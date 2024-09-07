@@ -1,0 +1,24 @@
+
+build: $(BUILD_ALL)
+	@
+
+run:
+	@
+
+deploy:  cloudflare-deploy-pages
+	@
+
+
+# -----------------------------------------------------------------------------
+#
+# BUILD RULES
+#
+# -----------------------------------------------------------------------------
+
+dist/www/lib/%.css: src/%.js
+	@mkdir -p "$(dir $@)"
+	if ! ./bin/littlecss "$<" > "$@"; then
+		unlink "$@"
+	fi
+
+# EOF
