@@ -8,6 +8,13 @@ const tl = { ...t, ...l };
 const br = { ...b, ...r };
 
 export default named({
+	align: group(
+		rule(".centered", {
+			display: "flex",
+			justify_content: "center",
+			align_items: "center",
+		})
+	),
 	blocks: group(
 		rule(".il", { display: "inline" }),
 		rule(".ibl", { display: "inline-block" }),
@@ -55,28 +62,36 @@ export default named({
 	padding: group(
 		sizes.map((k, i) =>
 			rule([`.p-${k}`, `.m-${i}`], {
-				padding: `${vars.padding[i + 1]}`,
-				__pad: `${vars.padding[i + 1]}`,
+				padding: `${vars.pad[i + 1]}`,
+				__pad: `${vars.pad[i + 1]}`,
 			})
 		),
 		sizes.map((k, i) =>
 			rule([`.pt-${k}`, `.pt-${i}`], {
-				padding_top: `${vars.padding[i + 1]}`,
+				padding_top: `${vars.pad[i + 1]}`,
 			})
 		),
 		sizes.map((k, i) =>
 			rule([`.pb-${k}`, `.pb-${i}`], {
-				padding_bottom: `${vars.padding[i + 1]}`,
+				padding_bottom: `${vars.pad[i + 1]}`,
 			})
 		),
 		sizes.map((k, i) =>
 			rule([`.pl-${k}`, `.pl-${i}`], {
-				padding_left: `${vars.padding[i + 1]}`,
+				padding_left: `${vars.pad[i + 1]}`,
 			})
 		),
 		sizes.map((k, i) =>
 			rule([`.pr-${k}`, `.pr-${i}`], {
-				padding_right: `${vars.padding[i + 1]}`,
+				padding_right: `${vars.pad[i + 1]}`,
+			})
+		)
+	),
+	gap: group(
+		sizes.map((k, i) =>
+			rule([`.p-${k}`, `.m-${i}`], {
+				gap: `${vars.gap[i + 1]}`,
+				__gap: `${vars.gap[i + 1]}`,
 			})
 		)
 	),
@@ -130,21 +145,18 @@ export default named({
 		}),
 		rule(".fit-content", {
 			max_width: "fit-content",
+		}),
+		rule(".fit-screen", {
+			box_sizing: "border-box",
+			min_height: "100vh",
+			height: "100vh",
+			max_height: "100vh",
+			min_width: "100vw",
+			width: "100vw",
+			max_width: "100vw",
 		})
 	),
-	row: group(
-		rule(".row", {
-			display: "flex",
-			gap: `${vars.gap}`,
-		})
-	),
-	stack: group(
-		rule(".stack", {
-			display: "flex",
-			flex_diretion: "column",
-			gap: `${vars.gap}`,
-		})
-	),
+
 	sizing: group(
 		named({
 			width: group(
@@ -153,22 +165,44 @@ export default named({
 				),
 				...sizes.map((k, i) =>
 					rule(`.h-${k}`, { height: `${vars.size[i + 1]}` })
-				)
+				),
+				rule(".w-screen", { width: "100vw" }),
+				rule(".h-screen", { width: "100vh" })
 			),
 			columns: group(
 				...times(10, (_) =>
-					rule(`.w-${_ + 1}col`, {
+					rule(`.w-${_ + 1}c`, {
 						width: `calc(${vars.column.width}*${_ + 1})`,
 					})
 				)
 			),
 			blocks: group(
 				...times(10, (_) =>
-					rule(`.w-${_ + 1}bl`, {
+					rule(`.w-${_ + 1}b`, {
 						width: `calc(${vars.block.width}*${_ + 1})`,
 					})
 				)
 			),
+		})
+	),
+	shapes: group(
+		rule(".square", { aspect_ratio: "1/1" }),
+		rule(".circle", { aspect_ratio: "1/1", border_radius: "50%" })
+	),
+	row: group(
+		rule(".row", {
+			display: "flex",
+			gap: `${vars.gap}`,
+		}),
+		rule(".row.wrap", {
+			flex_wrap: "wrap",
+		})
+	),
+	stack: group(
+		rule(".stack", {
+			display: "flex",
+			flex_direction: "column",
+			gap: `${vars.gap}`,
 		})
 	),
 });

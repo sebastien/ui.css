@@ -13,4 +13,10 @@ export default named({
 			})
 		)
 	),
+	text: group(
+		rule(".italic", { font_style: "italic" }),
+		rule(".bold", { font_weight: "400" }),
+		rule(".bolder", { font_weight: "600" }),
+		rule(".boldest", { font_weight: "800" })
+	),
 });

@@ -181,7 +181,6 @@ const layer = (...rules) => new Layer(rules);
 
 class Token {
 	constructor(name, value) {
-		console.log("NEW TOKEN", name, value);
 		this.name = name;
 		this.value = value;
 		this.ref = `--${this.name.replaceAll(".", "-").toLowerCase()}`;

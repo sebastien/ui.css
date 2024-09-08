@@ -1,4 +1,4 @@
-import { tokens, group, times, vars } from "../js/littlecss.js";
+import { tokens, group, times, vars, rule } from "../js/littlecss.js";
 
 const colors = {
 	cyan: "#00BCBC",
@@ -26,23 +26,64 @@ export default group(
 	}),
 	tokens({
 		color: {
+			text: `var(--color-low)`,
+			page: `var(--color-high)`,
+			white: "#FFFFFF",
+			black: "#000000",
 			high: `${vars.color.white}`,
 			low: `${vars.color.black}`,
+			blend: "oklab",
 		},
 	}),
 	tokens({
-		color: map(colors, (v, k) => ({
-			[k]: times(
+		color: map(colors, (_, k) =>
+			times(
 				11,
 				(i) =>
-					`color-mix(${vars.color.blend}, ${vars.color[k]}, ${
-						i < 5 ? vars.color.low : vars.color.hi
+					`color-mix(in oklab, ${vars.color[k]}, ${
+						i < 5 ? vars.color.low : vars.color.high
 					} ${
 						i < 5
 							? 100 - Math.round((100 * i) / 5)
 							: Math.round((100 * (i - 5)) / 5)
-					}%`
-			),
-		})),
-	})
+					}%)`
+			).reduce((r, v, k) => ((r[k] = v), r), {})
+		),
+	}),
+	...Object.keys(colors).map((color) =>
+		rule(`.bg-${color}`, {
+			__background_color: `${vars.color[color]}`,
+		})
+	),
+	...Object.keys(colors).map((color) =>
+		rule(`.bd-${color}`, {
+			__border_color: `${vars.color[color]}`,
+		})
+	),
+	...Object.keys(colors).map((color) =>
+		rule(`.${color}`, {
+			__color: `${vars.color[color]}`,
+		})
+	),
+	...Object.keys(colors).map((color) =>
+		times(11, (i) =>
+			rule(`.bg-${color}-${i}`, {
+				background_color: `${vars.color[color][i]}`,
+			})
+		)
+	),
+	...Object.keys(colors).map((color) =>
+		times(11, (i) =>
+			rule(`.bd-${color}-${i}`, {
+				background_color: `${vars.color[color][i]}`,
+			})
+		)
+	),
+	...Object.keys(colors).map((color) =>
+		times(11, (i) =>
+			rule(`.${color}-${i}`, {
+				color: `${vars.color[color][i]}`,
+			})
+		)
+	)
 );
