@@ -294,11 +294,23 @@ css.mount = (...values) => {
 	}
 };
 const sizes = ["xxs", "xs", "s", "m", "l", "xl", "xxl"];
+const sizenames = {
+	smallest: 0, //"xxs",
+	smaller: 1, //"xs",
+	small: 2, //"s",
+	medium: 3, //"m",
+	large: 4, //"l",
+	larger: 5, // "xl",
+	largest: 6, //"xxl",
+};
 const sides = ["left", "top", "right", "bottom"];
+const classes = (...values) => values.map((_) => `.${_}`);
 
 export {
+	classes,
 	sides,
 	sizes,
+	sizenames,
 	Vars,
 	on,
 	vars,

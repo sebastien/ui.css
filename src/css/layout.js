@@ -169,6 +169,13 @@ export default named({
 				rule(".w-screen", { width: "100vw" }),
 				rule(".h-screen", { width: "100vh" })
 			),
+			chars: group(
+				...times(10, (_) =>
+					rule(`.w-${_ + 1}ch`, {
+						width: `${Math.round(1.25 * (_ + 1))}ch`,
+					})
+				)
+			),
 			columns: group(
 				...times(10, (_) =>
 					rule(`.w-${_ + 1}c`, {
@@ -203,6 +210,14 @@ export default named({
 			display: "flex",
 			flex_direction: "column",
 			gap: `${vars.gap}`,
+		})
+	),
+	flex: group(
+		rule(".fill", {
+			flex_grow: "1",
+		}),
+		rule(".shrink", {
+			flex_shrink: "1",
 		})
 	),
 });
