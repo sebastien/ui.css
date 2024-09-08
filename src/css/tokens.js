@@ -4,6 +4,15 @@ export default tokens({
 	border: {
 		width: sizes.map((_, i) => `${i}px`),
 	},
+	size: [
+		"5px", // xxs
+		"10px", // xs
+		"15px", // s
+		"30px", // m
+		"40px", // l
+		"50px", // xl
+		"26px", // xxl
+	],
 	margin: [
 		"5px", // xxs
 		"10px", // xs

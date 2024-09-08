@@ -28,6 +28,7 @@ export default named({
 		sizes.map((k, i) =>
 			rule([`.m-${k}`, `.m-${i}`], {
 				margin: `${vars.margin[i + 1]}`,
+				__margin: `${vars.margin[i + 1]}`,
 			})
 		),
 		sizes.map((k, i) =>
@@ -55,6 +56,7 @@ export default named({
 		sizes.map((k, i) =>
 			rule([`.p-${k}`, `.m-${i}`], {
 				padding: `${vars.padding[i + 1]}`,
+				__pad: `${vars.padding[i + 1]}`,
 			})
 		),
 		sizes.map((k, i) =>
@@ -130,18 +132,43 @@ export default named({
 			max_width: "fit-content",
 		})
 	),
-	wcol: group(
-		...times(10, (_) =>
-			rule(`.w-${_ + 1}col`, {
-				width: `calc(${vars.column.width}*${_ + 1})`,
-			})
-		)
+	row: group(
+		rule(".row", {
+			display: "flex",
+			gap: `${vars.gap}`,
+		})
 	),
-	wbl: group(
-		...times(10, (_) =>
-			rule(`.w-${_ + 1}bl`, {
-				width: `calc(${vars.block.width}*${_ + 1})`,
-			})
-		)
+	stack: group(
+		rule(".stack", {
+			display: "flex",
+			flex_diretion: "column",
+			gap: `${vars.gap}`,
+		})
+	),
+	sizing: group(
+		named({
+			width: group(
+				...sizes.map((k, i) =>
+					rule(`.w-${k}`, { width: `${vars.size[i + 1]}` })
+				),
+				...sizes.map((k, i) =>
+					rule(`.h-${k}`, { height: `${vars.size[i + 1]}` })
+				)
+			),
+			columns: group(
+				...times(10, (_) =>
+					rule(`.w-${_ + 1}col`, {
+						width: `calc(${vars.column.width}*${_ + 1})`,
+					})
+				)
+			),
+			blocks: group(
+				...times(10, (_) =>
+					rule(`.w-${_ + 1}bl`, {
+						width: `calc(${vars.block.width}*${_ + 1})`,
+					})
+				)
+			),
+		})
 	),
 });
