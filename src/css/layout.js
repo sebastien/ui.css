@@ -1,4 +1,4 @@
-import { named, rule, group, vars, times } from "../js/littlecss.js";
+import { sizes, named, rule, group, vars, times } from "../js/littlecss.js";
 
 const t = { top: "0px" };
 const b = { bottom: "0px" };
@@ -23,6 +23,60 @@ export default named({
 		rule(".br", br),
 		rule(".l", l),
 		rule(".r", r)
+	),
+	margin: group(
+		sizes.map((k, i) =>
+			rule([`.m-${k}`, `.m-${i}`], {
+				margin: `${vars.margin[i + 1]}`,
+			})
+		),
+		sizes.map((k, i) =>
+			rule([`.mt-${k}`, `.mt-${i}`], {
+				margin_top: `${vars.margin[i + 1]}`,
+			})
+		),
+		sizes.map((k, i) =>
+			rule([`.mb-${k}`, `.mb-${i}`], {
+				margin_bottom: `${vars.margin[i + 1]}`,
+			})
+		),
+		sizes.map((k, i) =>
+			rule([`.ml-${k}`, `.ml-${i}`], {
+				margin_left: `${vars.margin[i + 1]}`,
+			})
+		),
+		sizes.map((k, i) =>
+			rule([`.mr-${k}`, `.mr-${i}`], {
+				margin_right: `${vars.margin[i + 1]}`,
+			})
+		)
+	),
+	padding: group(
+		sizes.map((k, i) =>
+			rule([`.p-${k}`, `.m-${i}`], {
+				padding: `${vars.padding[i + 1]}`,
+			})
+		),
+		sizes.map((k, i) =>
+			rule([`.pt-${k}`, `.pt-${i}`], {
+				padding_top: `${vars.padding[i + 1]}`,
+			})
+		),
+		sizes.map((k, i) =>
+			rule([`.pb-${k}`, `.pb-${i}`], {
+				padding_bottom: `${vars.padding[i + 1]}`,
+			})
+		),
+		sizes.map((k, i) =>
+			rule([`.pl-${k}`, `.pl-${i}`], {
+				padding_left: `${vars.padding[i + 1]}`,
+			})
+		),
+		sizes.map((k, i) =>
+			rule([`.pr-${k}`, `.pr-${i}`], {
+				padding_right: `${vars.padding[i + 1]}`,
+			})
+		)
 	),
 	expand: group(
 		rule(".expand", {
