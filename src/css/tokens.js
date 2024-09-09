@@ -81,13 +81,13 @@ export default group(
 		},
 		heading: {
 			size: [
-				"10px", // xxs
-				"12px", // xs
-				"14px", // s
-				"16px", // m
-				"18px", // l
-				"22px", // xl
-				"26px", // xxl
+				"10px", // 1: xxs
+				"12px", // 2: xs
+				"14px", // 3: s
+				"16px", // 4: m
+				"18px", // 5: l
+				"22px", // 6: xl
+				"26px", // 7: xxl
 			],
 		},
 	})
