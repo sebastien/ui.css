@@ -203,7 +203,9 @@ class Tokens extends Group {
 		} else {
 			for (const k in collection) {
 				const v = collection[k];
-				const p = prefix ? `${prefix}.${k}` : k;
+				const p = prefix
+					? `${prefix}.${k.replaceAll("_", ".")}`
+					: k.replaceAll("_", ".");
 				if (Object.getPrototypeOf(v) === Object.prototype) {
 					for (const _ of Tokens.Expand(v, p)) {
 						yield _;
@@ -242,6 +244,16 @@ class Meta {
 }
 class Documentation extends Meta {}
 const doc = (value) => new Documentation(value);
+
+class ImportURL {
+	constructor(url) {
+		this.url = url;
+	}
+	*lines() {
+		yield `@import url('${this.url}');`;
+	}
+}
+const url = (value) => new ImportURL(value);
 
 const named = (mapping) => {
 	const items = [];
@@ -312,6 +324,7 @@ export {
 	sizes,
 	sizenames,
 	Vars,
+	url,
 	on,
 	vars,
 	rule,

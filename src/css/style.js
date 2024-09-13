@@ -9,6 +9,12 @@ import {
 } from "../js/littlecss.js";
 
 export default named({
+	style: group(
+		rule([".nolink", ".nolink:hover"], {
+			color: "unset",
+			text_decoration: "none",
+		})
+	),
 	box: group(
 		rule(".box-c", { box_sizing: "content-box" }),
 		rule(".box-b", { box_sizing: "border-box" })
