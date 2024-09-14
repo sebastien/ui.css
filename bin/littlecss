@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-
+BASE="$(dirname "$(dirname "$(readlink -f "$0")")")"
 for ARG in $@; do
-  bun -e "import mod from './$ARG';import css from './src/js/littlecss.js';console.log([...css(mod)].join('\n'))"
+  bun -e "import mod from './$ARG';import css from '$BASE/src/js/littlecss.js';console.log([...css(mod)].join('\n'))"
 done
-
 # EOF

@@ -32,7 +32,7 @@ export default named({
 	),
 	font: group(
 		rule(".italic", { font_style: "italic" }),
-		rule(".lighter", { font_weight: "100" }),
+		rule([".lighter", ".thin"], { font_weight: "100" }),
 		rule(".light", { font_weight: "200" }),
 		rule(".regular", { font_weight: "400" }),
 		rule(".medium", { font_weight: "500" }),
@@ -44,6 +44,7 @@ export default named({
 		rule(".serif", { font_family: `${vars.font.serif}` }),
 		rule(".control", { font_family: `${vars.font.control}` }),
 		rule(".heading", { font_family: `${vars.font.heading}` }),
+		rule(".script", { font_family: `${vars.font.script}` }),
 		rule(".display", { font_family: `${vars.font.display}` }),
 		...Object.keys(sizenames).map((k, i) =>
 			rule(`.${k}`, { font_size: `${vars.text.size[i]}` })
