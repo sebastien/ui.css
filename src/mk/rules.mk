@@ -2,6 +2,9 @@
 build: $(BUILD_ALL)
 	@
 
+dist: $(DIST_ALL)
+	@
+
 run:
 	@
 

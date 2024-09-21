@@ -318,6 +318,24 @@ const sizenames = {
 const sides = ["left", "top", "right", "bottom"];
 const classes = (...values) => values.map((_) => `.${_}`);
 
+const percent = (v) => `${Math.round(v * 10000) / 100}%`;
+
+const blended = (name, color, other, percentage = 0.5, opacity = undefined) => {
+	const base = `color-mix(in oklab, ${color} ${percent(
+		percentage
+	)}%, ${other})`;
+	name = name.replaceAll("_", "-");
+	const temp = `${name.startsWith("--") ? "" : "--"}${name}-base`;
+	return opacity
+		? {
+				[temp]: base,
+				[name]: `rgba(${base}, ${percent(opacity)}`,
+		  }
+		: {
+				[name]: base,
+		  };
+};
+
 export {
 	classes,
 	sides,
@@ -328,12 +346,14 @@ export {
 	on,
 	vars,
 	rule,
+	blended,
 	times,
 	layer,
 	group,
 	css,
 	named,
 	tokens,
+	percent,
 	doc,
 };
 export default css;

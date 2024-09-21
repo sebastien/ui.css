@@ -16,7 +16,7 @@ export default group(
 		},
 		border: { width: "1px", color: `var(--color-text)` },
 		block: {
-			width: "160px",
+			width: "140px",
 		},
 	}),
 	tokens({
@@ -50,7 +50,18 @@ export default group(
 			"50px", // xl
 			"26px", // xxl
 		],
+		// TODO: Should probably be related to the font size
 		pad: [
+			"2px", // xxs
+			"4px", // xs
+			"6px", // s
+			"8px", // m
+			"12px", // l
+			"16px", // xl
+			"18px", // xxl
+		],
+		// These are too big
+		space: [
 			"5px", // xxs
 			"10px", // xs
 			"15px", // s

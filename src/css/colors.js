@@ -12,6 +12,11 @@ const colors = {
 	grey: "#808080",
 };
 
+// const bg = (color, other = vars.color.page, opacity = 0.25) => ({
+// 	...blend("bg", color, other, opacity),
+// 	background_color: "var(--${key}-color)",
+// });
+// FIXME: Move this outside
 const map = (v, f) => {
 	const r = {};
 	for (const k in v) {
@@ -33,6 +38,9 @@ export default group(
 			high: `${vars.color.white}`,
 			low: `${vars.color.black}`,
 			blend: "oklab",
+			bg: `color-mix(in oklab, ${vars.color.text} 10%, ${vars.color.page})`,
+			bd: `color-mix(in oklab, ${vars.color.text} 20%, ${vars.color.page})`,
+			fg: `currentColor`,
 		},
 	}),
 	tokens({
@@ -50,40 +58,56 @@ export default group(
 			).reduce((r, v, k) => ((r[k] = v), r), {})
 		),
 	}),
+	group(
+		rule(".bg", { background_color: `${vars.color.bg}` }),
+		rule(".fg", { color: `${vars.color.fg}` }),
+		rule(".bd", { border_color: `${vars.color.bd}` }),
+		// Resets
+		rule(".nobg", { __color_bg: `transparent` }),
+		rule(".nobd", { __color_bg: `transparent` }),
+		rule(".nofg", { __color_fg: `${vars.color.text}` })
+	),
 	...Object.keys(colors).map((color) =>
 		rule(`.bg-${color}`, {
-			__background_color: `${vars.color[color]}`,
+			__color_bg: `${vars.color[color]}`,
 		})
 	),
 	...Object.keys(colors).map((color) =>
 		rule(`.bd-${color}`, {
-			__border_color: `${vars.color[color]}`,
+			__color_bd: `${vars.color[color]}`,
 		})
 	),
 	...Object.keys(colors).map((color) =>
-		rule(`.${color}`, {
-			__color: `${vars.color[color]}`,
+		rule(`.fg-${color}`, {
+			__color_fg: `${vars.color[color]}`,
 		})
 	),
 	...Object.keys(colors).map((color) =>
 		times(11, (i) =>
 			rule(`.bg-${color}-${i}`, {
-				background_color: `${vars.color[color][i]}`,
+				__color_bg: `${vars.color[color][i]}`,
 			})
 		)
 	),
 	...Object.keys(colors).map((color) =>
 		times(11, (i) =>
 			rule(`.bd-${color}-${i}`, {
-				background_color: `${vars.color[color][i]}`,
+				__color_bd: `${vars.color[color][i]}`,
 			})
 		)
 	),
 	...Object.keys(colors).map((color) =>
 		times(11, (i) =>
 			rule(`.${color}-${i}`, {
-				color: `${vars.color[color][i]}`,
+				__color_fg: `${vars.color[color][i]}`,
 			})
 		)
 	)
+	// dk and lt blends
+	// ...times(11, (i)=> rule(`.bg-dk${i}`, {
+	// 		background_color `color-mix(in oklab, ${vars.color.bg} ${i*10}%, rgba(${vars.color.low}, 0%))`,
+	// })),
+	// ...times(11, (i)=> rule(`.bg-lt{i}`, {
+	// 		background_color `color-mix(in oklab, ${vars.color.bg} ${i*10}%, rgba(${vars.color.high}, 0%))`,
+	// })),
 );

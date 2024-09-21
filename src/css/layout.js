@@ -3,7 +3,7 @@ import { sizes, named, rule, group, vars, times } from "../js/littlecss.js";
 const t = { top: "0px" };
 const b = { bottom: "0px" };
 const l = { left: "0px" };
-const r = { r: "0px" };
+const r = { right: "0px" };
 const tl = { ...t, ...l };
 const br = { ...b, ...r };
 
@@ -61,7 +61,7 @@ export default named({
 	),
 	padding: group(
 		sizes.map((k, i) =>
-			rule([`.p-${k}`, `.m-${i}`], {
+			rule([`.p-${k}`, `.p-${i}`], {
 				padding: `${vars.pad[i + 1]}`,
 				__pad: `${vars.pad[i + 1]}`,
 			})
@@ -89,7 +89,7 @@ export default named({
 	),
 	gap: group(
 		sizes.map((k, i) =>
-			rule([`.p-${k}`, `.m-${i}`], {
+			rule([`.g-${k}`, `.g-${i}`], {
 				gap: `${vars.gap[i + 1]}`,
 				__gap: `${vars.gap[i + 1]}`,
 			})
@@ -218,6 +218,13 @@ export default named({
 		}),
 		rule(".shrink", {
 			flex_shrink: "1",
+		})
+	),
+	overflow: group(
+		rule(".overflow", {
+			scrollbar_color: `${vars.color.text}`,
+			scrollbar_width: "thin",
+			overflow: "auto",
 		})
 	),
 });
