@@ -80,25 +80,35 @@ export default group(
 			"24px", // xxl
 		],
 		text: {
+			base: "12",
+			unit: "16px",
 			size: [
-				"6px", // xxs
-				"8px", // xs
-				"10px", // s
-				"12px", // m
-				"14px", // l
-				"16px", // xl
-				"18px", // xxl
+				"calc( 6 / var(--text-base) * var(--text-unit))", // xxs
+				"calc( 8 / var(--text-base) * var(--text-unit))", // xs
+				"calc(10 / var(--text-base) * var(--text-unit))", // s
+				"calc(12 / var(--text-base) * var(--text-unit))", // m
+				"calc(14 / var(--text-base) * var(--text-unit))", // l
+				"calc(16 / var(--text-base) * var(--text-unit))", // xl
+				"calc(18 / var(--text-base) * var(--text-unit))", // xxl
 			],
 		},
+		limit: {
+			text: "60ch",
+			block: ["360px", "720px", "960"],
+			content: "960px",
+			page: "960px",
+		},
 		heading: {
+			base: "14",
+			unit: "14px",
 			size: [
-				"10px", // 1: xxs
-				"12px", // 2: xs
-				"14px", // 3: s
-				"16px", // 4: m
-				"18px", // 5: l
-				"22px", // 6: xl
-				"26px", // 7: xxl
+				"calc(12 / var(--heading-base) * var(--heading-unit))", // 1: xxs
+				"calc(14 / var(--heading-base) * var(--heading-unit))", // 2: xs
+				"calc(18 / var(--heading-base) * var(--heading-unit))", // 3: s
+				"calc(24 / var(--heading-base) * var(--heading-unit))", // 4: m
+				"calc(32 / var(--heading-base) * var(--heading-unit))", // 5: l
+				"calc(36 / var(--heading-base) * var(--heading-unit))", // 6: xl
+				"calc(48 / var(--heading-base) * var(--heading-unit))", // 7: xxl
 			],
 		},
 	})

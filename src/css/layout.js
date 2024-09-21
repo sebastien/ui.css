@@ -15,6 +15,10 @@ export default named({
 			align_items: "center",
 		})
 	),
+	box: group(
+		rule(".bbox", { box_sizing: "border-box" }),
+		rule(".cbox", { box_sizing: "content-box" })
+	),
 	blocks: group(
 		rule(".il", { display: "inline" }),
 		rule(".ibl", { display: "inline-block" }),
@@ -34,64 +38,64 @@ export default named({
 	margin: group(
 		sizes.map((k, i) =>
 			rule([`.m-${k}`, `.m-${i}`], {
-				margin: `${vars.margin[i + 1]}`,
-				__margin: `${vars.margin[i + 1]}`,
+				margin: `${vars.margin[i]}`,
+				__margin: `${vars.margin[i]}`,
 			})
 		),
 		sizes.map((k, i) =>
 			rule([`.mt-${k}`, `.mt-${i}`], {
-				margin_top: `${vars.margin[i + 1]}`,
+				margin_top: `${vars.margin[i]}`,
 			})
 		),
 		sizes.map((k, i) =>
 			rule([`.mb-${k}`, `.mb-${i}`], {
-				margin_bottom: `${vars.margin[i + 1]}`,
+				margin_bottom: `${vars.margin[i]}`,
 			})
 		),
 		sizes.map((k, i) =>
 			rule([`.ml-${k}`, `.ml-${i}`], {
-				margin_left: `${vars.margin[i + 1]}`,
+				margin_left: `${vars.margin[i]}`,
 			})
 		),
 		sizes.map((k, i) =>
 			rule([`.mr-${k}`, `.mr-${i}`], {
-				margin_right: `${vars.margin[i + 1]}`,
+				margin_right: `${vars.margin[i]}`,
 			})
 		)
 	),
 	padding: group(
 		sizes.map((k, i) =>
 			rule([`.p-${k}`, `.p-${i}`], {
-				padding: `${vars.pad[i + 1]}`,
-				__pad: `${vars.pad[i + 1]}`,
+				padding: `${vars.pad[i]}`,
+				__pad: `${vars.pad[i]}`,
 			})
 		),
 		sizes.map((k, i) =>
 			rule([`.pt-${k}`, `.pt-${i}`], {
-				padding_top: `${vars.pad[i + 1]}`,
+				padding_top: `${vars.pad[i]}`,
 			})
 		),
 		sizes.map((k, i) =>
 			rule([`.pb-${k}`, `.pb-${i}`], {
-				padding_bottom: `${vars.pad[i + 1]}`,
+				padding_bottom: `${vars.pad[i]}`,
 			})
 		),
 		sizes.map((k, i) =>
 			rule([`.pl-${k}`, `.pl-${i}`], {
-				padding_left: `${vars.pad[i + 1]}`,
+				padding_left: `${vars.pad[i]}`,
 			})
 		),
 		sizes.map((k, i) =>
 			rule([`.pr-${k}`, `.pr-${i}`], {
-				padding_right: `${vars.pad[i + 1]}`,
+				padding_right: `${vars.pad[i]}`,
 			})
 		)
 	),
 	gap: group(
 		sizes.map((k, i) =>
 			rule([`.g-${k}`, `.g-${i}`], {
-				gap: `${vars.gap[i + 1]}`,
-				__gap: `${vars.gap[i + 1]}`,
+				gap: `${vars.gap[i]}`,
+				__gap: `${vars.gap[i]}`,
 			})
 		)
 	),
@@ -102,6 +106,7 @@ export default named({
 			...tl,
 			...br,
 		}),
+
 		rule(".expand-h", {
 			position: "absolute",
 			box_sizing: "border-box",
@@ -156,7 +161,21 @@ export default named({
 			max_width: "100vw",
 		})
 	),
-
+	filling: group(
+		rule(".fill-screen", {
+			box_sizing: "border-box",
+			min_width: "100vw",
+			min_height: "100vh",
+		})
+	),
+	limit: group(
+		...["text", "content", "page"].map((_) =>
+			rule(`.limit-${_}`, { max_width: `${vars.limit[_]}` })
+		),
+		...times(3, (i) =>
+			rule(`.limit-0b`, { max_width: `${vars.limit.block[i]}` })
+		)
+	),
 	sizing: group(
 		named({
 			width: group(
@@ -199,6 +218,7 @@ export default named({
 	row: group(
 		rule(".row", {
 			display: "flex",
+			align_items: "center",
 			gap: `${vars.gap}`,
 		}),
 		rule(".row.wrap", {

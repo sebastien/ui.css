@@ -13,11 +13,13 @@ export default named({
 		rule([".nolink", ".nolink:hover"], {
 			color: "unset",
 			text_decoration: "none",
-		})
+		}),
+		rule(".nolh", { line_height: "0em" })
 	),
-	box: group(
-		rule(".box-c", { box_sizing: "content-box" }),
-		rule(".box-b", { box_sizing: "border-box" })
+	opacity: group(
+		rule(".dim", { opacity: `0.65` }),
+		rule(".dimmer", { opacity: `0.45` }),
+		rule(".dimmest", { opacity: `0.25` })
 	),
 	border: group(
 		rule(".bd", {
