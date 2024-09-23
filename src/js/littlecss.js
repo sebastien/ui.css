@@ -315,7 +315,7 @@ const sizenames = {
 	larger: 5, // "xl",
 	largest: 6, //"xxl",
 };
-const sides = ["left", "top", "right", "bottom"];
+const sides = { l: "left", t: "top", r: "right", b: "bottom" };
 const classes = (...values) => values.map((_) => `.${_}`);
 
 const percent = (v) => `${Math.round(v * 10000) / 100}%`;

@@ -30,10 +30,13 @@ export default named({
 		rule(".sticky", { position: "sticky" }),
 		rule(".rel", { position: "relative" }),
 		rule(".abs", { position: "absolute" }),
+		rule(".fix", { position: "fixed" }),
 		rule(".tl", tl),
 		rule(".br", br),
 		rule(".l", l),
-		rule(".r", r)
+		rule(".r", r),
+		rule(".t", t),
+		rule(".b", b)
 	),
 	margin: group(
 		sizes.map((k, i) =>
@@ -220,9 +223,6 @@ export default named({
 			display: "flex",
 			align_items: "center",
 			gap: `${vars.gap}`,
-		}),
-		rule(".row.wrap", {
-			flex_wrap: "wrap",
 		})
 	),
 	stack: group(
@@ -238,6 +238,15 @@ export default named({
 		}),
 		rule(".shrink", {
 			flex_shrink: "1",
+		}),
+		rule([".row.wrap", ".stack.wrap"], {
+			flex_wrap: "wrap",
+		}),
+		rule([".row.top", ".stack.top"], {
+			align_items: "flex-start",
+		}),
+		rule([".row.stretch", ".stack.stretch"], {
+			align_items: "stretch",
 		})
 	),
 	overflow: group(
