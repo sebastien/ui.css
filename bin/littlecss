@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 for ARG in $@; do
-  bun -e "import mod from './$ARG';import css from './src/js/littlecss.js';console.log([...css(mod)].join('\n'))"
+  bun -e "import mod from './$ARG';import css from './src/js/littlecss.js';console.log([...css(mod)].join(''))"
 done
 
 # EOF

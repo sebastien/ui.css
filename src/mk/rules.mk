@@ -15,7 +15,7 @@ deploy:  cloudflare-deploy-pages
 #
 # -----------------------------------------------------------------------------
 
-dist/www/lib/%.css: src/%.js
+dist/www/lib/%.css: src/%.js $(SOURCES_JS)
 	@mkdir -p "$(dir $@)"
 	if ! ./bin/littlecss "$<" > "$@"; then
 		unlink "$@"
