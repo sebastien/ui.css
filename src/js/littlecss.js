@@ -142,7 +142,14 @@ const on = new Proxy(
 
 class Group {
 	constructor(contents, name = undefined) {
-		this.contents = contents;
+		this.contents = [];
+		for (const v of contents) {
+			if (v instanceof Array) {
+				this.contents = this.contents.concat(v);
+			} else {
+				this.contents.push(v);
+			}
+		}
 		this.name = name;
 	}
 	*rules() {
@@ -177,6 +184,64 @@ const group = (...rules) => new Group(rules);
 class Layer extends Group {}
 const layer = (...rules) => new Layer(rules);
 
+class Token {
+	constructor(name, value) {
+		this.name = name;
+		this.value = value;
+		this.ref = `--${this.name.replaceAll(".", "-").toLowerCase()}`;
+	}
+	*lines() {
+		yield `${this.ref}: ${this.value};`;
+	}
+	toString() {
+		return `var(${this.ref}: ${this.value})`;
+	}
+}
+class Tokens extends Group {
+	static *Expand(collection, prefix = undefined) {
+		if (collection instanceof Array) {
+			for (const v of collection) {
+				for (const w of Tokens.Expand(v, prefix)) {
+					yield w;
+				}
+			}
+		} else {
+			for (const k in collection) {
+				const v = collection[k];
+				const p = prefix
+					? `${prefix}.${k.replaceAll("_", ".")}`
+					: k.replaceAll("_", ".");
+				if (Object.getPrototypeOf(v) === Object.prototype) {
+					for (const _ of Tokens.Expand(v, p)) {
+						yield _;
+					}
+				} else {
+					if (v instanceof Array) {
+						for (let i = 0; i < v.length; i++) {
+							yield new Token(p ? `${p}.${i}` : `${i}`, v[i]);
+						}
+					} else {
+						yield new Token(p, v);
+					}
+				}
+			}
+		}
+	}
+	*lines() {
+		yield "/* @tokens */";
+		yield ":root {";
+		for (const token of this.contents) {
+			for (const line of token.lines()) {
+				yield line;
+			}
+		}
+		yield "}";
+	}
+}
+const tokens = (...values) => {
+	return new Tokens([...Tokens.Expand(values)]);
+};
+
 class Meta {
 	constructor(value) {
 		this.value = value;
@@ -184,6 +249,16 @@ class Meta {
 }
 class Documentation extends Meta {}
 const doc = (value) => new Documentation(value);
+
+class ImportURL {
+	constructor(url) {
+		this.url = url;
+	}
+	*lines() {
+		yield `@import url('${this.url}');`;
+	}
+}
+const url = (value) => new ImportURL(value);
 
 const named = (mapping) => {
 	const items = [];
@@ -209,6 +284,82 @@ function* css(...values) {
 	//yield "/* EOF */";
 }
 
-export { Vars, on, vars, rule, times, layer, group, css, named, doc };
+// --
+// Injects the styles directly as stylesheets into the DOM.
+css.mount = (...values) => {
+	for (const v of values) {
+		const styles = [];
+		if (v instanceof Rule || v instanceof Group) {
+			styles.push(v);
+		} else if (Object.getPrototypeOf(v) === Object.prototype) {
+			for (const k in v) {
+				styles.push(v[k]);
+			}
+		} else {
+			throw new Error(`Unsupported type: ${v}`);
+		}
+		for (const s of styles) {
+			if (globalThis.document) {
+				const style = globalThis.document.createElement("style");
+				if (s.name) {
+					style.setAttribute("id", name);
+				}
+				style.textContent = [...s.lines()].join("\n");
+				globalThis.document.head.appendChild(style);
+			}
+		}
+	}
+};
+const sizes = ["xxs", "xs", "s", "m", "l", "xl", "xxl"];
+const sizenames = {
+	smallest: 0, //"xxs",
+	smaller: 1, //"xs",
+	small: 2, //"s",
+	medium: 3, //"m",
+	large: 4, //"l",
+	larger: 5, // "xl",
+	largest: 6, //"xxl",
+};
+const sides = { l: "left", t: "top", r: "right", b: "bottom" };
+const classes = (...values) => values.map((_) => `.${_}`);
+
+const percent = (v) => `${Math.round(v * 10000) / 100}%`;
+
+const blended = (name, color, other, percentage = 0.5, opacity = undefined) => {
+	const base = `color-mix(in oklab, ${color} ${percent(
+		percentage
+	)}%, ${other})`;
+	name = name.replaceAll("_", "-");
+	const temp = `${name.startsWith("--") ? "" : "--"}${name}-base`;
+	return opacity
+		? {
+				[temp]: base,
+				[name]: `rgba(${base}, ${percent(opacity)}`,
+		  }
+		: {
+				[name]: base,
+		  };
+};
+
+export {
+	classes,
+	sides,
+	sizes,
+	sizenames,
+	Vars,
+	url,
+	on,
+	vars,
+	rule,
+	blended,
+	times,
+	layer,
+	group,
+	css,
+	named,
+	tokens,
+	percent,
+	doc,
+};
 export default css;
 // EOF

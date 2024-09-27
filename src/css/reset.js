@@ -1,4 +1,4 @@
-import { all, controls } from "./lib/tags.js";
+import { all, inputs, controls } from "./lib/tags.js";
 import { on, rule, layer } from "../js/littlecss.js";
 
 export default layer(
@@ -20,6 +20,11 @@ export default layer(
 		text_shadow: "none",
 		text_align: "unset",
 		color: "default",
+	}),
+	rule(inputs, {
+		display: `inline-flex`,
+		width: `min-content`,
+		appearance: "none",
 	}),
 	rule(
 		[
