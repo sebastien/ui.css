@@ -17,6 +17,14 @@ export default named({
 		rule(".nolh", { line_height: "0em" }),
 		rule(".nogap", { gap: "0em" })
 	),
+	font: group(
+		rule(".lll", { font_weight: 100 }),
+		rule(".ll", { font_weight: 200 }),
+		rule(".l", { font_weight: 300 }),
+		rule(".b", { font_weight: 600 }),
+		rule(".bb", { font_weight: 700 }),
+		rule(".bbb", { font_weight: 800 })
+	),
 	opacity: group(
 		rule(".dim", { opacity: `0.65` }),
 		rule(".dimmer", { opacity: `0.45` }),
@@ -27,6 +35,7 @@ export default named({
 		rule(".invisible", { display: "hidden !important" })
 	),
 	border: group(
+		rule(".rd", { border_radius: `${vars.border.radius}` }),
 		rule(".bd", {
 			border: `${vars.border.width} solid ${vars.border.color}`,
 		}),

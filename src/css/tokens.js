@@ -14,7 +14,11 @@ export default group(
 			size: "14px",
 			lh: "1.25em",
 		},
-		border: { width: "1px", color: `var(--color-text)` },
+		border: {
+			width: "1px",
+			color: `var(--color-text)`,
+			radius: `var(--border-radius-3)`,
+		},
 		block: {
 			width: "140px",
 		},
@@ -33,13 +37,13 @@ export default group(
 			],
 		},
 		size: [
-			"5px", // xxs
-			"10px", // xs
-			"15px", // s
-			"30px", // m
-			"40px", // l
-			"50px", // xl
-			"26px", // xxl
+			"5px", //  0:xxs
+			"10px", // 1:xs
+			"15px", // 2:s
+			"30px", // 3:m
+			"40px", // 4:l
+			"50px", // 5:xl
+			"26px", // 6:xxl
 		],
 		margin: [
 			"5px", // xxs
