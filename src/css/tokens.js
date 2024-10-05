@@ -27,13 +27,13 @@ export default group(
 		border: {
 			width: sizes.map((_, i) => `${i}px`),
 			radius: [
-				"1px", // xxs
-				"2px", // xs
-				"4px", // s
-				"6px", // m
-				"8px", // l
-				"12px", // xl
-				"16px", // xxl
+				"1px", // 0:xxs
+				"2px", // 1:xs
+				"4px", // 2:s
+				"6px", // 3:m
+				"8px", // 4:l
+				"12px", // 5:xl
+				"16px", // 6:xxl
 			],
 		},
 		size: [

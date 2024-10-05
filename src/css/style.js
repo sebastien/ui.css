@@ -34,16 +34,34 @@ export default named({
 		rule(".skip", { display: "none !important" }),
 		rule(".invisible", { display: "hidden !important" })
 	),
+	rounding: group(
+		rule(".rounded", { border_radius: "0.25lh" }),
+		rule(".rounder", { border_radius: "0.5lh" }),
+		rule(".roundest", { border_radius: "1lh" })
+	),
 	border: group(
 		rule(".rd", { border_radius: `${vars.border.radius}` }),
 		rule(".bd", {
 			border: `${vars.border.width} solid ${vars.border.color}`,
 		}),
+		...times(10, (i) => rule(`.rd-${i}`, { __border_radius: `${i}px` })),
 		...times(10, (i) => rule(`.bd-${i}`, { __border_width: `${i}px` })),
 		...Object.keys(sides).map((k) =>
 			rule(`.bd-${k.substring(0, 1)}`, {
 				[`border-${sides[k]}`]: `${vars.border.width} solid currentColor `,
 			})
 		)
+	),
+	shape: group(
+		rule([".square", ".circle"], {
+			display: "inline-flex",
+			align_items: "center",
+			width: "1lh",
+			box_sizing: "border-box",
+			aspect_ratio: "1",
+		}),
+		rule([".circle"], {
+			border_radius: "100%",
+		})
 	),
 });

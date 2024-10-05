@@ -1,14 +1,14 @@
 import { tokens, group, times, vars, rule } from "../js/littlecss.js";
 
 const colors = {
-	cyan: "#00BCBC",
-	blue: "#0000FF",
-	purple: "#8000FF",
-	red: "#FF0000",
-	orange: "#FF7F00",
-	yellow: "#BCBC00",
+	cyan: "#14D3CA",
+	blue: "#1717BB",
+	purple: "#A21899",
+	red: "#FF3939",
+	orange: "#EE7204",
+	yellow: "#FBBE08",
 	pink: "#FF00FF",
-	green: "#00BC00",
+	green: "#3DBC1A",
 	grey: "#808080",
 };
 
