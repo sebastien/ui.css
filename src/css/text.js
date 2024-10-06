@@ -36,6 +36,9 @@ export default named({
 			margin_bottom: "1.5em",
 			padding_left: "1.5em",
 		}),
+		rule(["ol.t", ".t ol"], {
+			padding_left: "2em",
+		}),
 		rule(["ul.t li", ".t ul li"], {
 			list_style_type: "disc",
 		}),

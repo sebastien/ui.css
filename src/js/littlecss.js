@@ -372,8 +372,27 @@ const mods = (classes, ...modifiers) =>
 		.flatMap((_) => [`:${_}`, `.${_}`])
 		.flatMap((m) => classes.map((c) => `${c}${m}`));
 
+// --
+// Does the cross product of the given arrays.
+// >> cross(
+// >> 				[".selector.pills", ".selector.bar"],
+// >> 				["> li", "> .item"],
+// >> 				[":hover", ".hover"]
+// >> 			),
+const cross = (...sets) =>
+	sets.reduce((r, v) =>
+		r
+			? (r instanceof Array ? r : [r]).flatMap((_) =>
+					(v instanceof Array ? v : [v]).map((w) => `${_}${w}`)
+			  )
+			: v instanceof Array
+			? v
+			: [v]
+	);
+
 export {
 	classes,
+	cross,
 	sides,
 	sizes,
 	sizenames,
