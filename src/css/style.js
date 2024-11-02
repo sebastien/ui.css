@@ -64,4 +64,18 @@ export default named({
 			border_radius: "100%",
 		})
 	),
+	dark: group(
+		rule(".dark", {
+			__color_page: `${vars.color.black}`,
+			__color_text: `${vars.color.white}`,
+			background_color: `${vars.color.page}`,
+			color: `${vars.color.text}`,
+		}),
+		rule(".light", {
+			__color_page: `${vars.color.white}`,
+			__color_text: `${vars.color.black}`,
+			background_color: `${vars.color.page}`,
+			color: `${vars.color.text}`,
+		})
+	),
 });

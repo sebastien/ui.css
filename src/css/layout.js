@@ -200,14 +200,14 @@ export default named({
 			),
 			columns: group(
 				...times(10, (_) =>
-					rule(`.w-${_ + 1}c`, {
+					rule(`.w-${_ + 1}cl`, {
 						width: `calc(${vars.column.width}*${_ + 1})`,
 					})
 				)
 			),
 			blocks: group(
 				...times(10, (_) =>
-					rule(`.w-${_ + 1}b`, {
+					rule(`.w-${_ + 1}bl`, {
 						width: `calc(${vars.block.width}*${_ + 1})`,
 					})
 				)
