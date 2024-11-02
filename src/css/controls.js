@@ -14,6 +14,36 @@ import {
 import { inputs } from "./lib/tags.js";
 
 export default named({
+	selectable: group(
+		rule(".selectable", {
+			cursor: "pointer",
+			user_select: "none",
+			__color_bg: `${vars.color.grey}`,
+		}),
+		rule([".selectable:hover", ".selectable.hover"], {
+			...blended(
+				"background-color",
+				vars.color.bg,
+				vars.color.pagea,
+				0.15
+			),
+		}),
+		rule(
+			[
+				".selectable:active",
+				".selectable.selected",
+				".selectable[data-selected=true]",
+			],
+			{
+				...blended(
+					"background-color",
+					vars.color.bg,
+					vars.color.pagea,
+					0.35
+				),
+			}
+		)
+	),
 	action: group(
 		rule(".action", {
 			cursor: "pointer",
@@ -93,7 +123,7 @@ export default named({
 			__button_bg: "transparent",
 			border: `2px solid ${vars.button.bd}`,
 		}),
-		rule(["button.default", ".button.default"], {
+		rule(["button.default", ".button.default", "button[type=submit]"], {
 			outline: `3px solid ${vars.button.bg}`,
 		}),
 		rule(["button.primary", ".button.primary"], {

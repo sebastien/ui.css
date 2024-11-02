@@ -354,7 +354,7 @@ const percent = (v) => `${Math.round(v * 10000) / 100}%`;
 const blended = (name, color, other, percentage = 0.5, opacity = undefined) => {
 	const base = `color-mix(in oklab, ${color} ${percent(
 		percentage
-	)}%, ${other})`;
+	)}, ${other})`;
 	name = name.replaceAll("_", "-");
 	const temp = `${name.startsWith("--") ? "" : "--"}${name}-base`;
 	return opacity

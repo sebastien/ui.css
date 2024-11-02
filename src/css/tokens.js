@@ -75,13 +75,13 @@ export default group(
 			"26px", // xxl
 		],
 		gap: [
-			"0px", // xxs
-			"1px", // xs
-			"2px", // s
-			"3px", // m
-			"6px", // l
-			"12px", // xl
-			"24px", // xxl
+			"0px", // xxs - 0
+			"1px", // xs - 1
+			"2px", // s - 2
+			"3px", // m - 3
+			"6px", // l - 4
+			"12px", // xl - 5
+			"24px", // xxl - 6
 		],
 		text: {
 			base: "12",

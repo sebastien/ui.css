@@ -42,13 +42,13 @@ export default named({
 	border: group(
 		rule(".rd", { border_radius: `${vars.border.radius}` }),
 		rule(".bd", {
-			border: `${vars.border.width} solid ${vars.border.color}`,
+			border: `${vars.border.width} solid ${vars.color.bd}`,
 		}),
 		...times(10, (i) => rule(`.rd-${i}`, { __border_radius: `${i}px` })),
 		...times(10, (i) => rule(`.bd-${i}`, { __border_width: `${i}px` })),
 		...Object.keys(sides).map((k) =>
 			rule(`.bd-${k.substring(0, 1)}`, {
-				[`border-${sides[k]}`]: `${vars.border.width} solid currentColor `,
+				[`border-${sides[k]}`]: `${vars.border.width} solid ${vars.color.bd} `,
 			})
 		)
 	),

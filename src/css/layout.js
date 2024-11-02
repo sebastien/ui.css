@@ -223,6 +223,13 @@ export default named({
 			display: "flex",
 			align_items: "center",
 			gap: `${vars.gap}`,
+		}),
+		rule(".row.lined > *", {
+			border_right: `1px solid ${vars.color.bd}`,
+			border_collapse: "collapse",
+		}),
+		rule(".row.lined > *:last-child", {
+			border_right: "0px solid transparent",
 		})
 	),
 	stack: group(
