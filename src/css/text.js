@@ -62,6 +62,11 @@ export default named({
 			margin_bottom: "1.5em",
 		})
 	),
+	whitespace: group(
+		rule(".nobreak", { white_space: "nobreak" }),
+		rule(".pre", { white_space: "pre" }),
+		rule(".pre-lines", { white_space: "pre-line" })
+	),
 	font: group(
 		rule(".italic", { font_style: "italic" }),
 		rule([".lighter", ".thin"], { font_weight: "100" }),
@@ -72,6 +77,7 @@ export default named({
 		rule(".bolder", { font_weight: "700" }),
 		rule(".boldest", { font_weight: "800" }),
 		rule(".code", { font_family: `${vars.font.code}` }),
+		rule(".mono", { font_family: `${vars.font.mono}` }),
 		rule(".sans", { font_family: `${vars.font.sans}` }),
 		rule(".serif", { font_family: `${vars.font.serif}` }),
 		rule(".control", { font_family: `${vars.font.control}` }),

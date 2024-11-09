@@ -68,7 +68,7 @@ export default named({
 		rule(".pills", {
 			display: "inline-flex",
 			flex_wrap: "wrap",
-			gap: "1px",
+			gap: `${vars.gap}`,
 		}),
 		rule(".pill", {
 			display: "inline-flex",

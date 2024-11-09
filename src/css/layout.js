@@ -237,6 +237,13 @@ export default named({
 			display: "flex",
 			flex_direction: "column",
 			gap: `${vars.gap}`,
+		}),
+		rule(".stack.lined > *", {
+			border_bottom: `1px solid ${vars.color.bd}`,
+			border_collapse: "collapse",
+		}),
+		rule(".stack.lined > *:last-child", {
+			border_bottom: "0px solid transparent",
 		})
 	),
 	flex: group(
