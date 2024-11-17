@@ -1,4 +1,12 @@
-import { sizes, named, rule, group, vars, times } from "../js/littlecss.js";
+import {
+	sizes,
+	named,
+	rule,
+	group,
+	vars,
+	times,
+	percentages,
+} from "../js/littlecss.js";
 
 const t = { top: "0px" };
 const b = { bottom: "0px" };
@@ -209,6 +217,35 @@ export default named({
 				...times(10, (_) =>
 					rule(`.w-${_ + 1}bl`, {
 						width: `calc(${vars.block.width}*${_ + 1})`,
+					})
+				),
+				...times(10, (_) =>
+					rule(`.h-${_ + 1}bl`, {
+						width: `calc(${vars.block.width}*${_ + 1})`,
+					})
+				)
+			),
+			percentage: group(
+				...percentages.map((p) =>
+					rule(`.w-${p}p`, {
+						width: `${
+							p === 33
+								? "calc(100%/3)"
+								: p === 66
+								? "calc(100%*2/3)"
+								: `${p}%`
+						}`,
+					})
+				),
+				...percentages.map((p) =>
+					rule(`.h-${p}p`, {
+						height: `${
+							p === 33
+								? "calc(100%/3)"
+								: p === 66
+								? "calc(100%*2/3)"
+								: `${p}%`
+						}`,
 					})
 				)
 			),

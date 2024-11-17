@@ -390,6 +390,7 @@ const cross = (...sets) =>
 			: [v]
 	);
 
+const percentages = [5, 10, 15, 20, 25, 33, 50, 66, 75, 80, 90, 100];
 export {
 	classes,
 	cross,
@@ -411,6 +412,7 @@ export {
 	named,
 	tokens,
 	percent,
+	percentages,
 	doc,
 };
 export default css;
