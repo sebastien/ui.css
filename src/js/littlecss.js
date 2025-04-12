@@ -1,4 +1,10 @@
-const camelToKebab = (str) =>
+// ----------------------------------------------------------------------------
+//
+// UTILITIES
+//
+// ----------------------------------------------------------------------------
+
+const kebab = (str) =>
 	str
 		// Look for any lowercase letter followed by an uppercase letter
 		.replaceAll("_", "-")
@@ -19,7 +25,7 @@ function* properties(value, k) {
 		for (const kk in value) {
 			for (const v of properties(
 				value[kk],
-				k ? `${camelToKebab(k)}-${camelToKebab(kk)}` : camelToKebab(kk)
+				k ? `${kebab(k)}-${kebab(kk)}` : kebab(kk)
 			)) {
 				yield v;
 			}
@@ -29,51 +35,49 @@ function* properties(value, k) {
 	}
 }
 
-class Rule {
-	constructor(selectors, properties) {
-		this.selectors = selectors;
-		this.properties = properties;
-	}
-	*lines(compact) {
-		const sel = this.selectors
-			? this.selectors.join(compact ? "," : ", ")
-			: "*";
-		yield compact ? `${sel}{` : `${sel} {`;
-		for (const k in this.properties) {
-			yield compact
-				? `${k}:${this.properties[k]};`
-				: `\t${k}: ${this.properties[k]};`;
-		}
-		yield "}";
-	}
-}
-const rule = (selector, ...body) => {
-	// TODO: We could do basic selector parsing to extract classnames, tagnames
-	// and ids.
-	const sel = selector instanceof Array ? selector : [selector];
-	const props = {};
-	for (const b of body) {
-		if (typeof b === "string") {
-			for (let line of b.split("\n")) {
-				line = line.trim("");
-				if (line.endsWith(";")) {
-					line = line.substring(0, line.length - 1);
-				}
-				const i = line.indexOf(":");
-				if (!line.startsWith("//") && i >= 0) {
-					props[line.substring(0, i).trim()] = line
-						.substring(i + 1)
-						.trim();
-				}
-			}
-		} else {
-			for (const [k, v] of properties(b)) {
-				props[k] = v;
-			}
-		}
-		return new Rule(sel, props);
-	}
+const classes = (...values) => values.map((_) => `.${_}`);
+
+const percent = (v) => `${Math.round(v * 10000) / 100}%`;
+
+const blended = (name, color, other, percentage = 0.5, opacity = undefined) => {
+	const base = `color-mix(in oklab, ${color} ${percent(
+		percentage
+	)}%, ${other})`;
+	name = name.replaceAll("_", "-");
+	const temp = `${name.startsWith("--") ? "" : "--"}${name}-base`;
+	return opacity
+		? {
+				[temp]: base,
+				[name]: `rgba(${base}, ${percent(opacity)}`,
+		  }
+		: {
+				[name]: base,
+		  };
 };
+
+// ----------------------------------------------------------------------------
+//
+// CONSTANTS
+//
+// ----------------------------------------------------------------------------
+
+const sizes = ["xxs", "xs", "s", "m", "l", "xl", "xxl"];
+const sizenames = {
+	smallest: 0, //"xxs",
+	smaller: 1, //"xs",
+	small: 2, //"s",
+	medium: 3, //"m",
+	large: 4, //"l",
+	larger: 5, // "xl",
+	largest: 6, //"xxl",
+};
+const sides = { l: "left", t: "top", r: "right", b: "bottom" };
+
+// ----------------------------------------------------------------------------
+//
+// SCOPE
+//
+// ----------------------------------------------------------------------------
 
 // --
 // Scope defines variables, and allows to keep track of them.
@@ -92,6 +96,7 @@ class Scope {
 	}
 	constructor(name, parent) {
 		this._name = parent?._name ? `${parent._name}-${name}` : name;
+		// TODO: This should define properties
 	}
 	*walk() {
 		for (const k in this) {
@@ -128,6 +133,7 @@ const pseudo = (type, ...selectors) => {
 	}
 	return res;
 };
+
 const on = new Proxy(
 	{},
 	{
@@ -139,6 +145,77 @@ const on = new Proxy(
 				: target[property],
 	}
 );
+
+// ----------------------------------------------------------------------------
+//
+// RULE
+//
+// ----------------------------------------------------------------------------
+
+class Rule {
+	constructor(selectors, properties) {
+		this.selectors = selectors;
+		this.properties = properties;
+	}
+	*lines(compact) {
+		const sel = this.selectors
+			? this.selectors.join(compact ? "," : ", ")
+			: "*";
+		yield compact ? `${sel}{` : `${sel} {`;
+		for (const k in this.properties) {
+			yield compact
+				? `${k}:${this.properties[k]};`
+				: `\t${k}: ${this.properties[k]};`;
+		}
+		yield "}";
+	}
+	*docs(path) {
+		for (const name of this.selectors) {
+			yield {
+				type: "Rule",
+				name,
+				path,
+				definition: Object.keys(this.properties).reduce(
+					(r, k) => ((r[k] = `${this.properties[k]}`), r),
+					{}
+				),
+			};
+		}
+	}
+}
+const rule = (selector, ...body) => {
+	// TODO: We could do basic selector parsing to extract classnames, tagnames
+	// and ids.
+	const sel = selector instanceof Array ? selector : [selector];
+	const props = {};
+	for (const b of body) {
+		if (typeof b === "string") {
+			for (let line of b.split("\n")) {
+				line = line.trim("");
+				if (line.endsWith(";")) {
+					line = line.substring(0, line.length - 1);
+				}
+				const i = line.indexOf(":");
+				if (!line.startsWith("//") && i >= 0) {
+					props[line.substring(0, i).trim()] = line
+						.substring(i + 1)
+						.trim();
+				}
+			}
+		} else {
+			for (const [k, v] of properties(b)) {
+				props[k] = v;
+			}
+		}
+		return new Rule(sel, props);
+	}
+};
+
+// ----------------------------------------------------------------------------
+//
+// GROUP
+//
+// ----------------------------------------------------------------------------
 
 class Group {
 	constructor(contents, name = undefined) {
@@ -166,6 +243,15 @@ class Group {
 		}
 	}
 
+	*docs(path = undefined) {
+		path = this.name ? (path ? [...path, this.name] : [this.name]) : null;
+		for (const r of this.contents) {
+			for (const _ of r.docs(path)) {
+				yield _;
+			}
+		}
+	}
+
 	*lines(compact = true) {
 		if (!compact && this.name) {
 			yield `/* @${this.constructor.name.toLowerCase()} ${this.name} */`;
@@ -183,6 +269,25 @@ class Group {
 const group = (...rules) => new Group(rules);
 class Layer extends Group {}
 const layer = (...rules) => new Layer(rules);
+const named = (mapping) => {
+	const items = [];
+	for (const k in mapping) {
+		const v = mapping[k];
+		if (v instanceof Group) {
+			v.name = k;
+			items.push(v);
+		} else {
+			items.push(new Group(v instanceof Array ? v : v ? [v] : [], k));
+		}
+	}
+	return new Group(items);
+};
+
+// ----------------------------------------------------------------------------
+//
+// GROUP
+//
+// ----------------------------------------------------------------------------
 
 class Token {
 	constructor(name, value) {
@@ -193,10 +298,22 @@ class Token {
 	*lines() {
 		yield `${this.ref}: ${this.value};`;
 	}
+	*docs(path) {
+		yield {
+			type: "Token",
+			name: this.ref,
+			value: `${this.value}`,
+			path: path
+				? [...path, this.name]
+				: ["tokens", ...this.name.split(".")],
+		};
+	}
+
 	toString() {
 		return `var(${this.ref}: ${this.value})`;
 	}
 }
+
 class Tokens extends Group {
 	static *Expand(collection, prefix = undefined) {
 		if (collection instanceof Array) {
@@ -242,13 +359,32 @@ const tokens = (...values) => {
 	return new Tokens([...Tokens.Expand(values)]);
 };
 
+// ----------------------------------------------------------------------------
+//
+// META
+//
+// ----------------------------------------------------------------------------
+
 class Meta {
 	constructor(value) {
 		this.value = value;
 	}
 }
+
+// ----------------------------------------------------------------------------
+//
+// DOCUMENTATION
+//
+// ----------------------------------------------------------------------------
+
 class Documentation extends Meta {}
 const doc = (value) => new Documentation(value);
+
+// ----------------------------------------------------------------------------
+//
+// URL
+//
+// ----------------------------------------------------------------------------
 
 class ImportURL {
 	constructor(url) {
@@ -260,28 +396,40 @@ class ImportURL {
 }
 const url = (value) => new ImportURL(value);
 
-const named = (mapping) => {
-	const items = [];
-	for (const k in mapping) {
-		const v = mapping[k];
-		if (v instanceof Group) {
-			v.name = k;
-			items.push(v);
-		} else {
-			items.push(new Group(v instanceof Array ? v : v ? [v] : [], k));
-		}
-	}
-	return new Group(items);
-};
+// ----------------------------------------------------------------------------
+//
+// HIGH-LEVEL
+//
+// ----------------------------------------------------------------------------
 
 function* css(...values) {
 	// yield `/* Generated by LittleCSS */`;
 	for (const v of values) {
-		for (const l of v.lines(true)) {
-			yield l;
+		if (v.constructor === Array) {
+			for (const w of v) {
+				yield* css(w);
+			}
+		} else if (v.constructor === Object) {
+			yield* css(Object.values(v));
+		} else {
+			for (const l of v.lines(true)) {
+				yield l;
+			}
 		}
 	}
 	//yield "/* EOF */";
+}
+
+function* docs(...values) {
+	for (const v of values) {
+		if (v.constructor === Object) {
+			yield docs(...Object.values(v));
+		} else {
+			for (const _ of v.docs()) {
+				yield _;
+			}
+		}
+	}
 }
 
 // --
@@ -310,36 +458,6 @@ css.mount = (...values) => {
 		}
 	}
 };
-const sizes = ["xxs", "xs", "s", "m", "l", "xl", "xxl"];
-const sizenames = {
-	smallest: 0, //"xxs",
-	smaller: 1, //"xs",
-	small: 2, //"s",
-	medium: 3, //"m",
-	large: 4, //"l",
-	larger: 5, // "xl",
-	largest: 6, //"xxl",
-};
-const sides = { l: "left", t: "top", r: "right", b: "bottom" };
-const classes = (...values) => values.map((_) => `.${_}`);
-
-const percent = (v) => `${Math.round(v * 10000) / 100}%`;
-
-const blended = (name, color, other, percentage = 0.5, opacity = undefined) => {
-	const base = `color-mix(in oklab, ${color} ${percent(
-		percentage
-	)}%, ${other})`;
-	name = name.replaceAll("_", "-");
-	const temp = `${name.startsWith("--") ? "" : "--"}${name}-base`;
-	return opacity
-		? {
-				[temp]: base,
-				[name]: `rgba(${base}, ${percent(opacity)}`,
-		  }
-		: {
-				[name]: base,
-		  };
-};
 
 export {
 	classes,
@@ -360,6 +478,7 @@ export {
 	tokens,
 	percent,
 	doc,
+	docs,
 };
 export default css;
 // EOF

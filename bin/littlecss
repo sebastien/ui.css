@@ -1,6 +1,23 @@
 #!/usr/bin/env bash
 BASE="$(dirname "$(dirname "$(readlink -f "$0")")")"
-for ARG in $@; do
-	bun -e "import mod from './$ARG';import css from '$BASE/src/js/littlecss.js';console.log([...css(mod)].join('\n'))"
-done
+case $1 in
+-d | --doc)
+	shift
+	items=()
+	items+=("import {docs} from '$BASE/src/js/littlecss.js';const res={};")
+	for ARG in $@; do
+		i="${#items[@]}"
+		items+=("import mod$i from './$ARG';res['$ARG']=[...docs(mod$i)];")
+	done
+	items="${items[@]}"
+	if ! bun -e "$items;console.log(JSON.stringify(res))"; then
+		echo "!!! ERR Could not process: $@"
+	fi
+	;;
+*)
+	for ARG in $@; do
+		bun -e "import mod from './$ARG';import css from '$BASE/src/js/littlecss.js';console.log([...css(mod)].join('\n'))"
+	done
+	;;
+esac
 # EOF
