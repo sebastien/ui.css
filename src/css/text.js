@@ -30,6 +30,43 @@ export default named({
 			})
 		)
 	),
+	lists: group(
+		rule(["ul.t", "ol.t", "dl.t", ".t ul", ".t ol", ".t dl"], {
+			margin_top: "0.75em",
+			margin_bottom: "1.5em",
+			padding_left: "1.5em",
+		}),
+		rule(["ol.t", ".t ol"], {
+			padding_left: "2em",
+		}),
+		rule(["ul.t li", ".t ul li"], {
+			list_style_type: "disc",
+		}),
+		rule(["ol.t li", ".t ol li"], {
+			list_style_type: "decimal",
+		}),
+		rule([".t li", "li.t"], {
+			margin_bottom: "0.5em",
+		}),
+		rule([".t dl", "dl.t"], {
+			padding_left: "0em",
+		}),
+		rule([".t dt", "dt.t"], {
+			margin_top: "1.5em",
+			margin_bottom: "0.5em",
+			font_weight: "bold",
+			opacity: 0.75,
+		}),
+		rule([".t dd", "dd.t"], {
+			margin_top: "0.5em",
+			margin_bottom: "1.5em",
+		})
+	),
+	whitespace: group(
+		rule(".nobreak", { white_space: "nobreak" }),
+		rule(".pre", { white_space: "pre" }),
+		rule(".pre-lines", { white_space: "pre-line" })
+	),
 	font: group(
 		rule(".italic", { font_style: "italic" }),
 		rule([".lighter", ".thin"], { font_weight: "100" }),
@@ -40,6 +77,7 @@ export default named({
 		rule(".bolder", { font_weight: "700" }),
 		rule(".boldest", { font_weight: "800" }),
 		rule(".code", { font_family: `${vars.font.code}` }),
+		rule(".mono", { font_family: `${vars.font.mono}` }),
 		rule(".sans", { font_family: `${vars.font.sans}` }),
 		rule(".serif", { font_family: `${vars.font.serif}` }),
 		rule(".control", { font_family: `${vars.font.control}` }),
@@ -48,9 +86,6 @@ export default named({
 		rule(".display", { font_family: `${vars.font.display}` }),
 		...Object.keys(sizenames).map((k, i) =>
 			rule(`.${k}`, { font_size: `${vars.text.size[i]}` })
-		),
-		...Object.keys(sizenames).map((k, i) =>
-			rule(`.h-${k}`, { font_size: `${vars.heading.size[i]}` })
 		)
 	),
 });

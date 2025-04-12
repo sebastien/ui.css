@@ -14,7 +14,11 @@ export default group(
 			size: "14px",
 			lh: "1.25em",
 		},
-		border: { width: "1px", color: `var(--color-text)` },
+		border: {
+			width: "1px",
+			color: `var(--color-text)`,
+			radius: `var(--border-radius-3)`,
+		},
 		block: {
 			width: "140px",
 		},
@@ -23,23 +27,23 @@ export default group(
 		border: {
 			width: sizes.map((_, i) => `${i}px`),
 			radius: [
-				"1px", // xxs
-				"2px", // xs
-				"4px", // s
-				"6px", // m
-				"8px", // l
-				"12px", // xl
-				"16px", // xxl
+				"1px", // 0:xxs
+				"2px", // 1:xs
+				"4px", // 2:s
+				"6px", // 3:m
+				"8px", // 4:l
+				"12px", // 5:xl
+				"16px", // 6:xxl
 			],
 		},
 		size: [
-			"5px", // xxs
-			"10px", // xs
-			"15px", // s
-			"30px", // m
-			"40px", // l
-			"50px", // xl
-			"26px", // xxl
+			"5px", //  0:xxs
+			"10px", // 1:xs
+			"15px", // 2:s
+			"30px", // 3:m
+			"40px", // 4:l
+			"50px", // 5:xl
+			"26px", // 6:xxl
 		],
 		margin: [
 			"5px", // xxs
@@ -71,13 +75,13 @@ export default group(
 			"26px", // xxl
 		],
 		gap: [
-			"0px", // xxs
-			"1px", // xs
-			"2px", // s
-			"3px", // m
-			"6px", // l
-			"12px", // xl
-			"24px", // xxl
+			"0px", // xxs - 0
+			"1px", // xs - 1
+			"2px", // s - 2
+			"3px", // m - 3
+			"6px", // l - 4
+			"12px", // xl - 5
+			"24px", // xxl - 6
 		],
 		text: {
 			base: "12",

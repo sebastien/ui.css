@@ -1,0 +1,12 @@
+{
+	"compilerOptions": {
+		"paths": {
+			"@littlecss.js": [
+				"./src/js/littlecss.js"
+			],
+			"@littlecss/*.js": [
+				"./src/css/*.js"
+			]
+		}
+	}
+}

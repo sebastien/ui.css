@@ -1,14 +1,14 @@
 import { tokens, group, times, vars, rule } from "../js/littlecss.js";
 
 const colors = {
-	cyan: "#00BCBC",
-	blue: "#0000FF",
-	purple: "#8000FF",
-	red: "#FF0000",
-	orange: "#FF7F00",
-	yellow: "#BCBC00",
+	cyan: "#14D3CA",
+	blue: "#1717BB",
+	purple: "#A21899",
+	red: "#FF3939",
+	orange: "#EE7204",
+	yellow: "#FBBE08",
 	pink: "#FF00FF",
-	green: "#00BC00",
+	green: "#3DBC1A",
 	grey: "#808080",
 };
 
@@ -35,11 +35,17 @@ export default group(
 			page: `var(--color-high)`,
 			white: "#FFFFFF",
 			black: "#000000",
+			focus: "#000000",
 			high: `${vars.color.white}`,
 			low: `${vars.color.black}`,
+			// FIXME: higha/lowa should be page/text probably
+			higha: "#FFFFFF00",
+			lowa: "#00000000",
+			pagea: "#FFFFFF00",
+			texta: "#00000000",
 			blend: "oklab",
-			bg: `color-mix(in oklab, ${vars.color.text} 10%, ${vars.color.page})`,
-			bd: `color-mix(in oklab, ${vars.color.text} 20%, ${vars.color.page})`,
+			bg: `color-mix(in ${vars.color.blend}, ${vars.color.text} 10%, ${vars.color.page})`,
+			bd: `color-mix(in ${vars.color.blend}, ${vars.color.text} 20%, ${vars.color.page})`,
 			fg: `currentColor`,
 		},
 	}),

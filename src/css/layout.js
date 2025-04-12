@@ -1,4 +1,12 @@
-import { sizes, named, rule, group, vars, times } from "../js/littlecss.js";
+import {
+	sizes,
+	named,
+	rule,
+	group,
+	vars,
+	times,
+	percentages,
+} from "../js/littlecss.js";
 
 const t = { top: "0px" };
 const b = { bottom: "0px" };
@@ -200,15 +208,44 @@ export default named({
 			),
 			columns: group(
 				...times(10, (_) =>
-					rule(`.w-${_ + 1}c`, {
+					rule(`.w-${_ + 1}cl`, {
 						width: `calc(${vars.column.width}*${_ + 1})`,
 					})
 				)
 			),
 			blocks: group(
 				...times(10, (_) =>
-					rule(`.w-${_ + 1}b`, {
+					rule(`.w-${_ + 1}bl`, {
 						width: `calc(${vars.block.width}*${_ + 1})`,
+					})
+				),
+				...times(10, (_) =>
+					rule(`.h-${_ + 1}bl`, {
+						width: `calc(${vars.block.width}*${_ + 1})`,
+					})
+				)
+			),
+			percentage: group(
+				...percentages.map((p) =>
+					rule(`.w-${p}p`, {
+						width: `${
+							p === 33
+								? "calc(100%/3)"
+								: p === 66
+								? "calc(100%*2/3)"
+								: `${p}%`
+						}`,
+					})
+				),
+				...percentages.map((p) =>
+					rule(`.h-${p}p`, {
+						height: `${
+							p === 33
+								? "calc(100%/3)"
+								: p === 66
+								? "calc(100%*2/3)"
+								: `${p}%`
+						}`,
 					})
 				)
 			),
@@ -223,6 +260,13 @@ export default named({
 			display: "flex",
 			align_items: "center",
 			gap: `${vars.gap}`,
+		}),
+		rule(".row.lined > *", {
+			border_right: `1px solid ${vars.color.bd}`,
+			border_collapse: "collapse",
+		}),
+		rule(".row.lined > *:last-child", {
+			border_right: "0px solid transparent",
 		})
 	),
 	stack: group(
@@ -230,6 +274,13 @@ export default named({
 			display: "flex",
 			flex_direction: "column",
 			gap: `${vars.gap}`,
+		}),
+		rule(".stack.lined > *", {
+			border_bottom: `1px solid ${vars.color.bd}`,
+			border_collapse: "collapse",
+		}),
+		rule(".stack.lined > *:last-child", {
+			border_bottom: "0px solid transparent",
 		})
 	),
 	flex: group(

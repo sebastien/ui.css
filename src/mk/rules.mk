@@ -19,10 +19,11 @@ deploy: $(DIST_ALL)
 #
 # -----------------------------------------------------------------------------
 
+# FIXME: Not sure that's excuted
 dist/www/lib/%.css: src/%.js $(SOURCES_JS)
 	@mkdir -p "$(dir $@)"
 	if ! ./bin/littlecss "$<" > "$@.tmp"; then
-		unlink "$@"
+		unlink "$@.tmp"
 		exit 1
 	fi
 	if ! bun build --minify "$@.tmp" > "$@"; then

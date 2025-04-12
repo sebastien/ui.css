@@ -42,7 +42,7 @@ const percent = (v) => `${Math.round(v * 10000) / 100}%`;
 const blended = (name, color, other, percentage = 0.5, opacity = undefined) => {
 	const base = `color-mix(in oklab, ${color} ${percent(
 		percentage
-	)}%, ${other})`;
+	)}, ${other})`;
 	name = name.replaceAll("_", "-");
 	const temp = `${name.startsWith("--") ? "" : "--"}${name}-base`;
 	return opacity
@@ -72,7 +72,6 @@ const sizenames = {
 	largest: 6, //"xxl",
 };
 const sides = { l: "left", t: "top", r: "right", b: "bottom" };
-
 // ----------------------------------------------------------------------------
 //
 // SCOPE
@@ -183,7 +182,8 @@ class Rule {
 		}
 	}
 }
-const rule = (selector, ...body) => {
+
+function rule(selector, ...body) {
 	// TODO: We could do basic selector parsing to extract classnames, tagnames
 	// and ids.
 	const sel = selector instanceof Array ? selector : [selector];
@@ -209,7 +209,7 @@ const rule = (selector, ...body) => {
 		}
 		return new Rule(sel, props);
 	}
-};
+}
 
 // ----------------------------------------------------------------------------
 //
@@ -267,8 +267,31 @@ class Group {
 	}
 }
 const group = (...rules) => new Group(rules);
-class Layer extends Group {}
+class Layer extends Group {
+	*lines(compact = true) {
+		if (this.name) {
+			yield `@layer ${this.name} {`;
+		}
+		for (const line of super.lines(compact)) {
+			yield line;
+		}
+		if (this.name) {
+			yield `};`;
+		}
+	}
+}
+
 const layer = (...rules) => new Layer(rules);
+const layers = (layers) => {
+	const res = [];
+	for (const k in layers) {
+		const l = layer(layers[k]);
+		l.name = k;
+		res.push(l);
+	}
+	return res;
+};
+
 const named = (mapping) => {
 	const items = [];
 	for (const k in mapping) {
@@ -417,7 +440,7 @@ function* css(...values) {
 			}
 		}
 	}
-	//yield "/* EOF */";
+	yield "/* EOF */";
 }
 
 function* docs(...values) {
@@ -435,7 +458,7 @@ function* docs(...values) {
 // --
 // Injects the styles directly as stylesheets into the DOM.
 css.mount = (...values) => {
-	for (const v of values) {
+	for (const v of values.flatMap((_) => _)) {
 		const styles = [];
 		if (v instanceof Rule || v instanceof Group) {
 			styles.push(v);
@@ -450,7 +473,7 @@ css.mount = (...values) => {
 			if (globalThis.document) {
 				const style = globalThis.document.createElement("style");
 				if (s.name) {
-					style.setAttribute("id", name);
+					style.setAttribute("id", s.name);
 				}
 				style.textContent = [...s.lines()].join("\n");
 				globalThis.document.head.appendChild(style);
@@ -459,8 +482,33 @@ css.mount = (...values) => {
 	}
 };
 
+const mods = (classes, ...modifiers) =>
+	modifiers
+		.flatMap((_) => [`:${_}`, `.${_}`])
+		.flatMap((m) => classes.map((c) => `${c}${m}`));
+
+// --
+// Does the cross product of the given arrays.
+// >> cross(
+// >> 				[".selector.pills", ".selector.bar"],
+// >> 				["> li", "> .item"],
+// >> 				[":hover", ".hover"]
+// >> 			),
+const cross = (...sets) =>
+	sets.reduce((r, v) =>
+		r
+			? (r instanceof Array ? r : [r]).flatMap((_) =>
+					(v instanceof Array ? v : [v]).map((w) => `${_}${w}`)
+			  )
+			: v instanceof Array
+			? v
+			: [v]
+	);
+
+const percentages = [5, 10, 15, 20, 25, 33, 50, 66, 75, 80, 90, 100];
 export {
 	classes,
+	cross,
 	sides,
 	sizes,
 	sizenames,
@@ -469,14 +517,17 @@ export {
 	on,
 	vars,
 	rule,
+	mods,
 	blended,
 	times,
 	layer,
+	layers,
 	group,
 	css,
 	named,
 	tokens,
 	percent,
+	percentages,
 	doc,
 	docs,
 };
