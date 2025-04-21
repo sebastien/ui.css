@@ -32,12 +32,13 @@ export default named({
 	),
 	visibility: group(
 		rule(".skip", { display: "none !important" }),
-		rule(".invisible", { display: "hidden !important" })
+		rule(".invisible", { visibility: "hidden !important" }),
+		rule(".hidden", { visibility: "hidden !important" })
 	),
 	rounding: group(
 		rule(".rounded", { border_radius: "0.25lh" }),
 		rule(".rounder", { border_radius: "0.5lh" }),
-		rule(".roundest", { border_radius: "1lh" })
+		rule(".roundest", { border_radius: "1.5lh" })
 	),
 	border: group(
 		rule(".rd", { border_radius: `${vars.border.radius}` }),
@@ -62,6 +63,20 @@ export default named({
 		}),
 		rule([".circle"], {
 			border_radius: "100%",
+		})
+	),
+	sep: group(
+		rule(".sep > *:after", {
+			content: `"/"`,
+		}),
+		rule(".sep.dash > *:after", {
+			content: `"-"`,
+		}),
+		rule(".sep.comma > *:after", {
+			content: `", "`,
+		}),
+		rule(".sep:not(.trailing) > *:last-child:after", {
+			content: `""`,
 		})
 	),
 	dark: group(
