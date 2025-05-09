@@ -64,9 +64,11 @@ export default named({
 	),
 	whitespace: group(
 		rule(".nobreak", { white_space: "nobreak" }),
+		rule(".nowrap", { white_space: "nowrap" }),
 		rule(".pre", { white_space: "pre" }),
 		rule(".pre-lines", { white_space: "pre-line" })
 	),
+	overflow: group(rule(".ellipsis", { text_overflow: "ellipsis" })),
 	font: group(
 		rule(".italic", { font_style: "italic" }),
 		rule([".lighter", ".thin"], { font_weight: "100" }),

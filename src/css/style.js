@@ -53,6 +53,11 @@ export default named({
 			})
 		)
 	),
+	table: group(
+		rule(["table.lined th", "table.lined td"], {
+			border_bottom: `${vars.border.width} solid ${vars.border.color}`,
+		})
+	),
 	shape: group(
 		rule([".square", ".circle"], {
 			display: "inline-flex",

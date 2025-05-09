@@ -305,6 +305,9 @@ export default named({
 			scrollbar_color: `${vars.color.text}`,
 			scrollbar_width: "thin",
 			overflow: "auto",
+		}),
+		rule([".nooverflow", ".noflow"], {
+			overflow: "hidden",
 		})
 	),
 });

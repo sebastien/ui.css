@@ -28,6 +28,14 @@ export default named({
 				0.15
 			),
 		}),
+		rule([".selectable.highlighted", ".selectable[data-highligted=true]"], {
+			...blended(
+				"background-color",
+				vars.color.bg,
+				vars.color.pagea,
+				0.15
+			),
+		}),
 		rule(
 			[
 				".selectable:active",
