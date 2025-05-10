@@ -1,0 +1,1 @@
+- Allow to prune out rules given a set of classes

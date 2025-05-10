@@ -56,21 +56,19 @@ export default named({
 		rule(".action", {
 			cursor: "pointer",
 			user_select: "none",
-			border_color: `${vars.color.bd}`,
-			background_color: `${vars.color.bg}`,
-			color: `${vars.color.fg}`,
-		}),
-		rule(".action:hover", {
-			...blended("background-color", vars.color.bg, vars.color.low, 0.15),
-		}),
-		rule(".action.dark:hover", {
-			...blended(
-				"background-color",
-				vars.current.bg,
-				vars.color.high,
-				0.15
-			),
 		})
+		// NOTE: Disabling this for now
+		// rule(".action:hover", {
+		// 	...blended("background-color", vars.color.bg, vars.color.low, 0.15),
+		// }),
+		// rule(".action.dark:hover", {
+		// 	...blended(
+		// 		"background-color",
+		// 		vars.current.bg,
+		// 		vars.color.high,
+		// 		0.15
+		// 	),
+		// })
 	),
 	pill: group(
 		rule(".pills", {
@@ -159,7 +157,6 @@ export default named({
 			background: "transparent",
 			box_shadow: "unset",
 		}),
-
 		rule(mods(["button", ".button"], "hover"), {
 			background_color: `color-mix(in oklab, ${vars.button.bg}, ${vars.color.page} 40%)`,
 			border_color: `color-mix(in oklab, ${vars.button.bd}, ${vars.color.page} 20%)`,

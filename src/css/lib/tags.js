@@ -9,6 +9,7 @@ export const structure = [
 	"article",
 	"aside",
 	"main",
+	"menu",
 	"div",
 	"span",
 ];

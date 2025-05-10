@@ -39,12 +39,12 @@ export default named({
 		rule(".rel", { position: "relative" }),
 		rule(".abs", { position: "absolute" }),
 		rule(".fix", { position: "fixed" }),
-		rule(".tl", tl),
-		rule(".br", br),
-		rule(".l", l),
-		rule(".r", r),
-		rule(".t", t),
-		rule(".b", b)
+		rule(".to-tl", tl),
+		rule(".to-br", br),
+		rule(".to-l", l),
+		rule(".to-r", r),
+		rule(".to-t", t),
+		rule(".to-b", b)
 	),
 	margin: group(
 		sizes.map((k, i) =>
@@ -251,6 +251,7 @@ export default named({
 			),
 		})
 	),
+	sticky: group(rule(".sticky", { position: "sticky", top: 0 })),
 	shapes: group(
 		rule(".square", { aspect_ratio: "1/1" }),
 		rule(".circle", { aspect_ratio: "1/1", border_radius: "50%" })

@@ -83,6 +83,11 @@ export default group(
 			"12px", // xl - 5
 			"24px", // xxl - 6
 		],
+		shadow: {
+			depth: "2px",
+			spread: "1px",
+			color: "#00000020",
+		},
 		text: {
 			base: "12",
 			unit: "16px",

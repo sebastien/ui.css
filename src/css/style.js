@@ -15,7 +15,14 @@ export default named({
 			text_decoration: "none",
 		}),
 		rule(".nolh", { line_height: "0em" }),
-		rule(".nogap", { gap: "0em" })
+		rule(".nogap", { gap: "0em" }),
+		rule([".nostyle", ":hover .hover-nostyle", ".hover-nostyle:hover"], {
+			padding: "unset",
+			margin: "unset",
+			color: "unset",
+			border: "unset",
+			background: "unset",
+		})
 	),
 	font: group(
 		rule(".lll", { font_weight: 100 }),
@@ -45,11 +52,42 @@ export default named({
 		rule(".bd", {
 			border: `${vars.border.width} solid ${vars.color.bd}`,
 		}),
+		...times(10, (i) =>
+			rule(`.rd-tl-${i}`, { border_top_left_radius: `${i}px` })
+		),
+		...times(10, (i) =>
+			rule(`.rd-tr-${i}`, { border_top_right_radius: `${i}px` })
+		),
+		...times(10, (i) =>
+			rule(`.rd-bl-${i}`, { border_bottom_left_radius: `${i}px` })
+		),
+		...times(10, (i) =>
+			rule(`.rd-br-${i}`, { border_bottom_right_radius: `${i}px` })
+		),
 		...times(10, (i) => rule(`.rd-${i}`, { __border_radius: `${i}px` })),
 		...times(10, (i) => rule(`.bd-${i}`, { __border_width: `${i}px` })),
+		...times(10, (i) =>
+			rule(`.bd-t-${i}`, { __border_top_width: `${i}px` })
+		),
+		...times(10, (i) =>
+			rule(`.bd-b-${i}`, { __border_bottom_width: `${i}px` })
+		),
+		...times(10, (i) =>
+			rule(`.bd-l-${i}`, { __border_left_width: `${i}px` })
+		),
+		...times(10, (i) =>
+			rule(`.bd-r-${i}`, { __border_right_width: `${i}px` })
+		),
 		...Object.keys(sides).map((k) =>
 			rule(`.bd-${k.substring(0, 1)}`, {
 				[`border-${sides[k]}`]: `${vars.border.width} solid ${vars.color.bd} `,
+			})
+		)
+	),
+	shadow: group(
+		...times(10, (i) =>
+			rule(`.sh-${i}`, {
+				box_shadow: `calc(${vars.shadow.depth}*${i}) calc(${vars.shadow.depth}*${i}) calc(${vars.shadow.spread}*${i}) ${vars.shadow.color}`,
 			})
 		)
 	),
