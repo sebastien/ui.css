@@ -24,6 +24,18 @@ export default named({
 			background: "unset",
 		})
 	),
+	interaction: group(
+		rule(".noev", { pointer_events: "none" }),
+		rule(".ev", { pointer_events: "auto" }),
+		rule(".move", { cursor: "move" }),
+		rule(".pointer", { cursor: "pointer" }),
+		rule(".help", { cursor: "help" }),
+		rule(".grab", { cursor: "grab" }),
+		rule(".grabbing", { cursor: "grabbing" }),
+		rule(".resize-w", { cursor: "col-resize" }),
+		rule(".resize-h", { cursor: "row-resize" }),
+		rule(".resize-lr", { cursor: "nwse-resize" })
+	),
 	font: group(
 		rule(".lll", { font_weight: 100 }),
 		rule(".ll", { font_weight: 200 }),

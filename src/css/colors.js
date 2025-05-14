@@ -1,5 +1,6 @@
 import { tokens, group, times, vars, rule } from "../js/littlecss.js";
 
+// FIXME: These should be overridable
 const colors = {
 	cyan: "#14D3CA",
 	blue: "#1717BB",
@@ -10,6 +11,8 @@ const colors = {
 	pink: "#FF00FF",
 	green: "#3DBC1A",
 	grey: "#808080",
+	white: "#FFFFFF",
+	black: "#000000",
 };
 
 // const bg = (color, other = vars.color.page, opacity = 0.25) => ({
@@ -72,6 +75,15 @@ export default group(
 		rule(".nobg", { __color_bg: `transparent` }),
 		rule(".nobd", { __color_bg: `transparent` }),
 		rule(".nofg", { __color_fg: `${vars.color.text}` })
+	),
+	group(
+		...times(11, (i) =>
+			rule(`.bg-${i}`, {
+				background_color: `color-mix(in ${vars.color.blend}, ${
+					vars.color.bg
+				} ${i * 10}%, ${vars.color.page})`,
+			})
+		)
 	),
 	...Object.keys(colors).map((color) =>
 		rule(`.bg-${color}`, {

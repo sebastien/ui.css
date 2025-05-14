@@ -69,6 +69,20 @@ export default named({
 		rule(".pre-lines", { white_space: "pre-line" })
 	),
 	overflow: group(rule(".ellipsis", { text_overflow: "ellipsis" })),
+	decorations: named({
+		parens: group(
+			rule(".parens:before", { content: '"("' }),
+			rule(".parens:after", { content: '")"' })
+		),
+		brackets: group(
+			rule(".brackets:before", { content: '"{"' }),
+			rule(".brackets:after", { content: '"}"' })
+		),
+		sqbrackets: group(
+			rule(".sqbrackets:before", { content: '"["' }),
+			rule(".sqbrackets:after", { content: '"]"' })
+		),
+	}),
 	font: group(
 		rule(".italic", { font_style: "italic" }),
 		rule([".lighter", ".thin"], { font_weight: "100" }),

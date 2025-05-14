@@ -213,6 +213,14 @@ export default named({
 					})
 				)
 			),
+			percentages: group(
+				...[10, 15, 20, 25, "calc(100/3)", 50, "calc(2*100/3)", 75].map(
+					(_) =>
+						rule(`.w-${_}p`, {
+							width: `${_}%`,
+						})
+				)
+			),
 			blocks: group(
 				...times(10, (_) =>
 					rule(`.w-${_ + 1}bl`, {
