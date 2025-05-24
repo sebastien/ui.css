@@ -1,19 +1,8 @@
 import { tokens, group, times, vars, rule } from "../js/littlecss.js";
 
-// FIXME: These should be overridable
-const colors = {
-	cyan: "#14D3CA",
-	blue: "#1717BB",
-	purple: "#A21899",
-	red: "#FF3939",
-	orange: "#EE7204",
-	yellow: "#FBBE08",
-	pink: "#FF00FF",
-	green: "#3DBC1A",
-	grey: "#808080",
-	white: "#FFFFFF",
-	black: "#000000",
-};
+const colors = "cyan blue purple red orange yellow pink green grey white black"
+	.split(" ")
+	.reduce((r, v) => ((r[v] = vars.color[v]), r), {});
 
 // const bg = (color, other = vars.color.page, opacity = 0.25) => ({
 // 	...blend("bg", color, other, opacity),
@@ -29,36 +18,14 @@ const map = (v, f) => {
 };
 
 export default group(
-	tokens({
-		color: colors,
-	}),
-	tokens({
-		color: {
-			text: `var(--color-low)`,
-			page: `var(--color-high)`,
-			white: "#FFFFFF",
-			black: "#000000",
-			focus: "#000000",
-			high: `${vars.color.white}`,
-			low: `${vars.color.black}`,
-			// FIXME: higha/lowa should be page/text probably
-			higha: "#FFFFFF00",
-			lowa: "#00000000",
-			pagea: "#FFFFFF00",
-			texta: "#00000000",
-			blend: "oklab",
-			bg: `color-mix(in ${vars.color.blend}, ${vars.color.text} 10%, ${vars.color.page})`,
-			bd: `color-mix(in ${vars.color.blend}, ${vars.color.text} 20%, ${vars.color.page})`,
-			fg: `currentColor`,
-		},
-	}),
+	// NOTE: This depends on other tokens being set
 	tokens({
 		color: map(colors, (_, k) =>
 			times(
 				11,
 				(i) =>
 					`color-mix(in oklab, ${vars.color[k]}, ${
-						i < 5 ? vars.color.low : vars.color.high
+						i < 5 ? vars.theme.low : vars.theme.high
 					} ${
 						i < 5
 							? 100 - Math.round((100 * i) / 5)
@@ -68,64 +35,64 @@ export default group(
 		),
 	}),
 	group(
-		rule(".bg", { background_color: `${vars.color.bg}` }),
-		rule(".fg", { color: `${vars.color.fg}` }),
-		rule(".bd", { border_color: `${vars.color.bd}` }),
+		rule(".bg", { background_color: `${vars.theme.bg}` }),
+		rule(".fg", { color: `${vars.theme.fg}` }),
+		rule(".bd", { border_color: `${vars.theme.bd}` }),
 		// Resets
-		rule(".nobg", { __color_bg: `transparent` }),
-		rule(".nobd", { __color_bg: `transparent` }),
-		rule(".nofg", { __color_fg: `${vars.color.text}` })
+		rule(".nobg", { __theme_bg: `transparent` }),
+		rule(".nobd", { __theme_bg: `transparent` }),
+		rule(".nofg", { __theme_fg: `${vars.theme.text}` })
 	),
 	group(
 		...times(11, (i) =>
 			rule(`.bg-${i}`, {
-				background_color: `color-mix(in ${vars.color.blend}, ${
-					vars.color.bg
-				} ${i * 10}%, ${vars.color.page})`,
+				background_color: `color-mix(in ${vars.theme.blend}, ${
+					vars.theme.bg
+				} ${i * 10}%, ${vars.theme.page})`,
 			})
 		)
 	),
 	...Object.keys(colors).map((color) =>
 		rule(`.bg-${color}`, {
-			__color_bg: `${vars.color[color]}`,
+			__theme_bg: `${vars.color[color]}`,
 		})
 	),
 	...Object.keys(colors).map((color) =>
 		rule(`.bd-${color}`, {
-			__color_bd: `${vars.color[color]}`,
+			__theme_bd: `${vars.color[color]}`,
 		})
 	),
 	...Object.keys(colors).map((color) =>
 		rule(`.fg-${color}`, {
-			__color_fg: `${vars.color[color]}`,
+			__theme_fg: `${vars.color[color]}`,
 		})
 	),
 	...Object.keys(colors).map((color) =>
 		times(11, (i) =>
 			rule(`.bg-${color}-${i}`, {
-				__color_bg: `${vars.color[color][i]}`,
+				__theme_bg: `${vars.color[color][i]}`,
 			})
 		)
 	),
 	...Object.keys(colors).map((color) =>
 		times(11, (i) =>
 			rule(`.bd-${color}-${i}`, {
-				__color_bd: `${vars.color[color][i]}`,
+				__theme_bd: `${vars.color[color][i]}`,
 			})
 		)
 	),
 	...Object.keys(colors).map((color) =>
 		times(11, (i) =>
 			rule(`.${color}-${i}`, {
-				__color_fg: `${vars.color[color][i]}`,
+				__theme_fg: `${vars.color[color][i]}`,
 			})
 		)
 	)
 	// dk and lt blends
 	// ...times(11, (i)=> rule(`.bg-dk${i}`, {
-	// 		background_color `color-mix(in oklab, ${vars.color.bg} ${i*10}%, rgba(${vars.color.low}, 0%))`,
+	// 		background_color `color-mix(in oklab, ${vars.theme.bg} ${i*10}%, rgba(${vars.theme.low}, 0%))`,
 	// })),
 	// ...times(11, (i)=> rule(`.bg-lt{i}`, {
-	// 		background_color `color-mix(in oklab, ${vars.color.bg} ${i*10}%, rgba(${vars.color.high}, 0%))`,
+	// 		background_color `color-mix(in oklab, ${vars.theme.bg} ${i*10}%, rgba(${vars.theme.high}, 0%))`,
 	// })),
 );

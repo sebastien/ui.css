@@ -92,7 +92,7 @@ export default named({
 		),
 		...Object.keys(sides).map((k) =>
 			rule(`.bd-${k.substring(0, 1)}`, {
-				[`border-${sides[k]}`]: `${vars.border.width} solid ${vars.color.bd} `,
+				[`border-${sides[k]}`]: `${vars.border.width} solid ${vars.theme.bd} `,
 			})
 		)
 	),
@@ -104,6 +104,7 @@ export default named({
 		)
 	),
 	table: group(
+		// FIXME: Not sure the variables are correct.
 		rule(["table.lined th", "table.lined td"], {
 			border_bottom: `${vars.border.width} solid ${vars.border.color}`,
 		})
@@ -135,6 +136,7 @@ export default named({
 		})
 	),
 	dark: group(
+		// FIXME: THis is not right
 		rule(".dark", {
 			__color_page: `${vars.color.black}`,
 			__color_text: `${vars.color.white}`,

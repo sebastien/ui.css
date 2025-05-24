@@ -18,21 +18,21 @@ export default named({
 		rule(".selectable", {
 			cursor: "pointer",
 			user_select: "none",
-			__color_bg: `${vars.color.grey}`,
+			__theme_bg: `${vars.color.grey}`,
 		}),
 		rule([".selectable:hover", ".selectable.hover"], {
 			...blended(
 				"background-color",
-				vars.color.bg,
-				vars.color.pagea,
+				vars.theme.bg,
+				vars.theme.pagea,
 				0.15
 			),
 		}),
 		rule([".selectable.highlighted", ".selectable[data-highligted=true]"], {
 			...blended(
 				"background-color",
-				vars.color.bg,
-				vars.color.pagea,
+				vars.theme.bg,
+				vars.theme.pagea,
 				0.15
 			),
 		}),
@@ -45,8 +45,8 @@ export default named({
 			{
 				...blended(
 					"background-color",
-					vars.color.bg,
-					vars.color.pagea,
+					vars.theme.bg,
+					vars.theme.pagea,
 					0.35
 				),
 			}
@@ -59,13 +59,13 @@ export default named({
 		})
 		// NOTE: Disabling this for now
 		// rule(".action:hover", {
-		// 	...blended("background-color", vars.color.bg, vars.color.low, 0.15),
+		// 	...blended("background-color", vars.theme.bg, vars.theme.low, 0.15),
 		// }),
 		// rule(".action.dark:hover", {
 		// 	...blended(
 		// 		"background-color",
 		// 		vars.current.bg,
-		// 		vars.color.high,
+		// 		vars.theme.high,
 		// 		0.15
 		// 	),
 		// })
@@ -78,36 +78,36 @@ export default named({
 		}),
 		rule(".pill", {
 			display: "inline-flex",
-			border: `${vars.border.width} solid ${vars.color.bd}`,
+			border: `${vars.border.width} solid ${vars.theme.bd}`,
 			padding: `${vars.pad[0]} ${vars.pad[2]}`,
 			transition_properties: "color,border-color,background-color",
 			transition_duration: "150ms",
 			border_radius: `2lh`,
-			background_color: `color-mix(in oklab, ${vars.color.bg} 0%, ${vars.color.page})`,
+			background_color: `color-mix(in oklab, ${vars.theme.bg} 0%, ${vars.theme.page})`,
 		}),
 		rule([".pill:hover", ".pill.hover"], {
-			background_color: `color-mix(in oklab, ${vars.color.bg} 50%, ${vars.color.page})`,
+			background_color: `color-mix(in oklab, ${vars.theme.bg} 50%, ${vars.theme.page})`,
 		}),
 		rule(".pill.selected", {
-			background_color: `color-mix(in oklab, ${vars.color.bg} 100%, ${vars.color.page})`,
+			background_color: `color-mix(in oklab, ${vars.theme.bg} 100%, ${vars.theme.page})`,
 		}),
 		rule(".pill.transparent", {
 			background_color: "transparent",
 		}),
 		rule([".pill.transparent:hover", ".pill.transparent.hover"], {
-			background_color: `color-mix(in oklab, ${vars.color.bg} 5%, ${vars.color.page})`,
+			background_color: `color-mix(in oklab, ${vars.theme.bg} 5%, ${vars.theme.page})`,
 		}),
 		rule(".pill.transparent.selected", {
-			background_color: `color-mix(in oklab, ${vars.color.bg} 15%, ${vars.color.page})`,
+			background_color: `color-mix(in oklab, ${vars.theme.bg} 15%, ${vars.theme.page})`,
 		})
 	),
 	button: group(
 		rule(["button", ".button"], {
-			__color_bg: `${vars.color.text}`,
-			__button_bd: `${vars.color.bg}`,
-			__button_bg: `${vars.color.bg}`,
-			// __button_fg: `color-contrast(${vars.button.bg} vs ${vars.color.text}, ${vars.color.page})`,
-			__button_fg: `${vars.color.page}`,
+			__button_bd: `${vars.theme.bg}`,
+			__button_bg: `${vars.theme.bg}`,
+			// __button_fg: `color-contrast(${vars.button.bg} vs ${vars.theme.text}, ${vars.theme.page})`,
+			__button_fg: `${vars.theme.text}`,
+			__button_font: `${vars.font.control}`,
 			display: "inline-flex",
 			align_items: "center",
 			white_space: "nowrap",
@@ -116,7 +116,7 @@ export default named({
 			background: `${vars.button.bg}`,
 			color: `${vars.button.fg}`,
 			cursor: "pointer",
-			font_family: `${vars.font.control}`,
+			font_family: vars.button.font,
 			line_height: "1em",
 			font_size: "100%",
 			box_sizing: "border-box",
@@ -133,37 +133,37 @@ export default named({
 			outline: `3px solid ${vars.button.bg}`,
 		}),
 		rule(["button.primary", ".button.primary"], {
-			__color_bg: `${vars.color.blue[5]}`,
+			__theme_bg: `${vars.color.blue[5]}`,
 		}),
 		rule(["button.success", ".button.success"], {
-			__color_bg: `${vars.color.green[5]}`,
+			__theme_bg: `${vars.color.green[5]}`,
 		}),
 		rule(["button.info", ".button.info"], {
-			__color_bg: `${vars.color.cyan[5]}`,
+			__theme_bg: `${vars.color.cyan[5]}`,
 		}),
 		rule(["button.warning", ".button.warning"], {
-			__color_bg: `${vars.color.orange[5]}`,
+			__theme_bg: `${vars.color.orange[5]}`,
 		}),
 		rule(["button.danger", ".button.danger"], {
-			__color_bg: `${vars.color.red[5]}`,
+			__theme_bg: `${vars.color.red[5]}`,
 		}),
 		rule(["button.shadow", ".button.shadow"], {
-			box_shadow: `3px 3px 0px color-mix(in hsl, ${vars.color.bg}, #FFFFFF00 80%)`,
+			box_shadow: `3px 3px 0px color-mix(in hsl, ${vars.theme.bg}, #FFFFFF00 80%)`,
 		}),
 		rule(["button.transparent", ".button.transparent"], {
-			__button_bg: `color-mix(in oklab, ${vars.color.text}, ${vars.color.page} 90%)`,
-			__button_fg: `${vars.color.text}`,
+			__button_bg: `color-mix(in oklab, ${vars.theme.text}, ${vars.theme.page} 90%)`,
+			__button_fg: `${vars.theme.text}`,
 			__button_bd: "transparent",
 			background: "transparent",
 			box_shadow: "unset",
 		}),
 		rule(mods(["button", ".button"], "hover"), {
-			background_color: `color-mix(in oklab, ${vars.button.bg}, ${vars.color.page} 40%)`,
-			border_color: `color-mix(in oklab, ${vars.button.bd}, ${vars.color.page} 20%)`,
+			background_color: `color-mix(in oklab, ${vars.button.bg}, ${vars.theme.page} 40%)`,
+			border_color: `color-mix(in oklab, ${vars.button.bd}, ${vars.theme.page} 20%)`,
 		}),
 		rule(mods(["button.outline", ".button.ouline"], "hover"), {
 			background_color: `${vars.button.bd}`,
-			color: `${vars.color.page}`,
+			color: `${vars.theme.page}`,
 		}),
 		rule(
 			[
@@ -182,15 +182,15 @@ export default named({
 	),
 	selector: group(
 		rule(".selector", {
-			__selector_bd: `${vars.color.text}`,
-			__selector_bg: `${vars.color.higha}`,
-			__selector_bgs: `${vars.color.text}`,
-			__selector_bgh: `color-mix(in oklab, ${vars.selector.bgs}, ${vars.color.pagea} 90%)`,
-			__selector_bga: `color-mix(in oklab, ${vars.selector.bgs}, ${vars.color.pagea} 50%)`,
-			__selector_fg: `${vars.color.text}`,
-			__selector_fgs: `${vars.color.page}`,
-			__selector_fgh: `${vars.color.text}`,
-			__selector_fga: `${vars.color.text}`,
+			__selector_bd: `${vars.theme.text}`,
+			__selector_bg: `${vars.theme.higha}`,
+			__selector_bgs: `${vars.theme.text}`,
+			__selector_bgh: `color-mix(in oklab, ${vars.selector.bgs}, ${vars.theme.pagea} 90%)`,
+			__selector_bga: `color-mix(in oklab, ${vars.selector.bgs}, ${vars.theme.pagea} 50%)`,
+			__selector_fg: `${vars.theme.text}`,
+			__selector_fgs: `${vars.theme.page}`,
+			__selector_fgh: `${vars.theme.text}`,
+			__selector_fga: `${vars.theme.text}`,
 			display: "inline-flex",
 			gap: `0em`,
 			flex_wrap: "wrap",
@@ -337,13 +337,13 @@ export default named({
 	),
 	input: group(
 		rule([".input", "input", "textarea"], {
-			__input_bdf: `color-mix(in oklab,${vars.input.bd},${vars.color.low} 20%)`,
+			__input_bdf: `color-mix(in oklab,${vars.input.bd},${vars.theme.low} 20%)`,
 			__input_bdw: `1px`,
-			__input_ol: `color-mix(in oklab,${vars.color.focus},${vars.color.higha} 85%)`,
+			__input_ol: `color-mix(in oklab,${vars.theme.focus},${vars.theme.higha} 85%)`,
 			__input_olw: "1px",
-			__input_bd: `${vars.color.bd}`,
-			__input_fg: `${vars.color.text}`,
-			__input_bg: `${vars.color.page}`,
+			__input_bd: `${vars.theme.bd}`,
+			__input_fg: `${vars.theme.text}`,
+			__input_bg: `${vars.theme.page}`,
 			__gap: `${vars.gap[2]}`,
 			display: "inline-flex",
 			flex_wrap: "nowrap",
@@ -379,8 +379,8 @@ export default named({
 			}
 		),
 		rule(mods([".input", "input", "textarea"], "focus", "active"), {
-			outline: `3px solid color-mix(in oklab,${vars.color.focus},${vars.color.higha} 85%)`,
-			border_color: `${vars.color.bdf}`,
+			outline: `3px solid color-mix(in oklab,${vars.theme.focus},${vars.theme.higha} 85%)`,
+			border_color: `${vars.theme.bdf}`,
 		}),
 		rule(
 			mods(

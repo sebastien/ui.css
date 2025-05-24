@@ -24,6 +24,53 @@ export default group(
 		},
 	}),
 	tokens({
+		color: {
+			cyan: "#14D3CA",
+			blue: "#1717BB",
+			purple: "#A21899",
+			red: "#FF3939",
+			orange: "#EE7204",
+			yellow: "#FBBE08",
+			pink: "#FF00FF",
+			green: "#3DBC1A",
+			grey: "#808080",
+			white: "#FFFFFF",
+			black: "#000000",
+			// FIXME: Align higha/lowa
+			transparent: "#FFFFFF00",
+			transparentdk: "#00000000",
+		},
+		theme: {
+			neutral: vars.color.grey,
+			accent: vars.color.blue,
+			focus: vars.color.grey,
+
+			// These would be switched for dark mode
+			high: vars.color.white,
+			low: vars.color.black,
+			higha: vars.color.transparent,
+			lowa: vars.color.transparentdk,
+
+			// FIXME: These should be blended
+			// FIXME: higha/lowa should be page/text probably
+			//
+			text: vars.theme.low,
+			page: vars.theme.high,
+			texta: vars.theme.lowa,
+			pagea: vars.theme.higha,
+
+			// Default blending mode
+			blend: "oklab",
+
+			// These are used by default in the UI, note how they blend with
+			// the text.
+			bg: `color-mix(in ${vars.theme.blend}, ${vars.theme.neutral}  10%, ${vars.theme.page})`,
+			bd: `color-mix(in ${vars.theme.blend}, ${vars.theme.neutral}  20%, ${vars.theme.page})`,
+			bdf: `color-mix(in ${vars.theme.blend}, ${vars.theme.neutral} 10%, ${vars.theme.page})`,
+			fg: `currentColor`,
+		},
+	}),
+	tokens({
 		border: {
 			width: sizes.map((_, i) => `${i}px`),
 			radius: [
