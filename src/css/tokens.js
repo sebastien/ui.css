@@ -64,9 +64,9 @@ export default group(
 
 			// These are used by default in the UI, note how they blend with
 			// the text.
-			bg: `color-mix(in ${vars.theme.blend}, ${vars.theme.neutral}  10%, ${vars.theme.page})`,
-			bd: `color-mix(in ${vars.theme.blend}, ${vars.theme.neutral}  20%, ${vars.theme.page})`,
-			bdf: `color-mix(in ${vars.theme.blend}, ${vars.theme.neutral} 10%, ${vars.theme.page})`,
+			bg: `color-mix(in ${vars.theme.blend}, ${vars.theme.neutral}  20%, ${vars.theme.page})`,
+			bd: `color-mix(in ${vars.theme.blend}, ${vars.theme.neutral}  50%, ${vars.theme.page})`,
+			bdf: `color-mix(in ${vars.theme.blend}, ${vars.theme.neutral} 30%, ${vars.theme.page})`,
 			fg: `currentColor`,
 		},
 	}),

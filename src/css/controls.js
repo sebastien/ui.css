@@ -52,6 +52,12 @@ export default named({
 			}
 		)
 	),
+	resizable: group(
+		rule(".resize-h", {
+			cursor: "col-resize",
+			user_select: "none",
+		})
+	),
 	action: group(
 		rule(".action", {
 			cursor: "pointer",

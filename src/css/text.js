@@ -20,6 +20,14 @@ export default named({
 				font_size: `${vars.heading.size[i]}`,
 			})
 		),
+		// .hX rules do not have padding
+		...times(7, (i) =>
+			rule(`.h${i + 1}`, {
+				font_size: `${vars.heading.size[6 - i]}`,
+				font_weight: "600",
+			})
+		),
+		// hX.t have padding/margin
 		...times(7, (i) =>
 			rule(`h${i + 1}.t`, {
 				font_size: `${vars.heading.size[6 - i]}`,
@@ -66,7 +74,21 @@ export default named({
 		rule(".nobreak", { white_space: "nobreak" }),
 		rule(".nowrap", { white_space: "nowrap" }),
 		rule(".pre", { white_space: "pre" }),
-		rule(".pre-lines", { white_space: "pre-line" })
+		rule(".pre-lines", { white_space: "pre-line" }),
+		rule(".ellipsis", { text_overflow: "ellipsis", overflow: "hidden" })
+	),
+	delimiter: group(
+		rule(".sep-path>*:after", { content: '"/"' }),
+		rule(".sep-comma>*:after", { content: '", "' }),
+		rule(".sep-dash>*:after", { content: '"―"' }),
+		rule(
+			[
+				".sep-path>*:last-child:after",
+				".sep-comma>*:last-child:after",
+				".sep-dash>*:last-child:after",
+			],
+			{ display: "none" }
+		)
 	),
 	overflow: group(rule(".ellipsis", { text_overflow: "ellipsis" })),
 	decorations: named({

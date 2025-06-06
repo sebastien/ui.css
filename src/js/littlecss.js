@@ -473,7 +473,7 @@ css.mount = (...values) => {
 			if (globalThis.document) {
 				const style = globalThis.document.createElement("style");
 				if (s.name) {
-					style.setAttribute("id", s.name);
+					style.setAttribute("id", `littlecss-${s.name}`);
 				}
 				style.textContent = [...s.lines()].join("\n");
 				globalThis.document.head.appendChild(style);

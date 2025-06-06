@@ -118,19 +118,24 @@ export default named({
 			...br,
 		}),
 
-		rule(".expand-h", {
+		rule(".expand-w", {
 			position: "absolute",
 			box_sizing: "border-box",
 			...l,
 			...r,
 		}),
-		rule(".expand-v", {
+		rule(".expand-h", {
 			position: "absolute",
 			box_sizing: "border-box",
 			...t,
 			...b,
 		})
 	),
+	container: rule(".container > *", {
+		min_width: "100%",
+		min_height: "100%",
+		box_sizing: "border-box",
+	}),
 	fit: group(
 		rule(".fit", {
 			box_sizing: "border-box",
@@ -308,6 +313,14 @@ export default named({
 		rule([".row.stretch", ".stack.stretch"], {
 			align_items: "stretch",
 		})
+	),
+	grid: group(
+		...times(7, (_) =>
+			rule(`.cols-${_ + 1}`, {
+				display: "grid",
+				grid_template_columns: `repeat(${_ + 1}, 1fr)`,
+			})
+		)
 	),
 	overflow: group(
 		rule(".overflow", {

@@ -135,6 +135,12 @@ export default named({
 			content: `""`,
 		})
 	),
+	striped: group(
+		rule(".striped > *:nth-child(even)", {
+			background_color: `${vars.color.bg}`,
+		})
+	),
+	transparent: group(rule(".transparent", { color: "transparent" })),
 	dark: group(
 		// FIXME: THis is not right
 		rule(".dark", {
