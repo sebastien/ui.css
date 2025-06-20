@@ -168,6 +168,10 @@ class Rule {
 		}
 		yield "}";
 	}
+
+	*rules() {
+		yield [...this.lines(true)].join("\n");
+	}
 	*docs(path) {
 		for (const name of this.selectors) {
 			yield {
@@ -265,6 +269,11 @@ class Group {
 			yield `/* @end ${this.name} */`;
 		}
 	}
+	*rules() {
+		for (const r of this.contents) {
+			yield* r.rules();
+		}
+	}
 }
 const group = (...rules) => new Group(rules);
 class Layer extends Group {
@@ -321,6 +330,7 @@ class Token {
 	*lines() {
 		yield `${this.ref}: ${this.value};`;
 	}
+	*rules() {}
 	*docs(path) {
 		yield {
 			type: "Token",
@@ -376,6 +386,11 @@ class Tokens extends Group {
 			}
 		}
 		yield "}";
+	}
+	*rules() {
+		const lines = [...this.lines()];
+		lines.splice(0, 1);
+		yield lines.join("\n");
 	}
 }
 const tokens = (...values) => {
@@ -458,6 +473,7 @@ function* docs(...values) {
 // --
 // Injects the styles directly as stylesheets into the DOM.
 css.mount = (...values) => {
+	const res = [];
 	for (const v of values.flatMap((_) => _)) {
 		const styles = [];
 		if (v instanceof Rule || v instanceof Group) {
@@ -470,6 +486,12 @@ css.mount = (...values) => {
 			throw new Error(`Unsupported type: ${v}`);
 		}
 		for (const s of styles) {
+			// NOTE: Leaving this here for now, that's for wev components
+			// const style = new CSSStyleSheet();
+			// for (const r of s.rules()) {
+			// 	style.insertRule(r, style.cssRules.length);
+			// }
+			// res.push(style);
 			if (globalThis.document) {
 				const style = globalThis.document.createElement("style");
 				if (s.name) {
@@ -480,6 +502,7 @@ css.mount = (...values) => {
 			}
 		}
 	}
+	return res;
 };
 
 const mods = (classes, ...modifiers) =>

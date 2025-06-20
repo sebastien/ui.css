@@ -118,12 +118,14 @@ export default named({
 			display: "inline-flex",
 			align_items: "center",
 			white_space: "nowrap",
+			// FIXME: Is this OK?
 			padding: `0.5em 0.75em`,
 			border: `1px solid ${vars.button.bd}`,
 			background: `${vars.button.bg}`,
 			color: `${vars.button.fg}`,
 			cursor: "pointer",
 			font_family: vars.button.font,
+			// FIXME: Line height should be font line height no?
 			line_height: "1em",
 			font_size: "100%",
 			box_sizing: "border-box",
@@ -136,6 +138,14 @@ export default named({
 			__button_bg: "transparent",
 			border: `2px solid ${vars.button.bd}`,
 		}),
+		rule(["button.icon", ".button.icon"], {
+			__button_bg: "transparent",
+			padding: "0px",
+			min_width: "0px",
+			width: "min-content",
+			border_width: "0px",
+		}),
+
 		rule(["button.default", ".button.default", "button[type=submit]"], {
 			outline: `3px solid ${vars.button.bg}`,
 		}),
