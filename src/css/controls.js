@@ -84,6 +84,7 @@ export default named({
 		}),
 		rule(".pill", {
 			display: "inline-flex",
+			cursor: "pointer",
 			border: `${vars.border.width} solid ${vars.theme.bd}`,
 			padding: `${vars.pad[0]} ${vars.pad[2]}`,
 			transition_properties: "color,border-color,background-color",
@@ -113,7 +114,7 @@ export default named({
 			__button_bg: `${vars.theme.bg}`,
 			// __button_fg: `color-contrast(${vars.button.bg} vs ${vars.theme.text}, ${vars.theme.page})`,
 			__button_fg: `${vars.theme.text}`,
-			__button_font: `${vars.font.control}`,
+			__button_font: `${vars.font.control.family}`,
 			display: "inline-flex",
 			align_items: "center",
 			white_space: "nowrap",
@@ -210,7 +211,7 @@ export default named({
 			background: `${vars.selector.bg}`,
 			color: `${vars.selector.fg}`,
 			cursor: "pointer",
-			font_family: `${vars.font.control}`,
+			font_family: `${vars.font.control.family}`,
 			line_height: "1em",
 			font_size: "100%",
 			box_sizing: "border-box",
@@ -357,7 +358,7 @@ export default named({
 			gap: `${vars.gap}`,
 			border: `${vars.input.bdw} solid ${vars.input.bd}`,
 			outline: `1px solid ${vars.input.ol}`,
-			font_family: `${vars.font.control}`,
+			font_family: `${vars.font.control.family}`,
 			background_color: `${vars.input.bg}`,
 			color: `${vars.input.fg}`,
 			padding: `0.5em 0.5em`,
@@ -373,17 +374,7 @@ export default named({
 			width: "100%",
 			min_height: "7.25em",
 		}),
-		rule(
-			[".input.transparent", "input.transparent", "textarea.transparent"],
-			{
-				__input_ol: "transparent",
-				__input_olw: "0px",
-				__input_bdw: "0px",
-				__input_bd: "transparent",
-				__input_bdf: "transparent",
-				__input_bg: "transparent",
-			}
-		),
+
 		rule(mods([".input", "input", "textarea"], "focus", "active"), {
 			outline: `3px solid color-mix(in oklab,${vars.theme.focus},${vars.theme.higha} 85%)`,
 			border_color: `${vars.theme.bdf}`,
@@ -398,7 +389,22 @@ export default named({
 				outline: `0px solid transparent`,
 			}
 		),
+		// TODO: Checkbox
 		// Overrides
+		rule(mods([".no-input"], null, "focus", "active", "hover"), {
+			__input_ol: "transparent",
+			__input_olw: "0px",
+			__input_bdw: "0px",
+			__input_bd: "transparent",
+			__input_bdf: "transparent",
+			__input_bg: "transparent",
+			background_color: "transparent",
+			border_color: "transparent",
+			outline: "none",
+			min_width: "0px",
+			padding: "0px",
+			width: "auto",
+		}),
 		rule([".input.nopad", "input.nopad"], {
 			padding: "0em",
 		})

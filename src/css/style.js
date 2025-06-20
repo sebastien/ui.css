@@ -90,9 +90,12 @@ export default named({
 		...times(10, (i) =>
 			rule(`.bd-r-${i}`, { __border_right_width: `${i}px` })
 		),
+		rule(".bd", {
+			border: `${vars.border.width} ${vars.border.style} ${vars.border.color} `,
+		}),
 		...Object.keys(sides).map((k) =>
 			rule(`.bd-${k.substring(0, 1)}`, {
-				[`border-${sides[k]}`]: `${vars.border.width} solid ${vars.theme.bd} `,
+				[`border-${sides[k]}`]: `${vars.border.width} solid ${vars.border.color} `,
 			})
 		)
 	),
@@ -104,9 +107,16 @@ export default named({
 		)
 	),
 	table: group(
+		rule("table", {
+			border_collapse: "separate",
+			border_spacing: `0px ${vars.gap}`,
+		}),
 		// FIXME: Not sure the variables are correct.
 		rule(["table.lined th", "table.lined td"], {
-			border_bottom: `${vars.border.width} solid ${vars.border.color}`,
+			border_bottom: `${vars.border.width} ${vars.border.style} ${vars.border.color}`,
+		}),
+		rule(["table.lined tr:last-child td", "table.lined tr:last-child th"], {
+			border_bottom_width: "0px",
 		})
 	),
 	shape: group(

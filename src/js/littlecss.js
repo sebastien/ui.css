@@ -484,7 +484,7 @@ css.mount = (...values) => {
 
 const mods = (classes, ...modifiers) =>
 	modifiers
-		.flatMap((_) => [`:${_}`, `.${_}`])
+		.flatMap((_) => (_ ? [`:${_}`, `.${_}`] : ""))
 		.flatMap((m) => classes.map((c) => `${c}${m}`));
 
 // --

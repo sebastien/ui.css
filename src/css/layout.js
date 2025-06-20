@@ -47,6 +47,7 @@ export default named({
 		rule(".to-b", b)
 	),
 	margin: group(
+		rule(".ma", { margin: "auto" }),
 		sizes.map((k, i) =>
 			rule([`.m-${k}`, `.m-${i}`], {
 				margin: `${vars.margin[i]}`,
@@ -149,7 +150,8 @@ export default named({
 		rule(".fit-w", {
 			box_sizing: "border-box",
 			width: "100%",
-			min_width: "100%",
+			// NOTE: Note sure this is necessary
+			// min_width: "100%",
 			max_width: "100%",
 		}),
 		rule(".fit-h", {
@@ -202,7 +204,17 @@ export default named({
 					rule(`.h-${k}`, { height: `${vars.size[i + 1]}` })
 				),
 				rule(".w-screen", { width: "100vw" }),
-				rule(".h-screen", { width: "100vh" })
+				rule(".h-screen", { width: "100vh" }),
+				rule(".no-h", {
+					height: "auto",
+					min_height: "0px",
+					max_height: "unset",
+				}),
+				rule(".no-w", {
+					width: "auto",
+					min_width: "0px",
+					max_width: "unset",
+				})
 			),
 			chars: group(
 				...times(10, (_) =>
@@ -275,12 +287,15 @@ export default named({
 			align_items: "center",
 			gap: `${vars.gap}`,
 		}),
+		rule(".row.end", {
+			justify_content: "flex-end",
+		}),
 		rule(".row.lined > *", {
-			border_right: `1px solid ${vars.color.bd}`,
+			border_right: `${vars.border.width} ${vars.border.style} ${vars.border.color} `,
 			border_collapse: "collapse",
 		}),
 		rule(".row.lined > *:last-child", {
-			border_right: "0px solid transparent",
+			border_right_width: "0px",
 		})
 	),
 	stack: group(
@@ -290,11 +305,11 @@ export default named({
 			gap: `${vars.gap}`,
 		}),
 		rule(".stack.lined > *", {
-			border_bottom: `1px solid ${vars.color.bd}`,
+			border_bottom: `${vars.border.width} ${vars.border.style} ${vars.border.color} `,
 			border_collapse: "collapse",
 		}),
 		rule(".stack.lined > *:last-child", {
-			border_bottom: "0px solid transparent",
+			border_bottom_width: "0px",
 		})
 	),
 	flex: group(

@@ -9,12 +9,6 @@ import {
 } from "../js/littlecss.js";
 export default named({
 	headings: group(
-		rule([times(7, (i) => `h${i + 1}`)], {
-			font_family: `${vars.font.heading}`,
-			margin: "unset",
-			padding: "unset",
-			font_size: "unset",
-		}),
 		...sizes.map((k, i) =>
 			rule([times(7, (i) => `h${i + 1}.${k}`)], {
 				font_size: `${vars.heading.size[i]}`,
@@ -29,7 +23,7 @@ export default named({
 		),
 		// hX.t have padding/margin
 		...times(7, (i) =>
-			rule(`h${i + 1}.t`, {
+			rule([`h${i + 1}.t`, `.t h${i + 1}`], {
 				font_size: `${vars.heading.size[6 - i]}`,
 				font_weight: "600",
 				margin_top: `${vars.margin[2]}`,
@@ -39,6 +33,10 @@ export default named({
 		)
 	),
 	lists: group(
+		rule(["p.t", ".t p"], {
+			margin_top: "0.75em",
+			margin_bottom: "0.75em",
+		}),
 		rule(["ul.t", "ol.t", "dl.t", ".t ul", ".t ol", ".t dl"], {
 			margin_top: "0.75em",
 			margin_bottom: "1.5em",
@@ -46,6 +44,10 @@ export default named({
 		}),
 		rule(["ol.t", ".t ol"], {
 			padding_left: "2em",
+		}),
+		rule(["li.t > p", ".t li p"], {
+			maring_top: "unset",
+			maring_bottom: "unset",
 		}),
 		rule(["ul.t li", ".t ul li"], {
 			list_style_type: "disc",
@@ -106,24 +108,26 @@ export default named({
 		),
 	}),
 	font: group(
-		rule(".italic", { font_style: "italic" }),
-		rule([".lighter", ".thin"], { font_weight: "100" }),
-		rule(".light", { font_weight: "200" }),
-		rule(".regular", { font_weight: "400" }),
-		rule(".medium", { font_weight: "500" }),
-		rule(".bold", { font_weight: "600" }),
-		rule(".bolder", { font_weight: "700" }),
-		rule(".boldest", { font_weight: "800" }),
-		rule(".code", { font_family: `${vars.font.code}` }),
+		rule([".em", ".italic"], { font_style: "italic" }),
+		rule([".ltr", ".lighter", ".thin"], { font_weight: "100" }),
+		rule([".lt", ".light"], { font_weight: "200" }),
+		rule([".r", ".regular"], { font_weight: "400" }),
+		rule([".sb", ".medium"], { font_weight: "500" }),
+		rule([".b", ".bold"], { font_weight: "600" }),
+		rule([".br", ".bolder"], { font_weight: "700" }),
+		rule([".bst", ".boldest"], { font_weight: "800" }),
 		rule(".mono", { font_family: `${vars.font.mono}` }),
 		rule(".sans", { font_family: `${vars.font.sans}` }),
 		rule(".serif", { font_family: `${vars.font.serif}` }),
-		rule(".control", { font_family: `${vars.font.control}` }),
-		rule(".heading", { font_family: `${vars.font.heading}` }),
-		rule(".script", { font_family: `${vars.font.script}` }),
-		rule(".display", { font_family: `${vars.font.display}` }),
+		rule(".script", { font_family: `${vars.font.script.family}` }),
+		rule(".code", { font_family: `${vars.font.code.family}` }),
+		rule(".control", { font_family: `${vars.font.control.family}` }),
+		rule(".heading", { font_family: `${vars.font.heading.family}` }),
+		rule(".script", { font_family: `${vars.font.script.family}` }),
+		rule(".display", { font_family: `${vars.font.display.family}` }),
 		...Object.keys(sizenames).map((k, i) =>
 			rule(`.${k}`, { font_size: `${vars.text.size[i]}` })
 		)
 	),
 });
+// EOF

@@ -1,5 +1,5 @@
+import { vars, on, rule, layer, times } from "../js/littlecss.js";
 import { all, inputs, controls } from "./lib/tags.js";
-import { on, rule, layer } from "../js/littlecss.js";
 
 export default layer(
 	rule([...all, ".reset"], {
@@ -21,10 +21,18 @@ export default layer(
 		text_align: "unset",
 		color: "default",
 	}),
+	rule("body", {
+		font_family: `${vars.font.text.family}`,
+		font_size: `${vars.font.text.size}`,
+		line_height: `${vars.font.text.line}`,
+	}),
 	rule(inputs, {
 		display: `inline-flex`,
 		width: `min-content`,
 		appearance: "none",
+		font_family: `${vars.font.controls}`,
+		font_size: `${vars.font.size}`,
+		line_height: `${vars.font.lh}`,
 	}),
 	rule(
 		[
@@ -37,6 +45,12 @@ export default layer(
 			outline: "0px solid transparent",
 		}
 	),
+	rule([times(7, (i) => `h${i + 1}`)], {
+		font_family: `${vars.font.heading}`,
+		margin: "unset",
+		padding: "unset",
+		font_size: "unset",
+	}),
 	rule("summary::-webkit-details-marker", {
 		display: "none",
 	})
