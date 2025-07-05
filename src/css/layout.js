@@ -196,6 +196,7 @@ export default named({
 	),
 	sizing: group(
 		named({
+			// TODO: Support min/max width
 			width: group(
 				...sizes.map((k, i) =>
 					rule(`.w-${k}`, { width: `${vars.size[i + 1]}` })
@@ -205,6 +206,9 @@ export default named({
 				),
 				rule(".w-screen", { width: "100vw" }),
 				rule(".h-screen", { width: "100vh" }),
+				rule(".w-text", { max_width: `${vars.limit.text}` }),
+				rule(".w-content", { max_width: `${vars.limit.content}` }),
+				rule(".w-page", { max_width: `${vars.limit.page}` }),
 				rule(".no-h", {
 					height: "auto",
 					min_height: "0px",
@@ -297,6 +301,7 @@ export default named({
 			flex_direction: "column",
 			gap: `${vars.gap}`,
 		}),
+
 		rule(".stack.lined > *", {
 			border_bottom: `${vars.border.width} ${vars.border.style} ${vars.border.color} `,
 			border_collapse: "collapse",
@@ -312,6 +317,9 @@ export default named({
 		rule(".shrink", {
 			flex_shrink: "1",
 		}),
+		rule([".stack > .stretch", ".row > .stretch"], {
+			align_self: "stretch",
+		}),
 		rule([".row.wrap", ".stack.wrap"], {
 			flex_wrap: "wrap",
 		}),
@@ -324,9 +332,10 @@ export default named({
 	),
 	grid: group(
 		...times(7, (_) =>
-			rule(`.cols-${_ + 1}`, {
+			rule(`.col-${_ + 1}`, {
 				display: "grid",
 				grid_template_columns: `repeat(${_ + 1}, 1fr)`,
+				grid_column_gap: `${vars.gap}`,
 			})
 		)
 	),

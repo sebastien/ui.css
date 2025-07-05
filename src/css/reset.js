@@ -8,6 +8,7 @@ export default layer(
 		padding: "0px",
 		margin_block: "unset",
 		font_size: "100%",
+		font_style: "unset",
 		font_weight: "unset",
 		line_height: "unset",
 		border: "0px solid transparent",

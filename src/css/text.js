@@ -37,6 +37,12 @@ export default named({
 			margin_top: "0.75em",
 			margin_bottom: "0.75em",
 		}),
+		rule(["p.t:first-child", ".t p:first-child"], {
+			margin_top: "unset",
+		}),
+		rule(["p.t:last-child", ".t p:last-child"], {
+			margin_bottom: "unset",
+		}),
 		rule(["ul.t", "ol.t", "dl.t", ".t ul", ".t ol", ".t dl"], {
 			margin_top: "0.75em",
 			margin_bottom: "1.5em",
@@ -75,6 +81,23 @@ export default named({
 	whitespace: group(
 		rule(".nobreak", { white_space: "nobreak" }),
 		rule(".nowrap", { white_space: "nowrap" }),
+		rule(".noheading", {
+			__heading_base: 1,
+			__heading_max: 1,
+			__heading_min: 1,
+			__heading_amplitude: 0,
+			__heading_unit: "1rem",
+			// FIXME: In theory, these should not be required, but
+			// it doesn't seem that the sizes recalculate.
+			__heading_size_0: "1rem",
+			__heading_size_1: "1rem",
+			__heading_size_2: "1rem",
+			__heading_size_3: "1rem",
+			__heading_size_4: "1rem",
+			__heading_size_5: "1rem",
+			__heading_size_6: "1rem",
+			__heading_size_7: "1rem",
+		}),
 		rule(".pre", { white_space: "pre" }),
 		rule(".pre-lines", { white_space: "pre-line" }),
 		rule(".ellipsis", { text_overflow: "ellipsis", overflow: "hidden" })
@@ -125,6 +148,9 @@ export default named({
 		rule(".heading", { font_family: `${vars.font.heading.family}` }),
 		rule(".script", { font_family: `${vars.font.script.family}` }),
 		rule(".display", { font_family: `${vars.font.display.family}` }),
+		rule(".striked", { text_decoration: "line-through" }),
+		rule(".ul", { text_decoration: "underline" }),
+		rule(".ol", { text_decoration: "overline" }),
 		...Object.keys(sizenames).map((k, i) =>
 			rule(`.${k}`, { font_size: `${vars.text.size[i]}` })
 		)

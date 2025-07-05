@@ -14,14 +14,20 @@ export default named({
 			color: "unset",
 			text_decoration: "none",
 		}),
+		rule(".noresize", { resize: "none" }),
 		rule(".nolh", { line_height: "0em" }),
 		rule(".nogap", { gap: "0em" }),
 		rule([".nostyle", ":hover .hover-nostyle", ".hover-nostyle:hover"], {
+			appearance: "none",
 			padding: "unset",
 			margin: "unset",
 			color: "unset",
 			border: "unset",
 			background: "unset",
+			outline: "unset",
+			width: "unset",
+			min_width: "unset",
+			max_width: "unset",
 		})
 	),
 	interaction: group(
@@ -97,7 +103,9 @@ export default named({
 			rule(`.bd-${k.substring(0, 1)}`, {
 				[`border-${sides[k]}`]: `${vars.border.width} solid ${vars.border.color} `,
 			})
-		)
+		),
+		rule(".dashed", { border_style: "dashed" }),
+		rule(".dotted", { border_style: "dotted" })
 	),
 	shadow: group(
 		...times(10, (i) =>
@@ -119,18 +127,18 @@ export default named({
 			border_bottom_width: "0px",
 		})
 	),
-	shape: group(
-		rule([".square", ".circle"], {
-			display: "inline-flex",
-			align_items: "center",
-			width: "1lh",
-			box_sizing: "border-box",
-			aspect_ratio: "1",
-		}),
-		rule([".circle"], {
-			border_radius: "100%",
-		})
-	),
+	// DISABLE, should be layout?
+	// shape: group(
+	// 	rule([".square", ".circle"], {
+	// 		display: "inline-flex",
+	// 		align_items: "center",
+	// 		box_sizing: "border-box",
+	// 		aspect_ratio: "1",
+	// 	}),
+	// 	rule([".circle"], {
+	// 		border_radius: "100%",
+	// 	})
+	// ),
 	sep: group(
 		rule(".sep > *:after", {
 			content: `"/"`,

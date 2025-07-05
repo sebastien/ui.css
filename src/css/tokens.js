@@ -28,6 +28,11 @@ export default group(
 				size: `${vars.font.size}`,
 				line: `${vars.font.line}`,
 			},
+			code: {
+				family: `${vars.font.mono}`,
+				size: `${vars.font.size}`,
+				line: `${vars.font.line}`,
+			},
 			controls: {
 				family: `${vars.font.sans}`,
 				size: `${vars.font.size}`,
@@ -130,26 +135,16 @@ export default group(
 			"8px", // m
 			"12px", // l
 			"16px", // xl
-			"18px", // xxl
-		],
-		// These are too big
-		space: [
-			"5px", // xxs
-			"10px", // xs
-			"15px", // s
-			"30px", // m
-			"40px", // l
-			"50px", // xl
-			"26px", // xxl
+			"32px", // xxl
 		],
 		gap: [
-			"0px", // xxs - 0
-			"1px", // xs - 1
-			"2px", // s - 2
-			"3px", // m - 3
-			"6px", // l - 4
-			"12px", // xl - 5
-			"24px", // xxl - 6
+			"2px", // xxs - 0
+			"4px", // xs - 1
+			"6px", // s - 2
+			"8px", // m - 3
+			"12px", // l - 4
+			"16px", // xl - 5
+			"32px", // xxl -6
 		],
 		shadow: {
 			depth: "2px",
@@ -170,22 +165,25 @@ export default group(
 			],
 		},
 		limit: {
-			text: "60ch",
+			text: "80ch",
 			block: ["360px", "720px", "960"],
 			content: "960px",
 			page: "960px",
 		},
 		heading: {
-			base: "14",
-			unit: "14px",
+			base: 14,
+			min: 12,
+			max: 48,
+			unit: "1px",
+			amplitude: "calc(var(--heading-max) - var(--heading-min))",
 			size: [
-				"calc(12 / var(--heading-base) * var(--heading-unit))", // 1: xxs
-				"calc(14 / var(--heading-base) * var(--heading-unit))", // 2: xs
-				"calc(18 / var(--heading-base) * var(--heading-unit))", // 3: s
-				"calc(24 / var(--heading-base) * var(--heading-unit))", // 4: m
-				"calc(32 / var(--heading-base) * var(--heading-unit))", // 5: l
-				"calc(36 / var(--heading-base) * var(--heading-unit))", // 6: xl
-				"calc(48 / var(--heading-base) * var(--heading-unit))", // 7: xxl
+				"calc((var(--heading-base) + var(--heading-amplitude) * ((12 - 12) / (48 - 12))) * var(--heading-unit))", // 1: xxs
+				"calc((var(--heading-base) + var(--heading-amplitude) * ((14 - 12) / (48 - 12))) * var(--heading-unit))", // 2: xs
+				"calc((var(--heading-base) + var(--heading-amplitude) * ((18 - 12) / (48 - 12))) * var(--heading-unit))", // 3: s
+				"calc((var(--heading-base) + var(--heading-amplitude) * ((24 - 12) / (48 - 12))) * var(--heading-unit))", // 4: m
+				"calc((var(--heading-base) + var(--heading-amplitude) * ((32 - 12) / (48 - 12))) * var(--heading-unit))", // 5: l
+				"calc((var(--heading-base) + var(--heading-amplitude) * ((36 - 12) / (48 - 12))) * var(--heading-unit))", // 6: xl
+				"calc((var(--heading-base) + var(--heading-amplitude) * ((48 - 12) / (48 - 12))) * var(--heading-unit))", // 7: xxl
 			],
 		},
 	})
