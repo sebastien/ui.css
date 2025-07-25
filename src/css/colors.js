@@ -1,98 +1,83 @@
-import { tokens, group, times, vars, rule } from "../js/littlecss.js";
+import { group, vars, rule } from "../js/littlecss.js";
+import defaults from "./defaults.js";
+const semantic = ["neutral", "primary", "secondary", "tertiary"];
+const colors = [...Object.keys(defaults.palette), ...semantic];
+const transparent = [5, 10, 15, 20, 25, 50, 75, 90];
 
-const colors = "cyan blue purple red orange yellow pink green grey white black"
-	.split(" ")
-	.reduce((r, v) => ((r[v] = vars.color[v]), r), {});
-
-// const bg = (color, other = vars.color.page, opacity = 0.25) => ({
-// 	...blend("bg", color, other, opacity),
-// 	background_color: "var(--${key}-color)",
-// });
-// FIXME: Move this outside
-const map = (v, f) => {
-	const r = {};
-	for (const k in v) {
-		r[k] = f(v[k], k);
+function* ivariants(color, prefix, values) {
+	for (let i = 0; i < values.length; i++) {
+		const scope = [`.${prefix}-${color}-${i}`];
+		if (i === 5) {
+			scope.splice(0, 0, `.${prefix}-${color}`);
+		}
+		yield rule(scope, { [`__color_${prefix}`]: values[i] });
 	}
-	return r;
-};
+}
 
 export default group(
-	// NOTE: This depends on other tokens being set
-	tokens({
-		color: map(colors, (_, k) =>
-			times(
-				11,
-				(i) =>
-					`color-mix(in oklab, ${vars.color[k]}, ${
-						i < 5 ? vars.theme.low : vars.theme.high
-					} ${
-						i < 5
-							? 100 - Math.round((100 * i) / 5)
-							: Math.round((100 * (i - 5)) / 5)
-					}%)`
-			).reduce((r, v, k) => ((r[k] = v), r), {})
+	group(
+		rule(".bg", { background_color: `${vars.color.bg}` }),
+		rule(".fg", { color: `${vars.color.fg}` }),
+		rule(".bd", { border_color: `${vars.color.bd}` }),
+		rule(".ot", { outline_color: `${vars.color.ot}` }),
+
+		...transparent.map((_) =>
+			group(
+				rule(`.bg-${_}p`, {
+					background_color: `color-mix(in ${vars.color.blend}, ${vars.color.bg} ${_}%, ${vars.color.page})`,
+				}),
+				rule(`.fg-${_}p`, {
+					color: `color-mix(in ${vars.color.blend}, ${vars.color.fg} ${_}%, ${vars.color.page})`,
+				}),
+				rule(`.bd-${_}p`, {
+					border_color: `color-mix(in ${vars.color.blend}, ${vars.color.bd} ${_}%, ${vars.color.page})`,
+				}),
+				rule(`.ot-${_}p`, {
+					outline_color: `color-mix(in ${vars.color.blend}, ${vars.color.ol} ${_}%, ${vars.color.page})`,
+				})
+			)
 		),
-	}),
-	group(
-		rule(".bg", { background_color: `${vars.theme.bg}` }),
-		rule(".fg", { color: `${vars.theme.fg}` }),
-		rule(".bd", { border_color: `${vars.theme.bd}` }),
+
 		// Resets
-		rule(".nobg", { __theme_bg: `transparent` }),
-		rule(".nobd", { __theme_bg: `transparent` }),
-		rule(".nofg", { __theme_fg: `${vars.theme.text}` })
+		rule(".nobg", { __color_bg: `transparent` }),
+		rule(".nobd", { __color_bg: `transparent` }),
+		rule(".nofg", { __color_fg: `${vars.color.text}` }),
+		rule(".noot", { __color_ot: `${vars.color.text}` })
 	),
-	group(
-		...times(11, (i) =>
-			rule(`.bg-${i}`, {
-				background_color: `color-mix(in ${vars.theme.blend}, ${
-					vars.theme.bg
-				} ${i * 10}%, ${vars.theme.page})`,
-			})
+	...colors.map((color) =>
+		group(
+			...ivariants(
+				color,
+				"bg",
+				defaults.palette[color] ?? defaults[color]
+			)
 		)
 	),
-	...Object.keys(colors).map((color) =>
-		rule(`.bg-${color}`, {
-			__theme_bg: `${vars.color[color]}`,
-		})
-	),
-	...Object.keys(colors).map((color) =>
-		rule(`.bd-${color}`, {
-			__theme_bd: `${vars.color[color]}`,
-		})
-	),
-	...Object.keys(colors).map((color) =>
-		rule(`.fg-${color}`, {
-			__theme_fg: `${vars.color[color]}`,
-		})
-	),
-	...Object.keys(colors).map((color) =>
-		times(11, (i) =>
-			rule(`.bg-${color}-${i}`, {
-				__theme_bg: `${vars.color[color][i]}`,
-			})
+	...colors.map((color) =>
+		group(
+			...ivariants(
+				color,
+				"bd",
+				defaults.palette[color] ?? defaults[color]
+			)
 		)
 	),
-	...Object.keys(colors).map((color) =>
-		times(11, (i) =>
-			rule(`.bd-${color}-${i}`, {
-				__theme_bd: `${vars.color[color][i]}`,
-			})
+	...colors.map((color) =>
+		group(
+			...ivariants(
+				color,
+				"fd",
+				defaults.palette[color] ?? defaults[color]
+			)
 		)
 	),
-	...Object.keys(colors).map((color) =>
-		times(11, (i) =>
-			rule(`.${color}-${i}`, {
-				__theme_fg: `${vars.color[color][i]}`,
-			})
+	...colors.map((color) =>
+		group(
+			...ivariants(
+				color,
+				"ot",
+				defaults.palette[color] ?? defaults[color]
+			)
 		)
 	)
-	// dk and lt blends
-	// ...times(11, (i)=> rule(`.bg-dk${i}`, {
-	// 		background_color `color-mix(in oklab, ${vars.theme.bg} ${i*10}%, rgba(${vars.theme.low}, 0%))`,
-	// })),
-	// ...times(11, (i)=> rule(`.bg-lt{i}`, {
-	// 		background_color `color-mix(in oklab, ${vars.theme.bg} ${i*10}%, rgba(${vars.theme.high}, 0%))`,
-	// })),
 );

@@ -361,18 +361,25 @@ class Tokens extends Group {
 				const p = prefix
 					? `${prefix}.${k.replaceAll("_", ".")}`
 					: k.replaceAll("_", ".");
-				if (Object.getPrototypeOf(v) === Object.prototype) {
-					for (const _ of Tokens.Expand(v, p)) {
-						yield _;
-					}
-				} else {
-					if (v instanceof Array) {
+				switch (v?.constructor) {
+					case Object:
+						for (const _ of Tokens.Expand(v, p)) {
+							yield _;
+						}
+						break;
+					case Array:
 						for (let i = 0; i < v.length; i++) {
 							yield new Token(p ? `${p}.${i}` : `${i}`, v[i]);
 						}
-					} else {
+						break;
+					case undefined:
+						console.warn(`[littlecss] Undefined key '${k}' in`, {
+							collection,
+						});
+						break;
+					default:
 						yield new Token(p, v);
-					}
+						break;
 				}
 			}
 		}
@@ -530,29 +537,29 @@ const cross = (...sets) =>
 
 const percentages = [5, 10, 15, 20, 25, 33, 50, 66, 75, 80, 90, 100];
 export {
+	Vars,
+	blended,
 	classes,
 	cross,
-	sides,
-	sizes,
-	sizenames,
-	Vars,
-	url,
-	on,
-	vars,
-	rule,
-	mods,
-	blended,
-	times,
-	layer,
-	layers,
-	group,
 	css,
-	named,
-	tokens,
-	percent,
-	percentages,
 	doc,
 	docs,
+	group,
+	layer,
+	layers,
+	mods,
+	named,
+	on,
+	percent,
+	percentages,
+	rule,
+	sides,
+	sizenames,
+	sizes,
+	times,
+	tokens,
+	url,
+	vars,
 };
 export default css;
 // EOF

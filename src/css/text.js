@@ -29,6 +29,7 @@ export default named({
 				margin_top: `${vars.margin[2]}`,
 				margin_bottom: `${vars.margin[2]}`,
 				padding_bottom: `${vars.pad[0]}`,
+				text_decoration: "underline",
 			})
 		)
 	),
@@ -81,6 +82,7 @@ export default named({
 	whitespace: group(
 		rule(".nobreak", { white_space: "nobreak" }),
 		rule(".nowrap", { white_space: "nowrap" }),
+		rule(".wrap", { overflow_wrap: "break-word" }),
 		rule(".noheading", {
 			__heading_base: 1,
 			__heading_max: 1,

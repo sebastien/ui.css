@@ -1,4 +1,5 @@
 import { tokens, group, sizes, vars } from "../js/littlecss.js";
+import defaults from "./defaults.js";
 
 export default group(
 	tokens({
@@ -7,6 +8,7 @@ export default group(
 			sans: "sans-serif",
 			serif: "serif",
 			size: "1rem",
+			base: 14,
 			line: "1.25em",
 			text: {
 				family: `${vars.font.sans}`,
@@ -50,54 +52,63 @@ export default group(
 		},
 	}),
 	tokens({
+		// Palette is expected to be like:
+		// 0: 50
+		// 1: 100
+		// 2: 200
+		// 3: 300
+		// 4: 400
+		// 5: 500
+		// 6: 600
+		// 7: 700
+		// 8: 800
+		// 9: 900
+		palette: defaults.palette,
 		color: {
-			cyan: "#14D3CA",
-			blue: "#1717BB",
-			purple: "#A21899",
-			red: "#FF3939",
-			orange: "#EE7204",
-			yellow: "#FBBE08",
-			pink: "#FF00FF",
-			green: "#3DBC1A",
-			grey: "#808080",
+			// FIXME: Rework
+			// FIXME: Align higha/lowa
 			white: "#FFFFFF",
 			black: "#000000",
-			// FIXME: Align higha/lowa
+			neutral: defaults.neutral[5],
+			primary: defaults.primary[6],
+			secondary: defaults.secondary[4],
+			tertiary: defaults.tertiary[4],
+			success: defaults.palette.green[4],
+			info: defaults.palette.sky[2],
+			warning: defaults.palette.orange[5],
+			danger: defaults.palette.red[5],
 			transparent: "#FFFFFF00",
 			transparentdk: "#00000000",
-		},
-		theme: {
-			neutral: vars.color.grey,
-			accent: vars.color.blue,
-			focus: vars.color.grey,
-
+			//
+			// accent: vars.color.blue,
+			// focus: vars.color.grey,
 			// These would be switched for dark mode
 			high: vars.color.white,
 			low: vars.color.black,
-			higha: vars.color.transparent,
-			lowa: vars.color.transparentdk,
-
-			// FIXME: These should be blended
-			// FIXME: higha/lowa should be page/text probably
-			//
-			text: vars.theme.low,
-			page: vars.theme.high,
-			texta: vars.theme.lowa,
-			pagea: vars.theme.higha,
+			text: vars.color.low,
+			page: vars.color.high,
 
 			// Default blending mode
 			blend: "oklab",
 
+			// Variants with transparency for blending
+			higha: `color-mix(in ${vars.color.blend}, ${vars.color.high} 100%, transparent)`,
+			lowa: `color-mix(in ${vars.color.blend},  ${vars.color.low}  100%, transparent)`,
+			texta: `color-mix(in ${vars.color.blend}, ${vars.color.text} 100%, transparent)`,
+			pagea: `color-mix(in ${vars.color.blend}, ${vars.color.page} 100%, transparent)`,
+
 			// These are used by default in the UI, note how they blend with
 			// the text.
-			bg: `color-mix(in ${vars.theme.blend}, ${vars.theme.neutral}  20%, ${vars.theme.page})`,
-			bd: `color-mix(in ${vars.theme.blend}, ${vars.theme.neutral}  50%, ${vars.theme.page})`,
-			bdf: `color-mix(in ${vars.theme.blend}, ${vars.theme.neutral} 30%, ${vars.theme.page})`,
+			bg: `color-mix(in ${vars.color.blend},  ${vars.color.neutral}  20%, ${vars.color.page})`,
+			bd: `color-mix(in ${vars.color.blend},  ${vars.color.neutral}  50%, ${vars.color.page})`,
+			// FIXME: What's BDF for again?
+			bdf: `color-mix(in ${vars.color.blend}, ${vars.color.neutral}  30%, ${vars.color.page})`,
 			fg: `currentColor`,
 		},
 	}),
 	tokens({
 		border: {
+			color: `${vars.color.bd}`,
 			width: sizes.map((_, i) => `${i}px`),
 			radius: [
 				"1px", // 0:xxs
@@ -151,30 +162,40 @@ export default group(
 			spread: "1px",
 			color: "#00000020",
 		},
-		text: {
-			base: "12",
-			unit: "16px",
-			size: [
-				"calc( 6 / var(--text-base) * var(--text-unit))", // xxs
-				"calc( 8 / var(--text-base) * var(--text-unit))", // xs
-				"calc(10 / var(--text-base) * var(--text-unit))", // s
-				"calc(12 / var(--text-base) * var(--text-unit))", // m
-				"calc(14 / var(--text-base) * var(--text-unit))", // l
-				"calc(16 / var(--text-base) * var(--text-unit))", // xl
-				"calc(18 / var(--text-base) * var(--text-unit))", // xxl
-			],
-		},
 		limit: {
 			text: "80ch",
 			block: ["360px", "720px", "960"],
 			content: "960px",
 			page: "960px",
 		},
+		// The logic here is as follows:
+		// - Page baseline (page.base) defines the value for 1rem/100% at the body level
+		// - Page unit (page.unit) defines the equivalent of 1px in rems.
+		page: {
+			base: 16,
+			unit: "calc( (1rem/16) * var(--page-base) / 16)",
+		},
+		text: {
+			min: 9,
+			max: 22,
+			unit: "var(--page-unit)",
+			base: "var(--text-min)",
+			amplitude: "calc(var(--text-max) - var(--text-min))",
+			size: [
+				"calc((var(--text-base) + var(--text-amplitude) * ((6  - 6) / (18 - 6))) * var(--text-unit))", // 1: xxs
+				"calc((var(--text-base) + var(--text-amplitude) * ((8  - 6) / (18 - 6))) * var(--text-unit))", // 2: xs
+				"calc((var(--text-base) + var(--text-amplitude) * ((10 - 6) / (18 - 6))) * var(--text-unit))", // 3: s
+				"calc((var(--text-base) + var(--text-amplitude) * ((12 - 6) / (18 - 6))) * var(--text-unit))", // 4: m
+				"calc((var(--text-base) + var(--text-amplitude) * ((14 - 6) / (18 - 6))) * var(--text-unit))", // 5: l
+				"calc((var(--text-base) + var(--text-amplitude) * ((16 - 6) / (18 - 6))) * var(--text-unit))", // 6: xl
+				"calc((var(--text-base) + var(--text-amplitude) * ((18 - 6) / (18 - 6))) * var(--text-unit))", // 7: xxl
+			],
+		},
 		heading: {
-			base: 14,
-			min: 12,
-			max: 48,
-			unit: "1px",
+			min: "var(--page-base)",
+			max: 42,
+			unit: "var(--page-unit)",
+			base: "var(--heading-min)",
 			amplitude: "calc(var(--heading-max) - var(--heading-min))",
 			size: [
 				"calc((var(--heading-base) + var(--heading-amplitude) * ((12 - 12) / (48 - 12))) * var(--heading-unit))", // 1: xxs

@@ -301,7 +301,9 @@ export default named({
 			flex_direction: "column",
 			gap: `${vars.gap}`,
 		}),
-
+		rule(".stack > .right", {
+			align_self: "flex-end",
+		}),
 		rule(".stack.lined > *", {
 			border_bottom: `${vars.border.width} ${vars.border.style} ${vars.border.color} `,
 			border_collapse: "collapse",
