@@ -13,6 +13,20 @@ import {
 } from "../js/littlecss.js";
 import { inputs } from "./lib/tags.js";
 
+function button(fg, bg, index, direction = 1) {
+	return {
+		__button_bd: `${bg[index]}`,
+		__button_bg: `${bg[index]}`,
+		__button_fg: fg,
+		__button_ot: `${bg[index + 1 * direction]}`,
+		// Hover
+		__button_hover_bd: `${bg[index + 1 * direction]}`,
+		__button_hover_bg: `${bg[index + 1 * direction]}`,
+		// Active
+		__button_active_bd: `${bg[index + 2 * direction]}`,
+		__button_active_bg: `${bg[index + 2 * direction]}`,
+	};
+}
 export default named({
 	selectable: group(
 		rule(".selectable", {
@@ -106,10 +120,28 @@ export default named({
 	// TODO: https://tailwindcss.com/plus/ui-blocks/application-ui/forms/radio-groups
 	button: group(
 		rule(["button", ".button"], {
-			__button_bd: `${vars.color.bg}`,
-			__button_bg: `${vars.color.bg}`,
-			__button_fg: `${vars.color.text}`,
 			__button_font: `${vars.font.control.family}`,
+			// Default (inactive)
+			__button_bd: `${vars.palette.neutral[3]}`,
+			__button_bg: `${vars.palette.neutral[2]}`,
+			__button_fg: `${vars.palette.neutral[8]}`,
+			__button_ot: `${vars.palette.neutral[3]}`,
+			// Focus
+			__button_focus_bd: `${vars.button.bg}`,
+			__button_focus_bg: `${vars.button.bg}`,
+			__button_focus_fg: `${vars.button.fg}`,
+			__button_focus_ot: `${vars.button.ot}`,
+			// Hover
+			__button_hover_bd: `${vars.palette.neutral[4]}`,
+			__button_hover_bg: `${vars.palette.neutral[3]}`,
+			__button_hover_fg: `${vars.button.fg}`,
+			__button_hover_ot: `${vars.button.ot}`,
+			// Active
+			__button_active_bd: `${vars.palette.neutral[5]}`,
+			__button_active_bg: `${vars.palette.neutral[4]}`,
+			__button_active_fg: `${vars.button.fg}`,
+			__button_active_ot: `${vars.button.ot}`,
+
 			display: "inline-flex",
 			align_items: "center",
 			white_space: "nowrap",
@@ -128,10 +160,56 @@ export default named({
 				"border-color,background,color,transform,box-shadow",
 			transition_duration: "0.15s",
 		}),
+		rule(["button.default", ".button.default", "button[type=submit]"], {
+			outline: `3px solid ${vars.color.primary}`,
+		}),
+		rule(["button.primary", ".button.primary"], {
+			...button(vars.color.white, vars.palette.blue, 7),
+		}),
+		rule(["button.secondary", ".button.secondary"], {
+			...button(vars.color.white, vars.palette.sky, 6),
+		}),
+		rule(["button.tertiary", ".button.tertiary"], {
+			...button(vars.color.text, vars.palette.slate, 3),
+		}),
+		rule(["button.success", ".button.success"], {
+			...button(vars.color.white, vars.palette.green, 5),
+		}),
+		rule(["button.info", ".button.info"], {
+			...button(vars.color.text, vars.palette.cyan, 2),
+		}),
+		rule(["button.warning", ".button.warning"], {
+			...button(vars.color.text, vars.palette.amber, 4),
+		}),
+		rule(["button.danger", ".button.danger"], {
+			...button(vars.color.white, vars.palette.red, 5),
+		}),
+		rule(["button.shadow", ".button.shadow"], {
+			box_shadow: `3px 3px 0px color-mix(in hsl, ${vars.color.bg}, #FFFFFF00 80%)`,
+		}),
+		rule(["button.blank", ".button.blank"], {
+			__button_bg: `color-mix(in oklab, ${vars.color.text}, ${vars.color.page} 90%)`,
+			__button_fg: `${vars.color.text}`,
+			__button_bd: "transparent",
+			__button_active_bd: "transparent",
+			__button_hover_bd: "transparent",
+			__button_focus_bd: "transparent",
+			background: "transparent",
+			box_shadow: "unset",
+		}),
 		rule(["button.outline", ".button.outline"], {
-			__button_fg: `${vars.button.bd}`,
-			__button_bg: "transparent",
-			border: `2px solid ${vars.button.bd}`,
+			__button_bd: `${vars.neutral.blue[7]}`,
+			__button_bg: `color-mix(in ${vars.color.blend}, ${vars.color.pagea}, ${vars.color.white} 25%)`,
+			__button_fg: `${vars.palette.neutral[6]}`,
+			__button_ot: `${vars.palette.blue[7]}`,
+			// Hover
+			__button_hover_bd: `${vars.palette.blue[8]}`,
+			__button_hover_bg: `color-mix(in ${vars.color.blend}, ${vars.color.pagea}, ${vars.color.white} 35%)`,
+			// Active
+			__button_active_bd: `${vars.palette.blue[9]}`,
+			__button_active: `color-mix(in ${vars.color.blend}, ${vars.color.pagea}, ${vars.color.white} 50%)`,
+
+			border_width: "2px",
 		}),
 		rule(["button.icon", ".button.icon"], {
 			__button_bg: "transparent",
@@ -141,47 +219,38 @@ export default named({
 			border_width: "0px",
 		}),
 
-		rule(["button.default", ".button.default", "button[type=submit]"], {
-			outline: `3px solid ${vars.color.primary}`,
-		}),
-		rule(["button.primary", ".button.primary"], {
-			__color_bg: `${vars.color.primary}`,
-		}),
-		rule(["button.secondary", ".button.secondary"], {
-			__color_bg: `${vars.color.secondary}`,
-		}),
-		rule(["button.tertiary", ".button.tertiary"], {
-			__color_bg: `${vars.color.tertiary}`,
-		}),
-		rule(["button.success", ".button.success"], {
-			__color_bg: `${vars.color.success}`,
-		}),
-		rule(["button.info", ".button.info"], {
-			__color_bg: `${vars.color.info}`,
-		}),
-		rule(["button.warning", ".button.warning"], {
-			__color_bg: `${vars.color.warning}`,
-		}),
-		rule(["button.danger", ".button.danger"], {
-			__color_bg: `${vars.color.danger}`,
-		}),
-		rule(["button.shadow", ".button.shadow"], {
-			box_shadow: `3px 3px 0px color-mix(in hsl, ${vars.color.bg}, #FFFFFF00 80%)`,
-		}),
-		rule(["button.transparent", ".button.transparent"], {
-			__button_bg: `color-mix(in oklab, ${vars.color.text}, ${vars.color.page} 90%)`,
-			__button_fg: `${vars.color.text}`,
-			__button_bd: "transparent",
-			background: "transparent",
-			box_shadow: "unset",
+		rule(mods(["button", ".button"], "focus"), {
+			background_color: `${vars.button.focus.bg}`,
+			color: `${vars.button.focus.fg}`,
+			border_color: `${vars.button.focus.bd}`,
+			outline_color: `${vars.button.focus.ot}`,
+			outline_width: "2px",
 		}),
 		rule(mods(["button", ".button"], "hover"), {
-			background_color: `color-mix(in oklab, ${vars.button.bg}, ${vars.color.page} 40%)`,
-			border_color: `color-mix(in oklab, ${vars.button.bd}, ${vars.color.page} 20%)`,
+			background_color: `${vars.button.hover.bg}`,
+			color: `${vars.button.hover.fg}`,
+			border_color: `${vars.button.hover.bd}`,
+			outline_color: `${vars.button.hover.ot}`,
 		}),
-		rule(mods(["button.outline", ".button.ouline"], "hover"), {
-			background_color: `${vars.button.bd}`,
-			color: `${vars.color.page}`,
+		rule(mods(["button", ".button"], "active"), {
+			background_color: `${vars.button.active.bg}`,
+			color: `${vars.button.active.fg}`,
+			border_color: `${vars.button.active.bd}`,
+			outline_color: `${vars.button.active.bd}`,
+		}),
+		rule(mods(["button", ".button"], "disabled"), {
+			opacity: 0.5,
+			__button_focus_fg: vars.button.fg,
+			__button_focus_bd: vars.button.bd,
+			__button_focus_bg: vars.button.bg,
+			__button_hover_bd: vars.button.bd,
+			__button_hover_bg: vars.button.bg,
+			__button_hover_ot: vars.button.ot,
+			__button_hover_fg: vars.button.fg,
+			__button_active_bd: vars.button.bd,
+			__button_active_bg: vars.button.bg,
+			__button_active_ot: vars.button.ot,
+			__button_active_fg: vars.button.fg,
 		}),
 		rule(
 			[

@@ -1,7 +1,6 @@
 import { group, vars, rule } from "../js/littlecss.js";
 import defaults from "./defaults.js";
-const semantic = ["neutral", "primary", "secondary", "tertiary"];
-const colors = [...Object.keys(defaults.palette), ...semantic];
+const colors = [...Object.keys(defaults.palette)];
 const transparent = [5, 10, 15, 20, 25, 50, 75, 90];
 
 function* ivariants(color, prefix, values) {

@@ -6,17 +6,6 @@ const palette = Object.keys(colors).reduce(
 );
 const defaults = {
 	palette,
-	neutral: palette.gray,
-	primary: palette.blue,
-	secondary: palette.indigo,
-	tertiary: palette.slate,
-	colors: [
-		"neutral",
-		"primary",
-		"secondary",
-		"tertiary",
-		...Object.keys(palette),
-	],
 };
 export default defaults;
 // EOF
