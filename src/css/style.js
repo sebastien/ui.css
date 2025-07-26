@@ -1,6 +1,6 @@
 import {
 	sides,
-	sizes,
+	mods,
 	named,
 	rule,
 	group,
@@ -30,6 +30,7 @@ export default named({
 			max_width: "unset",
 		})
 	),
+
 	interaction: group(
 		rule(".noev", { pointer_events: "none" }),
 		rule(".ev", { pointer_events: "auto" }),
@@ -159,19 +160,47 @@ export default named({
 		})
 	),
 	transparent: group(rule(".transparent", { color: "transparent" })),
-	dark: group(
-		// FIXME: THis is not right
-		rule(".dark", {
-			__color_page: `${vars.color.black}`,
-			__color_text: `${vars.color.white}`,
-			background_color: `${vars.color.page}`,
-			color: `${vars.color.text}`,
+	depth: group(
+		rule(mods([".inset"], undefined, "focus", "hover", "active"), {
+			__inset_shadow: `color-mix(in ${vars.color.blend}, ${vars.color.shadow}, transparent 90%)`,
+			__inset_light: `color-mix(in ${vars.color.blend}, ${vars.color.high}, transparent 50%)`,
+			border_width: "2px",
+			border_top_color: vars.inset.shadow,
+			border_left_color: vars.inset.shadow,
+			border_bottom_color: vars.inset.light,
+			border_right_color: vars.inset.light,
 		}),
-		rule(".light", {
-			__color_page: `${vars.color.white}`,
-			__color_text: `${vars.color.black}`,
-			background_color: `${vars.color.page}`,
-			color: `${vars.color.text}`,
+		rule(mods([".raised"], undefined, "focus", "hover", "active"), {
+			__inset_shadow: `color-mix(in ${vars.color.blend}, ${vars.color.shadow}, transparent 90%)`,
+			__inset_light: `color-mix(in ${vars.color.blend}, ${vars.color.high}, transparent 50%)`,
+			border_width: "2px",
+			border_top_color: vars.inset.light,
+			border_left_color: vars.inset.light,
+			border_bottom_color: vars.inset.shadow,
+			border_right_color: vars.inset.shadow,
+		})
+	),
+	dark: group(
+		rule(".m-dark", {
+			__color_page: `${vars.color.low}`,
+			__color_pagea: `${vars.color.lowa}`,
+			__color_text: `${vars.color.high}`,
+			__color_texta: `${vars.color.higha}`,
+		}),
+		rule(".m-light", {
+			__color_page: `${vars.color.high}`,
+			__color_pagea: `${vars.color.higha}`,
+			__color_text: `${vars.color.low}`,
+			__color_texta: `${vars.color.lowa}`,
+		}),
+		rule(".t-dark", {
+			__color_text: vars.color.high,
+			__color_texta: vars.color.higha,
+		}),
+		rule(".t-light", {
+			__color_text: vars.color.low,
+			__color_texta: vars.color.lowa,
 		})
 	),
 });
+// EOF

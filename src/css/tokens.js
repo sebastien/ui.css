@@ -1,6 +1,9 @@
 import { tokens, group, sizes, vars } from "../js/littlecss.js";
 import defaults from "./defaults.js";
 
+// Module: tokens
+// This defines the main parameters for the style. They can be overriden
+// at will to theme everything.
 export default group(
 	tokens({
 		font: {
@@ -39,6 +42,7 @@ export default group(
 				family: `${vars.font.sans}`,
 				size: `${vars.font.size}`,
 				line: `${vars.font.line}`,
+				weight: 500,
 			},
 		},
 		border: {
@@ -65,18 +69,20 @@ export default group(
 		// 9: 900
 		palette: defaults.palette,
 		color: {
-			// FIXME: Rework
-			// FIXME: Align higha/lowa
+			// White and black points
 			white: "#FFFFFF",
 			black: "#000000",
-			// neutral: defaults.neutral[5],
-			// primary: defaults.primary[6],
-			// secondary: defaults.secondary[4],
-			// tertiary: defaults.tertiary[4],
-			// success: defaults.palette.green[4],
-			// info: defaults.palette.sky[2],
-			// warning: defaults.palette.orange[5],
-			// danger: defaults.palette.red[5],
+			// These are the semantic colors
+			neutral: defaults.palette.gray[5],
+			primary: defaults.palette.blue[6],
+			secondary: defaults.palette.sky[5],
+			tertiary: defaults.palette.slate[3],
+			success: defaults.palette.green[5],
+			info: defaults.palette.sky[2],
+			warning: defaults.palette.yellow[4],
+			danger: defaults.palette.red[5],
+			error: defaults.palette.red[5],
+			// FIXME: Now sure we need these two?
 			transparent: "#FFFFFF00",
 			transparentdk: "#00000000",
 			//
@@ -87,6 +93,8 @@ export default group(
 			low: vars.color.black,
 			text: vars.color.low,
 			page: vars.color.high,
+			shadow: vars.color.black,
+			shadowa: `rgb(from ${vars.color.black} r g b / 0)`,
 
 			// Default blending mode
 			blend: "oklab",
@@ -101,7 +109,7 @@ export default group(
 			// the text.
 			bg: `color-mix(in ${vars.color.blend},  ${vars.color.neutral}  20%, ${vars.color.page})`,
 			bd: `color-mix(in ${vars.color.blend},  ${vars.color.neutral}  50%, ${vars.color.page})`,
-			// FIXME: What's BDF for again?
+			// FIXME: What's BDF for again, border focus?
 			bdf: `color-mix(in ${vars.color.blend}, ${vars.color.neutral}  30%, ${vars.color.page})`,
 			fg: `currentColor`,
 		},
@@ -158,9 +166,10 @@ export default group(
 			"32px", // xxl -6
 		],
 		shadow: {
-			depth: "2px",
+			x: "0px",
+			y: "2px",
 			spread: "1px",
-			color: "#00000020",
+			color: `color-mix(in oklab, ${vars.color.shadow}, ${vars.color.pagea} 92%)`,
 		},
 		limit: {
 			text: "80ch",

@@ -1,33 +1,19 @@
 import {
-	sides,
-	classes,
-	sizes,
 	cross,
 	named,
 	rule,
 	group,
 	vars,
-	times,
 	blended,
 	mods,
 } from "../js/littlecss.js";
-import { inputs } from "./lib/tags.js";
 
-function button(fg, bg, index, direction = 1) {
-	return {
-		__button_bd: `${bg[index]}`,
-		__button_bg: `${bg[index]}`,
-		__button_fg: fg,
-		__button_ot: `${bg[index + 1 * direction]}`,
-		// Hover
-		__button_hover_bd: `${bg[index + 1 * direction]}`,
-		__button_hover_bg: `${bg[index + 1 * direction]}`,
-		// Active
-		__button_active_bd: `${bg[index + 2 * direction]}`,
-		__button_active_bg: `${bg[index + 2 * direction]}`,
-	};
-}
 export default named({
+	// ------------------------------------------------------------------------
+	//
+	// SELECTABLE
+	//
+	// ------------------------------------------------------------------------
 	selectable: group(
 		rule(".selectable", {
 			cursor: "pointer",
@@ -79,6 +65,11 @@ export default named({
 			user_select: "none",
 		})
 	),
+	// ------------------------------------------------------------------------
+	//
+	// PILL
+	//
+	// ------------------------------------------------------------------------
 	pill: group(
 		rule(".pills", {
 			display: "inline-flex",
@@ -118,78 +109,102 @@ export default named({
 	// TODO: https://tailwindcss.com/plus/ui-blocks/application-ui/elements/buttons
 	// TODO: https://tailwindcss.com/plus/ui-blocks/application-ui/forms/checkboxes
 	// TODO: https://tailwindcss.com/plus/ui-blocks/application-ui/forms/radio-groups
+	// ------------------------------------------------------------------------
+	//
+	// BUTTON
+	//
+	// ------------------------------------------------------------------------
 	button: group(
+		// TODO: Should pick the best contrasting color
 		rule(["button", ".button"], {
-			__button_font: `${vars.font.control.family}`,
-			// Default (inactive)
-			__button_bd: `${vars.palette.neutral[3]}`,
-			__button_bg: `${vars.palette.neutral[2]}`,
-			__button_fg: `${vars.palette.neutral[8]}`,
-			__button_ot: `${vars.palette.neutral[3]}`,
-			// Focus
-			__button_focus_bd: `${vars.button.bg}`,
-			__button_focus_bg: `${vars.button.bg}`,
-			__button_focus_fg: `${vars.button.fg}`,
-			__button_focus_ot: `${vars.button.ot}`,
-			// Hover
-			__button_hover_bd: `${vars.palette.neutral[4]}`,
-			__button_hover_bg: `${vars.palette.neutral[3]}`,
-			__button_hover_fg: `${vars.button.fg}`,
-			__button_hover_ot: `${vars.button.ot}`,
-			// Active
-			__button_active_bd: `${vars.palette.neutral[5]}`,
-			__button_active_bg: `${vars.palette.neutral[4]}`,
-			__button_active_fg: `${vars.button.fg}`,
-			__button_active_ot: `${vars.button.ot}`,
+			// Fonts
+			__button_font_family: `${vars.font.controls.family}`,
+			__button_font_line: `${vars.font.controls.line}`,
+			__button_font_weight: `${vars.font.controls.weight}`,
+			__button_font_size: `${vars.font.controls.size}`,
+			__button_border_size: "1px",
+			__button_outline_size: "2px",
+			// Buttons define a main color, and derive the colors automatically
+			// from the main color
+			__button_color_text: vars.color.text,
+			__button_color_main: vars.palette.neutral[3],
+			__button_color_hover: `lch(from ${vars.button.color.main} clamp(0, calc(l - 10), 100) clamp(0, calc(c + 2), 150) clamp(0, calc(h - 2), 360))`,
+			__button_color_active: `lch(from ${vars.button.color.main} clamp(0, calc(l - 20), 100) clamp(0, calc(c + 4), 150) clamp(0, calc(h - 4), 360))`,
 
+			// Inactive (default)
+			__button_bd: vars.button.color.main,
+			__button_bg: vars.button.color.main,
+			__button_fg: vars.button.color.text,
+			__button_ot: vars.button.color.main,
+			// Focus
+			__button_focus_bd: vars.button.bd,
+			__button_focus_bg: vars.button.bg,
+			__button_focus_fg: vars.button.fg,
+			__button_focus_ot: vars.button.color.hover,
+			// Hover
+			__button_hover_bd: vars.button.color.hover,
+			__button_hover_bg: vars.button.color.hover,
+			__button_hover_fg: vars.button.fg,
+			__button_hover_ot: vars.button.ot,
+			// Active
+			__button_active_bd: vars.button.color.active,
+			__button_active_bg: vars.button.color.active,
+			__button_active_fg: vars.button.fg,
+			__button_active_ot: vars.button.ot,
+			// Parametric Styling
+			border: `${vars.button.border.size} solid ${vars.button.bd}`,
+			outline: `0px solid ${vars.button.ot}`,
+			background: `${vars.button.bg}`,
+			color: `${vars.button.fg}`,
+			font_family: vars.button.font.family,
+			line_height: vars.button.font.line,
+			font_size: vars.button.font.size,
+			font_weight: vars.button.font.weight,
+
+			// Fixed styling
+			cursor: "pointer",
+			padding: `0.5em 0.75em`, // Padding will be based on font-size, which is what we want
+			box_sizing: "border-box",
 			display: "inline-flex",
 			align_items: "center",
 			white_space: "nowrap",
-			// FIXME: Is this OK?
-			padding: `0.5em 0.75em`,
-			border: `1px solid ${vars.button.bd}`,
-			background: `${vars.button.bg}`,
-			color: `${vars.button.fg}`,
-			cursor: "pointer",
-			font_family: vars.button.font,
-			// FIXME: Line height should be font line height no?
-			line_height: "1em",
-			font_size: "100%",
-			box_sizing: "border-box",
 			transition_property:
-				"border-color,background,color,transform,box-shadow",
-			transition_duration: "0.15s",
+				"border-width,border-color,background,color,transform,box-shadow,outline-width,outline-color",
+			transition_duration: "0.1s",
 		}),
 		rule(["button.default", ".button.default", "button[type=submit]"], {
-			outline: `3px solid ${vars.color.primary}`,
+			outline: `${vars.button.outline.size} solid ${vars.button.color.main}`,
 		}),
 		rule(["button.primary", ".button.primary"], {
-			...button(vars.color.white, vars.palette.blue, 7),
+			__button_color_main: vars.color.primary,
 		}),
 		rule(["button.secondary", ".button.secondary"], {
-			...button(vars.color.white, vars.palette.sky, 6),
+			__button_color_main: vars.color.secondary,
 		}),
 		rule(["button.tertiary", ".button.tertiary"], {
-			...button(vars.color.text, vars.palette.slate, 3),
+			__button_color_main: vars.color.tertiary,
 		}),
 		rule(["button.success", ".button.success"], {
-			...button(vars.color.white, vars.palette.green, 5),
+			__button_color_main: vars.color.success,
 		}),
 		rule(["button.info", ".button.info"], {
-			...button(vars.color.text, vars.palette.cyan, 2),
+			__button_color_main: vars.color.info,
 		}),
 		rule(["button.warning", ".button.warning"], {
-			...button(vars.color.text, vars.palette.amber, 4),
+			__button_color_main: vars.color.warning,
 		}),
 		rule(["button.danger", ".button.danger"], {
-			...button(vars.color.white, vars.palette.red, 5),
+			__button_color_main: vars.color.danger,
 		}),
 		rule(["button.shadow", ".button.shadow"], {
-			box_shadow: `3px 3px 0px color-mix(in hsl, ${vars.color.bg}, #FFFFFF00 80%)`,
+			box_shadow: `${vars.shadow.x} ${vars.shadow.y} ${vars.shadow.spread} ${vars.shadow.color}`,
 		}),
 		rule(["button.blank", ".button.blank"], {
-			__button_bg: `color-mix(in oklab, ${vars.color.text}, ${vars.color.page} 90%)`,
-			__button_fg: `${vars.color.text}`,
+			__button_color_main: `color-mix(in oklab, ${vars.color.text}, ${vars.color.pagea} 95%)`,
+			__button_color_hover: `color-mix(in oklab, ${vars.color.text}, ${vars.color.pagea} 90%)`,
+			__button_color_focus: `color-mix(in oklab, ${vars.color.text}, ${vars.color.pagea} 85%)`,
+			__button_color_active: `color-mix(in oklab, ${vars.color.text}, ${vars.color.pagea} 80%)`,
+			__button_color_text: `${vars.color.text}`,
 			__button_bd: "transparent",
 			__button_active_bd: "transparent",
 			__button_hover_bd: "transparent",
@@ -198,19 +213,20 @@ export default named({
 			box_shadow: "unset",
 		}),
 		rule(["button.outline", ".button.outline"], {
-			__button_bd: `${vars.neutral.blue[7]}`,
+			__button_border_size: "2px",
+			__button_bd: vars.button.color.main,
 			__button_bg: `color-mix(in ${vars.color.blend}, ${vars.color.pagea}, ${vars.color.white} 25%)`,
-			__button_fg: `${vars.palette.neutral[6]}`,
-			__button_ot: `${vars.palette.blue[7]}`,
 			// Hover
-			__button_hover_bd: `${vars.palette.blue[8]}`,
+			__button_hover_bd: vars.button.color.hover,
 			__button_hover_bg: `color-mix(in ${vars.color.blend}, ${vars.color.pagea}, ${vars.color.white} 35%)`,
+			// Focus
+			__button_focus_bd: vars.button.color.focus,
+			__button_focus_bg: `color-mix(in ${vars.color.blend}, ${vars.color.pagea}, ${vars.color.white} 45%)`,
 			// Active
-			__button_active_bd: `${vars.palette.blue[9]}`,
-			__button_active: `color-mix(in ${vars.color.blend}, ${vars.color.pagea}, ${vars.color.white} 50%)`,
-
-			border_width: "2px",
+			__button_active_bd: vars.button.color.active,
+			__button_active_bg: `color-mix(in ${vars.color.blend}, ${vars.color.pagea}, ${vars.color.white} 50%)`,
 		}),
+
 		rule(["button.icon", ".button.icon"], {
 			__button_bg: "transparent",
 			padding: "0px",
@@ -218,26 +234,24 @@ export default named({
 			width: "min-content",
 			border_width: "0px",
 		}),
-
 		rule(mods(["button", ".button"], "focus"), {
-			background_color: `${vars.button.focus.bg}`,
-			color: `${vars.button.focus.fg}`,
-			border_color: `${vars.button.focus.bd}`,
-			outline_color: `${vars.button.focus.ot}`,
-			outline_width: "2px",
+			background_color: vars.button.focus.bg,
+			color: vars.button.focus.fg,
+			border_color: vars.button.focus.bd,
+			outline_color: vars.button.focus.ot,
+			outline_width: vars.button.outline.size,
 		}),
 		rule(mods(["button", ".button"], "hover"), {
 			background_color: `${vars.button.hover.bg}`,
 			color: `${vars.button.hover.fg}`,
 			border_color: `${vars.button.hover.bd}`,
-			outline_color: `${vars.button.hover.ot}`,
 		}),
 		rule(mods(["button", ".button"], "active"), {
 			background_color: `${vars.button.active.bg}`,
 			color: `${vars.button.active.fg}`,
 			border_color: `${vars.button.active.bd}`,
-			outline_color: `${vars.button.active.bd}`,
 		}),
+
 		rule(mods(["button", ".button"], "disabled"), {
 			opacity: 0.5,
 			__button_focus_fg: vars.button.fg,
@@ -267,6 +281,11 @@ export default named({
 			}
 		)
 	),
+	// ------------------------------------------------------------------------
+	//
+	// SELECTOR
+	//
+	// ------------------------------------------------------------------------
 	selector: group(
 		rule(".selector", {
 			// FIXME: Should be __selector_{active,inactive,hover}_{bd,fg}
@@ -384,7 +403,9 @@ export default named({
 				)
 			)
 		),
-
+		// ====================================================================
+		// LISTS & MENUS
+		// ====================================================================
 		group(
 			// List & Menu
 			rule(...cross([".selector"], [".list", ".menu"]), {
@@ -423,62 +444,147 @@ export default named({
 			)
 		)
 	),
+	// ------------------------------------------------------------------------
+	//
+	// INPUT
+	//
+	// ------------------------------------------------------------------------
 	input: group(
 		rule([".input", "input", "textarea"], {
-			__input_bdf: `color-mix(in oklab,${vars.input.bd},${vars.color.low} 20%)`,
-			__input_bdw: `1px`,
-			__input_ol: `color-mix(in oklab,${vars.color.focus},${vars.color.higha} 85%)`,
-			__input_olw: "1px",
-			__input_bd: `${vars.color.bd}`,
-			__input_fg: `${vars.color.text}`,
-			__input_bg: `${vars.color.page}`,
-			__gap: `${vars.gap[2]}`,
+			// Fonts
+			__input_font_family: `${vars.font.controls.family}`,
+			__input_font_line: `${vars.font.controls.line}`,
+			__input_font_weight: `${vars.font.controls.weight}`,
+			__input_font_size: `${vars.font.controls.size}`,
+			__input_border_size: "1px",
+			__input_outline_size: "2px",
+			__input_color_text: vars.color.text,
+			__input_color_main: vars.palette.neutral[3],
+			__input_color_hover: `lch(from ${vars.input.color.main} clamp(0, calc(l - 10), 100) clamp(0, calc(c + 2), 150) clamp(0, calc(h - 2), 360))`,
+			__input_color_active: `lch(from ${vars.input.color.main} clamp(0, calc(l - 20), 100) clamp(0, calc(c + 4), 150) clamp(0, calc(h - 4), 360))`,
+			__input_gap: vars.gap[2],
+			// Inactive (default)
+			__input_fg: vars.input.color.text,
+			__input_bg: vars.color.page,
+			__input_bd: vars.input.color.main,
+			__input_ot: vars.input.color.main,
+			// Focus
+			__input_focus_fg: vars.input.fg,
+			__input_focus_bd: vars.input.bd,
+			__input_focus_bg: vars.input.bg,
+			__input_focus_ot: vars.input.ot,
+			// Hover
+			__input_hover_fg: vars.input.fg,
+			__input_hover_bd: vars.input.color.hover,
+			__input_hover_bg: vars.input.bg,
+			__input_hover_ot: vars.input.ot,
+			// Active
+			__input_active_bd: vars.input.color.active,
+			__input_active_bg: vars.input.bg,
+			__input_active_fg: vars.input.fg,
+			__input_active_ot: vars.input.ot,
+			// Parametric styling
+			border: `${vars.input.border.size} solid ${vars.input.bd}`,
+			background: `${vars.input.bg}`,
+			color: `${vars.input.fg}`,
+			font_family: vars.input.font.family,
+			line_height: vars.input.font.line,
+			font_size: vars.input.font.size,
+			font_weight: vars.input.font.weight,
+			gap: `${vars.input.gap}`,
+			// Static styling
+			outline: `0px solid ${vars.input.ot}`,
 			display: "inline-flex",
 			flex_wrap: "nowrap",
 			align_items: "center",
-			gap: `${vars.gap}`,
-			border: `${vars.input.bdw} solid ${vars.input.bd}`,
-			outline: `1px solid ${vars.input.ol}`,
-			font_family: `${vars.font.control.family}`,
-			background_color: `${vars.input.bg}`,
-			color: `${vars.input.fg}`,
-			padding: `0.5em 0.5em`,
-			line_height: "1em",
-			font_size: "100%",
-			// NOTE: This is required as numeric fields have an extra height
-			// This is so that the padding doesn't interfere.
+			padding: "0.5em 0.5em",
 			box_sizing: "border-box",
-			transition_property: "outline-width",
-			transition_duration: "0.15s",
+			transition_property:
+				"border-width,border-color,background,color,transform,box-shadow,outline-width,outline-color",
+			transition_duration: "0.1s",
 		}),
 		rule([".textarea", "textarea"], {
 			width: "100%",
 			field_sizing: "content",
 			resize: "none",
 		}),
-		rule(mods([".input", "input", "textarea"], "focus", "active"), {
-			outline: `3px solid color-mix(in oklab,${vars.color.focus},${vars.color.higha} 85%)`,
-			border_color: `${vars.color.bdf}`,
+		rule(mods(["input", ".input", "textarea", ".textarea"], "focus"), {
+			background_color: vars.input.focus.bg,
+			color: vars.input.focus.fg,
+			border_color: vars.input.focus.bd,
+			outline_color: vars.input.focus.ot,
+			outline_width: vars.input.outline.size,
+		}),
+		rule(mods(["button", ".button"], "hover"), {
+			background_color: vars.button.hover.bg,
+			color: vars.button.hover.fg,
+			border_color: vars.button.hover.bd,
+		}),
+		rule(mods(["button", ".button"], "active"), {
+			background_color: vars.button.active.bg,
+			color: vars.button.active.fg,
+			border_color: vars.button.active.bd,
+		}),
+		rule(cross(["input", ".input", "textarea", ".textarea"], ".missing"), {
+			__input_color_main: vars.color.error,
+			__input_fg: vars.input.color.text,
+		}),
+		rule(cross(["input", ".input", "textarea", ".textarea"], ".success"), {
+			__input_color_main: vars.color.success,
+			__input_color_text: `color-mix(in oklab, ${vars.color.success}, ${vars.color.text} 20%)`,
+			__input_bg: `color-mix(in oklab, ${vars.color.success}, ${vars.color.pagea} 95%)`,
+			__input_fg: vars.input.color.text,
+		}),
+		rule(cross(["input", ".input", "textarea", ".textarea"], ".warning"), {
+			__input_color_main: vars.color.warning,
+			__input_color_text: `color-mix(in oklab, ${vars.color.warning}, ${vars.color.text} 20%)`,
+			__input_bg: `color-mix(in oklab, ${vars.color.warning}, ${vars.color.pagea} 95%)`,
+			__input_fg: vars.input.color.text,
+		}),
+		rule(cross(["input", ".input", "textarea", ".textarea"], ".error"), {
+			__input_color_main: vars.color.error,
+			__input_color_text: `color-mix(in oklab, ${vars.color.error}, ${vars.color.text} 20%)`,
+			__input_bg: `color-mix(in oklab, ${vars.color.error}, ${vars.color.pagea} 95%)`,
+			__input_fg: vars.input.color.text,
 		}),
 		rule(
-			mods(
-				cross([".input", "input", "textarea"], ".transparent"),
-				"focus",
-				"active"
-			),
+			[
+				"input.blank",
+				".input.blank",
+				"textarea.blank",
+				".textarea.blank",
+			],
 			{
-				outline: `0px solid transparent`,
+				__input_color_main: `color-mix(in oklab, ${vars.color.text}, ${vars.color.pagea} 95%)`,
+				__input_color_hover: `color-mix(in oklab, ${vars.color.text}, ${vars.color.pagea} 90%)`,
+				__input_color_focus: `color-mix(in oklab, ${vars.color.text}, ${vars.color.pagea} 85%)`,
+				__input_color_active: `color-mix(in oklab, ${vars.color.text}, ${vars.color.pagea} 80%)`,
+				__input_color_text: `${vars.color.text}`,
+				__input_bd: "transparent",
+				__input_active_bd: "transparent",
+				__input_hover_bd: "transparent",
+				__input_focus_bd: "transparent",
+				background: "transparent",
+				box_shadow: "unset",
 			}
 		),
+		rule(mods(["input", ".input", "textarea", ".textarea"], "disabled"), {
+			opacity: 0.5,
+			__input_focus_fg: vars.input.fg,
+			__input_focus_bd: vars.input.bd,
+			__input_focus_bg: vars.input.bg,
+			__input_hover_bd: vars.input.bd,
+			__input_hover_bg: vars.input.bg,
+			__input_hover_ot: vars.input.ot,
+			__input_hover_fg: vars.input.fg,
+			__input_active_bd: vars.input.bd,
+			__input_active_bg: vars.input.bg,
+			__input_active_ot: vars.input.ot,
+			__input_active_fg: vars.input.fg,
+		}),
 		// TODO: Checkbox
 		// Overrides
 		rule(mods([".noinput"], null, "focus", "active", "hover"), {
-			__input_ol: "transparent",
-			__input_olw: "0px",
-			__input_bdw: "0px",
-			__input_bd: "transparent",
-			__input_bdf: "transparent",
-			__input_bg: "transparent",
 			background_color: "transparent",
 			border_color: "transparent",
 			outline: "none",
