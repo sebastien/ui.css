@@ -121,7 +121,6 @@ export default named({
 			__button_font_family: `${vars.font.controls.family}`,
 			__button_font_line: `${vars.font.controls.line}`,
 			__button_font_weight: `${vars.font.controls.weight}`,
-			__button_font_size: `${vars.font.controls.size}`,
 			__button_border_size: "1px",
 			__button_outline_size: "2px",
 			// Buttons define a main color, and derive the colors automatically
@@ -158,7 +157,6 @@ export default named({
 			color: `${vars.button.fg}`,
 			font_family: vars.button.font.family,
 			line_height: vars.button.font.line,
-			font_size: vars.button.font.size,
 			font_weight: vars.button.font.weight,
 
 			// Fixed styling
@@ -288,163 +286,150 @@ export default named({
 	// ------------------------------------------------------------------------
 	selector: group(
 		rule(".selector", {
-			// FIXME: Should be __selector_{active,inactive,hover}_{bd,fg}
-			__selector_bd: `${vars.color.text}`,
-			__selector_bg: `${vars.color.higha}`,
-			__selector_bgs: `${vars.color.text}`,
-			__selector_bgh: `color-mix(in oklab, ${vars.selector.bgs}, ${vars.color.pagea} 90%)`,
-			__selector_bga: `color-mix(in oklab, ${vars.selector.bgs}, ${vars.color.pagea} 50%)`,
-			__selector_fg: `${vars.color.text}`,
-			__selector_fgs: `${vars.color.page}`,
-			__selector_fgh: `${vars.color.text}`,
-			__selector_fga: `${vars.color.text}`,
+			// Fonts
+			__selector_font_family: `${vars.font.controls.family}`,
+			__selector_font_line: `${vars.font.controls.line}`,
+			__selector_font_weight: `${vars.font.controls.weight}`,
+			__selector_border_size: "1px",
+			__selector_border_radius: vars.border.radius,
+
+			// Define main color and derive others automatically
+			__selector_color_text: vars.color.text,
+			__selector_color_main: vars.palette.neutral[3],
+			__selector_color_hover: `lch(from ${vars.selector.color.main} clamp(0, calc(l - 10), 100) clamp(0, calc(c + 2), 150) clamp(0, calc(h - 2), 360))`,
+			__selector_color_active: `lch(from ${vars.selector.color.main} clamp(0, calc(l - 20), 100) clamp(0, calc(c + 4), 150) clamp(0, calc(h - 4), 360))`,
+
+			// Default (unselected) - transparent background
+			__selector_bd: vars.selector.color.main,
+			__selector_bg: "transparent",
+			__selector_fg: vars.selector.color.text,
+
+			// Hover
+			__selector_hover_bd: vars.selector.color.hover,
+			__selector_hover_bg: `color-mix(in oklab, ${vars.selector.color.main}, ${vars.color.page} 85%)`,
+			__selector_hover_fg: vars.selector.fg,
+
+			// Selected
+			__selector_selected_bd: vars.selector.color.main,
+			__selector_selected_bg: vars.selector.color.main,
+			__selector_selected_fg: vars.color.page,
+
+			// Active
+			__selector_active_bd: vars.selector.color.active,
+			__selector_active_bg: vars.selector.color.active,
+			__selector_active_fg: vars.color.page,
+
+			// Container styling
 			display: "inline-flex",
-			gap: `0em`,
-			flex_wrap: "wrap",
+			gap: "0",
+			flex_wrap: "nowrap",
 		}),
-		rule(".selector > li", ".selector > .item", {
-			user_select: "none",
-			align_items: "center",
-			white_space: "nowrap",
-			padding: `0.5em 0.75em`,
-			border: `1px solid ${vars.selector.bd}`,
+
+		rule([".selector > li", ".selector > .item"], {
+			// Parametric styling
+			border: `${vars.selector.border.size} solid ${vars.selector.bd}`,
 			background: `${vars.selector.bg}`,
 			color: `${vars.selector.fg}`,
+			font_family: vars.selector.font.family,
+			line_height: vars.selector.font.line,
+			font_weight: vars.selector.font.weight,
+
+			// Fixed styling
+			display: "inline-flex",
+			align_items: "center",
+			justify_content: "center",
+			white_space: "nowrap",
+			padding: "0.35em 0.65em",
 			cursor: "pointer",
-			font_family: `${vars.font.control.family}`,
-			line_height: "1em",
-			font_size: "100%",
+			user_select: "none",
 			box_sizing: "border-box",
-			border_collapse: "collapse",
-			transition_property:
-				"border-color,background,color,color,transform,box-shadow",
+			transition_property: "border-color,background,color",
 			transition_duration: "0.15s",
+			margin_left: "-1px",
 		}),
+
+		rule([".selector > li:first-child", ".selector > .item:first-child"], {
+			margin_left: "0",
+		}),
+
+		rule(mods([".selector > li", ".selector > .item"], "hover"), {
+			background_color: vars.selector.hover.bg,
+			color: vars.selector.hover.fg,
+			border_color: vars.selector.hover.bd,
+			z_index: "1",
+		}),
+
 		rule(
-			...cross([".selector"], ["> li", "> .item"], [":hover", ".hover"]),
+			[
+				".selector > li.selected",
+				".selector > .item.selected",
+				".selector > li[data-selected=true]",
+				".selector > .item[data-selected=true]",
+			],
 			{
-				background_color: `${vars.selector.bgh}`,
-				color: `${vars.selector.fgh}`,
+				background_color: vars.selector.selected.bg,
+				color: vars.selector.selected.fg,
+				border_color: vars.selector.selected.bd,
+				z_index: "2",
 			}
 		),
 
-		rule(...cross([".selector"], ["> li", "> .item"], ".selected"), {
-			background_color: `${vars.selector.bgs}`,
-			color: `${vars.selector.fgs}`,
+		rule(mods([".selector > li", ".selector > .item"], "active"), {
+			background_color: vars.selector.active.bg,
+			color: vars.selector.active.fg,
+			border_color: vars.selector.active.bd,
 		}),
-		rule(
-			...cross(
-				[".selector"],
-				["> li", "> .item"],
-				[":active", ".active"]
-			),
-			{
-				background_color: `${vars.selector.bga}`,
-				color: `${vars.selector.fga}`,
-			}
-		),
-		group(
-			// Pills & Bar
-			group(
-				rule(".selector.pills", {
-					__gap: `${vars.gap[2]}`,
-					gap: `${vars.gap}`,
-				}),
-				rule(".selector.pills > li", ".selector.pills > .item", {
-					border_radius: `2lh`,
-				})
-			),
-			group(
-				rule(
-					".selector.bar.rounded > li:first-child",
-					".selector.bar.rounded > .item:first-child",
-					{
-						border_top_left_radius: `2lh`,
-						border_bottom_left_radius: `2lh`,
-					}
-				),
-				rule(
-					".selector.bar.rounded > li:last-child",
-					".selector.bar.rounded > .item:last-child",
 
-					{
-						border_top_right_radius: `2lh`,
-						border_bottom_right_radius: `2lh`,
-					}
-				),
+		// Color variants - just override the main color like buttons do
+		rule([".selector.primary"], {
+			__selector_color_main: vars.color.primary,
+		}),
+		rule([".selector.secondary"], {
+			__selector_color_main: vars.color.secondary,
+		}),
+		rule([".selector.tertiary"], {
+			__selector_color_main: vars.color.tertiary,
+		}),
+		rule([".selector.success"], {
+			__selector_color_main: vars.color.success,
+		}),
+		rule([".selector.info"], {
+			__selector_color_main: vars.color.info,
+		}),
+		rule([".selector.warning"], {
+			__selector_color_main: vars.color.warning,
+		}),
+		rule([".selector.danger"], {
+			__selector_color_main: vars.color.danger,
+		}),
 
-				rule(
-					".selector.bar.rounded > li:last-child",
-					".selector.bar.rounded > .item:last-child",
+		// Style variants
+		rule([".selector.pills"], {
+			gap: `${vars.gap[1]}`,
+		}),
+		rule([".selector.pills > li", ".selector.pills > .item"], {
+			border_radius: "2lh",
+			margin_left: "0",
+		}),
 
-					{
-						border_top_right_radius: `2lh`,
-						border_bottom_right_radius: `2lh`,
-					}
-				),
+		rule([".selector > li:first-child", ".selector > .item:first-child"], {
+			border_top_left_radius: vars.selector.border.radius,
+			border_bottom_left_radius: vars.selector.border.radius,
+		}),
+		rule([".selector > li:last-child", ".selector > .item:last-child"], {
+			border_top_right_radius: vars.selector.border.radius,
+			border_bottom_right_radius: vars.selector.border.radius,
+		}),
 
-				rule(
-					...cross(".selector.bar.transparent", ["> li", "> .item"]),
-					{
-						border_left: "0px solid transparent",
-						border_top: "0px solid transparent",
-						border_bottom: "0px solid transparent",
-					}
-				),
-				rule(
-					...cross(
-						".selector.bar.transparent",
-						["> li", "> .item"],
-						[":last-child", ".last"]
-					),
-					{
-						border_right: "0px solid transparent",
-					}
-				)
-			)
-		),
-		// ====================================================================
-		// LISTS & MENUS
-		// ====================================================================
-		group(
-			// List & Menu
-			rule(...cross([".selector"], [".list", ".menu"]), {
-				__selector_bdw: "1px",
-				display: "flex",
-				gap: `${vars.gap}`,
-				flex_direction: "column",
-				flex_wrap: "nowrap",
-			}),
-			rule(...cross([".selector"], [".list", ".menu"], ".unlined"), {
-				__selector_bdw: "0px",
-			}),
-			rule(
-				...cross(
-					[".selector"],
-					[".list", ".menu"],
-					["> li", "> .item"]
-				),
-				{
-					display: "inline_flex",
-					align_items: "center",
-					border: "0px solid transparent",
-					border_bottom: `${vars.selector.bdw} solid ${vars.selector.bd}`,
-				}
-			),
-			rule(
-				...cross(
-					[".selector"],
-					[".list", ".menu"],
-					["> li", "> .item"],
-					[":last-child", ".last"]
-				),
-				{
-					border_bottom: `0px solid ${vars.selector.bd}`,
-				}
-			)
-		)
+		// Disabled state
+		rule(mods([".selector > li", ".selector > .item"], "disabled"), {
+			opacity: 0.5,
+			cursor: "not-allowed",
+		})
 	),
 	// ------------------------------------------------------------------------
+	//
+	// TOGGLE
 	//
 	// INPUT
 	//
@@ -455,7 +440,6 @@ export default named({
 			__input_font_family: `${vars.font.controls.family}`,
 			__input_font_line: `${vars.font.controls.line}`,
 			__input_font_weight: `${vars.font.controls.weight}`,
-			__input_font_size: `${vars.font.controls.size}`,
 			__input_border_size: "1px",
 			__input_outline_size: "2px",
 			__input_color_text: vars.color.text,
@@ -489,7 +473,6 @@ export default named({
 			color: `${vars.input.fg}`,
 			font_family: vars.input.font.family,
 			line_height: vars.input.font.line,
-			font_size: vars.input.font.size,
 			font_weight: vars.input.font.weight,
 			gap: `${vars.input.gap}`,
 			// Static styling
@@ -503,9 +486,12 @@ export default named({
 				"border-width,border-color,background,color,transform,box-shadow,outline-width,outline-color",
 			transition_duration: "0.1s",
 		}),
+		rule(cross(["input", ".input", "textarea", ".textarea"], ".bg"), {
+			__input_bg: vars.color.bg,
+		}),
 		rule([".textarea", "textarea"], {
 			width: "100%",
-			field_sizing: "content",
+			field_sizing: "content", // FIXME: This does not seem to work
 			resize: "none",
 		}),
 		rule(mods(["input", ".input", "textarea", ".textarea"], "focus"), {
@@ -593,6 +579,129 @@ export default named({
 		}),
 		rule([".input.nopad", "input.nopad"], {
 			padding: "0em",
+		})
+	),
+	// ------------------------------------------------------------------------
+	//
+	// TOGGLE
+	//
+	// ------------------------------------------------------------------------
+	toggle: group(
+		rule(".toggle", {
+			// Toggle track
+			__toggle_track_width: "3em",
+			__toggle_track_height: "1.5em",
+			__toggle_track_border_radius: "1em",
+			__toggle_track_border_width: "1px",
+
+			// Toggle slider
+			__toggle_slider_size: "calc(1.5em - 4px)",
+			__toggle_slider_offset: "2px",
+
+			// Colors - themeable like buttons
+			__toggle_color_main: vars.color.neutral,
+			__toggle_color_active: vars.color.primary,
+			__toggle_color_hover: `lch(from ${vars.toggle.color.main} clamp(0, calc(l - 10), 100) clamp(0, calc(c + 2), 150) clamp(0, calc(h - 2), 360))`,
+
+			// Inactive state
+			__toggle_track_bg: `color-mix(in oklab, ${vars.toggle.color.main}, ${vars.color.page} 85%)`,
+			__toggle_track_bd: vars.toggle.color.main,
+			__toggle_slider_bg: vars.color.page,
+			__toggle_slider_shadow: `0 1px 3px rgba(0, 0, 0, 0.3)`,
+
+			// Active state
+			__toggle_active_track_bg: vars.toggle.color.active,
+			__toggle_active_track_bd: vars.toggle.color.active,
+			__toggle_active_slider_bg: vars.color.page,
+
+			// Base styling
+			display: "inline-block",
+			position: "relative",
+			width: vars.toggle.track.width,
+			height: vars.toggle.track.height,
+			background: vars.toggle.track.bg,
+			border: `${vars.toggle.track.border.width} solid ${vars.toggle.track.bd}`,
+			border_radius: vars.toggle.track.border.radius,
+			cursor: "pointer",
+			user_select: "none",
+			transition: "all 0.2s ease",
+		}),
+
+		rule(".toggle::before", {
+			content: "''",
+			position: "absolute",
+			top: vars.toggle.slider.offset,
+			left: vars.toggle.slider.offset,
+			width: vars.toggle.slider.size,
+			height: vars.toggle.slider.size,
+			background: vars.toggle.slider.bg,
+			border_radius: "50%",
+			box_shadow: vars.toggle.slider.shadow,
+			transition: "transform 0.2s ease",
+			transform: "translateX(0)",
+		}),
+
+		rule([".toggle:hover", ".toggle.hover"], {
+			background: `color-mix(in oklab, ${vars.toggle.track.bg}, ${vars.toggle.color.hover} 15%)`,
+		}),
+
+		rule(
+			[
+				".toggle.checked",
+				".toggle[data-checked=true]",
+				"input[type=checkbox]:checked + .toggle",
+			],
+			{
+				background: vars.toggle.active.track.bg,
+				border_color: vars.toggle.active.track.bd,
+			}
+		),
+
+		rule(
+			[
+				".toggle.checked::before",
+				".toggle[data-checked=true]::before",
+				"input[type=checkbox]:checked + .toggle::before",
+			],
+			{
+				transform: `translateX(calc(${vars.toggle.track.width} - ${vars.toggle.slider.size} - ${vars.toggle.slider.offset} * 2))`,
+				background: vars.toggle.active.slider.bg,
+			}
+		),
+
+		// Color variants
+		rule([".toggle.primary"], {
+			__toggle_color_active: vars.color.primary,
+		}),
+		rule([".toggle.secondary"], {
+			__toggle_color_active: vars.color.secondary,
+		}),
+		rule([".toggle.success"], {
+			__toggle_color_active: vars.color.success,
+		}),
+		rule([".toggle.warning"], {
+			__toggle_color_active: vars.color.warning,
+		}),
+		rule([".toggle.danger"], {
+			__toggle_color_active: vars.color.danger,
+		}),
+
+		// Disabled state
+		rule([".toggle:disabled", ".toggle.disabled"], {
+			opacity: 0.5,
+			cursor: "not-allowed",
+		}),
+
+		// Size variants
+		rule([".toggle.small"], {
+			__toggle_track_width: "2.5em",
+			__toggle_track_height: "1.25em",
+			__toggle_slider_size: "calc(1.25em - 4px)",
+		}),
+		rule([".toggle.large"], {
+			__toggle_track_width: "3.5em",
+			__toggle_track_height: "1.75em",
+			__toggle_slider_size: "calc(1.75em - 4px)",
 		})
 	),
 });

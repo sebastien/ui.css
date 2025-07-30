@@ -20,19 +20,20 @@ export default group(
 		rule(".bd", { border_color: `${vars.color.bd}` }),
 		rule(".ot", { outline_color: `${vars.color.ot}` }),
 
+		// NOTE: These can be used to fade the colors to transparency
 		...transparent.map((_) =>
 			group(
 				rule(`.bg-${_}p`, {
-					background_color: `color-mix(in ${vars.color.blend}, ${vars.color.bg} ${_}%, ${vars.color.page})`,
+					background_color: `color-mix(in ${vars.color.blend}, ${vars.color.bg} ${_}%, ${vars.color.pagea})`,
 				}),
 				rule(`.fg-${_}p`, {
-					color: `color-mix(in ${vars.color.blend}, ${vars.color.fg} ${_}%, ${vars.color.page})`,
+					color: `color-mix(in ${vars.color.blend}, ${vars.color.fg} ${_}%, ${vars.color.pagea})`,
 				}),
 				rule(`.bd-${_}p`, {
-					border_color: `color-mix(in ${vars.color.blend}, ${vars.color.bd} ${_}%, ${vars.color.page})`,
+					border_color: `color-mix(in ${vars.color.blend}, ${vars.color.bd} ${_}%, ${vars.color.pagea})`,
 				}),
 				rule(`.ot-${_}p`, {
-					outline_color: `color-mix(in ${vars.color.blend}, ${vars.color.ol} ${_}%, ${vars.color.page})`,
+					outline_color: `color-mix(in ${vars.color.blend}, ${vars.color.ol} ${_}%, ${vars.color.pagea})`,
 				})
 			)
 		),

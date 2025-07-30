@@ -10,7 +10,6 @@ export default layer(
 		font_style: "unset",
 		font_weight: "unset",
 		font_family: `${vars.font.text.family}`,
-		font_size: `${vars.text.size[3]}`,
 		line_height: `${vars.font.text.line}`,
 		border: "0px solid transparent",
 		outline: "0px solid transparent",

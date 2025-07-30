@@ -62,14 +62,23 @@ export default named({
 		rule(".hidden", { visibility: "hidden !important" })
 	),
 	rounding: group(
-		rule(".rounded", { border_radius: "0.25lh" }),
-		rule(".rounder", { border_radius: "0.5lh" }),
-		rule(".roundest", { border_radius: "1.5lh" })
+		rule(".rounded", {
+			__border_radius: "0.25lh",
+			border_radius: vars.border.radius,
+		}),
+		rule(".rounder", {
+			__border_radius: "0.5lh",
+			border_radius: vars.border.radius,
+		}),
+		rule(".roundest", {
+			__border_radius: "1.5lh",
+			border_radius: vars.border.radius,
+		})
 	),
 	border: group(
 		rule(".rd", { border_radius: `${vars.border.radius}` }),
 		rule(".bd", {
-			border: `${vars.border.width} solid ${vars.color.bd}`,
+			border: `${vars.border.width} ${vars.border.style} ${vars.color.bd} `,
 		}),
 		...times(10, (i) =>
 			rule(`.rd-tl-${i}`, { border_top_left_radius: `${i}px` })
@@ -97,9 +106,6 @@ export default named({
 		...times(10, (i) =>
 			rule(`.bd-r-${i}`, { __border_right_width: `${i}px` })
 		),
-		rule(".bd", {
-			border: `${vars.border.width} ${vars.border.style} ${vars.border.color} `,
-		}),
 		...Object.keys(sides).map((k) =>
 			rule(`.bd-${k.substring(0, 1)}`, {
 				[`border-${sides[k]}`]: `${vars.border.width} solid ${vars.border.color} `,

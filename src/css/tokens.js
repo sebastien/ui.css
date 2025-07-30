@@ -163,7 +163,9 @@ export default group(
 			"8px", // m - 3
 			"12px", // l - 4
 			"16px", // xl - 5
-			"32px", // xxl -6
+			"24px", // xxl - 6
+			"32px", // xxxl - 7
+			"64px", // xxxxl - 8
 		],
 		shadow: {
 			x: "0px",
