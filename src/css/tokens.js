@@ -41,7 +41,7 @@ export default group(
 			controls: {
 				family: `${vars.font.sans}`,
 				size: `${vars.font.size}`,
-				line: `${vars.font.line}`,
+				line: "1em",
 				weight: 500,
 			},
 		},
@@ -115,6 +115,9 @@ export default group(
 		},
 	}),
 	tokens({
+		background: {
+			color: `${vars.color.bg}`,
+		},
 		border: {
 			color: `${vars.color.bd}`,
 			width: sizes.map((_, i) => `${i}px`),
@@ -128,6 +131,9 @@ export default group(
 				"16px", // 6:xxl
 			],
 		},
+		outline: {
+			color: `${vars.color.bd}`,
+		},
 		size: [
 			"5px", //  0:xxs
 			"10px", // 1:xs
@@ -135,7 +141,8 @@ export default group(
 			"30px", // 3:m
 			"40px", // 4:l
 			"50px", // 5:xl
-			"26px", // 6:xxl
+			"60px", // 6:xxl
+			// FIXME
 		],
 		margin: [
 			"5px", // xxs
@@ -144,7 +151,8 @@ export default group(
 			"30px", // m
 			"40px", // l
 			"50px", // xl
-			"26px", // xxl
+			"60px", // xxl
+			// FIXME
 		],
 		// TODO: Should probably be related to the font size
 		pad: [
@@ -154,7 +162,10 @@ export default group(
 			"8px", // m
 			"12px", // l
 			"16px", // xl
-			"32px", // xxl
+			"24px", // xxl
+			"32px", // xxxl
+			"48px", // xxxxl
+			"64px", // xxxxxl
 		],
 		gap: [
 			"2px", // xxs - 0
@@ -166,9 +177,15 @@ export default group(
 			"24px", // xxl - 6
 			"32px", // xxxl - 7
 			"64px", // xxxxl - 8
+			"96px", // xxxxxl - 9
 		],
+		opacity: {
+			dim: 0.65,
+			dimmer: 0.45,
+			dimmest: 0.25,
+		},
 		shadow: {
-			x: "0px",
+			x: "2px",
 			y: "2px",
 			spread: "1px",
 			color: `color-mix(in oklab, ${vars.color.shadow}, ${vars.color.pagea} 92%)`,
@@ -187,6 +204,7 @@ export default group(
 			unit: "calc( (1rem/16) * var(--page-base) / 16)",
 		},
 		text: {
+			color: `${vars.color.fg}`,
 			min: 9,
 			max: 22,
 			unit: "var(--page-unit)",
@@ -218,7 +236,18 @@ export default group(
 				"calc((var(--heading-base) + var(--heading-amplitude) * ((48 - 12) / (48 - 12))) * var(--heading-unit))", // 7: xxl
 			],
 		},
-	})
+		controls: {
+			padding: {
+				largest: "1em 1.25em",
+				larger: "0.85em 1.15em",
+				large: "0.75em 1em",
+				regular: "0.5em 0.75em",
+				small: "0.25em 0.5em",
+				smaller: "0.15em 0.35em",
+				smallest: "0.15em 0.15em",
+			},
+		},
+	}),
 );
 
 // EOF

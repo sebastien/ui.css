@@ -66,4 +66,47 @@ export default named({
 			__tree_depth: 5,
 		})
 	),
+
+	section: group(
+		rule("details.section", {
+			border: `1px solid ${vars.color.bd}`,
+			border_radius: `${vars.radius[1]}`,
+			margin_bottom: `${vars.space[2]}`,
+		}),
+
+		rule("details.section summary", {
+			cursor: "pointer",
+			user_select: "none",
+			padding: `${vars.pad[2]}`,
+			background_color: `${vars.color.bg_muted}`,
+			border_radius: `${vars.radius[1]} ${vars.radius[1]} 0 0`,
+			font_weight: "600",
+			transition: "background-color 0.2s ease",
+		}),
+
+		rule("details.section summary:hover", {
+			background_color: `${vars.color.bg_hover}`,
+		}),
+
+		rule("details.section summary:before", {
+			content: "'▸'",
+			display: "inline-block",
+			margin_right: `${vars.space[1]}`,
+			transition: "transform 0.2s ease",
+			transform_origin: "center",
+		}),
+
+		rule("details.section[open] summary:before", {
+			transform: "rotate(90deg)",
+		}),
+
+		rule("details.section[open] summary", {
+			border_radius: `${vars.radius[1]} ${vars.radius[1]} 0 0`,
+			border_bottom: `1px solid ${vars.color.bd}`,
+		}),
+
+		rule("details.section > *:not(summary)", {
+			padding: `${vars.pad[2]}`,
+		})
+	),
 });

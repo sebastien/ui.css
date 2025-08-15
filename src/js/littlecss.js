@@ -25,7 +25,7 @@ function* properties(value, k) {
 		for (const kk in value) {
 			for (const v of properties(
 				value[kk],
-				k ? `${kebab(k)}-${kebab(kk)}` : kebab(kk)
+				k ? `${kebab(k)}-${kebab(kk)}` : kebab(kk),
 			)) {
 				yield v;
 			}
@@ -41,7 +41,7 @@ const percent = (v) => `${Math.round(v * 10000) / 100}%`;
 
 const blended = (name, color, other, percentage = 0.5, opacity = undefined) => {
 	const base = `color-mix(in oklab, ${color} ${percent(
-		percentage
+		percentage,
 	)}, ${other})`;
 	name = name.replaceAll("_", "-");
 	const temp = `${name.startsWith("--") ? "" : "--"}${name}-base`;
@@ -49,10 +49,10 @@ const blended = (name, color, other, percentage = 0.5, opacity = undefined) => {
 		? {
 				[temp]: base,
 				[name]: `rgba(${base}, ${percent(opacity)}`,
-		  }
+			}
 		: {
 				[name]: base,
-		  };
+			};
 };
 
 // ----------------------------------------------------------------------------
@@ -61,7 +61,18 @@ const blended = (name, color, other, percentage = 0.5, opacity = undefined) => {
 //
 // ----------------------------------------------------------------------------
 
-const sizes = ["xxs", "xs", "s", "m", "l", "xl", "xxl"];
+const sizes = [
+	"xxs", // 0
+	"xs", // 1
+	"s", // 2
+	"m", // 3
+	"l", // 4
+	"xl", // 5
+	"xxl", // 6
+	"xxxl", // 7
+	"xxxxl", // 8
+	"xxxxxl", // 9
+];
 const sizenames = {
 	smallest: 0, //"xxs",
 	smaller: 1, //"xs",
@@ -70,6 +81,9 @@ const sizenames = {
 	large: 4, //"l",
 	larger: 5, // "xl",
 	largest: 6, //"xxl",
+	huge: 7, //"xxxl",
+	huger: 8, //"xxxxl",
+	hugest: 9, //"xxxxxl",
 };
 const sides = { l: "left", t: "top", r: "right", b: "bottom" };
 // ----------------------------------------------------------------------------
@@ -142,7 +156,7 @@ const on = new Proxy(
 						target[property] ??
 						((...sel) => pseudo(property, ...sel)))
 				: target[property],
-	}
+	},
 );
 
 // ----------------------------------------------------------------------------
@@ -180,7 +194,7 @@ class Rule {
 				path,
 				definition: Object.keys(this.properties).reduce(
 					(r, k) => ((r[k] = `${this.properties[k]}`), r),
-					{}
+					{},
 				),
 			};
 		}
@@ -267,11 +281,6 @@ class Group {
 		}
 		if (!compact && this.name) {
 			yield `/* @end ${this.name} */`;
-		}
-	}
-	*rules() {
-		for (const r of this.contents) {
-			yield* r.rules();
 		}
 	}
 }
@@ -456,13 +465,13 @@ function* css(...values) {
 			}
 		} else if (v.constructor === Object) {
 			yield* css(Object.values(v));
-		} else {
+		} else if (v && typeof v.lines === "function") {
 			for (const l of v.lines(true)) {
 				yield l;
 			}
 		}
+		// Skip primitive values that don't have a lines method
 	}
-	yield "/* EOF */";
 }
 
 function* docs(...values) {
@@ -528,11 +537,11 @@ const cross = (...sets) =>
 	sets.reduce((r, v) =>
 		r
 			? (r instanceof Array ? r : [r]).flatMap((_) =>
-					(v instanceof Array ? v : [v]).map((w) => `${_}${w}`)
-			  )
+					(v instanceof Array ? v : [v]).map((w) => `${_}${w}`),
+				)
 			: v instanceof Array
-			? v
-			: [v]
+				? v
+				: [v],
 	);
 
 const percentages = [5, 10, 15, 20, 25, 33, 50, 66, 75, 80, 90, 100];

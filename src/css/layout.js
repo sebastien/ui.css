@@ -21,18 +21,18 @@ export default named({
 			display: "flex",
 			justify_content: "center",
 			align_items: "center",
-		})
+		}),
 	),
 	box: group(
 		rule(".bbox", { box_sizing: "border-box" }),
-		rule(".cbox", { box_sizing: "content-box" })
+		rule(".cbox", { box_sizing: "content-box" }),
 	),
 	blocks: group(
 		rule(".il", { display: "inline" }),
 		rule(".ibl", { display: "inline-block" }),
 		rule(".bl", { display: "block" }),
 		rule(".fl", { display: "flex" }),
-		rule(".ifl", { display: "inline-flex" })
+		rule(".ifl", { display: "inline-flex" }),
 	),
 	position: group(
 		rule(".sticky", { position: "sticky" }),
@@ -44,7 +44,7 @@ export default named({
 		rule(".to-l", l),
 		rule(".to-r", r),
 		rule(".to-t", t),
-		rule(".to-b", b)
+		rule(".to-b", b),
 	),
 	margin: group(
 		rule(".ma", { margin: "auto" }),
@@ -52,64 +52,64 @@ export default named({
 			rule([`.m-${k}`, `.m-${i}`], {
 				margin: `${vars.margin[i]}`,
 				__margin: `${vars.margin[i]}`,
-			})
+			}),
 		),
 		sizes.map((k, i) =>
 			rule([`.mt-${k}`, `.mt-${i}`], {
 				margin_top: `${vars.margin[i]}`,
-			})
+			}),
 		),
 		sizes.map((k, i) =>
 			rule([`.mb-${k}`, `.mb-${i}`], {
 				margin_bottom: `${vars.margin[i]}`,
-			})
+			}),
 		),
 		sizes.map((k, i) =>
 			rule([`.ml-${k}`, `.ml-${i}`], {
 				margin_left: `${vars.margin[i]}`,
-			})
+			}),
 		),
 		sizes.map((k, i) =>
 			rule([`.mr-${k}`, `.mr-${i}`], {
 				margin_right: `${vars.margin[i]}`,
-			})
-		)
+			}),
+		),
 	),
 	padding: group(
 		sizes.map((k, i) =>
 			rule([`.p-${k}`, `.p-${i}`], {
 				padding: `${vars.pad[i]}`,
 				__pad: `${vars.pad[i]}`,
-			})
+			}),
 		),
 		sizes.map((k, i) =>
 			rule([`.pt-${k}`, `.pt-${i}`], {
 				padding_top: `${vars.pad[i]}`,
-			})
+			}),
 		),
 		sizes.map((k, i) =>
 			rule([`.pb-${k}`, `.pb-${i}`], {
 				padding_bottom: `${vars.pad[i]}`,
-			})
+			}),
 		),
 		sizes.map((k, i) =>
 			rule([`.pl-${k}`, `.pl-${i}`], {
 				padding_left: `${vars.pad[i]}`,
-			})
+			}),
 		),
 		sizes.map((k, i) =>
 			rule([`.pr-${k}`, `.pr-${i}`], {
 				padding_right: `${vars.pad[i]}`,
-			})
-		)
+			}),
+		),
 	),
 	gap: group(
 		sizes.map((k, i) =>
 			rule([`.g-${k}`, `.g-${i}`], {
 				gap: `${vars.gap[i]}`,
 				__gap: `${vars.gap[i]}`,
-			})
-		)
+			}),
+		),
 	),
 	expand: group(
 		rule(".expand", {
@@ -130,7 +130,7 @@ export default named({
 			box_sizing: "border-box",
 			...t,
 			...b,
-		})
+		}),
 	),
 	container: rule(".container > *", {
 		min_width: "100%",
@@ -177,32 +177,32 @@ export default named({
 			min_width: "100vw",
 			width: "100vw",
 			max_width: "100vw",
-		})
+		}),
 	),
 	filling: group(
 		rule(".fill-screen", {
 			box_sizing: "border-box",
 			min_width: "100vw",
 			min_height: "100vh",
-		})
+		}),
 	),
 	limit: group(
 		...["text", "content", "page"].map((_) =>
-			rule(`.limit-${_}`, { max_width: `${vars.limit[_]}` })
+			rule(`.limit-${_}`, { max_width: `${vars.limit[_]}` }),
 		),
 		...times(3, (i) =>
-			rule(`.limit-0b`, { max_width: `${vars.limit.block[i]}` })
-		)
+			rule(`.limit-0b`, { max_width: `${vars.limit.block[i]}` }),
+		),
 	),
 	sizing: group(
 		named({
 			// TODO: Support min/max width
 			width: group(
 				...sizes.map((k, i) =>
-					rule(`.w-${k}`, { width: `${vars.size[i + 1]}` })
+					rule(`.w-${k}`, { width: `${vars.size[i + 1]}` }),
 				),
 				...sizes.map((k, i) =>
-					rule(`.h-${k}`, { height: `${vars.size[i + 1]}` })
+					rule(`.h-${k}`, { height: `${vars.size[i + 1]}` }),
 				),
 				rule(".w-screen", { width: "100vw" }),
 				rule(".h-screen", { width: "100vh" }),
@@ -218,34 +218,34 @@ export default named({
 					width: "auto",
 					min_width: "0px",
 					max_width: "unset",
-				})
+				}),
 			),
 			chars: group(
 				...times(10, (_) =>
 					rule(`.w-${_ + 1}ch`, {
 						width: `${Math.round(1.25 * (_ + 1))}ch`,
-					})
-				)
+					}),
+				),
 			),
 			columns: group(
 				...times(10, (_) =>
 					rule(`.w-${_ + 1}cl`, {
 						width: `calc(${vars.column.width}*${_ + 1})`,
-					})
-				)
+					}),
+				),
 			),
 
 			blocks: group(
 				...times(10, (_) =>
 					rule(`.w-${_ + 1}bl`, {
 						width: `calc(${vars.block.width}*${_ + 1})`,
-					})
+					}),
 				),
 				...times(10, (_) =>
 					rule(`.h-${_ + 1}bl`, {
 						width: `calc(${vars.block.width}*${_ + 1})`,
-					})
-				)
+					}),
+				),
 			),
 			percentage: group(
 				...percentages.map((p) =>
@@ -254,10 +254,10 @@ export default named({
 							p === 33
 								? "calc(100%/3)"
 								: p === 66
-								? "calc(100%*2/3)"
-								: `${p}%`
+									? "calc(100%*2/3)"
+									: `${p}%`
 						}`,
-					})
+					}),
 				),
 				...percentages.map((p) =>
 					rule(`.h-${p}p`, {
@@ -265,18 +265,18 @@ export default named({
 							p === 33
 								? "calc(100%/3)"
 								: p === 66
-								? "calc(100%*2/3)"
-								: `${p}%`
+									? "calc(100%*2/3)"
+									: `${p}%`
 						}`,
-					})
-				)
+					}),
+				),
 			),
-		})
+		}),
 	),
 	sticky: group(rule(".sticky", { position: "sticky", top: 0 })),
 	shapes: group(
 		rule(".square", { aspect_ratio: "1/1" }),
-		rule(".circle", { aspect_ratio: "1/1", border_radius: "50%" })
+		rule(".circle", { aspect_ratio: "1/1", border_radius: "50%" }),
 	),
 	row: group(
 		rule(".row", {
@@ -293,7 +293,7 @@ export default named({
 		}),
 		rule(".row.lined > *:last-child", {
 			border_right_width: "0px",
-		})
+		}),
 	),
 	stack: group(
 		rule(".stack", {
@@ -310,7 +310,7 @@ export default named({
 		}),
 		rule(".stack.lined > *:last-child", {
 			border_bottom_width: "0px",
-		})
+		}),
 	),
 	flex: group(
 		rule(".fill", {
@@ -330,7 +330,7 @@ export default named({
 		}),
 		rule([".row.stretch", ".stack.stretch"], {
 			align_items: "stretch",
-		})
+		}),
 	),
 	grid: group(
 		...times(7, (_) =>
@@ -338,8 +338,8 @@ export default named({
 				display: "grid",
 				grid_template_columns: `repeat(${_ + 1}, 1fr)`,
 				grid_column_gap: `${vars.gap}`,
-			})
-		)
+			}),
+		),
 	),
 	overflow: group(
 		rule(".overflow", {
@@ -349,6 +349,6 @@ export default named({
 		}),
 		rule([".nooverflow", ".noflow"], {
 			overflow: "hidden",
-		})
+		}),
 	),
 });

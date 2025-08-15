@@ -3,81 +3,85 @@ import defaults from "./defaults.js";
 const colors = [...Object.keys(defaults.palette)];
 const transparent = [5, 10, 15, 20, 25, 50, 75, 90];
 
-function* ivariants(color, prefix, values) {
+function* ivariants(color, prefix, property, values) {
 	for (let i = 0; i < values.length; i++) {
 		const scope = [`.${prefix}-${color}-${i}`];
 		if (i === 5) {
 			scope.splice(0, 0, `.${prefix}-${color}`);
 		}
-		yield rule(scope, { [`__color_${prefix}`]: values[i] });
+		yield rule(scope, { [`__${property}`]: values[i] });
 	}
 }
 
 export default group(
 	group(
-		rule(".bg", { background_color: `${vars.color.bg}` }),
-		rule(".fg", { color: `${vars.color.fg}` }),
-		rule(".bd", { border_color: `${vars.color.bd}` }),
-		rule(".ot", { outline_color: `${vars.color.ot}` }),
+		rule(".bg", { background_color: `${vars.background.color}` }),
+		rule(".fg", { color: `${vars.text.color}` }),
+		rule(".bd", { border_color: `${vars.border.color}` }),
+		rule(".ot", { outline_color: `${vars.outline.color}` }),
 
 		// NOTE: These can be used to fade the colors to transparency
 		...transparent.map((_) =>
 			group(
 				rule(`.bg-${_}p`, {
-					background_color: `color-mix(in ${vars.color.blend}, ${vars.color.bg} ${_}%, ${vars.color.pagea})`,
+					background_color: `color-mix(in ${vars.color.blend}, ${vars.bacground.color} ${_}%, ${vars.color.pagea})`,
 				}),
 				rule(`.fg-${_}p`, {
-					color: `color-mix(in ${vars.color.blend}, ${vars.color.fg} ${_}%, ${vars.color.pagea})`,
+					color: `color-mix(in ${vars.color.blend}, ${vars.text.color} ${_}%, ${vars.color.pagea})`,
 				}),
 				rule(`.bd-${_}p`, {
-					border_color: `color-mix(in ${vars.color.blend}, ${vars.color.bd} ${_}%, ${vars.color.pagea})`,
+					border_color: `color-mix(in ${vars.color.blend}, ${vars.border.color} ${_}%, ${vars.color.pagea})`,
 				}),
 				rule(`.ot-${_}p`, {
-					outline_color: `color-mix(in ${vars.color.blend}, ${vars.color.ol} ${_}%, ${vars.color.pagea})`,
-				})
-			)
+					outline_color: `color-mix(in ${vars.color.blend}, ${vars.outline.color} ${_}%, ${vars.color.pagea})`,
+				}),
+			),
 		),
 
 		// Resets
-		rule(".nobg", { __color_bg: `transparent` }),
-		rule(".nobd", { __color_bg: `transparent` }),
-		rule(".nofg", { __color_fg: `${vars.color.text}` }),
-		rule(".noot", { __color_ot: `${vars.color.text}` })
+		rule(".nobg", { __background_color: "transparent" }),
+		rule(".nobd", { __border_color: "transparent" }),
+		rule(".nofg", { __text_color: `${vars.color.fg}` }),
+		rule(".noot", { __outline_color: "transparent" }),
 	),
 	...colors.map((color) =>
 		group(
 			...ivariants(
 				color,
 				"bg",
-				defaults.palette[color] ?? defaults[color]
-			)
-		)
+				"background_color",
+				defaults.palette[color] ?? defaults[color],
+			),
+		),
 	),
 	...colors.map((color) =>
 		group(
 			...ivariants(
 				color,
 				"bd",
-				defaults.palette[color] ?? defaults[color]
-			)
-		)
+				"border_color",
+				defaults.palette[color] ?? defaults[color],
+			),
+		),
 	),
 	...colors.map((color) =>
 		group(
 			...ivariants(
 				color,
 				"fd",
-				defaults.palette[color] ?? defaults[color]
-			)
-		)
+				"text_color",
+				defaults.palette[color] ?? defaults[color],
+			),
+		),
 	),
 	...colors.map((color) =>
 		group(
 			...ivariants(
 				color,
 				"ot",
-				defaults.palette[color] ?? defaults[color]
-			)
-		)
-	)
+				"outline_color",
+				defaults.palette[color] ?? defaults[color],
+			),
+		),
+	),
 );
