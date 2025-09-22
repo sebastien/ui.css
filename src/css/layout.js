@@ -160,6 +160,12 @@ export default named({
 			min_height: "100%",
 			max_height: "100%",
 		}),
+		rule(".fit-min", {
+			width: "min-content",
+		}),
+		rule(".fit-max", {
+			width: "max-content",
+		}),
 		rule(".fit-page", {
 			max_width: vars.page.width,
 		}),
@@ -283,6 +289,9 @@ export default named({
 			display: "flex",
 			align_items: "center",
 			gap: `${vars.gap}`,
+		}),
+		rule(".row.stretch", {
+			align_items: "stretch",
 		}),
 		rule(".row.end", {
 			justify_content: "flex-end",

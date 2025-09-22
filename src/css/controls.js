@@ -154,6 +154,7 @@ export default named({
 			__button_active_fg: vars.button.fg,
 			__button_active_ot: vars.button.ot,
 			__button_padding: vars.button.padding,
+			__gap: vars.gap[2],
 			// Parametric Styling
 			border: `${vars.button.border.size} solid ${vars.button.bd}`,
 			outline: `0px solid ${vars.button.ot}`,
@@ -164,7 +165,7 @@ export default named({
 			height: vars.button.font.line,
 			font_weight: vars.button.font.weight,
 			font_size: vars.button.font.size,
-
+			gap: vars.gap,
 			// Fixed styling
 			cursor: "pointer",
 			padding: vars.controls.padding.regular,
@@ -228,6 +229,10 @@ export default named({
 		rule(["button.danger", ".button.danger"], {
 			__button_color_main: vars.color.danger,
 			__button_color_text: `color-mix(in oklab, ${vars.button.color.main}, ${vars.color.text} 30%)`,
+		}),
+		rule(["button.transparent", ".button.transparent"], {
+			__button_color_main: vars.color.transparent,
+			__button_color_text: vars.color.text,
 		}),
 		rule(["button.shadow", ".button.shadow"], {
 			box_shadow: `${vars.shadow.x} ${vars.shadow.y} ${vars.shadow.spread} ${vars.shadow.color}`,

@@ -71,7 +71,7 @@ export default group(
 		color: {
 			// White and black points
 			white: "#FFFFFF",
-			black: "#000000",
+			black: "#303641",
 			// These are the semantic colors
 			neutral: defaults.palette.gray[5],
 			primary: defaults.palette.blue[6],
@@ -188,7 +188,7 @@ export default group(
 			x: "2px",
 			y: "2px",
 			spread: "1px",
-			color: `color-mix(in oklab, ${vars.color.shadow}, ${vars.color.pagea} 92%)`,
+			color: `color-mix(in oklab, ${vars.color.shadow}, ${vars.color.pagea} 95%)`,
 		},
 		limit: {
 			text: "80ch",

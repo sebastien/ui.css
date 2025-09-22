@@ -11,9 +11,9 @@ export default {
 	tokens,
 	reset,
 	layout,
-	text,
 	controls,
 	// NOTE: Style should be the last
+	text,
 	style,
 	colors,
 	components,

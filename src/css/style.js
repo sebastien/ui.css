@@ -192,20 +192,26 @@ export default named({
 			__color_pagea: `${vars.color.lowa}`,
 			__color_text: `${vars.color.high}`,
 			__color_texta: `${vars.color.higha}`,
+			background_color: `${vars.color.page}`,
+			color: `${vars.color.text}`,
 		}),
 		rule(".m-light", {
 			__color_page: `${vars.color.high}`,
 			__color_pagea: `${vars.color.higha}`,
 			__color_text: `${vars.color.low}`,
 			__color_texta: `${vars.color.lowa}`,
+			background_color: `${vars.color.page}`,
+			color: `${vars.color.text}`,
 		}),
 		rule(".t-dark", {
 			__color_text: vars.color.high,
 			__color_texta: vars.color.higha,
+			color: `${vars.color.text}`,
 		}),
 		rule(".t-light", {
 			__color_text: vars.color.low,
 			__color_texta: vars.color.lowa,
+			color: `${vars.color.text}`,
 		}),
 	),
 });
