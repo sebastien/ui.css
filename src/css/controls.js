@@ -1,10 +1,12 @@
 import {
 	cross,
 	named,
+	dim,
 	rule,
 	group,
 	vars,
 	blended,
+	blend,
 	mods,
 } from "../js/littlecss.js";
 
@@ -18,40 +20,27 @@ export default named({
 		rule(".selectable", {
 			cursor: "pointer",
 			user_select: "none",
-			__selectable_inactive_bg: vars.color.neutral,
-			__selectable_active_bg: vars.color.secondary,
+			transition_properties:
+				"background-color,color,border-color,outline-color,opacity",
+			transition_duration: "150ms",
+			__selectable_color_active: blend(
+				vars.color.low,
+				vars.color.pagea,
+				0.25,
+			),
 		}),
 		rule([".selectable:hover", ".selectable.hover"], {
-			...blended(
-				"background-color",
-				vars.selectable.inactive.bg,
-				vars.color.pagea,
-				0.15,
-			),
+			background_color: dim(vars.selectable.color.active, 0.1),
 		}),
 		rule([".selectable.highlighted", ".selectable[data-highligted=true]"], {
-			...blended(
-				"background-color",
-				vars.selectable.active.bg,
-				vars.color.pagea,
-				0.15,
-			),
+			background_color: dim(vars.selectable.color.active, 0.2),
 		}),
-		rule(
-			[
-				".selectable:active",
-				".selectable.selected",
-				".selectable[data-selected=true]",
-			],
-			{
-				...blended(
-					"background-color",
-					vars.selectable.active.bg,
-					vars.color.pagea,
-					0.35,
-				),
-			},
-		),
+		rule([".selectable.selected", ".selectable[data-selected=true]"], {
+			background_color: dim(vars.selectable.color.active, 0.3),
+		}),
+		rule([".selectable:active", ".selectable.active"], {
+			background_color: dim(vars.selectable.color.active, 0.35),
+		}),
 	),
 	resizable: group(
 		rule(".resize-h", {
@@ -128,10 +117,22 @@ export default named({
 			// Buttons define a main color, and derive the colors automatically
 			// from the main color
 			__button_color_text: vars.color.text,
-			__button_color_main: vars.palette.neutral[3],
-			__button_color_hover: `color-mix(in oklab, ${vars.button.color.main}, ${vars.color.higha} 20%)`,
-			__button_color_focus: `color-mix(in oklab, ${vars.button.color.main}, ${vars.color.higha} 10%)`,
-			__button_color_active: `color-mix(in oklab, ${vars.button.color.main}, ${vars.color.lowa} 10%)`,
+			__button_color_main: blend(vars.color.low, vars.color.pagea, 0.25),
+			__button_color_hover: blend(
+				vars.button.color.main,
+				vars.color.higha,
+				0.2,
+			),
+			__button_color_focus: blend(
+				vars.button.color.main,
+				vars.color.higha,
+				0.1,
+			),
+			__button_color_active: blend(
+				vars.button.color.main,
+				vars.color.higha,
+				0.1,
+			),
 
 			// Inactive (default)
 			__button_bd: vars.button.color.main,
@@ -276,6 +277,12 @@ export default named({
 
 		rule(["button.icon", ".button.icon"], {
 			__button_bg: "transparent",
+			__button_ot: "transparent",
+			__button_focus_ot: "transparent",
+			// NOTE: Same factors as selectable
+			__button_hover_bg: dim(vars.button.color.main, 0.1),
+			__button_active_bg: dim(vars.button.color.main, 0.3),
+			__button_active_ot: dim(vars.button.color.main, 0.35),
 			padding: "0px",
 			min_width: "0px",
 			width: "min-content",
@@ -346,9 +353,17 @@ export default named({
 
 			// Define main color and derive others automatically
 			__selector_color_text: vars.color.text,
-			__selector_color_main: vars.palette.neutral[3],
-			__selector_color_hover: `lch(from ${vars.selector.color.main} clamp(0, calc(l - 10), 100) clamp(0, calc(c + 2), 150) clamp(0, calc(h - 2), 360))`,
-			__selector_color_active: `lch(from ${vars.selector.color.main} clamp(0, calc(l - 20), 100) clamp(0, calc(c + 4), 150) clamp(0, calc(h - 4), 360))`,
+			__selector_color_main: vars.background.color,
+			__selector_color_hover: blend(
+				vars.selector.color.main,
+				vars.color.low,
+				0.1,
+			),
+			__selector_color_active: blend(
+				vars.selector.color.main,
+				vars.color.low,
+				0.15,
+			),
 
 			// Default (unselected) - transparent background
 			__selector_bd: vars.selector.color.main,
@@ -357,7 +372,7 @@ export default named({
 
 			// Hover
 			__selector_hover_bd: vars.selector.color.hover,
-			__selector_hover_bg: `color-mix(in oklab, ${vars.selector.color.main}, ${vars.color.page} 85%)`,
+			__selector_hover_bg: vars.selector.color.hover,
 			__selector_hover_fg: vars.selector.fg,
 
 			// Selected
@@ -557,7 +572,7 @@ export default named({
 				"input.largest",
 				".input.largest",
 				"textarea.largest",
-				".textarew.largest",
+				".textarea.largest",
 			],
 			{
 				padding: vars.controls.padding.largest,
@@ -568,10 +583,11 @@ export default named({
 				"input.larger",
 				".input.larger",
 				"textarea.larger",
-				".textarew.larger",
+				".textarea.larger",
 			],
 			{
 				padding: vars.controls.padding.larger,
+				font_size: vars.controls.size.larger,
 			},
 		),
 		rule(
@@ -579,10 +595,11 @@ export default named({
 				"input.large",
 				".input.large",
 				"textarea.large",
-				".textarew.large",
+				".textarea.large",
 			],
 			{
 				padding: vars.controls.padding.large,
+				font_size: vars.controls.size.large,
 			},
 		),
 		rule(
@@ -590,10 +607,11 @@ export default named({
 				"input.small",
 				".input.small",
 				"textarea.small",
-				".textarew.small",
+				".textarea.small",
 			],
 			{
 				padding: vars.controls.padding.small,
+				font_size: vars.controls.size.small,
 			},
 		),
 		rule(
@@ -601,10 +619,11 @@ export default named({
 				"input.smaller",
 				".input.smaller",
 				"textarea.smaller",
-				".textarew.smaller",
+				".textarea.smaller",
 			],
 			{
 				padding: vars.controls.padding.smaller,
+				font_size: vars.controls.size.smaller,
 			},
 		),
 		rule(
@@ -612,10 +631,11 @@ export default named({
 				"input.smallest",
 				".input.smallest",
 				"textarea.smallest",
-				".textarew.smallest",
+				".textarea.smallest",
 			],
 			{
 				padding: vars.controls.padding.smallest,
+				font_size: vars.controls.size.smallest,
 			},
 		),
 		rule(

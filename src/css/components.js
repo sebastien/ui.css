@@ -12,6 +12,29 @@ import {
 import { inputs } from "./lib/tags.js";
 
 export default named({
+	breadcrumbs: group(
+		rule(".breadcrumbs", {
+			display: "inline-flex",
+			flex_wrap: "wrap",
+		}),
+		rule(".breadcrumbs > li", {
+			display: "fleX",
+			align_items: "center",
+		}),
+		rule(".breadcrumbs > li + ::before", {
+			content: '""',
+			opacity: 0.4,
+			border_top: "1px solid",
+			border_right: "1px solid",
+			width: ".375rem",
+			height: ".375rem",
+			margin_left: ".5rem",
+			margin_right: ".75rem",
+			display: "block",
+			rotate: "45deg",
+		}),
+	),
+
 	tree: group(
 		rule("details.tree", {
 			__tree_indent: "1em",
@@ -64,7 +87,7 @@ export default named({
 
 		rule("details.tree details details details details details", {
 			__tree_depth: 5,
-		})
+		}),
 	),
 
 	section: group(
@@ -107,6 +130,6 @@ export default named({
 
 		rule("details.section > *:not(summary)", {
 			padding: `${vars.pad[2]}`,
-		})
+		}),
 	),
 });

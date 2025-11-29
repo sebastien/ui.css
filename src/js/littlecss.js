@@ -39,10 +39,16 @@ const classes = (...values) => values.map((_) => `.${_}`);
 
 const percent = (v) => `${Math.round(v * 10000) / 100}%`;
 
+const blend = (color, other, percentage = 0.5) => {
+	return `color-mix(in oklab, ${color}, ${other} ${percent(percentage)})`;
+};
+
+const dim = (color, percentage = 0.5) => {
+	return `color-mix(in oklab, ${color}, transparent ${percent(1 - percentage)})`;
+};
+
 const blended = (name, color, other, percentage = 0.5, opacity = undefined) => {
-	const base = `color-mix(in oklab, ${color} ${percent(
-		percentage,
-	)}, ${other})`;
+	const base = blend(color, other, percentage);
 	name = name.replaceAll("_", "-");
 	const temp = `${name.startsWith("--") ? "" : "--"}${name}-base`;
 	return opacity
@@ -548,6 +554,8 @@ const percentages = [5, 10, 15, 20, 25, 33, 50, 66, 75, 80, 90, 100];
 export {
 	Vars,
 	blended,
+	blend,
+	dim,
 	classes,
 	cross,
 	css,

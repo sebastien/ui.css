@@ -1,4 +1,4 @@
-import { group, vars, rule } from "../js/littlecss.js";
+import { group, vars, blend, rule } from "../js/littlecss.js";
 import defaults from "./defaults.js";
 const colors = [...Object.keys(defaults.palette)];
 const transparent = [5, 10, 15, 20, 25, 50, 75, 90];
@@ -43,6 +43,46 @@ export default group(
 		rule(".nobd", { __border_color: "transparent" }),
 		rule(".nofg", { __text_color: `${vars.color.fg}` }),
 		rule(".noot", { __outline_color: "transparent" }),
+	),
+	group(
+		rule(".bg-darkest", {
+			background_color: blend(
+				vars.background.color,
+				vars.color.low,
+				0.15,
+			),
+		}),
+		rule(".bg-darker", {
+			background_color: blend(vars.background.color, vars.color.low, 0.1),
+		}),
+		rule(".bg-dark", {
+			background_color: blend(
+				vars.background.color,
+				vars.color.low,
+				0.05,
+			),
+		}),
+		rule(".bg-light", {
+			background_color: blend(
+				vars.background.color,
+				vars.color.high,
+				0.1,
+			),
+		}),
+		rule(".bg-lighter", {
+			background_color: blend(
+				vars.background.color,
+				vars.color.high,
+				0.15,
+			),
+		}),
+		rule(".bg-lightest", {
+			background_color: blend(
+				vars.background.color,
+				vars.color.high,
+				0.2,
+			),
+		}),
 	),
 	...colors.map((color) =>
 		group(

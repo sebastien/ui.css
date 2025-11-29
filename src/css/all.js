@@ -10,13 +10,13 @@ import components from "./components.js";
 export default {
 	tokens,
 	reset,
-	layout,
 	controls,
+	components,
 	// NOTE: Style should be the last
 	text,
-	style,
 	colors,
-	components,
+	layout,
+	style,
 	behavior,
 };
 // EOF

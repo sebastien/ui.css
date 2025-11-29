@@ -82,6 +82,9 @@ export default group(
 			warning: defaults.palette.yellow[4],
 			danger: defaults.palette.red[5],
 			error: defaults.palette.red[5],
+			// TODO: muted
+			// TODO: accent
+			// TODO: destructive
 			// FIXME: Now sure we need these two?
 			transparent: "#FFFFFF00",
 			transparentdk: "#00000000",
@@ -89,16 +92,20 @@ export default group(
 			// accent: vars.color.blue,
 			// focus: vars.color.grey,
 			// These would be switched for dark mode
-			high: vars.color.white,
-			low: vars.color.black,
+			background: vars.color.white,
+			foreground: vars.color.black,
+			// These are the main colors used in the UI
+			high: vars.color.background,
+			low: vars.color.foreground,
 			text: vars.color.low,
 			page: vars.color.high,
-			shadow: vars.color.black,
-			shadowa: `rgb(from ${vars.color.black} r g b / 0)`,
+			shadow: vars.color.low,
+			shadowa: `rgb(from ${vars.color.shadow} r g b / 0)`,
 
 			// Default blending mode
 			blend: "oklab",
 
+			// FIXME: I don't think these are working
 			// Variants with transparency for blending
 			higha: `color-mix(in ${vars.color.blend}, ${vars.color.high} 100%, transparent)`,
 			lowa: `color-mix(in ${vars.color.blend},  ${vars.color.low}  100%, transparent)`,
@@ -188,7 +195,7 @@ export default group(
 			x: "2px",
 			y: "2px",
 			spread: "1px",
-			color: `color-mix(in oklab, ${vars.color.shadow}, ${vars.color.pagea} 95%)`,
+			color: `color-mix(in oklab, ${vars.color.shadow}, transparent 95%)`,
 		},
 		limit: {
 			text: "80ch",
@@ -245,6 +252,15 @@ export default group(
 				small: "0.25em 0.5em",
 				smaller: "0.15em 0.35em",
 				smallest: "0.15em 0.15em",
+			},
+			size: {
+				smallest: vars.text.size[1],
+				smaller: vars.text.size[2],
+				small: vars.text.size[3],
+				regular: vars.text.size[4],
+				large: vars.text.size[5],
+				larger: vars.text.size[6],
+				largest: vars.text.size[7],
 			},
 		},
 	}),
