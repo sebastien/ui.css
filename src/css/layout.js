@@ -35,6 +35,12 @@ export default named({
 		rule(".ifl", { display: "inline-flex" }),
 	),
 	position: group(
+		rule(".cover", {
+			top: "0px",
+			left: "0px",
+			bottom: "0px",
+			right: "0px",
+		}),
 		rule(".sticky", { position: "sticky" }),
 		rule(".rel", { position: "relative" }),
 		rule(".abs", { position: "absolute" }),
@@ -45,6 +51,11 @@ export default named({
 		rule(".to-r", r),
 		rule(".to-t", t),
 		rule(".to-b", b),
+		rule(".to-s", { top: "100%" }),
+		rule(".to-n", { top: "0%" }),
+		rule(".to-e", { left: "0%" }),
+		rule(".to-w", { left: "100%" }),
+		rule(".to-hc", { left: "50%" }),
 	),
 	margin: group(
 		rule(".ma", { margin: "auto" }),

@@ -37,6 +37,7 @@ export default named({
 		rule(["p.t", ".t p"], {
 			margin_top: "0.75em",
 			margin_bottom: "0.75em",
+			min_height: "1.5em",
 		}),
 		rule(["p.t:first-child", ".t p:first-child"], {
 			margin_top: "unset",

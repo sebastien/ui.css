@@ -94,23 +94,24 @@ export default group(
 			// These would be switched for dark mode
 			background: vars.color.white,
 			foreground: vars.color.black,
+			// Page is the page background
+			page: vars.color.background,
 			// These are the main colors used in the UI
 			high: vars.color.background,
 			low: vars.color.foreground,
-			text: vars.color.low,
-			page: vars.color.high,
+			// Light and dark colors are typically less than high and low, they
+			// are used to darken or lighten elements
+			light: `color-mix(in ${vars.color.blend}, ${vars.color.page}, ${vars.color.background} 50%)`,
+			dark: `color-mix(in ${vars.color.blend}, ${vars.color.page}, ${vars.color.background} 50%)`,
 			shadow: vars.color.low,
 			shadowa: `rgb(from ${vars.color.shadow} r g b / 0)`,
-
 			// Default blending mode
 			blend: "oklab",
-
-			// FIXME: I don't think these are working
 			// Variants with transparency for blending
-			higha: `color-mix(in ${vars.color.blend}, ${vars.color.high} 100%, transparent)`,
-			lowa: `color-mix(in ${vars.color.blend},  ${vars.color.low}  100%, transparent)`,
-			texta: `color-mix(in ${vars.color.blend}, ${vars.color.text} 100%, transparent)`,
-			pagea: `color-mix(in ${vars.color.blend}, ${vars.color.page} 100%, transparent)`,
+			higha: `color-mix(in ${vars.color.blend}, ${vars.color.high}, transparent 100%)`,
+			lowa: `color-mix(in ${vars.color.blend},  ${vars.color.low}, transparent 100%)`,
+			texta: `color-mix(in ${vars.color.blend}, ${vars.color.text}, transparent 100%)`,
+			pagea: `color-mix(in ${vars.color.blend}, ${vars.color.page}, transparent 100%)`,
 
 			// These are used by default in the UI, note how they blend with
 			// the text.
@@ -124,6 +125,7 @@ export default group(
 	tokens({
 		background: {
 			color: `${vars.color.bg}`,
+			colora: `color-mix(in ${vars.color.blend}, ${vars.background.color}, transparent 100%)`,
 		},
 		border: {
 			color: `${vars.color.bd}`,

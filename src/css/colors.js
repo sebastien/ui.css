@@ -16,6 +16,7 @@ function* ivariants(color, prefix, property, values) {
 export default group(
 	group(
 		rule(".bg", { background_color: `${vars.background.color}` }),
+		rule(".bg-page", { __background_color: vars.color.page }),
 		rule(".fg", { color: `${vars.text.color}` }),
 		rule(".bd", { border_color: `${vars.border.color}` }),
 		rule(".ot", { outline_color: `${vars.outline.color}` }),
@@ -46,42 +47,22 @@ export default group(
 	),
 	group(
 		rule(".bg-darkest", {
-			background_color: blend(
-				vars.background.color,
-				vars.color.low,
-				0.15,
-			),
+			background_color: `oklch(from ${vars.background.color} calc(l * 0.91) c h)`,
 		}),
 		rule(".bg-darker", {
-			background_color: blend(vars.background.color, vars.color.low, 0.1),
+			background_color: `oklch(from ${vars.background.color} calc(l * 0.94) c h)`,
 		}),
 		rule(".bg-dark", {
-			background_color: blend(
-				vars.background.color,
-				vars.color.low,
-				0.05,
-			),
+			background_color: `oklch(from ${vars.background.color} calc(l * 0.97) c h)`,
 		}),
 		rule(".bg-light", {
-			background_color: blend(
-				vars.background.color,
-				vars.color.high,
-				0.1,
-			),
+			background_color: `oklch(from ${vars.background.color} calc(l * 1.03) c h)`,
 		}),
 		rule(".bg-lighter", {
-			background_color: blend(
-				vars.background.color,
-				vars.color.high,
-				0.15,
-			),
+			background_color: `oklch(from ${vars.background.color} calc(l * 1.06) c h)`,
 		}),
 		rule(".bg-lightest", {
-			background_color: blend(
-				vars.background.color,
-				vars.color.high,
-				0.2,
-			),
+			background_color: `oklch(from ${vars.background.color} calc(l * 1.09) c h)`,
 		}),
 	),
 	...colors.map((color) =>

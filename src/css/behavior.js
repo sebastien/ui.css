@@ -20,8 +20,12 @@ export default named({
 			},
 		),
 	),
+	summary: group(
+		rule("details .open-show", { display: "none" }),
+		rule("details:open .open-show", { display: "unset" }),
+	),
 	show: group(
-		rule(".hover .hover-show", { opacity: "0.0" }),
+		rule(".hovered .hover-show", { opacity: "0.0" }),
 		rule(
 			[
 				".hovered:focus .hover-show",

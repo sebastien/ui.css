@@ -23,23 +23,19 @@ export default named({
 			transition_properties:
 				"background-color,color,border-color,outline-color,opacity",
 			transition_duration: "150ms",
-			__selectable_color_active: blend(
-				vars.color.low,
-				vars.color.pagea,
-				0.25,
-			),
+			// FIXME: We really need colors to lighten/brighten
+			__selectable_color_hover: `oklch(from ${vars.background.color} calc(l * 0.9) c h / 0.5)`,
+			__selectable_color_selected: `oklch(from ${vars.background.color} calc(l * 0.85) c h / 0.5)`,
+			__selectable_color_active: `oklch(from ${vars.background.color} calc(l * 0.8) c h / 0.5)`,
 		}),
 		rule([".selectable:hover", ".selectable.hover"], {
-			background_color: dim(vars.selectable.color.active, 0.1),
-		}),
-		rule([".selectable.highlighted", ".selectable[data-highligted=true]"], {
-			background_color: dim(vars.selectable.color.active, 0.2),
+			background_color: vars.selectable.color.hover,
 		}),
 		rule([".selectable.selected", ".selectable[data-selected=true]"], {
-			background_color: dim(vars.selectable.color.active, 0.3),
+			background_color: vars.selectable.color.selected,
 		}),
 		rule([".selectable:active", ".selectable.active"], {
-			background_color: dim(vars.selectable.color.active, 0.35),
+			background_color: vars.selectable.color.active,
 		}),
 	),
 	resizable: group(
@@ -120,17 +116,17 @@ export default named({
 			__button_color_main: blend(vars.color.low, vars.color.pagea, 0.25),
 			__button_color_hover: blend(
 				vars.button.color.main,
-				vars.color.higha,
+				vars.color.high,
 				0.2,
 			),
 			__button_color_focus: blend(
 				vars.button.color.main,
-				vars.color.higha,
+				vars.color.high,
 				0.1,
 			),
 			__button_color_active: blend(
 				vars.button.color.main,
-				vars.color.higha,
+				vars.color.high,
 				0.1,
 			),
 
@@ -178,6 +174,20 @@ export default named({
 			transition_property:
 				"border-width,border-color,background,color,transform,box-shadow,outline-width,outline-color",
 			transition_duration: "0.1s",
+		}),
+		rule(["button.icon", ".button.icon"], {
+			__button_color_main: vars.color.background,
+			__button_bg: "transparent",
+			__button_ot: "transparent",
+			__button_focus_ot: "transparent",
+			// NOTE: Same factors as selectable
+			__button_hover_bg: `oklch(from ${vars.button.color.main} calc(l * 0.9) c h / 0.35)`,
+			__button_active_bg: `oklch(from ${vars.button.color.main} calc(l * 0.8) c h / 0.45)`,
+			__button_active_ot: `oklch(from ${vars.button.color.main} calc(l * 0.8) c h / 0.15)`,
+			padding: "0px",
+			min_width: "0px",
+			width: "min-content",
+			border_width: "0px",
 		}),
 		rule(["button.largest", ".button.largest"], {
 			padding: vars.controls.padding.largest,
@@ -275,19 +285,6 @@ export default named({
 			__button_active_bg: `color-mix(in ${vars.color.blend}, ${vars.color.pagea}, ${vars.color.white} 50%)`,
 		}),
 
-		rule(["button.icon", ".button.icon"], {
-			__button_bg: "transparent",
-			__button_ot: "transparent",
-			__button_focus_ot: "transparent",
-			// NOTE: Same factors as selectable
-			__button_hover_bg: dim(vars.button.color.main, 0.1),
-			__button_active_bg: dim(vars.button.color.main, 0.3),
-			__button_active_ot: dim(vars.button.color.main, 0.35),
-			padding: "0px",
-			min_width: "0px",
-			width: "min-content",
-			border_width: "0px",
-		}),
 		rule(mods(["button", ".button"], "focus", "focus-within"), {
 			background_color: vars.button.focus.bg,
 			color: vars.button.focus.fg,
@@ -511,16 +508,37 @@ export default named({
 			__input_border_size: "1px",
 			__input_outline_size: "3px",
 			__input_color_text: vars.color.text,
-			__input_color_main: vars.palette.neutral[3],
-			__input_color_hover: `color-mix(in oklab, ${vars.input.color.main}, ${vars.color.higha} 20%)`,
-			__input_color_focus: `color-mix(in oklab, ${vars.input.color.main}, ${vars.color.higha} 10%)`,
-			__input_color_active: `color-mix(in oklab, ${vars.input.color.main}, ${vars.color.lowa} 10%)`,
+			__input_color_main: blend(
+				vars.color.low,
+				vars.color.background,
+				0.25,
+			),
+			__input_color_hover: blend(
+				vars.input.color.main,
+				vars.color.high,
+				0.2,
+			),
+			__input_color_focus: blend(
+				vars.input.color.main,
+				vars.color.high,
+				0.1,
+			),
+			__input_color_active: blend(
+				vars.input.color.main,
+				vars.color.high,
+				0.1,
+			),
 			__input_gap: vars.gap[2],
 			// Inactive (default)
 			__input_fg: vars.input.color.text,
-			__input_bg: `color-mix(in oklab, ${vars.input.color.page}, ${vars.color.pagea} 50%)`,
+			__input_bg: blend(vars.color.high, vars.color.background, 0.25),
 			__input_bd: vars.input.color.main,
-			__input_ot: `color-mix(in oklab, ${vars.input.color.main}, ${vars.color.pagea} 10%)`,
+			__input_ot: blend(
+				vars.color.low,
+				vars.color.background,
+				0.25,
+				0.15,
+			),
 			// Focus
 			__input_focus_fg: vars.input.fg,
 			__input_focus_bd: vars.input.bd,
@@ -744,7 +762,12 @@ export default named({
 		// Overrides
 		rule(
 			mods(
-				[".noinput"],
+				[
+					"input.noinput",
+					".input.noinput",
+					"textarea.noinput",
+					".textarea.noinput",
+				],
 				null,
 				"focus",
 				"focus-within",
@@ -759,9 +782,17 @@ export default named({
 				padding: "0px",
 			},
 		),
-		rule([".input.nopad", "input.nopad"], {
-			padding: "0em",
-		}),
+		rule(
+			[
+				"input.nopad",
+				".input.nopad",
+				"textarea.nopad",
+				".textarea.nopad",
+			],
+			{
+				padding: "0em",
+			},
+		),
 	),
 	// ------------------------------------------------------------------------
 	//

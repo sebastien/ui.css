@@ -55,10 +55,19 @@ export default named({
 		rule(".dim", { opacity: vars.opacity.dim }),
 		rule(".dimmer", { opacity: vars.opacity.dimmer }),
 		rule(".dimmest", { opacity: vars.opacity.dimmest }),
+		rule(".bg-dim", {
+			background_color: `oklch(from ${vars.color.background} l c h/ ${vars.opacity.dim})`,
+		}),
+		rule(".bg-dimmer", {
+			background_color: `oklch(from ${vars.color.background} l c h/ ${vars.opacity.dimmer})`,
+		}),
+		rule(".bg-dimmest", {
+			background_color: `oklch(from ${vars.color.background} l c h/ ${vars.opacity.dimmest})`,
+		}),
 	),
 	visibility: group(
 		rule(".skip", { display: "none !important" }),
-		rule(".invisible", { visibility: "hidden !important" }),
+		rule(".invisible", { opacity: "0 !important" }),
 		rule(".hidden", { visibility: "hidden !important" }),
 	),
 	rounding: group(
