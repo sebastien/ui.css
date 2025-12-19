@@ -213,7 +213,7 @@ export default group(
 			unit: "calc( (1rem/16) * var(--page-base) / 16)",
 		},
 		text: {
-			color: `${vars.color.fg}`,
+			color: `${vars.color.text}`,
 			min: 9,
 			max: 22,
 			unit: "var(--page-unit)",

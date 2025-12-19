@@ -530,9 +530,9 @@ export default named({
 			),
 			__input_gap: vars.gap[2],
 			// Inactive (default)
-			__input_fg: vars.input.color.text,
+			__input_fg: vars.input.text.color,
 			__input_bg: blend(vars.color.high, vars.color.background, 0.25),
-			__input_bd: vars.input.color.main,
+			__input_bd: vars.input.border.color,
 			__input_ot: blend(
 				vars.color.low,
 				vars.color.background,

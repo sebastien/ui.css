@@ -36,6 +36,7 @@ export default named({
 	),
 	position: group(
 		rule(".cover", {
+			position: "absolute",
 			top: "0px",
 			left: "0px",
 			bottom: "0px",

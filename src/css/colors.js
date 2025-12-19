@@ -3,6 +3,19 @@ import defaults from "./defaults.js";
 const colors = [...Object.keys(defaults.palette)];
 const transparent = [5, 10, 15, 20, 25, 50, 75, 90];
 
+const COLOR_NAMES = [
+	"white",
+	"black",
+	"neutral",
+	"primary",
+	"secondary",
+	"tertiary",
+	"success",
+	"info",
+	"warning",
+	"danger",
+	"error",
+];
 function* ivariants(color, prefix, property, values) {
 	for (let i = 0; i < values.length; i++) {
 		const scope = [`.${prefix}-${color}-${i}`];
@@ -16,11 +29,31 @@ function* ivariants(color, prefix, property, values) {
 export default group(
 	group(
 		rule(".bg", { background_color: `${vars.background.color}` }),
-		rule(".bg-page", { __background_color: vars.color.page }),
 		rule(".fg", { color: `${vars.text.color}` }),
 		rule(".bd", { border_color: `${vars.border.color}` }),
 		rule(".ot", { outline_color: `${vars.outline.color}` }),
-
+		group(
+			...COLOR_NAMES.map((color) =>
+				rule(`.bg-${color}`, {
+					__background_color: `${vars.color[color]}`,
+				}),
+			),
+			...COLOR_NAMES.map((color) =>
+				rule(`.fg-${color}`, {
+					__text_color: `${vars.color[color]}`,
+				}),
+			),
+			...COLOR_NAMES.map((color) =>
+				rule(`.bd-${color}`, {
+					__border_color: `${vars.color[color]}`,
+				}),
+			),
+			...COLOR_NAMES.map((color) =>
+				rule(`.ot-${color}`, {
+					__outline_color: `${vars.color[color]}`,
+				}),
+			),
+		),
 		// NOTE: These can be used to fade the colors to transparency
 		...transparent.map((_) =>
 			group(
