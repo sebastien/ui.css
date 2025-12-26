@@ -45,6 +45,18 @@ export default named({
 		rule(["p.t:last-child", ".t p:last-child"], {
 			margin_bottom: "unset",
 		}),
+		rule([".t code", "code.t"], {
+			font_family: vars.font.code.family,
+		}),
+		rule([".t em", "em.t"], {
+			font_style: "italic",
+		}),
+		rule([".t s", "s.t"], {
+			text_decoration: "strikethrough",
+		}),
+		rule([".t strong", "strong.t"], {
+			font_weight: "bold",
+		}),
 		rule(["ul.t", "ol.t", "dl.t", ".t ul", ".t ol", ".t dl"], {
 			margin_top: "0.75em",
 			margin_bottom: "1.5em",
