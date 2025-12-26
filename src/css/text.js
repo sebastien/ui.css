@@ -52,10 +52,56 @@ export default named({
 			font_style: "italic",
 		}),
 		rule([".t s", "s.t"], {
-			text_decoration: "strikethrough",
+			text_decoration: "line-through",
 		}),
 		rule([".t strong", "strong.t"], {
 			font_weight: "bold",
+		}),
+		// Inline formats
+		rule([".t a", "a.t"], {
+			color: "inherit",
+			text_decoration: "underline",
+		}),
+		rule([".t a:hover", "a.t:hover"], {
+			opacity: 0.75,
+		}),
+		rule([".t sub", "sub.t"], {
+			vertical_align: "sub",
+			font_size: "0.75em",
+		}),
+		rule([".t sup", "sup.t"], {
+			vertical_align: "super",
+			font_size: "0.75em",
+		}),
+		rule([".t u", "u.t"], {
+			text_decoration: "underline",
+		}),
+		// Block formats
+		rule([".t blockquote", "blockquote.t"], {
+			border_left: "4px solid",
+			border_color: "currentColor",
+			margin_left: "0",
+			margin_right: "0",
+			margin_top: "0.75em",
+			margin_bottom: "0.75em",
+			padding_left: "1em",
+			padding_top: "0.25em",
+			padding_bottom: "0.25em",
+			opacity: 0.85,
+		}),
+		rule([".t pre", "pre.t"], {
+			font_family: vars.font.code.family,
+			background: "rgba(128, 128, 128, 0.1)",
+			border_radius: "4px",
+			margin_top: "0.75em",
+			margin_bottom: "0.75em",
+			padding: "0.75em 1em",
+			overflow_x: "auto",
+			white_space: "pre",
+		}),
+		rule([".t pre code", "pre.t code"], {
+			background: "transparent",
+			padding: "0",
 		}),
 		rule(["ul.t", "ol.t", "dl.t", ".t ul", ".t ol", ".t dl"], {
 			margin_top: "0.75em",
@@ -121,6 +167,21 @@ export default named({
 		rule(".upper", { text_transform: "uppercase" }),
 		rule(".lower", { text_transform: "lowercase" }),
 		rule(".cap", { text_transform: "capitalize" }),
+	),
+	alignment: group(
+		rule(".t-center", { text_align: "center" }),
+		rule(".t-right", { text_align: "right" }),
+		rule(".t-left", { text_align: "left" }),
+		rule(".t-justify", { text_align: "justify" }),
+	),
+	direction: group(
+		rule(".t-rtl", {
+			direction: "rtl",
+			text_align: "inherit",
+		}),
+		rule(".t-ltr", {
+			direction: "ltr",
+		}),
 	),
 	delimiter: group(
 		rule(".sep-path>*:after", { content: '"/"' }),
