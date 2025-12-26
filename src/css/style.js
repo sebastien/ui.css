@@ -174,7 +174,6 @@ export default named({
 			background_color: `${vars.color.bg}`,
 		}),
 	),
-	transparent: group(rule(".transparent", { color: "transparent" })),
 	depth: group(
 		rule(mods([".inset"], undefined, "focus", "hover", "active"), {
 			__inset_shadow: `color-mix(in ${vars.color.blend}, ${vars.color.shadow}, transparent 90%)`,

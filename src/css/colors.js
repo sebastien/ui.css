@@ -73,29 +73,60 @@ export default group(
 		),
 
 		// Resets
-		rule(".nobg", { __background_color: "transparent" }),
-		rule(".nobd", { __border_color: "transparent" }),
-		rule(".nofg", { __text_color: `${vars.color.fg}` }),
-		rule(".noot", { __outline_color: "transparent" }),
+		rule(".bg-no", { __background_color: "transparent" }),
+		rule(".bd-no", { __border_color: "transparent" }),
+		rule(".fg-no", { __text_color: "transparent" }),
+		rule(".ot-no", { __outline_color: "transparent" }),
+		rule(".nobg", { background_color: "transparent" }),
+		rule(".nobd", { border_color: "transparent" }),
+		rule(".nofg", { text_color: "transparent" }),
+		rule(".noot", { outline_color: "transparent" }),
 	),
 	group(
+		// FIXME: This is the only way I managed to get the selectable to work as a contrast
 		rule(".bg-darkest", {
 			background_color: `oklch(from ${vars.background.color} calc(l * 0.91) c h)`,
+			__color_background: `oklch(from ${vars.background.color} calc(l * 0.91) c h)`,
 		}),
 		rule(".bg-darker", {
 			background_color: `oklch(from ${vars.background.color} calc(l * 0.94) c h)`,
+			__color_background: `oklch(from ${vars.background.color} calc(l * 0.94) c h)`,
 		}),
 		rule(".bg-dark", {
 			background_color: `oklch(from ${vars.background.color} calc(l * 0.97) c h)`,
+			__color_background: `oklch(from ${vars.background.color} calc(l * 0.97) c h)`,
 		}),
 		rule(".bg-light", {
 			background_color: `oklch(from ${vars.background.color} calc(l * 1.03) c h)`,
+			__color_background: `oklch(from ${vars.background.color} calc(l * 1.03) c h)`,
 		}),
 		rule(".bg-lighter", {
 			background_color: `oklch(from ${vars.background.color} calc(l * 1.06) c h)`,
+			__color_background: `oklch(from ${vars.background.color} calc(l * 1.06) c h)`,
 		}),
 		rule(".bg-lightest", {
 			background_color: `oklch(from ${vars.background.color} calc(l * 1.09) c h)`,
+			__color_background: `oklch(from ${vars.background.color} calc(l * 1.06) c h)`,
+		}),
+	),
+	group(
+		rule(".bd-darkest", {
+			border_color: `oklch(from ${vars.border.color} calc(l * 0.91) c h)`,
+		}),
+		rule(".bd-darker", {
+			border_color: `oklch(from ${vars.border.color} calc(l * 0.94) c h)`,
+		}),
+		rule(".bd-dark", {
+			border_color: `oklch(from ${vars.border.color} calc(l * 0.97) c h)`,
+		}),
+		rule(".bd-light", {
+			border_color: `oklch(from ${vars.border.color} calc(l * 1.03) c h)`,
+		}),
+		rule(".bd-lighter", {
+			border_color: `oklch(from ${vars.border.color} calc(l * 1.06) c h)`,
+		}),
+		rule(".bd-lightest", {
+			border_color: `oklch(from ${vars.border.color} calc(l * 1.09) c h)`,
 		}),
 	),
 	...colors.map((color) =>

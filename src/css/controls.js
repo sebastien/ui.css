@@ -10,6 +10,15 @@ import {
 	mods,
 } from "../js/littlecss.js";
 
+function hover(...args) {
+	const res = [];
+	for (const a of args) {
+		res.push(`${a}:hover`);
+		res.push(`${a}.hover`);
+	}
+	return res;
+}
+
 export default named({
 	// ------------------------------------------------------------------------
 	//
@@ -23,12 +32,13 @@ export default named({
 			transition_properties:
 				"background-color,color,border-color,outline-color,opacity",
 			transition_duration: "150ms",
-			// FIXME: We really need colors to lighten/brighten
-			__selectable_color_hover: `oklch(from ${vars.background.color} calc(l * 0.9) c h / 0.5)`,
-			__selectable_color_selected: `oklch(from ${vars.background.color} calc(l * 0.85) c h / 0.5)`,
-			__selectable_color_active: `oklch(from ${vars.background.color} calc(l * 0.8) c h / 0.5)`,
+			// NOTE: Should be same as button.icon
+			__selectable_color_main: vars.color.background,
+			__selectable_color_hover: `oklch(from ${vars.selectable.color.main} calc(l * 0.9) c h / 0.35)`,
+			__selectable_color_active: `oklch(from ${vars.selectable.color.main} calc(l * 0.9) c h / 0.45)`,
+			__selectable_color_selected: `oklch(from ${vars.selectable.color.main} calc(l * 0.9) c h / 0.55)`,
 		}),
-		rule([".selectable:hover", ".selectable.hover"], {
+		rule(hover(".selectable"), {
 			background_color: vars.selectable.color.hover,
 		}),
 		rule([".selectable.selected", ".selectable[data-selected=true]"], {
@@ -76,7 +86,7 @@ export default named({
 			border_radius: `2lh`,
 			background_color: `color-mix(in oklab, ${vars.pill.inactive.bg} 0%, ${vars.color.page})`,
 		}),
-		rule([".pill:hover", ".pill.hover"], {
+		rule(hover(".pill"), {
 			background_color: `color-mix(in oklab, ${vars.pill.inactive.bg} 50%, ${vars.color.page})`,
 		}),
 		rule(".pill.selected", {
@@ -85,7 +95,7 @@ export default named({
 		rule(".pill.transparent", {
 			background_color: "transparent",
 		}),
-		rule([".pill.transparent:hover", ".pill.transparent.hover"], {
+		rule(hover(".pill.transparent"), {
 			background_color: `color-mix(in oklab, ${vars.pill.active.bg} 5%, ${vars.color.page})`,
 		}),
 		rule(".pill.transparent.selected", {
@@ -184,7 +194,8 @@ export default named({
 			__button_hover_bg: `oklch(from ${vars.button.color.main} calc(l * 0.9) c h / 0.35)`,
 			__button_active_bg: `oklch(from ${vars.button.color.main} calc(l * 0.8) c h / 0.45)`,
 			__button_active_ot: `oklch(from ${vars.button.color.main} calc(l * 0.8) c h / 0.15)`,
-			padding: "0px",
+			__padding: "4px",
+			padding: vars.padding,
 			min_width: "0px",
 			width: "min-content",
 			border_width: "0px",
@@ -292,7 +303,7 @@ export default named({
 			outline_color: vars.button.focus.ot,
 			outline_width: vars.button.outline.size,
 		}),
-		rule(mods(["button", ".button"], "hover"), {
+		rule(hover("button", ".button"), {
 			background_color: vars.button.hover.bg,
 			color: vars.button.hover.fg,
 			border_color: vars.button.hover.bd,
@@ -416,7 +427,7 @@ export default named({
 			margin_left: "0",
 		}),
 
-		rule(mods([".selector > li", ".selector > .item"], "hover"), {
+		rule(hover(".selector > li", ".selector > .item"), {
 			background_color: vars.selector.hover.bg,
 			color: vars.selector.hover.fg,
 			border_color: vars.selector.hover.bd,
@@ -670,7 +681,7 @@ export default named({
 				outline_width: vars.input.outline.size,
 			},
 		),
-		rule(mods(["input", ".input", "textarea", ".textarea"], "hover"), {
+		rule(hover("input", ".input", "textarea", ".textarea"), {
 			background_color: vars.input.hover.bg,
 			color: vars.input.hover.fg,
 			border_color: vars.input.hover.bd,
@@ -854,7 +865,7 @@ export default named({
 			transform: "translateX(0)",
 		}),
 
-		rule([".toggle:hover", ".toggle.hover"], {
+		rule(hover(".toggle"), {
 			background: `color-mix(in oklab, ${vars.toggle.track.bg}, ${vars.toggle.color.hover} 15%)`,
 		}),
 

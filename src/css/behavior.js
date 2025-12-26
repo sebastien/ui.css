@@ -13,7 +13,7 @@ export default named({
 				".hover-undim:hover",
 				".hover-undim:focus",
 				".hover-undim:focus-within",
-			],
+			].map((_) => `body.no-hover ${_}`),
 			{
 				opacity: "1.0",
 				transition: "opacity 0.2s ease-in-out",
@@ -34,7 +34,7 @@ export default named({
 				".hover-show:hover",
 				".hover-show:focus",
 				".hover-show:focus-within",
-			],
+			].map((_) => `body:not(.no-hover) ${_}`),
 			{
 				opacity: "1.0",
 				transition: "opacity 0.2s ease-in-out",
@@ -49,20 +49,30 @@ export default named({
 				".hover-show:hover",
 				".hover-show:focus",
 				".hover-show:focus-within",
-			],
+			].map((_) => `body:not(.no-hover) ${_}`),
 			{
 				visibility: "visible",
 			},
 		),
 		rule(".hovered .when-hovered", { display: "none" }),
-		rule(".hovered:hover .when-hovered", { display: "unset" }),
-		rule(".hovered:hover .when-not-hovered", { display: "none" }),
+		rule("body:not(.no-hover) .hovered:hover .when-hovered", {
+			display: "unset",
+		}),
+		rule("body:not(.no-hover) .hovered:hover .when-not-hovered", {
+			display: "none",
+		}),
 	),
 	shift: group(
 		rule(".hover-dx", { transition: "transform 0.1s" }),
-		rule([".hover-dx:hover", ".hovered:hover .hover-dx"], {
-			transform: "translateX(20%)",
-		}),
+		rule(
+			[
+				"body:not(.no-hover) .hover-dx:hover",
+				"body:not(.no-hover) .hovered:hover .hover-dx",
+			],
+			{
+				transform: "translateX(20%)",
+			},
+		),
 	),
 });
 // EOF
