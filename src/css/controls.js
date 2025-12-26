@@ -5,8 +5,6 @@ import {
 	rule,
 	group,
 	vars,
-	blended,
-	blend,
 	mods,
 } from "../js/littlecss.js";
 
@@ -29,31 +27,85 @@ export default named({
 		rule(".selectable", {
 			cursor: "pointer",
 			user_select: "none",
-			transition_properties:
+			transition_property:
 				"background-color,color,border-color,outline-color,opacity",
 			transition_duration: "150ms",
-			// NOTE: Should be same as button.icon
+			// Define main color and derive others using oklch (consistent with button/input/pill)
 			__selectable_color_main: vars.color.background,
 			__selectable_color_hover: `oklch(from ${vars.selectable.color.main} calc(l * 0.9) c h / 0.35)`,
-			__selectable_color_active: `oklch(from ${vars.selectable.color.main} calc(l * 0.9) c h / 0.45)`,
-			__selectable_color_selected: `oklch(from ${vars.selectable.color.main} calc(l * 0.9) c h / 0.55)`,
+			__selectable_color_focus: `oklch(from ${vars.selectable.color.main} calc(l * 0.9) c h / 0.25)`,
+			__selectable_color_active: `oklch(from ${vars.selectable.color.main} calc(l * 0.85) c h / 0.45)`,
+			__selectable_color_selected: `oklch(from ${vars.selectable.color.main} calc(l * 0.85) c h / 0.55)`,
 		}),
 		rule(hover(".selectable"), {
 			background_color: vars.selectable.color.hover,
 		}),
+		rule(
+			[
+				".selectable:focus",
+				".selectable:focus-within",
+				".selectable.focus",
+			],
+			{
+				background_color: vars.selectable.color.focus,
+				outline: `2px solid ${vars.selectable.color.main}`,
+				outline_offset: "1px",
+			},
+		),
 		rule([".selectable.selected", ".selectable[data-selected=true]"], {
 			background_color: vars.selectable.color.selected,
 		}),
 		rule([".selectable:active", ".selectable.active"], {
 			background_color: vars.selectable.color.active,
 		}),
-	),
-	resizable: group(
-		rule(".resize-h", {
-			cursor: "col-resize",
-			user_select: "none",
+		rule([".selectable:disabled", ".selectable.disabled"], {
+			opacity: 0.5,
+			cursor: "not-allowed",
+			pointer_events: "none",
+		}),
+		// Color variants - override main color like button/selector
+		rule(".selectable.primary", {
+			__selectable_color_main: vars.color.primary,
+		}),
+		rule(".selectable.secondary", {
+			__selectable_color_main: vars.color.secondary,
+		}),
+		rule(".selectable.tertiary", {
+			__selectable_color_main: vars.color.tertiary,
+		}),
+		rule(".selectable.success", {
+			__selectable_color_main: vars.color.success,
+		}),
+		rule(".selectable.info", {
+			__selectable_color_main: vars.color.info,
+		}),
+		rule(".selectable.warning", {
+			__selectable_color_main: vars.color.warning,
+		}),
+		rule(".selectable.danger", {
+			__selectable_color_main: vars.color.danger,
+		}),
+		// Size variants - use controls.padding like button/input
+		rule(".selectable.largest", {
+			padding: vars.controls.padding.largest,
+		}),
+		rule(".selectable.larger", {
+			padding: vars.controls.padding.larger,
+		}),
+		rule(".selectable.large", {
+			padding: vars.controls.padding.large,
+		}),
+		rule(".selectable.small", {
+			padding: vars.controls.padding.small,
+		}),
+		rule(".selectable.smaller", {
+			padding: vars.controls.padding.smaller,
+		}),
+		rule(".selectable.smallest", {
+			padding: vars.controls.padding.smallest,
 		}),
 	),
+
 	action: group(
 		rule(".action", {
 			cursor: "pointer",
@@ -72,34 +124,79 @@ export default named({
 			gap: `${vars.gap}`,
 		}),
 		rule(".pill", {
-			// TODO: Redo these following buttons
-			__pill_inactive_bd: vars.color.neutral,
-			__pill_inactive_bg: vars.color.neutral,
-			__pill_active_bd: vars.border.color,
-			__pill_active_bg: vars.color.neutral,
+			// Define main color and derive others using oklch (consistent with button/input/selectable)
+			__pill_color_main: vars.color.neutral,
+			__pill_color_hover: `oklch(from ${vars.pill.color.main} calc(l * 0.9) c h / 0.35)`,
+			__pill_color_active: `oklch(from ${vars.pill.color.main} calc(l * 0.85) c h / 0.45)`,
+			__pill_color_selected: `oklch(from ${vars.pill.color.main} calc(l * 0.85) c h / 0.55)`,
+			// State colors
+			__pill_bd: vars.pill.color.main,
+			__pill_bg: "transparent",
+			__pill_fg: vars.color.text,
+			// Hover
+			__pill_hover_bd: vars.pill.color.main,
+			__pill_hover_bg: vars.pill.color.hover,
+			__pill_hover_fg: vars.pill.fg,
+			// Selected
+			__pill_selected_bd: vars.pill.color.main,
+			__pill_selected_bg: vars.pill.color.selected,
+			__pill_selected_fg: vars.pill.fg,
+			// Active
+			__pill_active_bd: vars.pill.color.main,
+			__pill_active_bg: vars.pill.color.active,
+			__pill_active_fg: vars.pill.fg,
+			// Styling
 			display: "inline-flex",
 			cursor: "pointer",
-			border: `${vars.border.width} solid ${vars.color.pill.bd}`,
+			user_select: "none",
+			border: `${vars.border.width} solid ${vars.pill.bd}`,
+			background_color: vars.pill.bg,
+			color: vars.pill.fg,
 			padding: `${vars.pad[0]} ${vars.pad[2]}`,
-			transition_properties: "color,border-color,background-color",
+			transition_property: "color,border-color,background-color",
 			transition_duration: "150ms",
 			border_radius: `2lh`,
-			background_color: `color-mix(in oklab, ${vars.pill.inactive.bg} 0%, ${vars.color.page})`,
 		}),
 		rule(hover(".pill"), {
-			background_color: `color-mix(in oklab, ${vars.pill.inactive.bg} 50%, ${vars.color.page})`,
+			background_color: vars.pill.hover.bg,
+			border_color: vars.pill.hover.bd,
+			color: vars.pill.hover.fg,
 		}),
-		rule(".pill.selected", {
-			background_color: `color-mix(in oklab, ${vars.pill.active.bg} 100%, ${vars.color.page})`,
+		rule([".pill.selected", ".pill[data-selected=true]"], {
+			background_color: vars.pill.selected.bg,
+			border_color: vars.pill.selected.bd,
+			color: vars.pill.selected.fg,
 		}),
-		rule(".pill.transparent", {
-			background_color: "transparent",
+		rule([".pill:active", ".pill.active"], {
+			background_color: vars.pill.active.bg,
+			border_color: vars.pill.active.bd,
+			color: vars.pill.active.fg,
 		}),
-		rule(hover(".pill.transparent"), {
-			background_color: `color-mix(in oklab, ${vars.pill.active.bg} 5%, ${vars.color.page})`,
+		rule([".pill:disabled", ".pill.disabled"], {
+			opacity: 0.5,
+			cursor: "not-allowed",
 		}),
-		rule(".pill.transparent.selected", {
-			background_color: `color-mix(in oklab, ${vars.pill.active.bg} 15%, ${vars.color.page})`,
+		// Color variants - override main color like button/selector/selectable
+		rule(".pill.primary", {
+			__pill_color_main: vars.color.primary,
+		}),
+		rule(".pill.secondary", {
+			__pill_color_main: vars.color.secondary,
+		}),
+		rule(".pill.tertiary", {
+			__pill_color_main: vars.color.tertiary,
+		}),
+		rule(".pill.success", {
+			__pill_color_main: vars.color.success,
+		}),
+		rule(".pill.info", {
+			__pill_color_main: vars.color.info,
+		}),
+		rule(".pill.warning", {
+			__pill_color_main: vars.color.warning,
+		}),
+		rule(".pill.danger", {
+			__pill_color_main: vars.color.danger,
 		}),
 	),
 	// TODO: https://tailwindcss.com/plus/ui-blocks/application-ui/elements/buttons
@@ -118,27 +215,17 @@ export default named({
 			__button_font_line: `${vars.font.controls.line}`,
 			__button_font_weight: `${vars.font.controls.weight}`,
 			__button_font_size: `${vars.font.controls.size}`,
-			__button_border_size: "1px",
-			__button_outline_size: "3px",
+			__border_width: "1px",
+			__outline_width: "3px",
+			__button_border_size: vars.border.width,
+			__button_outline_size: vars.outline.width,
 			// Buttons define a main color, and derive the colors automatically
-			// from the main color
+			// from the main color using oklch for consistent shade calculation
 			__button_color_text: vars.color.text,
-			__button_color_main: blend(vars.color.low, vars.color.pagea, 0.25),
-			__button_color_hover: blend(
-				vars.button.color.main,
-				vars.color.high,
-				0.2,
-			),
-			__button_color_focus: blend(
-				vars.button.color.main,
-				vars.color.high,
-				0.1,
-			),
-			__button_color_active: blend(
-				vars.button.color.main,
-				vars.color.high,
-				0.1,
-			),
+			__button_color_main: `oklch(from ${vars.color.low} l c h / 0.75)`,
+			__button_color_hover: `oklch(from ${vars.button.color.main} calc(l * 0.9) c h)`,
+			__button_color_focus: `oklch(from ${vars.button.color.main} calc(l * 0.95) c h)`,
+			__button_color_active: `oklch(from ${vars.button.color.main} calc(l * 0.85) c h)`,
 
 			// Inactive (default)
 			__button_bd: vars.button.color.main,
@@ -183,7 +270,7 @@ export default named({
 			white_space: "nowrap",
 			transition_property:
 				"border-width,border-color,background,color,transform,box-shadow,outline-width,outline-color",
-			transition_duration: "0.1s",
+			transition_duration: "150ms",
 		}),
 		rule(["button.icon", ".button.icon"], {
 			__button_color_main: vars.color.background,
@@ -219,8 +306,7 @@ export default named({
 			padding: vars.controls.padding.smallest,
 		}),
 		rule(["button.default", ".button.default"], {
-			__button_outline_size: "3px",
-			outline_width: vars.button.outline.size,
+			__outline_width: "3px",
 			outline_color: `color-mix(in oklab, ${vars.button.color.main}, ${vars.color.lowa} 10%)`,
 		}),
 		rule(["button.primary", ".button.primary"], {
@@ -359,19 +445,12 @@ export default named({
 			__selector_border_size: "1px",
 			__selector_border_radius: vars.border.radius,
 
-			// Define main color and derive others automatically
+			// Define main color and derive others automatically using oklch
 			__selector_color_text: vars.color.text,
 			__selector_color_main: vars.background.color,
-			__selector_color_hover: blend(
-				vars.selector.color.main,
-				vars.color.low,
-				0.1,
-			),
-			__selector_color_active: blend(
-				vars.selector.color.main,
-				vars.color.low,
-				0.15,
-			),
+			__selector_color_hover: `oklch(from ${vars.selector.color.main} calc(l * 0.9) c h)`,
+			__selector_color_focus: `oklch(from ${vars.selector.color.main} calc(l * 0.95) c h)`,
+			__selector_color_active: `oklch(from ${vars.selector.color.main} calc(l * 0.85) c h)`,
 
 			// Default (unselected) - transparent background
 			__selector_bd: vars.selector.color.main,
@@ -382,6 +461,11 @@ export default named({
 			__selector_hover_bd: vars.selector.color.hover,
 			__selector_hover_bg: vars.selector.color.hover,
 			__selector_hover_fg: vars.selector.fg,
+
+			// Focus
+			__selector_focus_bd: vars.selector.color.focus,
+			__selector_focus_bg: vars.selector.color.focus,
+			__selector_focus_fg: vars.selector.fg,
 
 			// Selected
 			__selector_selected_bd: vars.selector.color.main,
@@ -419,7 +503,7 @@ export default named({
 			user_select: "none",
 			box_sizing: "border-box",
 			transition_property: "border-color,background,color",
-			transition_duration: "0.15s",
+			transition_duration: "150ms",
 			margin_left: "-1px",
 		}),
 
@@ -433,6 +517,22 @@ export default named({
 			border_color: vars.selector.hover.bd,
 			z_index: "1",
 		}),
+
+		rule(
+			mods(
+				[".selector > li", ".selector > .item"],
+				"focus",
+				"focus-within",
+			),
+			{
+				background_color: vars.selector.focus.bg,
+				color: vars.selector.focus.fg,
+				border_color: vars.selector.focus.bd,
+				outline: `2px solid ${vars.selector.color.main}`,
+				outline_offset: "-2px",
+				z_index: "1",
+			},
+		),
 
 		rule(
 			[
@@ -501,6 +601,62 @@ export default named({
 			opacity: 0.5,
 			cursor: "not-allowed",
 		}),
+
+		// Size variants - use controls.padding like button/input
+		rule(
+			[
+				".selector.largest > li",
+				".selector.largest > .item",
+			],
+			{
+				padding: vars.controls.padding.largest,
+			},
+		),
+		rule(
+			[
+				".selector.larger > li",
+				".selector.larger > .item",
+			],
+			{
+				padding: vars.controls.padding.larger,
+			},
+		),
+		rule(
+			[
+				".selector.large > li",
+				".selector.large > .item",
+			],
+			{
+				padding: vars.controls.padding.large,
+			},
+		),
+		rule(
+			[
+				".selector.small > li",
+				".selector.small > .item",
+			],
+			{
+				padding: vars.controls.padding.small,
+			},
+		),
+		rule(
+			[
+				".selector.smaller > li",
+				".selector.smaller > .item",
+			],
+			{
+				padding: vars.controls.padding.smaller,
+			},
+		),
+		rule(
+			[
+				".selector.smallest > li",
+				".selector.smallest > .item",
+			],
+			{
+				padding: vars.controls.padding.smallest,
+			},
+		),
 	),
 	// ------------------------------------------------------------------------
 	//
@@ -518,38 +674,18 @@ export default named({
 			__input_font_size: `${vars.font.controls.size}`,
 			__input_border_size: "1px",
 			__input_outline_size: "3px",
+			// Define main color and derive others automatically using oklch
 			__input_color_text: vars.color.text,
-			__input_color_main: blend(
-				vars.color.low,
-				vars.color.background,
-				0.25,
-			),
-			__input_color_hover: blend(
-				vars.input.color.main,
-				vars.color.high,
-				0.2,
-			),
-			__input_color_focus: blend(
-				vars.input.color.main,
-				vars.color.high,
-				0.1,
-			),
-			__input_color_active: blend(
-				vars.input.color.main,
-				vars.color.high,
-				0.1,
-			),
+			__input_color_main: `oklch(from ${vars.color.low} l c h / 0.75)`,
+			__input_color_hover: `oklch(from ${vars.input.color.main} calc(l * 0.9) c h)`,
+			__input_color_focus: `oklch(from ${vars.input.color.main} calc(l * 0.95) c h)`,
+			__input_color_active: `oklch(from ${vars.input.color.main} calc(l * 0.85) c h)`,
 			__input_gap: vars.gap[2],
 			// Inactive (default)
 			__input_fg: vars.input.text.color,
-			__input_bg: blend(vars.color.high, vars.color.background, 0.25),
+			__input_bg: `oklch(from ${vars.color.high} l c h / 0.25)`,
 			__input_bd: vars.input.border.color,
-			__input_ot: blend(
-				vars.color.low,
-				vars.color.background,
-				0.25,
-				0.15,
-			),
+			__input_ot: `oklch(from ${vars.color.low} l c h / 0.15)`,
 			// Focus
 			__input_focus_fg: vars.input.fg,
 			__input_focus_bd: vars.input.bd,
@@ -586,7 +722,7 @@ export default named({
 			box_sizing: "content-box",
 			transition_property:
 				"border-width,border-color,background,color,transform,box-shadow,outline-width,outline-color",
-			transition_duration: "0.1s",
+			transition_duration: "150ms",
 		}),
 		rule(cross(["input", ".input", "textarea", ".textarea"], ".bg"), {
 			__input_bg: vars.color.bg,

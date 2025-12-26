@@ -39,8 +39,8 @@ export default named({
 		rule(".help", { cursor: "help" }),
 		rule(".grab", { cursor: "grab" }),
 		rule(".grabbing", { cursor: "grabbing" }),
-		rule(".resize-w", { cursor: "col-resize" }),
-		rule(".resize-h", { cursor: "row-resize" }),
+		rule(".resize-w", { cursor: "col-resize", user_select: "none" }),
+		rule(".resize-h", { cursor: "row-resize", user_select: "none" }),
 		rule(".resize-lr", { cursor: "nwse-resize" }),
 	),
 	font: group(
@@ -120,6 +120,7 @@ export default named({
 				[`border-${sides[k]}`]: `${vars.border.width} solid ${vars.border.color} `,
 			}),
 		),
+		...times(10, (i) => rule(`.ot-${i}`, { __outline_width: `${i}px` })),
 		rule(".dashed", { border_style: "dashed" }),
 		rule(".dotted", { border_style: "dotted" }),
 	),
