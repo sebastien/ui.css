@@ -11,6 +11,7 @@ export default group(
 			sans: "sans-serif",
 			serif: "serif",
 			size: "1rem",
+			cursive: "cursive",
 			base: 14,
 			line: "1.25em",
 			text: {
@@ -29,7 +30,7 @@ export default group(
 				line: `${vars.font.line}`,
 			},
 			script: {
-				family: `${vars.font.text}`,
+				family: `${vars.font.cursive}`,
 				size: `${vars.font.size}`,
 				line: `${vars.font.line}`,
 			},

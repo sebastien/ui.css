@@ -376,9 +376,11 @@ class Tokens extends Group {
 		} else {
 			for (const k in collection) {
 				const v = collection[k];
+				// Strip trailing underscore from key before processing
+				const cleanKey = k.endsWith("_") ? k.slice(0, -1) : k;
 				const p = prefix
-					? `${prefix}.${k.replaceAll("_", ".")}`
-					: k.replaceAll("_", ".");
+					? `${prefix}.${cleanKey.replaceAll("_", ".")}`
+					: cleanKey.replaceAll("_", ".");
 				switch (v?.constructor) {
 					case Object:
 						for (const _ of Tokens.Expand(v, p)) {

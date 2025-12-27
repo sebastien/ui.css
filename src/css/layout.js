@@ -227,6 +227,8 @@ export default named({
 				rule(".w-text", { max_width: `${vars.limit.text}` }),
 				rule(".w-content", { max_width: `${vars.limit.content}` }),
 				rule(".w-page", { max_width: `${vars.limit.page}` }),
+				rule(".h-0", { height: "0px" }),
+				rule(".w-0", { height: "0px" }),
 				rule(".no-h", {
 					height: "auto",
 					min_height: "0px",
