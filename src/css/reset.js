@@ -32,7 +32,7 @@ export default layer(
 		width: `min-content`,
 		appearance: "none",
 		font_family: `${vars.font.controls.family}`,
-		font_size: `${vars.text.size[3]}`,
+		font_size: `${vars.textsize.size[3]}`,
 		line_height: `${vars.font.controls.line}`,
 	}),
 	rule(

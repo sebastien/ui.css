@@ -29,7 +29,6 @@ export default named({
 				margin_top: `${vars.margin[2]}`,
 				margin_bottom: `${vars.margin[2]}`,
 				padding_bottom: `${vars.pad[0]}`,
-				text_decoration: "underline",
 			}),
 		),
 	),
@@ -233,10 +232,10 @@ export default named({
 		rule(".ul", { text_decoration: "underline" }),
 		rule(".ol", { text_decoration: "overline" }),
 		...Object.keys(sizenames).map((k, i) =>
-			rule(`.t-${k}`, { font_size: `${vars.text.size[i]}` }),
+			rule(`.t-${k}`, { font_size: `${vars.textsize.size[i]}` }),
 		),
 		...Object.keys(sizes).map((k, i) =>
-			rule(`.t-${k}`, { font_size: `${vars.text.size[i]}` }),
+			rule(`.t-${k}`, { font_size: `${vars.textsize.size[i]}` }),
 		),
 	),
 });

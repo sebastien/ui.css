@@ -9,14 +9,14 @@ import { group, vars, rule } from "../js/littlecss.js";
 // Colors are computed using OKLCH with the formula:
 //   color = oklch(L C H / A)
 // where:
-//   L = clamp(0, (l + delta-l) / 9, 1)
+//   L = clamp(0, 0.05 + (l + delta-l) / 10, 1)  // 0→0.05 (near-black), 9→0.95 (near-white)
 //   C = clamp(0, (c + delta-c) / 9 * 0.4, 0.4)
 //   H = base-hue + (h + delta-h) * 40
 //   A = clamp(0, (o + delta-o) / 9, 1)
 
 const COLOR_NAMES = [
-	"white",
-	"black",
+	"paper",
+	"ink",
 	"neutral",
 	"primary",
 	"secondary",
@@ -28,7 +28,7 @@ const COLOR_NAMES = [
 ];
 
 // Property definitions: short prefix, full name, CSS property
-const PROPS = [
+export const PROPS = [
 	{ short: "bg", full: "background", css: "background_color" },
 	{ short: "tx", full: "text", css: "color" },
 	{ short: "bd", full: "border", css: "border_color" },
@@ -37,11 +37,21 @@ const PROPS = [
 
 // Compute the OKLCH color string from variables
 // For text, we clamp L between l-min and l-max for contrast
-function computeColor(prop, useConstraints = false) {
+// Luminosity maps 0-9 to 0.05-0.95 (near-black to near-white in light mode)
+// In dark mode, the scale inverts: 0-9 maps to 0.95-0.05
+// Formula: L = 0.5 + direction * (l - 4.5) / 10
+//   direction=1:  L = 0.05 + l/10 (light mode)
+//   direction=-1: L = 0.95 - l/10 (dark mode)
+export function computeColor(prop, useConstraints = false) {
 	const v = vars[prop.full];
+	const dir = vars.color.l.direction;
+
+	// Base luminosity calculation with direction
+	const lBase = `(0.5 + ${dir} * ((${v.l} + ${v.delta.l}) - 4.5) / 10)`;
+
 	const lCalc = useConstraints
-		? `clamp(${v.l.min} / 9, (${v.l} + ${v.delta.l}) / 9, ${v.l.max} / 9)`
-		: `clamp(0, (${v.l} + ${v.delta.l}) / 9, 1)`;
+		? `clamp(0.5 + ${dir} * (${v.l.min} - 4.5) / 10, ${lBase}, 0.5 + ${dir} * (${v.l.max} - 4.5) / 10)`
+		: `clamp(0, ${lBase}, 1)`;
 
 	return `oklch(from ${v.base} calc(${lCalc}) calc(clamp(0, (${v.c} + ${v.delta.c}) / 9 * c * 2, 0.4)) calc(h + (${v.h} + ${v.delta.h}) * 40) / calc(clamp(0, (${v.o} + ${v.delta.o}) / 9, 1)))`;
 }
@@ -140,12 +150,33 @@ function namedLuminosityClasses(prop) {
 }
 
 // Semantic color classes for a property
+// Ink and paper are special: they ignore luminosity and chroma modifiers
+// but still allow opacity adjustments
 function semanticColorClasses(prop) {
-	return COLOR_NAMES.map((color) =>
-		rule(`.${prop.short}-${color}`, {
-			[`__${prop.full}_base`]: vars.color[color],
-		}),
-	);
+	return COLOR_NAMES.map((color) => {
+		const base = { [`__${prop.full}_base`]: vars.color[color] };
+		// Ink: forces scale position 0 (dark in light mode, light in dark mode)
+		if (color === "ink") {
+			return rule(`.${prop.short}-${color}`, {
+				...base,
+				[`__${prop.full}_l`]: 0,
+				[`__${prop.full}_c`]: 0,
+				[`__${prop.full}_delta_l`]: 0,
+				[`__${prop.full}_delta_c`]: 0,
+			});
+		}
+		// Paper: forces scale position 9 (light in light mode, dark in dark mode)
+		if (color === "paper") {
+			return rule(`.${prop.short}-${color}`, {
+				...base,
+				[`__${prop.full}_l`]: 9,
+				[`__${prop.full}_c`]: 0,
+				[`__${prop.full}_delta_l`]: 0,
+				[`__${prop.full}_delta_c`]: 0,
+			});
+		}
+		return rule(`.${prop.short}-${color}`, base);
+	});
 }
 
 // Text luminosity classes that override contrast constraints
@@ -166,12 +197,14 @@ export default group(
 	// DARK / LIGHT MODE
 	// ------------------------------------------------------------------------
 	rule(".light, :root", {
-		__color_page: vars.color.white,
-		__color_text: vars.color.black,
+		__color_page: vars.color.paper,
+		__color_text: vars.color.ink,
+		__color_l_direction: 1,
 	}),
 	rule(".dark", {
-		__color_page: vars.color.black,
-		__color_text: vars.color.white,
+		__color_page: vars.color.ink,
+		__color_text: vars.color.paper,
+		__color_l_direction: -1,
 	}),
 
 	// ------------------------------------------------------------------------
@@ -183,9 +216,9 @@ export default group(
 		// Calculate if background is dark (L <= 4) for contrast
 		// bg-is-dark: 1 if dark, 0 if light
 		__bg_is_dark: `clamp(0, (4.5 - ${vars.background.l} - ${vars.background.delta.l}) * 10, 1)`,
-		// Set text constraints: dark bg = light text (7-9), light bg = dark text (0-2)
-		__text_l_min: `calc(${vars.bg.is.dark} * 7)`,
-		__text_l_max: `calc(2 + ${vars.bg.is.dark} * 7)`,
+		// Set text constraints: dark bg = light text (8-9), light bg = dark text (0-1)
+		__text_l_min: `calc(${vars.bg.is.dark} * 8)`,
+		__text_l_max: `calc(1 + ${vars.bg.is.dark} * 8)`,
 	}),
 	// .tx - applies text color with contrast constraints
 	rule(".tx", {
@@ -194,6 +227,7 @@ export default group(
 	// .bd - applies border color
 	rule(".bd", {
 		border_color: computeColor(PROPS[2]),
+		border_width: vars.border.width,
 	}),
 	// .ol - applies outline color
 	rule(".ol", {

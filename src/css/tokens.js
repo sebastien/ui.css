@@ -57,9 +57,11 @@ export default group(
 	// Semantic colors - all defined at L=0.5 in OKLCH as neutral baseline
 	tokens({
 		color: {
-			// White and black points
-			white: "#FFFFFF",
-			black: "#000000",
+			// Scale endpoint colors (swap with dark/light mode)
+			ink: "#000000" /* scale position 0 */,
+			paper: "#FFFFFF" /* scale position 9 */,
+			// Luminosity direction: 1 = normal (light mode), -1 = inverted (dark mode)
+			l: { direction: 1 },
 			// Blending color space
 			blend: "oklch",
 			// Semantic colors (all at L=0.5)
@@ -72,8 +74,8 @@ export default group(
 			warning: "oklch(0.5 0.18 90)" /* amber */,
 			danger: "oklch(0.5 0.22 25)" /* red */,
 			// Mode-dependent colors (defaults to light mode, swapped by .dark)
-			page: vars.color.white,
-			text: vars.color.black,
+			page: vars.color.paper,
+			text: vars.color.ink,
 		},
 	}),
 	// ------------------------------------------------------------------------
@@ -88,7 +90,7 @@ export default group(
 			// Base semantic color
 			base: vars.color.neutral,
 			// Absolute values (0-9 scale)
-			l: 8 /* luminosity: 0=dark, 9=light */,
+			l: 7 /* luminosity: 0=dark, 9=light */,
 			c: 5 /* chroma: 0=gray, 9=vivid */,
 			h: 0 /* hue offset from base */,
 			o: 9 /* opacity: 0=transparent, 9=opaque */,
@@ -107,20 +109,22 @@ export default group(
 				min: 0,
 				max: 9,
 			},
-			// Legacy properties for text sizing
+		},
+		// Text sizing properties (separate from text color)
+		textsize: {
 			min: 9,
 			max: 22,
 			unit: "var(--page-unit)",
-			base: "var(--text-min)",
-			amplitude: "calc(var(--text-max) - var(--text-min))",
+			base: "var(--textsize-min)",
+			amplitude: "calc(var(--textsize-max) - var(--textsize-min))",
 			size: [
-				"calc((var(--text-base) + var(--text-amplitude) * ((6  - 6) / (18 - 6))) * var(--text-unit))", // 0: xxs
-				"calc((var(--text-base) + var(--text-amplitude) * ((8  - 6) / (18 - 6))) * var(--text-unit))", // 1: xs
-				"calc((var(--text-base) + var(--text-amplitude) * ((10 - 6) / (18 - 6))) * var(--text-unit))", // 2: s
-				"calc((var(--text-base) + var(--text-amplitude) * ((12 - 6) / (18 - 6))) * var(--text-unit))", // 3: m
-				"calc((var(--text-base) + var(--text-amplitude) * ((14 - 6) / (18 - 6))) * var(--text-unit))", // 4: l
-				"calc((var(--text-base) + var(--text-amplitude) * ((16 - 6) / (18 - 6))) * var(--text-unit))", // 5: xl
-				"calc((var(--text-base) + var(--text-amplitude) * ((18 - 6) / (18 - 6))) * var(--text-unit))", // 6: xxl
+				"calc((var(--textsize-base) + var(--textsize-amplitude) * ((6  - 6) / (18 - 6))) * var(--textsize-unit))", // 0: xxs
+				"calc((var(--textsize-base) + var(--textsize-amplitude) * ((8  - 6) / (18 - 6))) * var(--textsize-unit))", // 1: xs
+				"calc((var(--textsize-base) + var(--textsize-amplitude) * ((10 - 6) / (18 - 6))) * var(--textsize-unit))", // 2: s
+				"calc((var(--textsize-base) + var(--textsize-amplitude) * ((12 - 6) / (18 - 6))) * var(--textsize-unit))", // 3: m
+				"calc((var(--textsize-base) + var(--textsize-amplitude) * ((14 - 6) / (18 - 6))) * var(--textsize-unit))", // 4: l
+				"calc((var(--textsize-base) + var(--textsize-amplitude) * ((16 - 6) / (18 - 6))) * var(--textsize-unit))", // 5: xl
+				"calc((var(--textsize-base) + var(--textsize-amplitude) * ((18 - 6) / (18 - 6))) * var(--textsize-unit))", // 6: xxl
 			],
 		},
 		border: {
@@ -130,8 +134,9 @@ export default group(
 			h: 0,
 			o: 9,
 			delta: { l: 0, c: 0, h: 0, o: 0 },
+			width: "1px",
 			// Non-color properties
-			width: sizes.map((_, i) => `${i}px`),
+			sizes: sizes.map((_, i) => `${i}px`),
 			radius: [
 				"1px", // 0:xxs
 				"2px", // 1:xs
@@ -252,13 +257,13 @@ export default group(
 				smallest: "0.15em 0.15em",
 			},
 			size: {
-				smallest: vars.text.size[0],
-				smaller: vars.text.size[1],
-				small: vars.text.size[2],
-				regular: vars.text.size[3],
-				large: vars.text.size[4],
-				larger: vars.text.size[5],
-				largest: vars.text.size[6],
+				smallest: vars.textsize.size[0],
+				smaller: vars.textsize.size[1],
+				small: vars.textsize.size[2],
+				regular: vars.textsize.size[3],
+				large: vars.textsize.size[4],
+				larger: vars.textsize.size[5],
+				largest: vars.textsize.size[6],
 			},
 		},
 	}),

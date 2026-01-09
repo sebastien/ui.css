@@ -8,39 +8,65 @@
       {"imports": {
       "@littlecss": "../js/littlecss.js",
       "@littlecss/": "../css/",
-      "@select/ui": "../js/select.ui.js"
+      "@select/ui": "../js/select.ui.js",
+      "@select/cells": "../js/select.cells.js"
       }}
     </script>
   </head>
   <body>
-    <section>
-      <h1>Color Specimen</h1>
+    <section class="rounder m-2 p-4 bg bg-neutral bg-9">
+      <h3 class="t">Color Specimen</h3>
       <div id="colors"></div>
       <template id="ColorSwatches">
-        <div out="colors" class="row g-3"></div>
-      </template>
-      <template id="ColorSwatch">
-        <li>
-          <div class="p-1 pl-2 pr-2 rounded t-smaller bd" out:class="class" out="color"></div>
-        </li>
-      </template>
-    </section>
-    <script type="module">
-      import css, {layers} from "@littlecss"
-      import all from "@littlecss/all"
-      css.mount(...layers(all))
-    </script>
-    <script type="module">
-      import {ui} from "@select/ui"
-      import {COLOR_NAMES} from "@littlecss/colors"
-      console.log("COLOR_NAMES:", COLOR_NAMES)
-      const ColorSwatch = ui("#ColorSwatch").does({
-      "class": (self, {color}) => `bg-${color} bg`,
-      })
-      const ColorSwatches = ui("#ColorSwatches").does({
-        colors: (self) => COLOR_NAMES.map(color => ColorSwatch({color}))
-      })
-      ColorSwatches.new().set().mount("#colors")
-    </script>
-  </body>
+        <fieldset class="grid-2 g-2">
+          <label class="b">Color</label>
+          <span out="selectedColor">No color selected</span>
+          <label class="b">Shade</label>
+          <span out="selectedShade">No shade selected</span>
+        </div>
+      </fieldset>
+      <div out="colors" class="row g-3"></div>
+      <div out="shades" class="row g-3"></div>
+      <div class="row g-2">
+        <button out:class="buttonClass">Button</button>
+        <input out:class="buttonClass" type="text" out:value="color" placeholder="Default"/>
+        <div class="pill" out:class="buttonClass" out="selectedColor">Default</div>
+        <div class="pill outline" out:class="buttonClass" out="selectedColor">Default</div>
+      </div>
+    </template>
+    <template id="ColorSwatch">
+      <li class="selectable stack bd bd-white bd-1 p-1 g-1" style="width:64px" on:click>
+        <div class="square" out:data-color="color" out:class="class" ></div>
+        <div class="t-center t-small" out="name">Untitled</div>
+      </li>
+    </template>
+  </section>
+  <script type="module">
+    import css, {layers} from "@littlecss"
+    import all from "@littlecss/all"
+    css.mount(...layers(all))
+  </script>
+  <script type="module">
+    import {ui} from "@select/ui"
+    import cell from "@select/cells"
+    import {COLOR_NAMES} from "@littlecss/colors"
+    console.log("COLOR_NAMES:", COLOR_NAMES)
+    const selectedColor = cell()
+    const selectedShade = cell()
+    const ColorSwatch = ui("#ColorSwatch").does({
+      		"class": (self, {color,shade,selectedColor,selectpdShade}) => [`bg-${color ?? "neutral"} bg`, `bg-${shade ?? 5}`,
+          (selectedColor?.value === color ?? "neutral") || (selectedShade?.value!== undefined && selectedShade?.value === shade) ? "selected" : null],
+            click: (self, {color,shade},event)=>({selectedColor:color,selectedShade:shade})
+    });
+     			const SHADES = new Array(10).fill(0).map((_,i)=>i);
+    const ColorSwatches = ui("#ColorSwatches").init(()=>{
+      return {selectedColor,selectedShade}
+    }).does({
+      colors: (self,{selectedColor}) => COLOR_NAMES.map(color => ColorSwatch({color,selectedColor:selectedColor,name:color})),
+     	shades: (self,{selectedColor,selectedShade}) => SHADES.map(shade => ColorSwatch({color:selectedColor.value,shade,selectedShade,name:shade})),
+      buttonClass: (self,{selectedColor,selectedShade}) => [selectedColor?.value, selectedShade?.value !== undefined ? `bg-${selectedShade.value}` : null]
+    })
+    ColorSwatches.new().set().mount("#colors")
+  </script>
+</body>
 </html>

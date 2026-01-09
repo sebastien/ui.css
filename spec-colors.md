@@ -195,7 +195,7 @@ computations accordingly.
 The final color is computed as:
 
 ```
-L = clamp(0, (l + delta-l) / 9, 1)
+L = clamp(0, 0.05 + (l + delta-l) / 10, 1)   // 0→0.05 (near-black), 9→0.95 (near-white)
 C = clamp(0, (c + delta-c) / 9 * 0.4, 0.4)
 H = base-hue + (h + delta-h) * 40
 A = clamp(0, (o + delta-o) / 9, 1)
@@ -203,9 +203,13 @@ A = clamp(0, (o + delta-o) / 9, 1)
 color = oklch(L C H / A)
 ```
 
+The luminosity scale maps 0-9 to OKLCH L values of 0.05-0.95, ensuring that:
+- `l=0` produces near-black (L=0.05) but never pure black
+- `l=9` produces near-white (L=0.95) but never pure white
+
 For text with contrast constraints:
 ```
-L = clamp(l-min / 9, (l + delta-l) / 9, l-max / 9)
+L = clamp(0.05 + l-min / 10, 0.05 + (l + delta-l) / 10, 0.05 + l-max / 10)
 ```
 
 ## Usage Examples
