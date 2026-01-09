@@ -1,5 +1,4 @@
 import { tokens, group, sizes, vars } from "../js/littlecss.js";
-import defaults from "./defaults.js";
 
 // Module: tokens
 // This defines the main parameters for the style. They can be overriden
@@ -68,21 +67,22 @@ export default group(
 		// 7: 700
 		// 8: 800
 		// 9: 900
-		palette: defaults.palette,
 		color: {
+			opacity: 1.0,
+			shade: 0.65,
 			// White and black points
 			white: "#FFFFFF",
-			black: "#303641",
+			black: "#000000",
 			// These are the semantic colors
-			neutral: defaults.palette.gray[5],
-			primary: defaults.palette.blue[6],
-			secondary: defaults.palette.sky[5],
-			tertiary: defaults.palette.slate[3],
-			success: defaults.palette.green[5],
-			info: defaults.palette.sky[2],
-			warning: defaults.palette.yellow[4],
-			danger: defaults.palette.red[5],
-			error: defaults.palette.red[5],
+			neutral: "oklch(0.5 0.01 250)" /* near-gray, very low chroma */,
+			primary: "oklch(0.5 0.15 250)" /* calm blue */,
+			secondary: "oklch(0.5 0.15 280)" /* violet */,
+			tertiary: "oklch(0.5 0.15 160)" /* teal */,
+			success: "oklch(0.5 0.18 145)" /* green */,
+			info: "oklch(0.5 0.16 220)" /* cyan-blue */,
+			warning: "oklch(0.5 0.18 90)" /* amber */,
+			danger: "oklch(0.5 0.22 25)" /* red */,
+			error: "oklch(0.5 0.22 25)" /* same red as danger */,
 			// TODO: muted
 			// TODO: accent
 			// TODO: destructive
@@ -126,10 +126,14 @@ export default group(
 	tokens({
 		background: {
 			color: `${vars.color.bg}`,
+			opacity: vars.color.opacity,
+			shade: vars.color.shade,
 			colora: `color-mix(in ${vars.color.blend}, ${vars.background.color}, transparent 100%)`,
 		},
 		border: {
 			color: `${vars.color.bd}`,
+			opacity: vars.color.opacity,
+			shade: vars.color.shade,
 			width: sizes.map((_, i) => `${i}px`),
 			radius: [
 				"1px", // 0:xxs
@@ -141,7 +145,14 @@ export default group(
 				"16px", // 6:xxl
 			],
 		},
+		text: {
+			opacity: vars.color.opacity,
+			shade: vars.color.shade,
+			color: `${vars.color.text}`,
+		},
 		outline: {
+			opacity: vars.color.opacity,
+			shade: vars.color.shade,
 			color: `${vars.color.bd}`,
 		},
 		size: [

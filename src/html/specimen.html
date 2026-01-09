@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Color Specimen</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="importmap">
+      {"imports": {
+      "@littlecss": "../js/littlecss.js",
+      "@littlecss/": "../css/",
+      "@select/ui": "../js/select.ui.js"
+      }}
+    </script>
+  </head>
+  <body>
+    <section>
+      <h1>Color Specimen</h1>
+      <div id="colors"></div>
+      <template id="ColorSwatches">
+        <div out="colors" class="row g-3"></div>
+      </template>
+      <template id="ColorSwatch">
+        <li>
+          <div class="p-1 pl-2 pr-2 rounded t-smaller bd" out:class="class" out="color"></div>
+        </li>
+      </template>
+    </section>
+    <script type="module">
+      import css, {layers} from "@littlecss"
+      import all from "@littlecss/all"
+      css.mount(...layers(all))
+    </script>
+    <script type="module">
+      import {ui} from "@select/ui"
+      import {COLOR_NAMES} from "@littlecss/colors"
+      console.log("COLOR_NAMES:", COLOR_NAMES)
+      const ColorSwatch = ui("#ColorSwatch").does({
+      "class": (self, {color}) => `bg-${color} bg`,
+      })
+      const ColorSwatches = ui("#ColorSwatches").does({
+        colors: (self) => COLOR_NAMES.map(color => ColorSwatch({color}))
+      })
+      ColorSwatches.new().set().mount("#colors")
+    </script>
+  </body>
+</html>
