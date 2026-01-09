@@ -55,14 +55,15 @@ export default named({
 		rule(".dim", { opacity: vars.opacity.dim }),
 		rule(".dimmer", { opacity: vars.opacity.dimmer }),
 		rule(".dimmest", { opacity: vars.opacity.dimmest }),
+		// Background opacity variants using new color system
 		rule(".bg-dim", {
-			background_color: `oklch(from ${vars.color.background} l c h/ ${vars.opacity.dim})`,
+			__background_o: 6,
 		}),
 		rule(".bg-dimmer", {
-			background_color: `oklch(from ${vars.color.background} l c h/ ${vars.opacity.dimmer})`,
+			__background_o: 4,
 		}),
 		rule(".bg-dimmest", {
-			background_color: `oklch(from ${vars.color.background} l c h/ ${vars.opacity.dimmest})`,
+			__background_o: 2,
 		}),
 	),
 	visibility: group(
@@ -86,8 +87,10 @@ export default named({
 	),
 	border: group(
 		rule(".rd", { border_radius: `${vars.border.radius}` }),
-		rule(".bd", {
-			border: `${vars.border.width} ${vars.border.style} ${vars.border.color} `,
+		// Border with computed color from new system
+		rule(".bd-styled", {
+			border_width: vars.border.width,
+			border_style: vars.border.style,
 		}),
 		...times(10, (i) =>
 			rule(`.rd-tl-${i}`, { border_top_left_radius: `${i}px` }),
@@ -102,25 +105,26 @@ export default named({
 			rule(`.rd-br-${i}`, { border_bottom_right_radius: `${i}px` }),
 		),
 		...times(10, (i) => rule(`.rd-${i}`, { __border_radius: `${i}px` })),
-		...times(10, (i) => rule(`.bd-${i}`, { __border_width: `${i}px` })),
+		...times(10, (i) => rule(`.bdw-${i}`, { __border_width: `${i}px` })),
 		...times(10, (i) =>
-			rule(`.bd-t-${i}`, { __border_top_width: `${i}px` }),
+			rule(`.bdw-t-${i}`, { __border_top_width: `${i}px` }),
 		),
 		...times(10, (i) =>
-			rule(`.bd-b-${i}`, { __border_bottom_width: `${i}px` }),
+			rule(`.bdw-b-${i}`, { __border_bottom_width: `${i}px` }),
 		),
 		...times(10, (i) =>
-			rule(`.bd-l-${i}`, { __border_left_width: `${i}px` }),
+			rule(`.bdw-l-${i}`, { __border_left_width: `${i}px` }),
 		),
 		...times(10, (i) =>
-			rule(`.bd-r-${i}`, { __border_right_width: `${i}px` }),
+			rule(`.bdw-r-${i}`, { __border_right_width: `${i}px` }),
 		),
 		...Object.keys(sides).map((k) =>
-			rule(`.bd-${k.substring(0, 1)}`, {
-				[`border-${sides[k]}`]: `${vars.border.width} solid ${vars.border.color} `,
+			rule(`.bd-${k.substring(0, 1)}-styled`, {
+				[`border_${sides[k]}_width`]: vars.border.width,
+				[`border_${sides[k]}_style`]: "solid",
 			}),
 		),
-		...times(10, (i) => rule(`.ot-${i}`, { __outline_width: `${i}px` })),
+		...times(10, (i) => rule(`.olw-${i}`, { __outline_width: `${i}px` })),
 		rule(".dashed", { border_style: "dashed" }),
 		rule(".dotted", { border_style: "dotted" }),
 	),
@@ -136,26 +140,14 @@ export default named({
 			border_collapse: "separate",
 			border_spacing: `0px ${vars.gap}`,
 		}),
-		// FIXME: Not sure the variables are correct.
 		rule(["table.lined th", "table.lined td"], {
-			border_bottom: `${vars.border.width} ${vars.border.style} ${vars.border.color}`,
+			border_bottom_width: vars.border.width,
+			border_bottom_style: "solid",
 		}),
 		rule(["table.lined tr:last-child td", "table.lined tr:last-child th"], {
 			border_bottom_width: "0px",
 		}),
 	),
-	// DISABLE, should be layout?
-	// shape: group(
-	// 	rule([".square", ".circle"], {
-	// 		display: "inline-flex",
-	// 		align_items: "center",
-	// 		box_sizing: "border-box",
-	// 		aspect_ratio: "1",
-	// 	}),
-	// 	rule([".circle"], {
-	// 		border_radius: "100%",
-	// 	})
-	// ),
 	sep: group(
 		rule(".sep > *:after", {
 			content: `"/"`,
@@ -172,13 +164,13 @@ export default named({
 	),
 	striped: group(
 		rule(".striped > *:nth-child(even)", {
-			background_color: `${vars.color.bg}`,
+			__background_l: 7,
 		}),
 	),
 	depth: group(
 		rule(mods([".inset"], undefined, "focus", "hover", "active"), {
-			__inset_shadow: `color-mix(in ${vars.color.blend}, ${vars.color.shadow}, transparent 90%)`,
-			__inset_light: `color-mix(in ${vars.color.blend}, ${vars.color.high}, transparent 50%)`,
+			__inset_shadow: `oklch(0 0 0 / 0.1)`,
+			__inset_light: `oklch(1 0 0 / 0.5)`,
 			border_width: "2px",
 			border_top_color: vars.inset.shadow,
 			border_left_color: vars.inset.shadow,
@@ -186,8 +178,8 @@ export default named({
 			border_right_color: vars.inset.light,
 		}),
 		rule(mods([".raised"], undefined, "focus", "hover", "active"), {
-			__inset_shadow: `color-mix(in ${vars.color.blend}, ${vars.color.shadow}, transparent 90%)`,
-			__inset_light: `color-mix(in ${vars.color.blend}, ${vars.color.high}, transparent 50%)`,
+			__inset_shadow: `oklch(0 0 0 / 0.1)`,
+			__inset_light: `oklch(1 0 0 / 0.5)`,
 			border_width: "2px",
 			border_top_color: vars.inset.light,
 			border_left_color: vars.inset.light,
@@ -195,32 +187,40 @@ export default named({
 			border_right_color: vars.inset.shadow,
 		}),
 	),
-	dark: group(
+	// Dark/light mode handled in colors.js
+	// Legacy mode classes for backwards compatibility
+	mode: group(
 		rule(".m-dark", {
-			__color_page: `${vars.color.low}`,
-			__color_pagea: `${vars.color.lowa}`,
-			__color_text: `${vars.color.high}`,
-			__color_texta: `${vars.color.higha}`,
-			background_color: `${vars.color.page}`,
-			color: `${vars.color.text}`,
+			__color_page: vars.color.black,
+			__color_text: vars.color.white,
+			// Invert default luminosities for dark mode
+			__background_l: 2,
+			__text_l: 8,
+			__border_l: 3,
+			background_color: vars.color.page,
+			color: vars.color.text,
 		}),
 		rule(".m-light", {
-			__color_page: `${vars.color.high}`,
-			__color_pagea: `${vars.color.higha}`,
-			__color_text: `${vars.color.low}`,
-			__color_texta: `${vars.color.lowa}`,
-			background_color: `${vars.color.page}`,
-			color: `${vars.color.text}`,
+			__color_page: vars.color.white,
+			__color_text: vars.color.black,
+			// Standard luminosities for light mode
+			__background_l: 8,
+			__text_l: 1,
+			__border_l: 6,
+			background_color: vars.color.page,
+			color: vars.color.text,
 		}),
 		rule(".t-dark", {
-			__color_text: vars.color.high,
-			__color_texta: vars.color.higha,
-			color: `${vars.color.text}`,
+			__text_l: 8,
+			__text_l_min: 0,
+			__text_l_max: 9,
+			color: vars.color.white,
 		}),
 		rule(".t-light", {
-			__color_text: vars.color.low,
-			__color_texta: vars.color.lowa,
-			color: `${vars.color.text}`,
+			__text_l: 1,
+			__text_l_min: 0,
+			__text_l_max: 9,
+			color: vars.color.black,
 		}),
 	),
 });

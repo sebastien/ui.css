@@ -45,35 +45,24 @@ export default group(
 				weight: 500,
 			},
 		},
-		border: {
-			width: "1px",
-			style: "solid",
-			color: `var(--theme-neutral)`,
-			radius: `var(--border-radius-3)`,
-		},
 		block: {
 			width: "140px",
 		},
 	}),
+	// ------------------------------------------------------------------------
+	//
+	// COLORS
+	//
+	// ------------------------------------------------------------------------
+	// Semantic colors - all defined at L=0.5 in OKLCH as neutral baseline
 	tokens({
-		// Palette is expected to be like:
-		// 0: 50
-		// 1: 100
-		// 2: 200
-		// 3: 300
-		// 4: 400
-		// 5: 500
-		// 6: 600
-		// 7: 700
-		// 8: 800
-		// 9: 900
 		color: {
-			opacity: 1.0,
-			shade: 0.65,
 			// White and black points
 			white: "#FFFFFF",
 			black: "#000000",
-			// These are the semantic colors
+			// Blending color space
+			blend: "oklch",
+			// Semantic colors (all at L=0.5)
 			neutral: "oklch(0.5 0.01 250)" /* near-gray, very low chroma */,
 			primary: "oklch(0.5 0.15 250)" /* calm blue */,
 			secondary: "oklch(0.5 0.15 280)" /* violet */,
@@ -82,58 +71,66 @@ export default group(
 			info: "oklch(0.5 0.16 220)" /* cyan-blue */,
 			warning: "oklch(0.5 0.18 90)" /* amber */,
 			danger: "oklch(0.5 0.22 25)" /* red */,
-			error: "oklch(0.5 0.22 25)" /* same red as danger */,
-			// TODO: muted
-			// TODO: accent
-			// TODO: destructive
-			// FIXME: Now sure we need these two?
-			transparent: "#FFFFFF00",
-			transparentdk: "#00000000",
-			//
-			// accent: vars.color.blue,
-			// focus: vars.color.grey,
-			// These would be switched for dark mode
-			background: vars.color.white,
-			foreground: vars.color.black,
-			// Page is the page background
-			page: vars.color.background,
-			// These are the main colors used in the UI
-			high: vars.color.background,
-			low: vars.color.foreground,
-			// Light and dark colors are typically less than high and low, they
-			// are used to darken or lighten elements
-			light: `color-mix(in ${vars.color.blend}, ${vars.color.page}, ${vars.color.background} 50%)`,
-			dark: `color-mix(in ${vars.color.blend}, ${vars.color.page}, ${vars.color.background} 50%)`,
-			shadow: vars.color.low,
-			shadowa: `rgb(from ${vars.color.shadow} r g b / 0)`,
-			// Default blending mode
-			blend: "oklab",
-			// Variants with transparency for blending
-			higha: `color-mix(in ${vars.color.blend}, ${vars.color.high}, transparent 100%)`,
-			lowa: `color-mix(in ${vars.color.blend},  ${vars.color.low}, transparent 100%)`,
-			texta: `color-mix(in ${vars.color.blend}, ${vars.color.text}, transparent 100%)`,
-			pagea: `color-mix(in ${vars.color.blend}, ${vars.color.page}, transparent 100%)`,
-
-			// These are used by default in the UI, note how they blend with
-			// the text.
-			bg: `color-mix(in ${vars.color.blend},  ${vars.color.neutral}  20%, ${vars.color.page})`,
-			bd: `color-mix(in ${vars.color.blend},  ${vars.color.neutral}  50%, ${vars.color.page})`,
-			// FIXME: What's BDF for again, border focus?
-			bdf: `color-mix(in ${vars.color.blend}, ${vars.color.neutral}  30%, ${vars.color.page})`,
-			fg: `currentColor`,
+			// Mode-dependent colors (defaults to light mode, swapped by .dark)
+			page: vars.color.white,
+			text: vars.color.black,
 		},
 	}),
+	// ------------------------------------------------------------------------
+	//
+	// COLOR PROPERTIES
+	//
+	// ------------------------------------------------------------------------
+	// Each color property has: base, l, c, h, o, delta.{l,c,h,o}
+	// See spec-colors.md for full documentation
 	tokens({
 		background: {
-			color: `${vars.color.bg}`,
-			opacity: vars.color.opacity,
-			shade: vars.color.shade,
-			colora: `color-mix(in ${vars.color.blend}, ${vars.background.color}, transparent 100%)`,
+			// Base semantic color
+			base: vars.color.neutral,
+			// Absolute values (0-9 scale)
+			l: 8 /* luminosity: 0=dark, 9=light */,
+			c: 5 /* chroma: 0=gray, 9=vivid */,
+			h: 0 /* hue offset from base */,
+			o: 9 /* opacity: 0=transparent, 9=opaque */,
+			// Delta adjustments (-9 to +9)
+			delta: { l: 0, c: 0, h: 0, o: 0 },
+		},
+		text: {
+			base: vars.color.text,
+			l: 1 /* dark text by default */,
+			c: 0 /* neutral chroma */,
+			h: 0,
+			o: 9,
+			delta: { l: 0, c: 0, h: 0, o: 0 },
+			// Contrast constraints (set by .bg for accessibility)
+			l: {
+				min: 0,
+				max: 9,
+			},
+			// Legacy properties for text sizing
+			min: 9,
+			max: 22,
+			unit: "var(--page-unit)",
+			base: "var(--text-min)",
+			amplitude: "calc(var(--text-max) - var(--text-min))",
+			size: [
+				"calc((var(--text-base) + var(--text-amplitude) * ((6  - 6) / (18 - 6))) * var(--text-unit))", // 0: xxs
+				"calc((var(--text-base) + var(--text-amplitude) * ((8  - 6) / (18 - 6))) * var(--text-unit))", // 1: xs
+				"calc((var(--text-base) + var(--text-amplitude) * ((10 - 6) / (18 - 6))) * var(--text-unit))", // 2: s
+				"calc((var(--text-base) + var(--text-amplitude) * ((12 - 6) / (18 - 6))) * var(--text-unit))", // 3: m
+				"calc((var(--text-base) + var(--text-amplitude) * ((14 - 6) / (18 - 6))) * var(--text-unit))", // 4: l
+				"calc((var(--text-base) + var(--text-amplitude) * ((16 - 6) / (18 - 6))) * var(--text-unit))", // 5: xl
+				"calc((var(--text-base) + var(--text-amplitude) * ((18 - 6) / (18 - 6))) * var(--text-unit))", // 6: xxl
+			],
 		},
 		border: {
-			color: `${vars.color.bd}`,
-			opacity: vars.color.opacity,
-			shade: vars.color.shade,
+			base: vars.color.neutral,
+			l: 6 /* mid-light luminosity */,
+			c: 2 /* low chroma */,
+			h: 0,
+			o: 9,
+			delta: { l: 0, c: 0, h: 0, o: 0 },
+			// Non-color properties
 			width: sizes.map((_, i) => `${i}px`),
 			radius: [
 				"1px", // 0:xxs
@@ -144,17 +141,24 @@ export default group(
 				"12px", // 5:xl
 				"16px", // 6:xxl
 			],
-		},
-		text: {
-			opacity: vars.color.opacity,
-			shade: vars.color.shade,
-			color: `${vars.color.text}`,
+			style: "solid",
 		},
 		outline: {
-			opacity: vars.color.opacity,
-			shade: vars.color.shade,
-			color: `${vars.color.bd}`,
+			base: vars.color.neutral,
+			l: 5,
+			c: 2,
+			h: 0,
+			o: 9,
+			delta: { l: 0, c: 0, h: 0, o: 0 },
+			width: "2px",
 		},
+	}),
+	// ------------------------------------------------------------------------
+	//
+	// SPACING & SIZING
+	//
+	// ------------------------------------------------------------------------
+	tokens({
 		size: [
 			"5px", //  0:xxs
 			"10px", // 1:xs
@@ -163,42 +167,39 @@ export default group(
 			"40px", // 4:l
 			"50px", // 5:xl
 			"60px", // 6:xxl
-			// FIXME
 		],
 		margin: [
-			"5px", // xxs
-			"10px", // xs
-			"15px", // s
-			"30px", // m
-			"40px", // l
-			"50px", // xl
-			"60px", // xxl
-			// FIXME
+			"5px", // 0: xxs
+			"10px", // 1: xs
+			"15px", // 2: s
+			"30px", // 3: m
+			"40px", // 4: l
+			"50px", // 5: xl
+			"60px", // 6: xxl
 		],
-		// TODO: Should probably be related to the font size
 		pad: [
-			"2px", // xxs
-			"4px", // xs
-			"6px", // s
-			"8px", // m
-			"12px", // l
-			"16px", // xl
-			"24px", // xxl
-			"32px", // xxxl
-			"48px", // xxxxl
-			"64px", // xxxxxl
+			"2px", // 0: xxs
+			"4px", // 1: xs
+			"6px", // 2: s
+			"8px", // 3: m
+			"12px", // 4: l
+			"16px", // 5: xl
+			"24px", // 6: xxl
+			"32px", // 7: xxxl
+			"48px", // 8: xxxxl
+			"64px", // 9: xxxxxl
 		],
 		gap: [
-			"2px", // xxs - 0
-			"4px", // xs - 1
-			"6px", // s - 2
-			"8px", // m - 3
-			"12px", // l - 4
-			"16px", // xl - 5
-			"24px", // xxl - 6
-			"32px", // xxxl - 7
-			"64px", // xxxxl - 8
-			"96px", // xxxxxl - 9
+			"2px", // 0: xxs
+			"4px", // 1: xs
+			"6px", // 2: s
+			"8px", // 3: m
+			"12px", // 4: l
+			"16px", // 5: xl
+			"24px", // 6: xxl
+			"32px", // 7: xxxl
+			"64px", // 8: xxxxl
+			"96px", // 9: xxxxxl
 		],
 		opacity: {
 			dim: 0.65,
@@ -209,7 +210,7 @@ export default group(
 			x: "2px",
 			y: "2px",
 			spread: "1px",
-			color: `color-mix(in oklab, ${vars.color.shadow}, transparent 95%)`,
+			color: "oklch(0 0 0 / 0.05)",
 		},
 		limit: {
 			text: "80ch",
@@ -224,23 +225,6 @@ export default group(
 			base: 16,
 			unit: "calc( (1rem/16) * var(--page-base) / 16)",
 		},
-		text: {
-			color: `${vars.color.text}`,
-			min: 9,
-			max: 22,
-			unit: "var(--page-unit)",
-			base: "var(--text-min)",
-			amplitude: "calc(var(--text-max) - var(--text-min))",
-			size: [
-				"calc((var(--text-base) + var(--text-amplitude) * ((6  - 6) / (18 - 6))) * var(--text-unit))", // 1: xxs
-				"calc((var(--text-base) + var(--text-amplitude) * ((8  - 6) / (18 - 6))) * var(--text-unit))", // 2: xs
-				"calc((var(--text-base) + var(--text-amplitude) * ((10 - 6) / (18 - 6))) * var(--text-unit))", // 3: s
-				"calc((var(--text-base) + var(--text-amplitude) * ((12 - 6) / (18 - 6))) * var(--text-unit))", // 4: m
-				"calc((var(--text-base) + var(--text-amplitude) * ((14 - 6) / (18 - 6))) * var(--text-unit))", // 5: l
-				"calc((var(--text-base) + var(--text-amplitude) * ((16 - 6) / (18 - 6))) * var(--text-unit))", // 6: xl
-				"calc((var(--text-base) + var(--text-amplitude) * ((18 - 6) / (18 - 6))) * var(--text-unit))", // 7: xxl
-			],
-		},
 		heading: {
 			min: "var(--page-base)",
 			max: 42,
@@ -248,13 +232,13 @@ export default group(
 			base: "var(--heading-min)",
 			amplitude: "calc(var(--heading-max) - var(--heading-min))",
 			size: [
-				"calc((var(--heading-base) + var(--heading-amplitude) * ((12 - 12) / (48 - 12))) * var(--heading-unit))", // 1: xxs
-				"calc((var(--heading-base) + var(--heading-amplitude) * ((14 - 12) / (48 - 12))) * var(--heading-unit))", // 2: xs
-				"calc((var(--heading-base) + var(--heading-amplitude) * ((18 - 12) / (48 - 12))) * var(--heading-unit))", // 3: s
-				"calc((var(--heading-base) + var(--heading-amplitude) * ((24 - 12) / (48 - 12))) * var(--heading-unit))", // 4: m
-				"calc((var(--heading-base) + var(--heading-amplitude) * ((32 - 12) / (48 - 12))) * var(--heading-unit))", // 5: l
-				"calc((var(--heading-base) + var(--heading-amplitude) * ((36 - 12) / (48 - 12))) * var(--heading-unit))", // 6: xl
-				"calc((var(--heading-base) + var(--heading-amplitude) * ((48 - 12) / (48 - 12))) * var(--heading-unit))", // 7: xxl
+				"calc((var(--heading-base) + var(--heading-amplitude) * ((12 - 12) / (48 - 12))) * var(--heading-unit))", // 0: xxs
+				"calc((var(--heading-base) + var(--heading-amplitude) * ((14 - 12) / (48 - 12))) * var(--heading-unit))", // 1: xs
+				"calc((var(--heading-base) + var(--heading-amplitude) * ((18 - 12) / (48 - 12))) * var(--heading-unit))", // 2: s
+				"calc((var(--heading-base) + var(--heading-amplitude) * ((24 - 12) / (48 - 12))) * var(--heading-unit))", // 3: m
+				"calc((var(--heading-base) + var(--heading-amplitude) * ((32 - 12) / (48 - 12))) * var(--heading-unit))", // 4: l
+				"calc((var(--heading-base) + var(--heading-amplitude) * ((36 - 12) / (48 - 12))) * var(--heading-unit))", // 5: xl
+				"calc((var(--heading-base) + var(--heading-amplitude) * ((48 - 12) / (48 - 12))) * var(--heading-unit))", // 6: xxl
 			],
 		},
 		controls: {
@@ -268,13 +252,13 @@ export default group(
 				smallest: "0.15em 0.15em",
 			},
 			size: {
-				smallest: vars.text.size[1],
-				smaller: vars.text.size[2],
-				small: vars.text.size[3],
-				regular: vars.text.size[4],
-				large: vars.text.size[5],
-				larger: vars.text.size[6],
-				largest: vars.text.size[7],
+				smallest: vars.text.size[0],
+				smaller: vars.text.size[1],
+				small: vars.text.size[2],
+				regular: vars.text.size[3],
+				large: vars.text.size[4],
+				larger: vars.text.size[5],
+				largest: vars.text.size[6],
 			},
 		},
 	}),

@@ -38,7 +38,7 @@ export default named({
 	tree: group(
 		rule("details.tree", {
 			__tree_indent: "1em",
-			border_top: `1px solid ${vars.color.bd}`,
+			border_top: `1px solid oklch(from ${vars.border.base} calc(l + (${vars.border.l} - 5) * 0.1) c h / calc(${vars.border.o} / 9))`,
 			border_collapse: "collapse",
 		}),
 		rule("details.tree[open]", {}),
@@ -92,29 +92,29 @@ export default named({
 
 	section: group(
 		rule("details.section", {
-			border: `1px solid ${vars.color.bd}`,
-			border_radius: `${vars.radius[1]}`,
-			margin_bottom: `${vars.space[2]}`,
+			border: `1px solid oklch(from ${vars.border.base} calc(l + (${vars.border.l} - 5) * 0.1) c h / calc(${vars.border.o} / 9))`,
+			border_radius: `${vars.border.radius[1]}`,
+			margin_bottom: `${vars.margin[2]}`,
 		}),
 
 		rule("details.section summary", {
 			cursor: "pointer",
 			user_select: "none",
 			padding: `${vars.pad[2]}`,
-			background_color: `${vars.color.bg_muted}`,
-			border_radius: `${vars.radius[1]} ${vars.radius[1]} 0 0`,
+			background_color: `oklch(from ${vars.background.base} calc(l + (7 - 5) * 0.1) c h / calc(${vars.background.o} / 9))`,
+			border_radius: `${vars.border.radius[1]} ${vars.border.radius[1]} 0 0`,
 			font_weight: "600",
 			transition: "background-color 0.2s ease",
 		}),
 
 		rule("details.section summary:hover", {
-			background_color: `${vars.color.bg_hover}`,
+			background_color: `oklch(from ${vars.background.base} calc(l + (6 - 5) * 0.1) c h / calc(${vars.background.o} / 9))`,
 		}),
 
 		rule("details.section summary:before", {
 			content: "'▸'",
 			display: "inline-block",
-			margin_right: `${vars.space[1]}`,
+			margin_right: `${vars.gap[1]}`,
 			transition: "transform 0.2s ease",
 			transform_origin: "center",
 		}),
@@ -124,8 +124,8 @@ export default named({
 		}),
 
 		rule("details.section[open] summary", {
-			border_radius: `${vars.radius[1]} ${vars.radius[1]} 0 0`,
-			border_bottom: `1px solid ${vars.color.bd}`,
+			border_radius: `${vars.border.radius[1]} ${vars.border.radius[1]} 0 0`,
+			border_bottom: `1px solid oklch(from ${vars.border.base} calc(l + (${vars.border.l} - 5) * 0.1) c h / calc(${vars.border.o} / 9))`,
 		}),
 
 		rule("details.section > *:not(summary)", {
