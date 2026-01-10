@@ -1,5 +1,20 @@
 import { cross, named, rule, group, vars, mods } from "../js/littlecss.js";
-import { computeColor, PROPS } from "./colors.js";
+import { computeColor, oklchColor, PROPS } from "./colors.js";
+
+// ----------------------------------------------------------------------------
+// CONTROL CONSTANTS (aligned with spec-controls-colors.md)
+// ----------------------------------------------------------------------------
+// Values are on 0-9 scale where /9 gives the actual value
+// Focus: 2px outline at 15% opacity
+const FOCUS = { width: "2px", opacity: 1.35 }; // 1.35/9 ≈ 0.15
+// Luminosity deltas (towards ink: negative values make colors darker in light mode)
+const DELTA = { hover: -0.25, selected: -0.5, active: -0.75 };
+// Amplification factor for outline variants (text/border need more contrast)
+const OUTLINE_AMP = 2;
+// Selectable background opacities
+const SELECTABLE = { opacity: { hover: 1.35, selected: 1.8, active: 2.25 } }; // /9 → 0.15, 0.20, 0.25
+// Input background (paper at 90% opacity)
+const INPUT = { backgroundOpacity: 8.1 }; // 8.1/9 ≈ 0.9
 
 // ----------------------------------------------------------------------------
 //
@@ -51,17 +66,28 @@ export default named({
 			__selectable_background_base: vars.color.neutral,
 			__selectable_background_l: 5,
 			__selectable_background_c: 5,
+			__selectable_background_h: 0,
 			__selectable_background_o: 0,
 			__selectable_background_delta_l: 0,
+			__selectable_background_delta_c: 0,
+			__selectable_background_delta_h: 0,
+			__selectable_background_delta_o: 0,
+			// Outline variables for focus state
 			__selectable_outline_base: vars.color.neutral,
 			__selectable_outline_l: 5,
+			__selectable_outline_c: 5,
+			__selectable_outline_h: 0,
 			__selectable_outline_o: 0,
-			// Computed background color using selectable variables
-			background_color: `oklch(from ${vars.selectable_background.base} calc(clamp(0, 0.05 + (${vars.selectable_background.l} + ${vars.selectable_background.delta.l}) / 10, 1)) calc(${vars.selectable_background.c} / 9 * c * 2) h / calc(${vars.selectable_background.o} / 9))`,
+			__selectable_outline_delta_l: 0,
+			__selectable_outline_delta_c: 0,
+			__selectable_outline_delta_h: 0,
+			__selectable_outline_delta_o: 0,
+			// Computed background color using direction-aware luminosity
+			background_color: oklchColor("selectable", "background"),
 		}),
 		rule(hover(".selectable"), {
-			__selectable_background_o: 3,
-			__selectable_background_delta_l: -1,
+			__selectable_background_o: SELECTABLE.opacity.hover,
+			__selectable_background_delta_l: DELTA.hover,
 		}),
 		rule(
 			[
@@ -70,18 +96,17 @@ export default named({
 				".selectable.focus",
 			],
 			{
-				__selectable_background_o: 2,
-				outline: `2px solid ${vars.selectable_background.base}`,
+				outline: `${FOCUS.width} solid oklch(from ${vars.selectable_outline.base} 0.5 0.15 h / ${FOCUS.opacity / 9})`,
 				outline_offset: "1px",
 			},
 		),
 		rule([".selectable.selected", ".selectable[data-selected=true]"], {
-			__selectable_background_o: 5,
-			__selectable_background_delta_l: -2,
+			__selectable_background_o: SELECTABLE.opacity.selected,
+			__selectable_background_delta_l: DELTA.selected,
 		}),
 		rule([".selectable:active", ".selectable.active"], {
-			__selectable_background_o: 4,
-			__selectable_background_delta_l: -2,
+			__selectable_background_o: SELECTABLE.opacity.active,
+			__selectable_background_delta_l: DELTA.active,
 		}),
 		rule([".selectable:disabled", ".selectable.disabled"], {
 			opacity: 0.5,
@@ -91,24 +116,31 @@ export default named({
 		// Color variants
 		rule(".selectable.primary", {
 			__selectable_background_base: vars.color.primary,
+			__selectable_outline_base: vars.color.primary,
 		}),
 		rule(".selectable.secondary", {
 			__selectable_background_base: vars.color.secondary,
+			__selectable_outline_base: vars.color.secondary,
 		}),
 		rule(".selectable.tertiary", {
 			__selectable_background_base: vars.color.tertiary,
+			__selectable_outline_base: vars.color.tertiary,
 		}),
 		rule(".selectable.success", {
 			__selectable_background_base: vars.color.success,
+			__selectable_outline_base: vars.color.success,
 		}),
 		rule(".selectable.info", {
 			__selectable_background_base: vars.color.info,
+			__selectable_outline_base: vars.color.info,
 		}),
 		rule(".selectable.warning", {
 			__selectable_background_base: vars.color.warning,
+			__selectable_outline_base: vars.color.warning,
 		}),
 		rule(".selectable.danger", {
 			__selectable_background_base: vars.color.danger,
+			__selectable_outline_base: vars.color.danger,
 		}),
 		// Size variants
 		rule(".selectable.largest", { padding: vars.controls.padding.largest }),
@@ -134,6 +166,7 @@ export default named({
 	//
 	// ------------------------------------------------------------------------
 	// Pill elements are small, rounded interactive tags/badges.
+	// Uses standard variables (--background-*, --text-*, --border-*)
 	pill: group(
 		rule(".pills", {
 			display: "inline-flex",
@@ -170,8 +203,8 @@ export default named({
 			__text_delta_c: 0,
 			__text_delta_h: 0,
 			__text_delta_o: 0,
-			// WCAG contrast calculation
-			__bg_is_dark: `clamp(0, (4.5 - ${vars.background.l} - ${vars.background.delta.l}) * 10, 1)`,
+			// WCAG contrast calculation (threshold 5.5: bg-5 → paper, bg-6 → ink)
+			__bg_is_dark: `clamp(0, (5.5 - ${vars.background.l} - ${vars.background.delta.l}) * 10, 1)`,
 			__text_l_min: `calc(${vars.bg.is.dark} * 8)`,
 			__text_l_max: `calc(1 + ${vars.bg.is.dark} * 8)`,
 			// Styling
@@ -195,37 +228,37 @@ export default named({
 			__border_l: vars.background.l,
 		}),
 		rule(hover(".pill"), {
-			__background_o: 3,
-			__background_delta_l: -1,
+			__background_delta_l: DELTA.hover,
 		}),
 		rule(hover(".pill:not(.outline)"), {
-			__border_delta_l: -1,
+			__border_delta_l: DELTA.hover,
 		}),
 		rule(hover(".pill.outline"), {
-			__text_delta_l: -1,
-			__border_delta_l: -1,
+			__background_o: SELECTABLE.opacity.hover,
+			__text_delta_l: DELTA.hover * OUTLINE_AMP,
+			__border_delta_l: DELTA.hover * OUTLINE_AMP,
 		}),
 		rule([".pill.selected", ".pill[data-selected=true]"], {
-			__background_o: 5,
-			__background_delta_l: -2,
+			__background_delta_l: DELTA.selected,
 		}),
 		rule([".pill:not(.outline).selected", ".pill:not(.outline)[data-selected=true]"], {
-			__border_delta_l: -2,
+			__border_delta_l: DELTA.selected,
 		}),
 		rule([".pill.outline.selected", ".pill.outline[data-selected=true]"], {
-			__text_delta_l: -2,
-			__border_delta_l: -2,
+			__background_o: SELECTABLE.opacity.selected,
+			__text_delta_l: DELTA.selected * OUTLINE_AMP,
+			__border_delta_l: DELTA.selected * OUTLINE_AMP,
 		}),
 		rule([".pill:active", ".pill.active"], {
-			__background_o: 4,
-			__background_delta_l: -2,
+			__background_delta_l: DELTA.active,
 		}),
 		rule([".pill:not(.outline):active", ".pill:not(.outline).active"], {
-			__border_delta_l: -2,
+			__border_delta_l: DELTA.active,
 		}),
 		rule([".pill.outline:active", ".pill.outline.active"], {
-			__text_delta_l: -2,
-			__border_delta_l: -2,
+			__background_o: SELECTABLE.opacity.active,
+			__text_delta_l: DELTA.active * OUTLINE_AMP,
+			__border_delta_l: DELTA.active * OUTLINE_AMP,
 		}),
 		rule([".pill:disabled", ".pill.disabled"], {
 			opacity: 0.5,
@@ -268,10 +301,29 @@ export default named({
 			__text_base: vars.color.danger,
 		}),
 		// Style variants
+		// Outline: text uses accent color exactly (disable WCAG constraints)
+		// Border at 80% opacity to match text visual weight
 		rule(".pill.outline", {
 			__background_o: 0,
-			__text_l: `calc(${vars.background.l} - 2)`,
-			__border_l: `calc(${vars.background.l} + 2)`,
+			__text_l: vars.background.l,
+			__text_l_min: 0,
+			__text_l_max: 9,
+			__border_l: vars.background.l,
+			__border_o: 7.2,
+		}),
+		// Contrast: force maximum text contrast (0.05 or 0.95 luminosity)
+		// For filled pills: text uses extreme luminosity based on bg darkness
+		rule(".pill.contrast:not(.outline)", {
+			// Force text to 0 (ink) or 9 (paper) with no range
+			__text_l_min: `calc(${vars.bg.is.dark} * 9)`,
+			__text_l_max: `calc(${vars.bg.is.dark} * 9)`,
+		}),
+		// For outline pills: shift text/border halfway toward paper/ink
+		// In light mode (direction=1): darken by moving toward ink (delta-l negative)
+		// In dark mode (direction=-1): lighten by moving toward paper (delta-l positive)
+		rule(".pill.outline.contrast", {
+			__text_delta_l: `calc(var(--color-l-direction) * -2.25)`,
+			__border_delta_l: `calc(var(--color-l-direction) * -2.25)`,
 		}),
 	),
 
@@ -326,8 +378,8 @@ export default named({
 			__text_delta_c: 0,
 			__text_delta_h: 0,
 			__text_delta_o: 0,
-			// WCAG contrast calculation
-			__bg_is_dark: `clamp(0, (4.5 - ${vars.background.l} - ${vars.background.delta.l}) * 10, 1)`,
+			// WCAG contrast calculation (threshold 5.5: bg-5 → paper, bg-6 → ink)
+			__bg_is_dark: `clamp(0, (5.5 - ${vars.background.l} - ${vars.background.delta.l}) * 10, 1)`,
 			__text_l_min: `calc(${vars.bg.is.dark} * 8)`,
 			__text_l_max: `calc(1 + ${vars.bg.is.dark} * 8)`,
 			// Computed colors
@@ -361,6 +413,10 @@ export default named({
 		rule(["button.icon", ".button.icon"], {
 			__background_o: 0,
 			__border_o: 0,
+			// Text follows background-l so bg-* modifiers control text luminosity
+			__text_l: vars.background.l,
+			__text_l_min: 0,
+			__text_l_max: 9,
 			padding: "4px",
 			min_width: "0px",
 			width: "min-content",
@@ -434,26 +490,73 @@ export default named({
 			__background_o: 0,
 			__border_o: 0,
 			__outline_o: 0,
+			// Text follows background-l so bg-* modifiers control text luminosity
+			__text_l: vars.background.l,
+			__text_l_min: 0,
+			__text_l_max: 9,
 		}),
+		// Outline: text uses accent color exactly (disable WCAG constraints)
+		// Border at 80% opacity to match text visual weight
 		rule(["button.outline", ".button.outline"], {
 			__background_o: 0,
-			__border_o: 9,
+			__border_o: 7.2,
+			// Text and border follow background-l so bg-* modifiers control their luminosity
+			__text_l: vars.background.l,
+			__text_l_min: 0,
+			__text_l_max: 9,
+			__border_l: vars.background.l,
 			border_width: "2px",
 		}),
 		// State: focus
 		rule(mods(["button", ".button"], "focus", "focus-within"), {
-			__outline_o: 5,
-			outline_width: "3px",
+			__outline_o: FOCUS.opacity,
+			outline_width: FOCUS.width,
 		}),
-		// State: hover
-		rule(hover("button", ".button"), {
-			__background_delta_l: -1,
-			__border_delta_l: -1,
+		// State: hover (filled)
+		rule(hover("button:not(.outline):not(.blank):not(.icon)", ".button:not(.outline):not(.blank):not(.icon)"), {
+			__background_delta_l: DELTA.hover,
+			__border_delta_l: DELTA.hover,
 		}),
-		// State: active
-		rule(mods(["button", ".button"], "active"), {
-			__background_delta_l: -2,
-			__border_delta_l: -2,
+		// State: hover (outline/blank/icon - amplified for visibility, with background)
+		rule(hover("button.outline", ".button.outline", "button.blank", ".button.blank", "button.icon", ".button.icon"), {
+			__background_o: SELECTABLE.opacity.hover,
+			__background_delta_l: DELTA.hover,
+			__border_delta_l: DELTA.hover * OUTLINE_AMP,
+			__text_delta_l: DELTA.hover * OUTLINE_AMP,
+		}),
+		// State: selected (filled)
+		rule(mods(["button:not(.outline):not(.blank):not(.icon)", ".button:not(.outline):not(.blank):not(.icon)"], "selected"), {
+			__background_delta_l: DELTA.selected,
+			__border_delta_l: DELTA.selected,
+		}),
+		rule(["button:not(.outline):not(.blank):not(.icon)[data-selected=true]", ".button:not(.outline):not(.blank):not(.icon)[data-selected=true]"], {
+			__background_delta_l: DELTA.selected,
+			__border_delta_l: DELTA.selected,
+		}),
+		// State: selected (outline/blank/icon - amplified for visibility, with background)
+		rule(mods(["button.outline", ".button.outline", "button.blank", ".button.blank", "button.icon", ".button.icon"], "selected"), {
+			__background_o: SELECTABLE.opacity.selected,
+			__background_delta_l: DELTA.selected,
+			__border_delta_l: DELTA.selected * OUTLINE_AMP,
+			__text_delta_l: DELTA.selected * OUTLINE_AMP,
+		}),
+		rule(["button.outline[data-selected=true]", ".button.outline[data-selected=true]", "button.blank[data-selected=true]", ".button.blank[data-selected=true]", "button.icon[data-selected=true]", ".button.icon[data-selected=true]"], {
+			__background_o: SELECTABLE.opacity.selected,
+			__background_delta_l: DELTA.selected,
+			__border_delta_l: DELTA.selected * OUTLINE_AMP,
+			__text_delta_l: DELTA.selected * OUTLINE_AMP,
+		}),
+		// State: active (filled)
+		rule(mods(["button:not(.outline):not(.blank):not(.icon)", ".button:not(.outline):not(.blank):not(.icon)"], "active"), {
+			__background_delta_l: DELTA.active,
+			__border_delta_l: DELTA.active,
+		}),
+		// State: active (outline/blank/icon - amplified for visibility, with background)
+		rule(mods(["button.outline", ".button.outline", "button.blank", ".button.blank", "button.icon", ".button.icon"], "active"), {
+			__background_o: SELECTABLE.opacity.active,
+			__background_delta_l: DELTA.active,
+			__border_delta_l: DELTA.active * OUTLINE_AMP,
+			__text_delta_l: DELTA.active * OUTLINE_AMP,
 		}),
 		// State: disabled
 		rule(mods(["button", ".button"], "disabled"), {
@@ -475,6 +578,21 @@ export default named({
 				aspect_ratio: "1",
 			},
 		),
+		// Contrast: force maximum text contrast (0.05 or 0.95 luminosity)
+		// For filled buttons: text uses extreme luminosity based on bg darkness
+		rule(["button.contrast:not(.outline):not(.blank):not(.icon)", ".button.contrast:not(.outline):not(.blank):not(.icon)"], {
+			// Force text to 0 (ink) or 9 (paper) with no range
+			__text_l_min: `calc(${vars.bg.is.dark} * 9)`,
+			__text_l_max: `calc(${vars.bg.is.dark} * 9)`,
+		}),
+		// For outline/blank/icon buttons: shift text/border halfway toward paper/ink
+		// In light mode (direction=1): darken by moving toward ink (delta-l negative)
+		// In dark mode (direction=-1): lighten by moving toward paper (delta-l positive)
+		// Halfway = delta of ~2.25 toward ink/paper
+		rule(["button.outline.contrast", ".button.outline.contrast", "button.blank.contrast", ".button.blank.contrast", "button.icon.contrast", ".button.icon.contrast"], {
+			__text_delta_l: `calc(var(--color-l-direction) * -2.25)`,
+			__border_delta_l: `calc(var(--color-l-direction) * -2.25)`,
+		}),
 	),
 
 	// ------------------------------------------------------------------------
@@ -518,8 +636,8 @@ export default named({
 			__text_delta_c: 0,
 			__text_delta_h: 0,
 			__text_delta_o: 0,
-			// WCAG contrast calculation
-			__bg_is_dark: `clamp(0, (4.5 - ${vars.background.l} - ${vars.background.delta.l}) * 10, 1)`,
+			// WCAG contrast calculation (threshold 5.5: bg-5 → paper, bg-6 → ink)
+			__bg_is_dark: `clamp(0, (5.5 - ${vars.background.l} - ${vars.background.delta.l}) * 10, 1)`,
 			__text_l_min: `calc(${vars.bg.is.dark} * 8)`,
 			__text_l_max: `calc(1 + ${vars.bg.is.dark} * 8)`,
 			// Container styling
@@ -561,8 +679,8 @@ export default named({
 			border_bottom_right_radius: vars.border.radius[3],
 		}),
 		rule(hover(".selector > li", ".selector > .item"), {
-			__background_o: 5,
-			__background_delta_l: -1,
+			__background_o: SELECTABLE.opacity.hover,
+			__background_delta_l: DELTA.hover,
 			z_index: "1",
 		}),
 		rule(
@@ -572,8 +690,7 @@ export default named({
 				"focus-within",
 			),
 			{
-				__background_o: 4,
-				outline: `2px solid ${vars.background.base}`,
+				outline: `${FOCUS.width} solid oklch(from ${vars.background.base} 0.5 0.15 h / ${FOCUS.opacity / 9})`,
 				outline_offset: "-2px",
 				z_index: "1",
 			},
@@ -587,14 +704,14 @@ export default named({
 			],
 			{
 				__background_o: 9,
-				__background_delta_l: 0,
+				__background_delta_l: DELTA.selected,
 				// Text contrast is now automatic via WCAG calculation
 				z_index: "2",
 			},
 		),
 		rule(mods([".selector > li", ".selector > .item"], "active"), {
-			__background_o: 7,
-			__background_delta_l: -2,
+			__background_o: SELECTABLE.opacity.active,
+			__background_delta_l: DELTA.active,
 		}),
 		// Color variants
 		rule(".selector.primary", {
@@ -672,7 +789,7 @@ export default named({
 	// Input elements are text entry fields. They use their own namespaced
 	// variables (--input-*) to avoid affecting child elements.
 	// Text color has WCAG-adaptive contrast based on input background.
-	// Neutral inputs have a solid page-color background; colored inputs
+	// Neutral inputs have paper background at 0.9 opacity; colored inputs
 	// have a light tint of their semantic color.
 	input: group(
 		rule([".input", "input", "textarea", ".textarea"], {
@@ -681,13 +798,16 @@ export default named({
 			__input_font_line: vars.font.controls.line,
 			__input_font_weight: vars.font.controls.weight,
 			__input_font_size: vars.font.controls.size,
-			// Input-specific background variables
-			__input_background_base: vars.color.page,
+			// Input-specific background variables (paper at 0.9 opacity per spec)
+			__input_background_base: vars.color.paper,
 			__input_background_l: 9,
 			__input_background_c: 0,
 			__input_background_h: 0,
-			__input_background_o: 9,
+			__input_background_o: INPUT.backgroundOpacity,
 			__input_background_delta_l: 0,
+			__input_background_delta_c: 0,
+			__input_background_delta_h: 0,
+			__input_background_delta_o: 0,
 			// Input-specific border variables
 			__input_border_base: vars.color.neutral,
 			__input_border_l: 4,
@@ -695,31 +815,42 @@ export default named({
 			__input_border_h: 0,
 			__input_border_o: 9,
 			__input_border_delta_l: 0,
+			__input_border_delta_c: 0,
+			__input_border_delta_h: 0,
+			__input_border_delta_o: 0,
 			// Input-specific outline variables
 			__input_outline_base: vars.color.neutral,
 			__input_outline_l: 5,
 			__input_outline_c: 5,
 			__input_outline_h: 0,
 			__input_outline_o: 0,
+			__input_outline_delta_l: 0,
+			__input_outline_delta_c: 0,
+			__input_outline_delta_h: 0,
+			__input_outline_delta_o: 0,
 			// Input-specific text variables
 			__input_text_base: vars.color.text,
 			__input_text_l: 5,
 			__input_text_c: 0,
 			__input_text_h: 0,
 			__input_text_o: 9,
+			__input_text_delta_l: 0,
+			__input_text_delta_c: 0,
+			__input_text_delta_h: 0,
+			__input_text_delta_o: 0,
 			// WCAG contrast calculation for input
 			__input_is_dark: `clamp(0, (5.5 - ${vars.input_background.l} - ${vars.input_background.delta.l}) * 10, 1)`,
 			__input_text_l_min: `calc(${vars.input.is.dark} * 7)`,
 			__input_text_l_max: `calc(2 + ${vars.input.is.dark} * 7)`,
-			// Computed styling
+			// Computed styling using direction-aware colors
 			border_width: "1px",
 			border_style: "solid",
-			border_color: `oklch(from ${vars.input_border.base} calc(clamp(0, 0.05 + (${vars.input_border.l} + ${vars.input_border.delta.l}) / 10, 1)) calc(${vars.input_border.c} / 9 * c * 2) h / calc(${vars.input_border.o} / 9))`,
+			border_color: oklchColor("input", "border"),
 			outline_width: "0px",
 			outline_style: "solid",
-			outline_color: `oklch(from ${vars.input_outline.base} calc(clamp(0, 0.05 + ${vars.input_outline.l} / 10, 1)) calc(${vars.input_outline.c} / 9 * c * 2) h / calc(${vars.input_outline.o} / 9))`,
-			background_color: `oklch(from ${vars.input_background.base} calc(clamp(0, 0.05 + (${vars.input_background.l} + ${vars.input_background.delta.l}) / 10, 1)) calc(${vars.input_background.c} / 9 * c * 2) h / calc(${vars.input_background.o} / 9))`,
-			color: `oklch(from ${vars.input_text.base} calc(clamp(0.05 + ${vars.input_text.l.min} / 10, 0.05 + ${vars.input_text.l} / 10, 0.05 + ${vars.input_text.l.max} / 10)) calc(${vars.input_text.c} / 9 * c * 2) h / calc(${vars.input_text.o} / 9))`,
+			outline_color: oklchColor("input", "outline"),
+			background_color: oklchColor("input", "background"),
+			color: oklchColor("input", "text", { useConstraints: true }),
 			// Typography
 			font_family: vars.input.font.family,
 			line_height: vars.input.font.line,
@@ -821,17 +952,17 @@ export default named({
 				"focus-within",
 			),
 			{
-				__input_outline_o: 2,
-				outline_width: "3px",
+				__input_outline_o: FOCUS.opacity,
+				outline_width: FOCUS.width,
 			},
 		),
 		// State: hover
 		rule(hover("input", ".input", "textarea", ".textarea"), {
-			__input_border_delta_l: -1,
+			__input_border_delta_l: DELTA.hover,
 		}),
 		// State: active
 		rule(mods(["input", ".input", "textarea", ".textarea"], "active"), {
-			__input_border_delta_l: -2,
+			__input_border_delta_l: DELTA.active,
 		}),
 		// State: disabled
 		rule(mods(["input", ".input", "textarea", ".textarea"], "disabled"), {
@@ -979,12 +1110,21 @@ export default named({
 			__toggle_background_base: vars.color.neutral,
 			__toggle_background_l: 7,
 			__toggle_background_c: 2,
+			__toggle_background_h: 0,
 			__toggle_background_o: 9,
 			__toggle_background_delta_l: 0,
+			__toggle_background_delta_c: 0,
+			__toggle_background_delta_h: 0,
+			__toggle_background_delta_o: 0,
 			__toggle_border_base: vars.color.neutral,
 			__toggle_border_l: 5,
 			__toggle_border_c: 5,
+			__toggle_border_h: 0,
 			__toggle_border_o: 9,
+			__toggle_border_delta_l: 0,
+			__toggle_border_delta_c: 0,
+			__toggle_border_delta_h: 0,
+			__toggle_border_delta_o: 0,
 			// Active color (when checked)
 			__toggle_active_base: vars.color.primary,
 			// Base styling
@@ -992,8 +1132,8 @@ export default named({
 			position: "relative",
 			width: vars.toggle.track.width,
 			height: vars.toggle.track.height,
-			background: `oklch(from ${vars.toggle_background.base} calc((${vars.toggle_background.l} + ${vars.toggle_background.delta.l}) / 9) calc(${vars.toggle_background.c} / 9 * c * 2) h / calc(${vars.toggle_background.o} / 9))`,
-			border: `${vars.toggle.track.border.width} solid oklch(from ${vars.toggle_border.base} calc(${vars.toggle_border.l} / 9) calc(${vars.toggle_border.c} / 9 * c * 2) h / calc(${vars.toggle_border.o} / 9))`,
+			background: oklchColor("toggle", "background"),
+			border: `${vars.toggle.track.border.width} solid ${oklchColor("toggle", "border")}`,
 			border_radius: vars.toggle.track.border.radius,
 			cursor: "pointer",
 			user_select: "none",
@@ -1008,7 +1148,7 @@ export default named({
 			left: vars.toggle.slider.offset,
 			width: vars.toggle.slider.size,
 			height: vars.toggle.slider.size,
-			background: vars.color.white,
+			background: vars.color.paper,
 			border_radius: "50%",
 			box_shadow: "0 1px 3px rgba(0, 0, 0, 0.3)",
 			transition_property: "transform",
@@ -1016,7 +1156,7 @@ export default named({
 			transform: "translateX(0)",
 		}),
 		rule(hover(".toggle"), {
-			__toggle_background_delta_l: -1,
+			__toggle_background_delta_l: DELTA.hover,
 		}),
 		rule(
 			[

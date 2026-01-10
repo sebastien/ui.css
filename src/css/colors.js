@@ -9,9 +9,15 @@ import { group, vars, rule } from "../js/littlecss.js";
 // Colors are computed using OKLCH with the formula:
 //   color = oklch(L C H / A)
 // where:
-//   L = clamp(0, 0.05 + (l + delta-l) / 10, 1)  // 0→0.05 (near-black), 9→0.95 (near-white)
-//   C = clamp(0, (c + delta-c) / 9 * 0.4, 0.4)
-//   H = base-hue + (h + delta-h) * 40
+//   L = 0.5 + direction * (l + delta-l - 4.5) / 10
+//       direction=1 (light mode):  0→0.05 (near-black), 9→0.95 (near-white)
+//       direction=-1 (dark mode):  0→0.95 (near-white), 9→0.05 (near-black)
+//   C = clamp(0, (c + delta-c) / 9 * c * 2.5 * saturation, 0.4)
+//   H = base-hue + (h + delta-h) * 40 + temperature-shift
+//       temperature-shift = temperature * (
+//           max(0, L - 0.5) * 2 * warm    // lights shift toward warm when temp > 0
+//         - max(0, 0.5 - L) * 2 * cool    // darks shift toward cool when temp > 0
+//       )
 //   A = clamp(0, (o + delta-o) / 9, 1)
 
 const COLOR_NAMES = [
@@ -35,25 +41,60 @@ export const PROPS = [
 	{ short: "ol", full: "outline", css: "outline_color" },
 ];
 
-// Compute the OKLCH color string from variables
+// ----------------------------------------------------------------------------
+// CSS-NATIVE COLOR COMPUTATION
+// ----------------------------------------------------------------------------
+// These functions generate oklch() expressions using CSS variables directly,
+// making the output CSS more readable and debuggable.
+
+/**
+ * Generate an oklch() color expression using CSS variables
+ * @param {string|null} namespace - Variable prefix (e.g., "selectable", "input") or null for standard vars
+ * @param {string} prop - Property name (e.g., "background", "text", "border", "outline")
+ * @param {object} options - { useConstraints: boolean } for WCAG text constraints
+ * @returns {string} CSS oklch() expression
+ */
+export function oklchColor(namespace, prop, options = {}) {
+	const { useConstraints = false } = options;
+	const prefix = namespace ? `${namespace}-${prop}` : prop;
+	const dir = "var(--color-l-direction)";
+
+	// Direction-aware luminosity: L = 0.5 + direction * (l + delta_l - 4.5) / 10
+	const lBase = `calc(0.5 + ${dir} * (var(--${prefix}-l) + var(--${prefix}-delta-l) - 4.5) / 10)`;
+
+	let lCalc;
+	if (useConstraints) {
+		const lMin = `calc(0.5 + ${dir} * (var(--${prefix}-l-min) - 4.5) / 10)`;
+		const lMax = `calc(0.5 + ${dir} * (var(--${prefix}-l-max) - 4.5) / 10)`;
+		lCalc = `clamp(${lMin}, ${lBase}, ${lMax})`;
+	} else {
+		lCalc = `clamp(0, ${lBase}, 1)`;
+	}
+
+	const cCalc = `calc((var(--${prefix}-c) + var(--${prefix}-delta-c)) / 9)`;
+	const hCalc = `calc(var(--${prefix}-h) + var(--${prefix}-delta-h))`;
+	const oCalc = `calc((var(--${prefix}-o) + var(--${prefix}-delta-o)) / 9)`;
+
+	// Temperature-based hue shift:
+	// - At L=0.5 (mid-tones): no shift
+	// - At L>0.5 (lights): shift toward warm or cool based on temperature sign
+	// - At L<0.5 (darks): shift opposite direction
+	// Formula: (L - 0.5) * 2 * temperature * warm (for lights) or cool (for darks)
+	// We use max(0, L-0.5) for light contribution and max(0, 0.5-L) for dark contribution
+	const tempShift = `calc(
+		var(--color-temperature) * (
+			max(0, ${lBase} - 0.5) * 2 * var(--color-warm) -
+			max(0, 0.5 - ${lBase}) * 2 * var(--color-cool)
+		)
+	)`;
+
+	return `oklch(from var(--${prefix}-base) ${lCalc} calc(clamp(0, ${cCalc}, 1) * c * 2.5 * var(--color-saturation)) calc(h + ${hCalc} * 40 + ${tempShift}) / clamp(0, ${oCalc}, 1))`;
+}
+
+// Compute the OKLCH color string using standard property variables
 // For text, we clamp L between l-min and l-max for contrast
-// Luminosity maps 0-9 to 0.05-0.95 (near-black to near-white in light mode)
-// In dark mode, the scale inverts: 0-9 maps to 0.95-0.05
-// Formula: L = 0.5 + direction * (l - 4.5) / 10
-//   direction=1:  L = 0.05 + l/10 (light mode)
-//   direction=-1: L = 0.95 - l/10 (dark mode)
 export function computeColor(prop, useConstraints = false) {
-	const v = vars[prop.full];
-	const dir = vars.color.l.direction;
-
-	// Base luminosity calculation with direction
-	const lBase = `(0.5 + ${dir} * ((${v.l} + ${v.delta.l}) - 4.5) / 10)`;
-
-	const lCalc = useConstraints
-		? `clamp(0.5 + ${dir} * (${v.l.min} - 4.5) / 10, ${lBase}, 0.5 + ${dir} * (${v.l.max} - 4.5) / 10)`
-		: `clamp(0, ${lBase}, 1)`;
-
-	return `oklch(from ${v.base} calc(${lCalc}) calc(clamp(0, (${v.c} + ${v.delta.c}) / 9 * c * 2, 0.4)) calc(h + (${v.h} + ${v.delta.h}) * 40) / calc(clamp(0, (${v.o} + ${v.delta.o}) / 9, 1)))`;
+	return oklchColor(null, prop.full, { useConstraints });
 }
 
 // Generate luminosity modifier classes
@@ -213,9 +254,10 @@ export default group(
 	// .bg - applies background color and sets text contrast constraints
 	rule(".bg", {
 		background_color: computeColor(PROPS[0]),
-		// Calculate if background is dark (L <= 4) for contrast
+		// Calculate if background is dark (L <= 5) for contrast
 		// bg-is-dark: 1 if dark, 0 if light
-		__bg_is_dark: `clamp(0, (4.5 - ${vars.background.l} - ${vars.background.delta.l}) * 10, 1)`,
+		// Threshold at 5.5 means bg-5 → text towards paper, bg-6 → text towards ink
+		__bg_is_dark: `clamp(0, (5.5 - ${vars.background.l} - ${vars.background.delta.l}) * 10, 1)`,
 		// Set text constraints: dark bg = light text (8-9), light bg = dark text (0-1)
 		__text_l_min: `calc(${vars.bg.is.dark} * 8)`,
 		__text_l_max: `calc(1 + ${vars.bg.is.dark} * 8)`,

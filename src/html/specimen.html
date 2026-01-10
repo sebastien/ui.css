@@ -14,9 +14,9 @@
     </script>
   </head>
   <body>
-    <section class="rounder m-2 p-4 bg bg-neutral bg-9">
+    <section class="stack g-4 rounder m-4 p-4 bg bg-neutral bg-9">
       <h3 class="t">Color Specimen</h3>
-      <div id="colors"></div>
+      <div class="stack g-4" id="colors"></div>
       <template id="ColorSwatches">
         <fieldset class="grid-2 g-2">
           <label class="b">Color</label>
@@ -27,16 +27,27 @@
       </fieldset>
       <div out="colors" class="row g-3"></div>
       <div out="shades" class="row g-3"></div>
-      <div class="row g-2">
-        <button out:class="buttonClass">Button</button>
-        <input out:class="buttonClass" type="text" out:value="color" placeholder="Default"/>
-        <div class="pill" out:class="buttonClass" out="selectedColor">Default</div>
-        <div class="pill outline" out:class="buttonClass" out="selectedColor">Default</div>
+      <div class="stack g-4">
+        <div class="row g-2">
+          <button out:class="buttonClass">Button</button>
+          <button class="contrast" out:class="buttonClass">Contrast Button</button>
+          <button class="outline" out:class="buttonClass">Outline Button</button>
+          <button class="label" out:class="buttonClass">Label Button</button>
+          <button class="icon" out:class="buttonClass">Icon Button</button>
+          <button class="blank" out:class="buttonClass">Blank Button</button>
+        </div>
+        <div class="row g-2">
+          <input out:class="buttonClass" type="text" out:value="color" placeholder="Default"/>
+        </div>
+        <div class="row g-2">
+          <div class="pill" out:class="buttonClass" out="selectedColor">Default</div>
+          <div class="pill outline" out:class="buttonClass" out="selectedColor">Default</div>
+        </div>
       </div>
     </template>
     <template id="ColorSwatch">
-      <li class="selectable stack bd bd-white bd-1 p-1 g-1" style="width:64px" on:click>
-        <div class="square" out:data-color="color" out:class="class" ></div>
+      <li class="selectable rounded stack p-1 g-1" out:class="selected" style="width:64px" on:click>
+        <div class="square bd-paper bd" out:data-color="color"  out:class="class" ></div>
         <div class="t-center t-small" out="name">Untitled</div>
       </li>
     </template>
@@ -54,9 +65,10 @@
     const selectedColor = cell()
     const selectedShade = cell()
     const ColorSwatch = ui("#ColorSwatch").does({
-      		"class": (self, {color,shade,selectedColor,selectpdShade}) => [`bg-${color ?? "neutral"} bg`, `bg-${shade ?? 5}`,
-          (selectedColor?.value === color ?? "neutral") || (selectedShade?.value!== undefined && selectedShade?.value === shade) ? "selected" : null],
-            click: (self, {color,shade},event)=>({selectedColor:color,selectedShade:shade})
+      		selected: (self, {color,shade,selectedColor,selectpdShade}) =>
+          (selectedColor?.value === color ?? "neutral") || (selectedShade?.value!== undefined && selectedShade?.value === shade)  ? "selected" : "",
+      		"class": (self, {color,shade,selectedColor,selectpdShade}) => [`bg-${color ?? "neutral"} bg`, `bg-${shade ?? 5}`],
+          click: (self, {color,shade},event)=>({selectedColor:color,selectedShade:shade})
     });
      			const SHADES = new Array(10).fill(0).map((_,i)=>i);
     const ColorSwatches = ui("#ColorSwatches").init(()=>{

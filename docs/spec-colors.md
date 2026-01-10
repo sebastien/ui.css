@@ -2,21 +2,31 @@
 
 ## Base Colors
 
-- `white`: white point (page in light mode, text in dark mode)
-- `black`: black point (page in dark mode, text in light mode)
+- `paper`: white point (page in light mode, text in dark mode) - scale position 9
+- `ink`: black point (page in dark mode, text in light mode) - scale position 0
 
 ## Semantic Colors
 
-- `neutral`: near-gray, very low chroma
-- `primary`: main brand color (blue)
-- `secondary`: secondary brand color (violet)
-- `tertiary`: tertiary accent (teal)
-- `success`: positive feedback (green)
-- `info`: informational (cyan-blue)
-- `warning`: caution (amber)
-- `danger`: error/destructive (red)
+- `neutral`: near-gray, very low chroma (oklch 0.5 0.02 250)
+- `primary`: main brand color, calm blue (oklch 0.5 0.20 250)
+- `secondary`: secondary brand color, violet (oklch 0.5 0.20 280)
+- `tertiary`: tertiary accent, teal (oklch 0.5 0.20 160)
+- `success`: positive feedback, green (oklch 0.5 0.24 145)
+- `info`: informational, cyan-blue (oklch 0.5 0.22 220)
+- `warning`: caution, amber (oklch 0.5 0.24 90)
+- `danger`: error/destructive, red (oklch 0.5 0.28 25)
 
 All semantic colors are defined at L=0.5 in OKLCH as a neutral baseline.
+
+## Global Color Tokens
+
+| Token | Default | Description |
+|-------|---------|-------------|
+| `--color-l-direction` | 1 | Luminosity direction: 1 (light mode), -1 (dark mode) |
+| `--color-saturation` | 0.8 | Global saturation multiplier |
+| `--color-temperature` | 0.15 | Warm/cool shift intensity |
+| `--color-warm` | 60 | Hue degrees to shift toward warm at light extremes |
+| `--color-cool` | 100 | Hue degrees to shift toward cool at dark extremes |
 
 ## Color Properties
 
@@ -62,10 +72,17 @@ Set the base color for a property:
 .{bg,tx,bd,ol}-{color}
 ```
 
+Where color is one of: `paper`, `ink`, `neutral`, `primary`, `secondary`, `tertiary`, `success`, `info`, `warning`, `danger`
+
 Examples:
 - `.bg-primary` → `--background-base: var(--color-primary)`
 - `.tx-danger` → `--text-base: var(--color-danger)`
 - `.bd-neutral` → `--border-base: var(--color-neutral)`
+
+**Special handling for ink/paper:**
+- `.bg-ink` forces `l=0, c=0` (ignores luminosity/chroma modifiers)
+- `.bg-paper` forces `l=9, c=0` (ignores luminosity/chroma modifiers)
+- Opacity adjustments still apply to both
 
 ### Luminosity Classes
 
@@ -146,22 +163,42 @@ Preset delta values:
 Apply the computed color to the CSS property:
 
 ```
-.bg   → applies background-color
-.tx   → applies color
-.bd   → applies border-color
+.bg   → applies background-color (and sets text contrast constraints)
+.tx   → applies color (with contrast constraints)
+.bd   → applies border-color (and border-width)
 .ol   → applies outline-color
 ```
 
 **Important**: Setting modifier classes (`.bg-primary`, `.bg-8`, etc.) only sets
 variables. You must use `.bg` to actually apply the color.
 
+### Reset Classes
+
+Remove color from a property:
+
+```
+.bg-no   → --background-o: 0 (transparent via opacity)
+.tx-no   → --text-o: 0
+.bd-no   → --border-o: 0
+.ol-no   → --outline-o: 0
+
+.nobg    → background-color: transparent (direct CSS)
+.notx    → color: inherit
+.nobd    → border-color: transparent
+.nool    → outline-color: transparent
+```
+
 ## Automatic Text Contrast
 
 When `.bg` is applied, it automatically sets text luminosity constraints to
 ensure WCAG 4.5:1 contrast ratio:
 
-- Light backgrounds (L > 4) constrain text to dark (L: 0-2)
-- Dark backgrounds (L <= 4) constrain text to light (L: 7-9)
+- Light backgrounds (L >= 6, threshold 5.5) constrain text to dark (L: 0-1)
+- Dark backgrounds (L <= 5, threshold 5.5) constrain text to light (L: 8-9)
+
+The threshold at 5.5 means:
+- `bg-5` → text toward paper (light: 8-9, dark: 0-1)
+- `bg-6` → text toward ink (light: 0-1, dark: 8-9)
 
 The `.tx` class respects these constraints by clamping `--text-l` between
 `--text-l-min` and `--text-l-max`.
@@ -177,39 +214,51 @@ The `.dark` and `.light` classes set mode-specific defaults:
 
 ```css
 .light, :root {
-  --color-page: var(--color-white);
-  --color-text: var(--color-black);
+  --color-page: var(--color-paper);
+  --color-text: var(--color-ink);
+  --color-l-direction: 1;
 }
 
 .dark {
-  --color-page: var(--color-black);
-  --color-text: var(--color-white);
+  --color-page: var(--color-ink);
+  --color-text: var(--color-paper);
+  --color-l-direction: -1;
 }
 ```
 
-Components and controls inherit these values and adjust their color
-computations accordingly.
+The direction-aware luminosity formula automatically inverts the scale in dark mode,
+so `l=7` always means "light shade" regardless of mode.
 
 ## Color Computation Formula
 
-The final color is computed as:
+The final color is computed using direction-aware luminosity:
 
 ```
-L = clamp(0, 0.05 + (l + delta-l) / 10, 1)   // 0→0.05 (near-black), 9→0.95 (near-white)
-C = clamp(0, (c + delta-c) / 9 * 0.4, 0.4)
-H = base-hue + (h + delta-h) * 40
+L = 0.5 + direction * (l + delta-l - 4.5) / 10
+    direction=1 (light mode):  0→0.05 (near-black), 9→0.95 (near-white)
+    direction=-1 (dark mode):  0→0.95 (near-white), 9→0.05 (near-black)
+
+C = clamp(0, (c + delta-c) / 9 * base-chroma * 2.5 * saturation, 0.4)
+
+H = base-hue + (h + delta-h) * 40 + temperature-shift
+    temperature-shift = temperature * (
+        max(0, L - 0.5) * 2 * warm    // lights shift toward warm
+      - max(0, 0.5 - L) * 2 * cool    // darks shift toward cool
+    )
+
 A = clamp(0, (o + delta-o) / 9, 1)
 
 color = oklch(L C H / A)
 ```
 
-The luminosity scale maps 0-9 to OKLCH L values of 0.05-0.95, ensuring that:
-- `l=0` produces near-black (L=0.05) but never pure black
-- `l=9` produces near-white (L=0.95) but never pure white
+The direction-aware luminosity provides automatic dark mode support:
+- In light mode (direction=1): `l=0` produces near-black, `l=9` produces near-white
+- In dark mode (direction=-1): `l=0` produces near-white, `l=9` produces near-black
 
 For text with contrast constraints:
 ```
-L = clamp(0.05 + l-min / 10, 0.05 + (l + delta-l) / 10, 0.05 + l-max / 10)
+L = clamp(L-min, L-base, L-max)
+where L-min and L-max are computed using the same direction-aware formula
 ```
 
 ## Usage Examples

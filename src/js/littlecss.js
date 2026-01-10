@@ -5,12 +5,14 @@
 // ----------------------------------------------------------------------------
 
 const kebab = (str) =>
-	str
-		// Look for any lowercase letter followed by an uppercase letter
-		.replaceAll("_", "-")
-		.replace(/([a-z0-9])([A-Z])/g, "$1-$2")
-		// Convert the entire string to lowercase
-		.toLowerCase();
+	str === undefined || str === null
+		? ""
+		: str
+				// Look for any lowercase letter followed by an uppercase letter
+				.replaceAll("_", "-")
+				.replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+				// Convert the entire string to lowercase
+				.toLowerCase();
 
 const times = (n, f) => {
 	const r = new Array(n);
@@ -117,7 +119,7 @@ class Scope {
 		target[property] = value;
 	}
 	constructor(name, parent) {
-		this._name = parent?._name ? `${parent._name}-${name}` : name;
+		this._name = parent?._name ? `${parent._name}-${kebab(name)}` : kebab(name);
 		// TODO: This should define properties
 	}
 	*walk() {

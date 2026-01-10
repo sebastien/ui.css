@@ -88,7 +88,7 @@ export default named({
 	border: group(
 		rule(".rd", { border_radius: `${vars.border.radius}` }),
 		// Border with computed color from new system
-		rule(".bd-styled", {
+		rule(".bd", {
 			border_width: vars.border.width,
 			border_style: vars.border.style,
 		}),

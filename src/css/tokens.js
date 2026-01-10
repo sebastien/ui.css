@@ -62,17 +62,24 @@ export default group(
 			paper: "#FFFFFF" /* scale position 9 */,
 			// Luminosity direction: 1 = normal (light mode), -1 = inverted (dark mode)
 			l: { direction: 1 },
+			// Saturation multiplier: 1 = default, >1 = more vivid, <1 = more muted
+			saturation: 0.8,
+			// Temperature blending: shift hue toward warm/cool at luminosity extremes
+			// temperature: -1 = cool lights/warm darks, +1 = warm lights/cool darks, 0 = off
+			temperature: 0.15,
+			warm: 60 /* hue degrees to shift toward warm (yellow ~70) at light extremes */,
+			cool: 100 /* hue degrees to shift toward cool (blue ~250) at dark extremes */,
 			// Blending color space
 			blend: "oklch",
 			// Semantic colors (all at L=0.5)
-			neutral: "oklch(0.5 0.01 250)" /* near-gray, very low chroma */,
-			primary: "oklch(0.5 0.15 250)" /* calm blue */,
-			secondary: "oklch(0.5 0.15 280)" /* violet */,
-			tertiary: "oklch(0.5 0.15 160)" /* teal */,
-			success: "oklch(0.5 0.18 145)" /* green */,
-			info: "oklch(0.5 0.16 220)" /* cyan-blue */,
-			warning: "oklch(0.5 0.18 90)" /* amber */,
-			danger: "oklch(0.5 0.22 25)" /* red */,
+			neutral: "oklch(0.5 0.02 250)" /* near-gray, very low chroma */,
+			primary: "oklch(0.5 0.20 250)" /* calm blue */,
+			secondary: "oklch(0.5 0.20 280)" /* violet */,
+			tertiary: "oklch(0.5 0.20 160)" /* teal */,
+			success: "oklch(0.5 0.24 145)" /* green */,
+			info: "oklch(0.5 0.22 220)" /* cyan-blue */,
+			warning: "oklch(0.5 0.24 90)" /* amber */,
+			danger: "oklch(0.5 0.28 25)" /* red */,
 			// Mode-dependent colors (defaults to light mode, swapped by .dark)
 			page: vars.color.paper,
 			text: vars.color.ink,
@@ -91,7 +98,7 @@ export default group(
 			base: vars.color.neutral,
 			// Absolute values (0-9 scale)
 			l: 7 /* luminosity: 0=dark, 9=light */,
-			c: 5 /* chroma: 0=gray, 9=vivid */,
+			c: 7 /* chroma: 0=gray, 9=vivid */,
 			h: 0 /* hue offset from base */,
 			o: 9 /* opacity: 0=transparent, 9=opaque */,
 			// Delta adjustments (-9 to +9)
