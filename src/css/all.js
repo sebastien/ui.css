@@ -1,3 +1,4 @@
+import { layers } from "@littlecss.js";
 import tokens from "./tokens.js";
 import reset from "./reset.js";
 import layout from "./layout.js";
@@ -7,7 +8,7 @@ import colors from "./colors.js";
 import controls from "./controls.js";
 import behavior from "./behavior.js";
 import components from "./components.js";
-export default {
+export default layers({
 	tokens,
 	reset,
 	controls,
@@ -18,5 +19,5 @@ export default {
 	layout,
 	style,
 	behavior,
-};
+});
 // EOF

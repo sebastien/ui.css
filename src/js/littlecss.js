@@ -305,7 +305,7 @@ class Layer extends Group {
 			yield line;
 		}
 		if (this.name) {
-			yield `};`;
+			yield `}`;
 		}
 	}
 }
