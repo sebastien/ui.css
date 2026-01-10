@@ -70,11 +70,6 @@ Mode-dependent colors (swap in dark mode):
 | Token | Default | Description |
 |-------|---------|-------------|
 | `--color-l-direction` | `1` | Luminosity direction: 1 (light), -1 (dark) |
-| `--color-saturation` | `0.8` | Global saturation multiplier |
-| `--color-temperature` | `0.15` | Warm/cool shift intensity |
-| `--color-warm` | `60` | Hue degrees toward warm at light extremes |
-| `--color-cool` | `100` | Hue degrees toward cool at dark extremes |
-| `--color-blend` | `oklch` | Color blending space |
 
 ### Color Property Tokens
 
@@ -84,26 +79,23 @@ Each color property (background, text, border, outline) has these tokens:
 
 | Token | Default | Description |
 |-------|---------|-------------|
-| `--background-base` | `var(--color-neutral)` | Semantic base color |
-| `--background-l` | `7` | Luminosity (0-9) |
-| `--background-c` | `7` | Chroma (0-9) |
-| `--background-h` | `0` | Hue offset |
-| `--background-o` | `9` | Opacity (0-9) |
-| `--background-delta-l` | `0` | Luminosity adjustment |
-| `--background-delta-c` | `0` | Chroma adjustment |
-| `--background-delta-h` | `0` | Hue adjustment |
-| `--background-delta-o` | `0` | Opacity adjustment |
+| `--background-level` | `7` | Scale position (0-9) |
+| `--background-c` | `0.02` | Chroma |
+| `--background-h` | `250` | Hue |
+| `--background-alpha` | `10` | Opacity (0-10) |
+| `--background-blend` | `0` | Blend amount toward target |
+| `--background-blending` | `transparent` | Blend target color |
 
 #### Text
 
 | Token | Default | Description |
 |-------|---------|-------------|
-| `--text-base` | `var(--color-text)` | Semantic base color |
-| `--text-l` | `1` | Luminosity (dark by default) |
-| `--text-c` | `0` | Chroma (neutral) |
-| `--text-h` | `0` | Hue offset |
-| `--text-o` | `9` | Opacity |
-| `--text-delta-*` | `0` | Delta adjustments |
+| `--text-level` | `1` | Scale position (dark by default) |
+| `--text-c` | `0.02` | Chroma |
+| `--text-h` | `250` | Hue |
+| `--text-alpha` | `10` | Opacity |
+| `--text-blend` | `0` | Blend amount |
+| `--text-blending` | `transparent` | Blend target |
 | `--text-l-min` | `0` | Contrast constraint min |
 | `--text-l-max` | `9` | Contrast constraint max |
 
@@ -111,12 +103,12 @@ Each color property (background, text, border, outline) has these tokens:
 
 | Token | Default | Description |
 |-------|---------|-------------|
-| `--border-base` | `var(--color-neutral)` | Semantic base color |
-| `--border-l` | `6` | Luminosity |
-| `--border-c` | `2` | Chroma (low) |
-| `--border-h` | `0` | Hue offset |
-| `--border-o` | `9` | Opacity |
-| `--border-delta-*` | `0` | Delta adjustments |
+| `--border-level` | `6` | Scale position |
+| `--border-c` | `0.02` | Chroma (low) |
+| `--border-h` | `250` | Hue |
+| `--border-alpha` | `10` | Opacity |
+| `--border-blend` | `0` | Blend amount |
+| `--border-blending` | `transparent` | Blend target |
 | `--border-width` | `1px` | Default width |
 | `--border-style` | `solid` | Default style |
 
@@ -124,12 +116,12 @@ Each color property (background, text, border, outline) has these tokens:
 
 | Token | Default | Description |
 |-------|---------|-------------|
-| `--outline-base` | `var(--color-neutral)` | Semantic base color |
-| `--outline-l` | `5` | Luminosity |
-| `--outline-c` | `2` | Chroma |
-| `--outline-h` | `0` | Hue offset |
-| `--outline-o` | `9` | Opacity |
-| `--outline-delta-*` | `0` | Delta adjustments |
+| `--outline-level` | `5` | Scale position |
+| `--outline-c` | `0.02` | Chroma |
+| `--outline-h` | `250` | Hue |
+| `--outline-alpha` | `10` | Opacity |
+| `--outline-blend` | `0` | Blend amount |
+| `--outline-blending` | `transparent` | Blend target |
 | `--outline-width` | `2px` | Default width |
 
 ### Border Tokens
@@ -302,12 +294,6 @@ Override tokens to customize your theme:
     --font-sans: "Inter", system-ui, sans-serif;
     --font-mono: "JetBrains Mono", monospace;
     
-    /* Adjust saturation globally */
-    --color-saturation: 1.0;
-    
-    /* Warmer color temperature */
-    --color-temperature: 0.25;
-    
     /* Custom spacing */
     --pad-3: 10px;
     --gap-3: 10px;
@@ -333,3 +319,18 @@ The system automatically handles dark mode via `--color-l-direction`:
     --color-l-direction: -1;
 }
 ```
+
+## Color Variable Summary
+
+The simplified color system uses these variables per property:
+
+| Variable | Range | Description |
+|----------|-------|-------------|
+| `--{prop}-level` | 0-9 | Scale position (0=dark, 9=light) |
+| `--{prop}-c` | 0-0.4 | Chroma (saturation) |
+| `--{prop}-h` | 0-360 | Hue (degrees) |
+| `--{prop}-alpha` | 0-10 | Opacity (10=opaque) |
+| `--{prop}-blend` | 0-9 | Blend amount |
+| `--{prop}-blending` | color | Blend target |
+
+Where `{prop}` is one of: `background`, `text`, `border`, `outline`

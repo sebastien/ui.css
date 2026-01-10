@@ -5,36 +5,38 @@ import { group, vars, rule } from "../js/littlecss.js";
 // COLOR SYSTEM
 //
 // ----------------------------------------------------------------------------
-// This module implements the unified color system described in spec-colors.md.
+// This module implements a simplified color system with pre-computed scales.
+//
 // Colors are computed using OKLCH with the formula:
-//   color = oklch(L C H / A)
-// where:
-//   L = 0.5 + direction * (l + delta-l - 4.5) / 10
-//       direction=1 (light mode):  0→0.05 (near-black), 9→0.95 (near-white)
-//       direction=-1 (dark mode):  0→0.95 (near-white), 9→0.05 (near-black)
-//   C = clamp(0, (c + delta-c) / 9 * c * 2.5 * saturation, 0.4)
-//   H = base-hue + (h + delta-h) * 40 + temperature-shift
-//       temperature-shift = temperature * (
-//           max(0, L - 0.5) * 2 * warm    // lights shift toward warm when temp > 0
-//         - max(0, 0.5 - L) * 2 * cool    // darks shift toward cool when temp > 0
-//       )
-//   A = clamp(0, (o + delta-o) / 9, 1)
+//   L = 0.05 + effective_level * 0.1
+//   effective_level = direction == 1 ? level : (9 - level)
+//   color = oklch(L C H / alpha)
+//
+// Blending is done via color-mix:
+//   blended = color-mix(in oklch, base, blending blend*10%)
 
-const COLOR_NAMES = [
-	"paper",
-	"ink",
-	"neutral",
-	"primary",
-	"secondary",
-	"tertiary",
-	"success",
-	"info",
-	"warning",
-	"danger",
-];
+// ----------------------------------------------------------------------------
+// COLOR DEFINITIONS
+// ----------------------------------------------------------------------------
+// Base colors defined at L=0.5, with their chroma and hue extracted
+
+export const colors = {
+	paper: { c: 0, h: 0 },
+	ink: { c: 0, h: 0 },
+	neutral: { c: 0.02, h: 250 },
+	primary: { c: 0.2, h: 250 },
+	secondary: { c: 0.2, h: 280 },
+	tertiary: { c: 0.2, h: 160 },
+	success: { c: 0.24, h: 145 },
+	info: { c: 0.22, h: 220 },
+	warning: { c: 0.24, h: 90 },
+	danger: { c: 0.28, h: 25 },
+};
+
+export const colorNames = Object.keys(colors);
 
 // Property definitions: short prefix, full name, CSS property
-export const PROPS = [
+export const props = [
 	{ short: "bg", full: "background", css: "background_color" },
 	{ short: "tx", full: "text", css: "color" },
 	{ short: "bd", full: "border", css: "border_color" },
@@ -42,10 +44,30 @@ export const PROPS = [
 ];
 
 // ----------------------------------------------------------------------------
+// COLOR SCALE GENERATION (build-time)
+// ----------------------------------------------------------------------------
+// Generate 10-step scales for each color, from L=0.05 to L=0.95
+
+function generateColorScales() {
+	const scales = {};
+	for (const [name, { c, h }] of Object.entries(colors)) {
+		// Skip paper and ink - they don't have scales
+		if (name === "paper" || name === "ink") continue;
+
+		for (let i = 0; i < 10; i++) {
+			const L = (0.05 + i * 0.1).toFixed(2);
+			scales[`__color_${name}_${i}`] = `oklch(${L} ${c} ${h})`;
+		}
+		// Also store base chroma and hue for runtime use
+		scales[`__color_${name}_c`] = c;
+		scales[`__color_${name}_h`] = h;
+	}
+	return scales;
+}
+
+// ----------------------------------------------------------------------------
 // CSS-NATIVE COLOR COMPUTATION
 // ----------------------------------------------------------------------------
-// These functions generate oklch() expressions using CSS variables directly,
-// making the output CSS more readable and debuggable.
 
 /**
  * Generate an oklch() color expression using CSS variables
@@ -57,174 +79,130 @@ export const PROPS = [
 export function oklchColor(namespace, prop, options = {}) {
 	const { useConstraints = false } = options;
 	const prefix = namespace ? `${namespace}-${prop}` : prop;
-	const dir = "var(--color-l-direction)";
+	const dir = "var(--color-l-direction, 1)";
 
-	// Direction-aware luminosity: L = 0.5 + direction * (l + delta_l - 4.5) / 10
-	const lBase = `calc(0.5 + ${dir} * (var(--${prefix}-l) + var(--${prefix}-delta-l) - 4.5) / 10)`;
+	// Direction-aware level: in dark mode (dir=-1), level 8 maps to position 1
+	// effective = level * dir + (1 - dir) / 2 * 9
+	// dir=1:  effective = level
+	// dir=-1: effective = -level + 9 = 9 - level
+	const effectiveLevel = `(var(--${prefix}-level) * ${dir} + (1 - ${dir}) / 2 * 9)`;
+
+	// Luminosity from level: L = 0.05 + effective * 0.1
+	const L = `calc(0.05 + ${effectiveLevel} * 0.1)`;
 
 	let lCalc;
 	if (useConstraints) {
-		const lMin = `calc(0.5 + ${dir} * (var(--${prefix}-l-min) - 4.5) / 10)`;
-		const lMax = `calc(0.5 + ${dir} * (var(--${prefix}-l-max) - 4.5) / 10)`;
-		lCalc = `clamp(${lMin}, ${lBase}, ${lMax})`;
+		// For text with WCAG constraints
+		const lMin = `calc(0.05 + (var(--${prefix}-l-min) * ${dir} + (1 - ${dir}) / 2 * 9) * 0.1)`;
+		const lMax = `calc(0.05 + (var(--${prefix}-l-max) * ${dir} + (1 - ${dir}) / 2 * 9) * 0.1)`;
+		lCalc = `clamp(${lMin}, ${L}, ${lMax})`;
 	} else {
-		lCalc = `clamp(0, ${lBase}, 1)`;
+		lCalc = `clamp(0.05, ${L}, 0.95)`;
 	}
 
-	const cCalc = `calc((var(--${prefix}-c) + var(--${prefix}-delta-c)) / 9)`;
-	const hCalc = `calc(var(--${prefix}-h) + var(--${prefix}-delta-h))`;
-	const oCalc = `calc((var(--${prefix}-o) + var(--${prefix}-delta-o)) / 9)`;
+	// Chroma and hue from property variables
+	const C = `var(--${prefix}-c)`;
+	const H = `var(--${prefix}-h)`;
 
-	// Temperature-based hue shift:
-	// - At L=0.5 (mid-tones): no shift
-	// - At L>0.5 (lights): shift toward warm or cool based on temperature sign
-	// - At L<0.5 (darks): shift opposite direction
-	// Formula: (L - 0.5) * 2 * temperature * warm (for lights) or cool (for darks)
-	// We use max(0, L-0.5) for light contribution and max(0, 0.5-L) for dark contribution
-	const tempShift = `calc(
-		var(--color-temperature) * (
-			max(0, ${lBase} - 0.5) * 2 * var(--color-warm) -
-			max(0, 0.5 - ${lBase}) * 2 * var(--color-cool)
-		)
-	)`;
+	// Alpha from 0-10 scale
+	const alpha = `calc(var(--${prefix}-alpha, 10) / 10)`;
 
-	return `oklch(from var(--${prefix}-base) ${lCalc} calc(clamp(0, ${cCalc}, 1) * c * 2.5 * var(--color-saturation)) calc(h + ${hCalc} * 40 + ${tempShift}) / clamp(0, ${oCalc}, 1))`;
+	// Base color
+	const baseColor = `oklch(${lCalc} ${C} ${H})`;
+
+	// Blend with target if blend > 0
+	const blended = `color-mix(in oklch, ${baseColor}, var(--${prefix}-blending, transparent) calc(var(--${prefix}-blend, 0) * 10%))`;
+
+	// Apply alpha
+	return `oklch(from ${blended} l c h / ${alpha})`;
 }
 
 // Compute the OKLCH color string using standard property variables
-// For text, we clamp L between l-min and l-max for contrast
 export function computeColor(prop, useConstraints = false) {
 	return oklchColor(null, prop.full, { useConstraints });
 }
 
-// Generate luminosity modifier classes
-function luminosityClasses(prop) {
-	return Array.from({ length: 10 }, (_, i) =>
-		rule(`.${prop.short}-${i}`, { [`__${prop.full}_l`]: i }),
-	);
-}
+// ----------------------------------------------------------------------------
+// UTILITY CLASS GENERATORS
+// ----------------------------------------------------------------------------
 
-// Generate chroma modifier classes (suffix: c)
-function chromaClasses(prop) {
-	return Array.from({ length: 10 }, (_, i) =>
-		rule(`.${prop.short}-${i}c`, { [`__${prop.full}_c`]: i }),
-	);
-}
+// Generate color classes: .bg-{color} and .bg-{color}-{0-9}
+function colorClasses(prop) {
+	const classes = [];
 
-// Generate opacity modifier classes (suffix: o)
-function opacityClasses(prop) {
-	return Array.from({ length: 10 }, (_, i) =>
-		rule(`.${prop.short}-${i}o`, { [`__${prop.full}_o`]: i }),
-	);
-}
-
-// Generate delta luminosity classes (+/-)
-function deltaLuminosityClasses(prop) {
-	const plus = Array.from({ length: 9 }, (_, i) =>
-		rule(`.${prop.short}-l\\+${i + 1}`, {
-			[`__${prop.full}_delta_l`]: i + 1,
-		}),
-	);
-	const minus = Array.from({ length: 9 }, (_, i) =>
-		rule(`.${prop.short}-l-${i + 1}`, {
-			[`__${prop.full}_delta_l`]: -(i + 1),
-		}),
-	);
-	return [...plus, ...minus];
-}
-
-// Generate delta chroma classes (+/-)
-function deltaChromaClasses(prop) {
-	const plus = Array.from({ length: 9 }, (_, i) =>
-		rule(`.${prop.short}-c\\+${i + 1}`, {
-			[`__${prop.full}_delta_c`]: i + 1,
-		}),
-	);
-	const minus = Array.from({ length: 9 }, (_, i) =>
-		rule(`.${prop.short}-c-${i + 1}`, {
-			[`__${prop.full}_delta_c`]: -(i + 1),
-		}),
-	);
-	return [...plus, ...minus];
-}
-
-// Generate delta hue classes (+/-)
-function deltaHueClasses(prop) {
-	const plus = Array.from({ length: 9 }, (_, i) =>
-		rule(`.${prop.short}-h\\+${i + 1}`, {
-			[`__${prop.full}_delta_h`]: i + 1,
-		}),
-	);
-	const minus = Array.from({ length: 9 }, (_, i) =>
-		rule(`.${prop.short}-h-${i + 1}`, {
-			[`__${prop.full}_delta_h`]: -(i + 1),
-		}),
-	);
-	return [...plus, ...minus];
-}
-
-// Generate delta opacity classes (+/-)
-function deltaOpacityClasses(prop) {
-	const plus = Array.from({ length: 9 }, (_, i) =>
-		rule(`.${prop.short}-o\\+${i + 1}`, {
-			[`__${prop.full}_delta_o`]: i + 1,
-		}),
-	);
-	const minus = Array.from({ length: 9 }, (_, i) =>
-		rule(`.${prop.short}-o-${i + 1}`, {
-			[`__${prop.full}_delta_o`]: -(i + 1),
-		}),
-	);
-	return [...plus, ...minus];
-}
-
-// Named luminosity variants
-function namedLuminosityClasses(prop) {
-	return [
-		rule(`.${prop.short}-darkest`, { [`__${prop.full}_delta_l`]: -4 }),
-		rule(`.${prop.short}-darker`, { [`__${prop.full}_delta_l`]: -2 }),
-		rule(`.${prop.short}-dark`, { [`__${prop.full}_delta_l`]: -1 }),
-		rule(`.${prop.short}-light`, { [`__${prop.full}_delta_l`]: 1 }),
-		rule(`.${prop.short}-lighter`, { [`__${prop.full}_delta_l`]: 2 }),
-		rule(`.${prop.short}-lightest`, { [`__${prop.full}_delta_l`]: 4 }),
-	];
-}
-
-// Semantic color classes for a property
-// Ink and paper are special: they ignore luminosity and chroma modifiers
-// but still allow opacity adjustments
-function semanticColorClasses(prop) {
-	return COLOR_NAMES.map((color) => {
-		const base = { [`__${prop.full}_base`]: vars.color[color] };
-		// Ink: forces scale position 0 (dark in light mode, light in dark mode)
-		if (color === "ink") {
-			return rule(`.${prop.short}-${color}`, {
-				...base,
-				[`__${prop.full}_l`]: 0,
-				[`__${prop.full}_c`]: 0,
-				[`__${prop.full}_delta_l`]: 0,
-				[`__${prop.full}_delta_c`]: 0,
-			});
+	for (const [name, { c, h }] of Object.entries(colors)) {
+		// Special handling for paper and ink
+		if (name === "paper") {
+			// .bg-paper → level 9, no chroma
+			classes.push(
+				rule(`.${prop.short}-paper`, {
+					[`__${prop.full}_level`]: 9,
+					[`__${prop.full}_c`]: 0,
+					[`__${prop.full}_h`]: 0,
+				}),
+			);
+			continue;
 		}
-		// Paper: forces scale position 9 (light in light mode, dark in dark mode)
-		if (color === "paper") {
-			return rule(`.${prop.short}-${color}`, {
-				...base,
-				[`__${prop.full}_l`]: 9,
-				[`__${prop.full}_c`]: 0,
-				[`__${prop.full}_delta_l`]: 0,
-				[`__${prop.full}_delta_c`]: 0,
-			});
+		if (name === "ink") {
+			// .bg-ink → level 0, no chroma
+			classes.push(
+				rule(`.${prop.short}-ink`, {
+					[`__${prop.full}_level`]: 0,
+					[`__${prop.full}_c`]: 0,
+					[`__${prop.full}_h`]: 0,
+				}),
+			);
+			continue;
 		}
-		return rule(`.${prop.short}-${color}`, base);
-	});
+
+		// .bg-primary → level 5 (default)
+		classes.push(
+			rule(`.${prop.short}-${name}`, {
+				[`__${prop.full}_level`]: 5,
+				[`__${prop.full}_c`]: c,
+				[`__${prop.full}_h`]: h,
+			}),
+		);
+
+		// .bg-primary-0 through .bg-primary-9
+		for (let i = 0; i < 10; i++) {
+			classes.push(
+				rule(`.${prop.short}-${name}-${i}`, {
+					[`__${prop.full}_level`]: i,
+					[`__${prop.full}_c`]: c,
+					[`__${prop.full}_h`]: h,
+				}),
+			);
+		}
+	}
+
+	return classes;
+}
+
+// Generate alpha classes: .bg-a0 through .bg-a10
+function alphaClasses(prop) {
+	return Array.from({ length: 11 }, (_, i) =>
+		rule(`.${prop.short}-a${i}`, { [`__${prop.full}_alpha`]: i }),
+	);
+}
+
+// Generate blend classes: .bg+paper/1 through .bg+paper/9, .bg+ink/1 through .bg+ink/9
+function blendClasses(prop) {
+	return ["paper", "ink"].flatMap((target) =>
+		Array.from({ length: 9 }, (_, i) =>
+			rule(`.${prop.short}\\+${target}\\/${i + 1}`, {
+				[`__${prop.full}_blend`]: i + 1,
+				[`__${prop.full}_blending`]: `var(--color-${target})`,
+			}),
+		),
+	);
 }
 
 // Text luminosity classes that override contrast constraints
-function textLuminosityOverrideClasses() {
+function textLevelOverrideClasses() {
 	return Array.from({ length: 10 }, (_, i) =>
 		rule(`.tx-${i}`, {
-			__text_l: i,
+			__text_level: i,
 			// Remove constraints when explicitly set
 			__text_l_min: 0,
 			__text_l_max: 9,
@@ -232,8 +210,16 @@ function textLuminosityOverrideClasses() {
 	);
 }
 
-export { COLOR_NAMES };
+// ----------------------------------------------------------------------------
+// EXPORTS
+// ----------------------------------------------------------------------------
+
 export default group(
+	// ------------------------------------------------------------------------
+	// COLOR SCALES (build-time generated)
+	// ------------------------------------------------------------------------
+	rule(":root", generateColorScales()),
+
 	// ------------------------------------------------------------------------
 	// DARK / LIGHT MODE
 	// ------------------------------------------------------------------------
@@ -244,9 +230,6 @@ export default group(
 		// Apply actual properties
 		background_color: vars.color.paper,
 		color: vars.color.ink,
-		// Set base variables for the color system
-		__background_base: vars.color.paper,
-		__text_base: vars.color.ink,
 	}),
 	rule(".dark", {
 		__color_page: vars.color.ink,
@@ -255,9 +238,6 @@ export default group(
 		// Apply actual properties with swapped colors
 		background_color: vars.color.ink,
 		color: vars.color.paper,
-		// Update base variables for the color system
-		__background_base: vars.color.ink,
-		__text_base: vars.color.paper,
 	}),
 
 	// ------------------------------------------------------------------------
@@ -265,86 +245,56 @@ export default group(
 	// ------------------------------------------------------------------------
 	// .bg - applies background color and sets text contrast constraints
 	rule(".bg", {
-		background_color: computeColor(PROPS[0]),
-		// Calculate if background is dark (L <= 5) for contrast
+		background_color: computeColor(props[0]),
+		// Calculate if background is dark (level <= 4) for contrast
 		// bg-is-dark: 1 if dark, 0 if light
-		// Threshold at 5.5 means bg-5 → text towards paper, bg-6 → text towards ink
-		__bg_is_dark: `clamp(0, (5.5 - ${vars.background.l} - ${vars.background.delta.l}) * 10, 1)`,
-		// Direction-aware text constraints: in dark mode (direction=-1), invert the mapping
-		// effective_is_dark = (1 + direction * (2 * bg_is_dark - 1)) / 2
-		__text_l_min: `calc((1 + ${vars.color.l.direction} * (2 * ${vars.bg.is.dark} - 1)) / 2 * 8)`,
-		__text_l_max: `calc(1 + (1 + ${vars.color.l.direction} * (2 * ${vars.bg.is.dark} - 1)) / 2 * 8)`,
+		// Threshold at 4.5 means level 4 → dark, level 5 → light
+		__bg_is_dark: `clamp(0, (4.5 - var(--background-level)) * 10, 1)`,
+		// Direction-aware text constraints for WCAG contrast
+		__text_l_min: `calc((1 + var(--color-l-direction) * (2 * var(--bg-is-dark) - 1)) / 2 * 8)`,
+		__text_l_max: `calc(1 + (1 + var(--color-l-direction) * (2 * var(--bg-is-dark) - 1)) / 2 * 8)`,
 	}),
 	// .tx - applies text color with contrast constraints
 	rule(".tx", {
-		color: computeColor(PROPS[1], true),
+		color: computeColor(props[1], true),
 	}),
 	// .bd - applies border color
 	rule(".bd", {
-		border_color: computeColor(PROPS[2]),
+		border_color: computeColor(props[2]),
 		border_width: vars.border.width,
 	}),
 	// .ol - applies outline color
 	rule(".ol", {
-		outline_color: computeColor(PROPS[3]),
+		outline_color: computeColor(props[3]),
 	}),
 
 	// ------------------------------------------------------------------------
-	// SEMANTIC COLOR CLASSES
+	// COLOR CLASSES
 	// ------------------------------------------------------------------------
-	...PROPS.flatMap(semanticColorClasses),
+	...props.flatMap(colorClasses),
 
 	// ------------------------------------------------------------------------
-	// LUMINOSITY CLASSES (0-9)
+	// TEXT LEVEL OVERRIDE CLASSES
 	// ------------------------------------------------------------------------
-	// For text, use override classes that remove constraints
-	...luminosityClasses(PROPS[0]), // bg
-	...textLuminosityOverrideClasses(), // tx (with constraint override)
-	...luminosityClasses(PROPS[2]), // bd
-	...luminosityClasses(PROPS[3]), // ol
+	...textLevelOverrideClasses(),
 
 	// ------------------------------------------------------------------------
-	// CHROMA CLASSES (0-9)c
+	// ALPHA CLASSES (0-10)
 	// ------------------------------------------------------------------------
-	...PROPS.flatMap(chromaClasses),
+	...props.flatMap(alphaClasses),
 
 	// ------------------------------------------------------------------------
-	// OPACITY CLASSES (0-9)o
+	// BLEND CLASSES
 	// ------------------------------------------------------------------------
-	...PROPS.flatMap(opacityClasses),
-
-	// ------------------------------------------------------------------------
-	// DELTA LUMINOSITY CLASSES (l+1 to l+9, l-1 to l-9)
-	// ------------------------------------------------------------------------
-	...PROPS.flatMap(deltaLuminosityClasses),
-
-	// ------------------------------------------------------------------------
-	// NAMED LUMINOSITY VARIANTS
-	// ------------------------------------------------------------------------
-	...PROPS.flatMap(namedLuminosityClasses),
-
-	// ------------------------------------------------------------------------
-	// DELTA CHROMA CLASSES (c+1 to c+9, c-1 to c-9)
-	// ------------------------------------------------------------------------
-	...PROPS.flatMap(deltaChromaClasses),
-
-	// ------------------------------------------------------------------------
-	// DELTA HUE CLASSES (h+1 to h+9, h-1 to h-9)
-	// ------------------------------------------------------------------------
-	...PROPS.flatMap(deltaHueClasses),
-
-	// ------------------------------------------------------------------------
-	// DELTA OPACITY CLASSES (o+1 to o+9, o-1 to o-9)
-	// ------------------------------------------------------------------------
-	...PROPS.flatMap(deltaOpacityClasses),
+	...props.flatMap(blendClasses),
 
 	// ------------------------------------------------------------------------
 	// RESET CLASSES
 	// ------------------------------------------------------------------------
-	rule(".bg-no", { __background_o: 0 }),
-	rule(".tx-no", { __text_o: 0 }),
-	rule(".bd-no", { __border_o: 0 }),
-	rule(".ol-no", { __outline_o: 0 }),
+	rule(".bg-no", { __background_alpha: 0 }),
+	rule(".tx-no", { __text_alpha: 0 }),
+	rule(".bd-no", { __border_alpha: 0 }),
+	rule(".ol-no", { __outline_alpha: 0 }),
 	// Direct transparent application (no variables)
 	rule(".nobg", { background_color: "transparent" }),
 	rule(".notx", { color: "inherit" }),

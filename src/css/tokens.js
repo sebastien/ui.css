@@ -55,23 +55,15 @@ export default group(
 	//
 	// ------------------------------------------------------------------------
 	// Semantic colors - all defined at L=0.5 in OKLCH as neutral baseline
+	// Color scales (0-9) are generated at build time in colors.js
 	tokens({
 		color: {
-			// Scale endpoint colors (swap with dark/light mode)
-			ink: "#000000" /* scale position 0 */,
-			paper: "#FFFFFF" /* scale position 9 */,
+			// Scale endpoint colors
+			ink: "#000000",
+			paper: "#FFFFFF",
 			// Luminosity direction: 1 = normal (light mode), -1 = inverted (dark mode)
 			l: { direction: 1 },
-			// Saturation multiplier: 1 = default, >1 = more vivid, <1 = more muted
-			saturation: 0.8,
-			// Temperature blending: shift hue toward warm/cool at luminosity extremes
-			// temperature: -1 = cool lights/warm darks, +1 = warm lights/cool darks, 0 = off
-			temperature: 0.15,
-			warm: 60 /* hue degrees to shift toward warm (yellow ~70) at light extremes */,
-			cool: 100 /* hue degrees to shift toward cool (blue ~250) at dark extremes */,
-			// Blending color space
-			blend: "oklch",
-			// Semantic colors (all at L=0.5)
+			// Semantic colors (all at L=0.5, chroma and hue preserved in scales)
 			neutral: "oklch(0.5 0.02 250)" /* near-gray, very low chroma */,
 			primary: "oklch(0.5 0.20 250)" /* calm blue */,
 			secondary: "oklch(0.5 0.20 280)" /* violet */,
@@ -90,27 +82,28 @@ export default group(
 	// COLOR PROPERTIES
 	//
 	// ------------------------------------------------------------------------
-	// Each color property has: base, l, c, h, o, delta.{l,c,h,o}
+	// Each color property has: level, alpha, blend, blending
 	// See spec-colors.md for full documentation
 	tokens({
 		background: {
-			// Base semantic color
-			base: vars.color.neutral,
-			// Absolute values (0-9 scale)
-			l: 7 /* luminosity: 0=dark, 9=light */,
-			c: 7 /* chroma: 0=gray, 9=vivid */,
-			h: 0 /* hue offset from base */,
-			o: 9 /* opacity: 0=transparent, 9=opaque */,
-			// Delta adjustments (-9 to +9)
-			delta: { l: 0, c: 0, h: 0, o: 0 },
+			// Level: 0-9 scale position (0=dark, 9=light)
+			level: 7,
+			// Chroma and hue from base color
+			c: 0.02,
+			h: 250,
+			// Alpha: 0-10 opacity (10=opaque)
+			alpha: 10,
+			// Blend: 0-9 amount to blend toward blending target
+			blend: 0,
+			blending: "transparent",
 		},
 		text: {
-			base: vars.color.text,
-			l: 1 /* dark text by default */,
-			c: 0 /* neutral chroma */,
-			h: 0,
-			o: 9,
-			delta: { l: 0, c: 0, h: 0, o: 0 },
+			level: 1 /* dark text by default */,
+			c: 0.02,
+			h: 250,
+			alpha: 10,
+			blend: 0,
+			blending: "transparent",
 			// Contrast constraints (set by .bg for accessibility)
 			l: {
 				min: 0,
@@ -135,12 +128,12 @@ export default group(
 			],
 		},
 		border: {
-			base: vars.color.neutral,
-			l: 6 /* mid-light luminosity */,
-			c: 2 /* low chroma */,
-			h: 0,
-			o: 9,
-			delta: { l: 0, c: 0, h: 0, o: 0 },
+			level: 6,
+			c: 0.02,
+			h: 250,
+			alpha: 10,
+			blend: 0,
+			blending: "transparent",
 			width: "1px",
 			// Non-color properties
 			sizes: sizes.map((_, i) => `${i}px`),
@@ -156,12 +149,12 @@ export default group(
 			style: "solid",
 		},
 		outline: {
-			base: vars.color.neutral,
-			l: 5,
-			c: 2,
-			h: 0,
-			o: 9,
-			delta: { l: 0, c: 0, h: 0, o: 0 },
+			level: 5,
+			c: 0.02,
+			h: 250,
+			alpha: 10,
+			blend: 0,
+			blending: "transparent",
 			width: "2px",
 		},
 	}),

@@ -6,12 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script type="importmap">
       {"imports": {
-      "@littlecss": "../js/littlecss.js",
+      "@littlecss.js": "../js/littlecss.js",
       "@littlecss/": "../css/",
       "@select/ui": "../js/select.ui.js",
       "@select/cells": "../js/select.cells.js"
       }}
     </script>
+    <style>
+      html body  {
+      		--color-paper: #fff59a;
+      		--color-ink: #011118;
+      		--color-neutral: var(--color-paper);
+      		--color-primary: #ffd10f;
+      		--color-secondary: #fff176;
+      }
+    </style>
   </head>
   <body>
     <section class="stack g-4 rounder m-4 p-4 bg bg-neutral bg-9">
@@ -53,9 +62,9 @@
     </template>
   </section>
   <script type="module">
-    import css, {layers} from "@littlecss"
+    import css, {layers} from "@littlecss.js"
     import all from "@littlecss/all"
-    css.mount(...layers(all))
+    css.mount(all)
   </script>
   <script type="module">
     import {ui} from "@select/ui"

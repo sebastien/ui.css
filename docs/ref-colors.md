@@ -31,7 +31,7 @@ Apply computed colors from CSS variables:
 <div class="bg-primary bg">Primary background</div>
 
 <!-- Set color variables without applying -->
-<div class="bg-primary bg-7">Variables set, no visible color yet</div>
+<div class="bg-primary bg-primary-7">Variables set, no visible color yet</div>
 ```
 
 ## Semantic Colors
@@ -75,18 +75,18 @@ Available color names: `paper`, `ink`, `neutral`, `primary`, `secondary`, `terti
 `ink` and `paper` are scale endpoint colors that swap in dark/light mode:
 
 ```html
-<!-- ink: scale position 0 (black in light mode, white in dark mode) -->
+<!-- ink: level 0 (black in light mode, white in dark mode) -->
 <span class="tx-ink tx">Always maximum contrast text</span>
 
-<!-- paper: scale position 9 (white in light mode, black in dark mode) -->
+<!-- paper: level 9 (white in light mode, black in dark mode) -->
 <div class="bg-paper bg">Always page background color</div>
 ```
 
-These colors ignore luminosity/chroma modifiers but respect opacity.
+These colors have level set to 0 (ink) or 9 (paper) with zero chroma.
 
-## Luminosity Scale (0-9)
+## Level Scale (0-9)
 
-Set absolute luminosity on the 0-9 scale:
+Set absolute level on the 0-9 scale using `.{prop}-{color}-{level}`:
 
 | Value | Light Mode | Dark Mode |
 |-------|------------|-----------|
@@ -95,103 +95,66 @@ Set absolute luminosity on the 0-9 scale:
 | 9 | Near-white (L=0.95) | Near-black (L=0.05) |
 
 ```html
-<div class="bg-primary bg-8 bg">Light primary (l=8)</div>
-<div class="bg-primary bg-2 bg">Dark primary (l=2)</div>
-<div class="bg-neutral bg-7 bg">Light gray</div>
+<div class="bg-primary-8 bg">Light primary (level=8)</div>
+<div class="bg-primary-2 bg">Dark primary (level=2)</div>
+<div class="bg-neutral-7 bg">Light gray</div>
 ```
 
-### Text Luminosity Override
+### Default Level
+
+Using `.{prop}-{color}` without a level suffix sets level to 5 (mid-tone):
+
+```html
+<div class="bg-primary bg">Primary at level 5</div>
+```
+
+### Text Level Override
 
 For text, setting `.tx-{0-9}` also removes WCAG contrast constraints:
 
 ```html
 <!-- Auto-contrast: text adapts to background -->
-<div class="bg-primary bg-2 bg tx">Auto light text on dark bg</div>
+<div class="bg-primary-2 bg tx">Auto light text on dark bg</div>
 
-<!-- Manual override: force specific luminosity -->
-<div class="bg-primary bg-2 bg tx-5 tx">Mid-tone text (may break contrast)</div>
+<!-- Manual override: force specific level -->
+<div class="bg-primary-2 bg tx-5 tx">Mid-tone text (may break contrast)</div>
 ```
 
-## Chroma Classes (0-9)
+## Alpha Classes (0-10)
 
-Set color saturation with the `c` suffix:
+Set opacity with `.{prop}-a{0-10}`:
 
 ```html
-<div class="bg-primary bg-0c bg">Grayscale (no chroma)</div>
-<div class="bg-primary bg-5c bg">Medium saturation</div>
-<div class="bg-primary bg-9c bg">Maximum saturation</div>
+<div class="bg-primary bg-a0 bg">Transparent</div>
+<div class="bg-primary bg-a5 bg">50% opacity</div>
+<div class="bg-primary bg-a10 bg">Fully opaque</div>
 ```
 
-## Opacity Classes (0-9)
+## Blend Classes
 
-Set opacity with the `o` suffix:
+Blend toward ink or paper using `.{prop}+ink/{1-9}` or `.{prop}+paper/{1-9}`:
 
 ```html
-<div class="bg-primary bg-0o bg">Transparent</div>
-<div class="bg-primary bg-5o bg">50% opacity</div>
-<div class="bg-primary bg-9o bg">Fully opaque</div>
+<div class="bg-primary bg+paper/3 bg">Blend 30% toward paper</div>
+<div class="bg-primary bg+ink/2 bg">Blend 20% toward ink</div>
 ```
 
-## Delta Modifiers
-
-Adjust values relative to the base:
-
-### Delta Luminosity
-
-```html
-<div class="bg-primary bg-l+2 bg">Lighter (+2)</div>
-<div class="bg-primary bg-l-1 bg">Darker (-1)</div>
-```
-
-### Named Luminosity Variants
-
-| Class | Delta | Effect |
-|-------|-------|--------|
-| `.{prop}-darkest` | -4 | Much darker |
-| `.{prop}-darker` | -2 | Darker |
-| `.{prop}-dark` | -1 | Slightly darker |
-| `.{prop}-light` | +1 | Slightly lighter |
-| `.{prop}-lighter` | +2 | Lighter |
-| `.{prop}-lightest` | +4 | Much lighter |
-
-```html
-<div class="bg-primary bg-lighter bg">Lighter primary</div>
-<div class="bg-primary bg-darker bg">Darker primary</div>
-```
-
-### Delta Chroma
-
-```html
-<div class="bg-primary bg-c+2 bg">More saturated</div>
-<div class="bg-primary bg-c-2 bg">Less saturated</div>
-```
-
-### Delta Hue
-
-Each unit shifts hue by 40 degrees:
-
-```html
-<div class="bg-primary bg-h+1 bg">Hue shifted +40°</div>
-<div class="bg-primary bg-h-1 bg">Hue shifted -40°</div>
-```
-
-### Delta Opacity
-
-```html
-<div class="bg-primary bg-o+2 bg">More opaque</div>
-<div class="bg-primary bg-o-2 bg">More transparent</div>
-```
+| Pattern | Effect |
+|---------|--------|
+| `.bg+paper/1` | 10% blend toward paper |
+| `.bg+paper/5` | 50% blend toward paper |
+| `.bg+ink/3` | 30% blend toward ink |
 
 ## Reset/Remove Colors
 
-### Using Variables (sets opacity to 0)
+### Using Variables (sets alpha to 0)
 
 | Class | Description |
 |-------|-------------|
-| `.bg-no` | `--background-o: 0` |
-| `.tx-no` | `--text-o: 0` |
-| `.bd-no` | `--border-o: 0` |
-| `.ol-no` | `--outline-o: 0` |
+| `.bg-no` | `--background-alpha: 0` |
+| `.tx-no` | `--text-alpha: 0` |
+| `.bd-no` | `--border-alpha: 0` |
+| `.ol-no` | `--outline-alpha: 0` |
 
 ### Direct Transparent (bypasses variables)
 
@@ -204,7 +167,7 @@ Each unit shifts hue by 40 degrees:
 
 ## Dark/Light Mode
 
-The system automatically adapts to dark/light mode via direction-aware luminosity:
+The system automatically adapts to dark/light mode via direction-aware level calculation:
 
 ```html
 <!-- These classes set the mode -->
@@ -212,7 +175,7 @@ The system automatically adapts to dark/light mode via direction-aware luminosit
 <body class="dark">...</body>
 
 <!-- Colors automatically invert in dark mode -->
-<div class="bg-primary bg-7 bg">
+<div class="bg-primary-7 bg">
     Light shade in both modes (adapts automatically)
 </div>
 ```
@@ -224,15 +187,15 @@ The system automatically adapts to dark/light mode via direction-aware luminosit
 
 ## Automatic Text Contrast
 
-When `.bg` is applied, it sets text luminosity constraints based on background:
+When `.bg` is applied, it sets text level constraints based on background:
 
-- Background L >= 6 (light): text constrained to L 0-1 (dark)
-- Background L <= 5 (dark): text constrained to L 8-9 (light)
+- Background level >= 5 (light): text constrained to level 0-1 (dark)
+- Background level <= 4 (dark): text constrained to level 8-9 (light)
 
 ```html
 <!-- Text automatically contrasts with background -->
-<div class="bg-primary bg-8 bg tx">Dark text on light bg (auto)</div>
-<div class="bg-primary bg-2 bg tx">Light text on dark bg (auto)</div>
+<div class="bg-primary-8 bg tx">Dark text on light bg (auto)</div>
+<div class="bg-primary-2 bg tx">Light text on dark bg (auto)</div>
 ```
 
 ## Usage Examples
@@ -249,18 +212,18 @@ When `.bg` is applied, it sets text luminosity constraints based on background:
 ### Card with Subtle Background
 
 ```html
-<div class="bg-neutral bg-8 bg p-m bd-neutral bd-6 bd">
+<div class="bg-neutral-8 bg p-m bd-neutral-6 bd">
     <h3 class="tx">Card Title</h3>
-    <p class="tx-neutral tx-4 tx">Muted text content</p>
+    <p class="tx-neutral-4 tx">Muted text content</p>
 </div>
 ```
 
 ### Semantic Color Shades
 
 ```html
-<div class="bg-primary bg-8 bg p-m">Light primary</div>
-<div class="bg-primary bg-5 bg p-m tx">Medium primary</div>
-<div class="bg-primary bg-2 bg p-m tx">Dark primary</div>
+<div class="bg-primary-8 bg p-m">Light primary</div>
+<div class="bg-primary bg p-m tx">Medium primary (level 5)</div>
+<div class="bg-primary-2 bg p-m tx">Dark primary</div>
 ```
 
 ### Transparent Overlays
@@ -268,7 +231,7 @@ When `.bg` is applied, it sets text luminosity constraints based on background:
 ```html
 <div class="rel">
     <img src="photo.jpg" alt="Background">
-    <div class="cover bg-ink bg-5o bg tx centered">
+    <div class="cover bg-ink bg-a5 bg tx centered">
         Overlay text
     </div>
 </div>
@@ -298,17 +261,19 @@ When `.bg` is applied, it sets text luminosity constraints based on background:
 ### Multiple Properties
 
 ```html
-<div class="bg-primary bg-8 bg bd-primary bd-5 bd tx-primary tx">
+<div class="bg-primary-8 bg bd-primary-5 bd tx-primary tx">
     Primary bg (light), darker border, primary text
 </div>
 ```
 
-### Hover State with Delta
+### Blended Colors
 
 ```html
-<button class="bg-primary bg hover:bg-l-1">
-    Darkens on hover
-</button>
+<!-- Soften a color by blending toward paper -->
+<button class="bg-primary bg+paper/2 bg tx">Softened primary</button>
+
+<!-- Deepen a color by blending toward ink -->
+<button class="bg-primary bg+ink/1 bg tx">Deepened primary</button>
 ```
 
 ## CSS Variables Reference
@@ -317,29 +282,50 @@ Each property has these variables:
 
 | Variable | Range | Description |
 |----------|-------|-------------|
-| `--{prop}-base` | color | Semantic base color |
-| `--{prop}-l` | 0-9 | Luminosity |
-| `--{prop}-c` | 0-9 | Chroma |
-| `--{prop}-h` | 0-9 | Hue offset (×40°) |
-| `--{prop}-o` | 0-9 | Opacity |
-| `--{prop}-delta-l` | -9 to +9 | Luminosity adjustment |
-| `--{prop}-delta-c` | -9 to +9 | Chroma adjustment |
-| `--{prop}-delta-h` | -9 to +9 | Hue adjustment |
-| `--{prop}-delta-o` | -9 to +9 | Opacity adjustment |
+| `--{prop}-level` | 0-9 | Scale position (0=dark, 9=light) |
+| `--{prop}-c` | 0-0.4 | Chroma |
+| `--{prop}-h` | 0-360 | Hue |
+| `--{prop}-alpha` | 0-10 | Opacity (10=opaque) |
+| `--{prop}-blend` | 0-9 | Blend amount toward blending target |
+| `--{prop}-blending` | color | Blend target color |
 
 Text-specific:
 
 | Variable | Description |
 |----------|-------------|
-| `--text-l-min` | Minimum luminosity (set by `.bg`) |
-| `--text-l-max` | Maximum luminosity (set by `.bg`) |
+| `--text-l-min` | Minimum level (set by `.bg`) |
+| `--text-l-max` | Maximum level (set by `.bg`) |
 
 Global:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `--color-l-direction` | 1 | 1 (light) or -1 (dark) |
-| `--color-saturation` | 0.8 | Global saturation multiplier |
-| `--color-temperature` | 0.15 | Warm/cool shift intensity |
-| `--color-warm` | 60 | Hue shift toward warm at light extremes |
-| `--color-cool` | 100 | Hue shift toward cool at dark extremes |
+
+## Color Computation Formula
+
+Colors are computed using OKLCH:
+
+```
+L = 0.05 + effective_level * 0.1
+effective_level = direction == 1 ? level : (9 - level)
+color = oklch(L C H / alpha)
+```
+
+Blending uses `color-mix`:
+```
+blended = color-mix(in oklch, base, blending blend*10%)
+```
+
+## Class Pattern Summary
+
+| Pattern | Example | Effect |
+|---------|---------|--------|
+| `.{prop}-{color}` | `.bg-primary` | Color at level 5 |
+| `.{prop}-{color}-{0-9}` | `.bg-primary-8` | Color at specific level |
+| `.{prop}-a{0-10}` | `.bg-a7` | 70% alpha |
+| `.{prop}+paper/{1-9}` | `.bg+paper/3` | Blend 30% toward paper |
+| `.{prop}+ink/{1-9}` | `.tx+ink/2` | Blend 20% toward ink |
+| `.tx-{0-9}` | `.tx-3` | Text level (disables contrast) |
+| `.{prop}-no` | `.bg-no` | Set alpha to 0 |
+| `.no{prop}` | `.nobg` | Direct transparent |

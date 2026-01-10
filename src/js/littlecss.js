@@ -108,11 +108,17 @@ const sides = { l: "left", t: "top", r: "right", b: "bottom" };
 class Scope {
 	// NOTE: It is a bit awkward
 	static get(target, property) {
-		return typeof property === "string" &&
+		if (
+			typeof property === "string" &&
 			property !== "_name" &&
-			property != "walk"
-			? (target[property] = target[property] ?? scope(property, target))
-			: target[property];
+			property !== "walk"
+		) {
+			if (target[property] === undefined) {
+				target[property] = scope(property, target);
+			}
+			return target[property];
+		}
+		return target[property];
 	}
 	static set(target, property, value) {
 		// TODO: We should have the vars in a map instead
@@ -149,7 +155,7 @@ const vars = scope(Vars);
 const pseudo = (type, ...selectors) => {
 	let res = [];
 	for (const s of selectors) {
-		if (s instanceof Array) {
+		if (Array.isArray(s)) {
 			res = res.concat(pseudo(type, ...s));
 		} else {
 			res.push(`${s}:${type}`);
@@ -161,12 +167,15 @@ const pseudo = (type, ...selectors) => {
 const on = new Proxy(
 	{},
 	{
-		get: (target, property) =>
-			typeof property === "string"
-				? (target[property] =
-						target[property] ??
-						((...sel) => pseudo(property, ...sel)))
-				: target[property],
+		get: (target, property) => {
+			if (typeof property === "string") {
+				if (target[property] === undefined) {
+					target[property] = (...sel) => pseudo(property, ...sel);
+				}
+				return target[property];
+			}
+			return target[property];
+		},
 	},
 );
 
@@ -203,10 +212,10 @@ class Rule {
 				type: "Rule",
 				name,
 				path,
-				definition: Object.keys(this.properties).reduce(
-					(r, k) => ((r[k] = `${this.properties[k]}`), r),
-					{},
-				),
+				definition: Object.keys(this.properties).reduce((r, k) => {
+					r[k] = `${this.properties[k]}`;
+					return r;
+				}, {}),
 			};
 		}
 	}
@@ -215,7 +224,7 @@ class Rule {
 function rule(selector, ...body) {
 	// TODO: We could do basic selector parsing to extract classnames, tagnames
 	// and ids.
-	const sel = selector instanceof Array ? selector : [selector];
+	const sel = Array.isArray(selector) ? selector : [selector];
 	const props = {};
 	for (const b of body) {
 		if (typeof b === "string") {
@@ -250,7 +259,7 @@ class Group {
 	constructor(contents, name = undefined) {
 		this.contents = [];
 		for (const v of contents) {
-			if (v instanceof Array) {
+			if (Array.isArray(v)) {
 				this.contents = this.contents.concat(v);
 			} else {
 				this.contents.push(v);
@@ -329,7 +338,7 @@ const named = (mapping) => {
 			v.name = k;
 			items.push(v);
 		} else {
-			items.push(new Group(v instanceof Array ? v : v ? [v] : [], k));
+			items.push(new Group(Array.isArray(v) ? v : v ? [v] : [], k));
 		}
 	}
 	return new Group(items);
@@ -369,7 +378,7 @@ class Token {
 
 class Tokens extends Group {
 	static *Expand(collection, prefix = undefined) {
-		if (collection instanceof Array) {
+		if (Array.isArray(collection)) {
 			for (const v of collection) {
 				for (const w of Tokens.Expand(v, prefix)) {
 					yield w;
@@ -503,7 +512,7 @@ function* docs(...values) {
 // Injects the styles directly as stylesheets into the DOM.
 css.mount = (...values) => {
 	const res = [];
-	for (const v of values.flatMap((_) => _)) {
+	for (const v of values.flat()) {
 		const styles = [];
 		if (v instanceof Rule || v instanceof Group) {
 			styles.push(v);
@@ -549,10 +558,10 @@ const mods = (classes, ...modifiers) =>
 const cross = (...sets) =>
 	sets.reduce((r, v) =>
 		r
-			? (r instanceof Array ? r : [r]).flatMap((_) =>
-					(v instanceof Array ? v : [v]).map((w) => `${_}${w}`),
+			? (Array.isArray(r) ? r : [r]).flatMap((_) =>
+					(Array.isArray(v) ? v : [v]).map((w) => `${_}${w}`),
 				)
-			: v instanceof Array
+			: Array.isArray(v)
 				? v
 				: [v],
 	);

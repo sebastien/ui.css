@@ -1,186 +1,161 @@
 # Colors
 
+## Overview
+
+LittleCSS uses a simplified color system based on pre-computed 10-step luminosity scales. Each semantic color has a scale from 0 (dark, near ink) to 9 (light, near paper), with the base color at position 5.
+
 ## Base Colors
 
-- `paper`: white point (page in light mode, text in dark mode) - scale position 9
-- `ink`: black point (page in dark mode, text in light mode) - scale position 0
+- `paper`: white point (#FFFFFF)
+- `ink`: black point (#000000)
 
 ## Semantic Colors
 
-- `neutral`: near-gray, very low chroma (oklch 0.5 0.02 250)
-- `primary`: main brand color, calm blue (oklch 0.5 0.20 250)
-- `secondary`: secondary brand color, violet (oklch 0.5 0.20 280)
-- `tertiary`: tertiary accent, teal (oklch 0.5 0.20 160)
-- `success`: positive feedback, green (oklch 0.5 0.24 145)
-- `info`: informational, cyan-blue (oklch 0.5 0.22 220)
-- `warning`: caution, amber (oklch 0.5 0.24 90)
-- `danger`: error/destructive, red (oklch 0.5 0.28 25)
+| Name | Description | OKLCH Definition |
+|------|-------------|------------------|
+| `neutral` | near-gray, very low chroma | `oklch(0.5 0.02 250)` |
+| `primary` | main brand color, calm blue | `oklch(0.5 0.20 250)` |
+| `secondary` | secondary brand color, violet | `oklch(0.5 0.20 280)` |
+| `tertiary` | tertiary accent, teal | `oklch(0.5 0.20 160)` |
+| `success` | positive feedback, green | `oklch(0.5 0.24 145)` |
+| `info` | informational, cyan-blue | `oklch(0.5 0.22 220)` |
+| `warning` | caution, amber | `oklch(0.5 0.24 90)` |
+| `danger` | error/destructive, red | `oklch(0.5 0.28 25)` |
 
-All semantic colors are defined at L=0.5 in OKLCH as a neutral baseline.
+All semantic colors are defined at L=0.5 in OKLCH. The chroma and hue are preserved across the luminosity scale.
 
-## Global Color Tokens
+## Color Scales
+
+For each semantic color, a 10-step scale is generated at build time:
+
+```css
+--color-primary-0: oklch(0.05 0.20 250);  /* near ink */
+--color-primary-1: oklch(0.15 0.20 250);
+--color-primary-2: oklch(0.25 0.20 250);
+--color-primary-3: oklch(0.35 0.20 250);
+--color-primary-4: oklch(0.45 0.20 250);
+--color-primary-5: oklch(0.55 0.20 250);  /* base color */
+--color-primary-6: oklch(0.65 0.20 250);
+--color-primary-7: oklch(0.75 0.20 250);
+--color-primary-8: oklch(0.85 0.20 250);
+--color-primary-9: oklch(0.95 0.20 250);  /* near paper */
+```
+
+These can be overridden manually for fine-tuning.
+
+## Global Tokens
 
 | Token | Default | Description |
 |-------|---------|-------------|
 | `--color-l-direction` | 1 | Luminosity direction: 1 (light mode), -1 (dark mode) |
-| `--color-saturation` | 0.8 | Global saturation multiplier |
-| `--color-temperature` | 0.15 | Warm/cool shift intensity |
-| `--color-warm` | 60 | Hue degrees to shift toward warm at light extremes |
-| `--color-cool` | 100 | Hue degrees to shift toward cool at dark extremes |
 
 ## Color Properties
 
 Colors can be applied to four properties:
 
-| Property | Prefix | CSS Property | Variable Prefix |
-|----------|--------|--------------|-----------------|
-| Background | `bg` | `background-color` | `--background-` |
-| Text | `tx` | `color` | `--text-` |
-| Border | `bd` | `border-color` | `--border-` |
-| Outline | `ol` | `outline-color` | `--outline-` |
+| Property | Prefix | CSS Property |
+|----------|--------|--------------|
+| Background | `bg` | `background-color` |
+| Text | `tx` | `color` |
+| Border | `bd` | `border-color` |
+| Outline | `ol` | `outline-color` |
 
-## CSS Variables
+## CSS Variables (per property)
 
-Each property has these CSS variables:
-
-| Variable | Range | Description |
-|----------|-------|-------------|
-| `--{prop}-base` | color | The semantic base color |
-| `--{prop}-l` | 0-9 | Luminosity (0=darkest, 9=lightest) |
-| `--{prop}-c` | 0-9 | Chroma (0=gray, 9=vivid) |
-| `--{prop}-h` | 0-9 | Hue offset from base (each unit = 40°) |
-| `--{prop}-o` | 0-9 | Opacity (0=transparent, 9=opaque) |
-| `--{prop}-delta-l` | -9 to +9 | Relative luminosity adjustment |
-| `--{prop}-delta-c` | -9 to +9 | Relative chroma adjustment |
-| `--{prop}-delta-h` | -9 to +9 | Relative hue adjustment |
-| `--{prop}-delta-o` | -9 to +9 | Relative opacity adjustment |
+| Variable | Range | Default | Description |
+|----------|-------|---------|-------------|
+| `--{prop}-level` | 0-9 | 5 | Scale position (0=dark, 9=light) |
+| `--{prop}-c` | 0-0.4 | varies | Chroma from base color |
+| `--{prop}-h` | 0-360 | varies | Hue from base color |
+| `--{prop}-alpha` | 0-10 | 10 | Opacity (10=opaque) |
+| `--{prop}-blend` | 0-9 | 0 | Blend amount toward target |
+| `--{prop}-blending` | color | transparent | Blend target color |
 
 Text also has contrast constraint variables:
 
 | Variable | Description |
 |----------|-------------|
-| `--text-l-min` | Minimum luminosity (set by `.bg` for contrast) |
-| `--text-l-max` | Maximum luminosity (set by `.bg` for contrast) |
+| `--text-l-min` | Minimum level (set by `.bg` for contrast) |
+| `--text-l-max` | Maximum level (set by `.bg` for contrast) |
 
 ## Utility Classes
 
-### Semantic Color Classes
+### Color Classes
 
-Set the base color for a property:
+Set the color and level for a property:
 
 ```
-.{bg,tx,bd,ol}-{color}
+.{bg,tx,bd,ol}-{color}        → level 5 (default)
+.{bg,tx,bd,ol}-{color}-{0-9}  → specific level
 ```
 
-Where color is one of: `paper`, `ink`, `neutral`, `primary`, `secondary`, `tertiary`, `success`, `info`, `warning`, `danger`
+Where color is: `paper`, `ink`, `neutral`, `primary`, `secondary`, `tertiary`, `success`, `info`, `warning`, `danger`
 
 Examples:
-- `.bg-primary` → `--background-base: var(--color-primary)`
-- `.tx-danger` → `--text-base: var(--color-danger)`
-- `.bd-neutral` → `--border-base: var(--color-neutral)`
+```html
+<div class="bg-primary bg">Primary at level 5</div>
+<div class="bg-primary-8 bg">Light primary (level 8)</div>
+<div class="bg-primary-2 bg">Dark primary (level 2)</div>
+<div class="tx-danger tx">Danger text</div>
+```
 
 **Special handling for ink/paper:**
-- `.bg-ink` forces `l=0, c=0` (ignores luminosity/chroma modifiers)
-- `.bg-paper` forces `l=9, c=0` (ignores luminosity/chroma modifiers)
-- Opacity adjustments still apply to both
-
-### Luminosity Classes
-
-Set absolute luminosity (0-9):
-
-```
-.{bg,tx,bd,ol}-{0-9}
-```
-
-Examples:
-- `.bg-8` → `--background-l: 8` (light background)
-- `.bg-2` → `--background-l: 2` (dark background)
-- `.tx-1` → `--text-l: 1` (dark text)
-
-### Chroma Classes
-
-Set absolute chroma (0-9):
-
-```
-.{bg,tx,bd,ol}-{0-9}c
-```
-
-Examples:
-- `.bg-0c` → `--background-c: 0` (grayscale)
-- `.bg-9c` → `--background-c: 9` (vivid/saturated)
-
-### Opacity Classes
-
-Set absolute opacity (0-9):
-
-```
-.{bg,tx,bd,ol}-{0-9}o
-```
-
-Examples:
-- `.bg-5o` → `--background-o: 5` (50% opacity)
-- `.bg-0o` → `--background-o: 0` (transparent)
-
-### Delta Luminosity Classes
-
-Relative luminosity adjustment:
-
-```
-.{bg,tx,bd,ol}-l+{1-9}   (lighter)
-.{bg,tx,bd,ol}-l-{1-9}   (darker)
-```
-
-Examples:
-- `.bg-l+2` → `--background-delta-l: 2`
-- `.bg-l-1` → `--background-delta-l: -1`
-
-### Named Luminosity Variants
-
-Preset delta values:
-
-| Class | Delta | Effect |
-|-------|-------|--------|
-| `.{prop}-darkest` | -4 | Much darker |
-| `.{prop}-darker` | -2 | Darker |
-| `.{prop}-dark` | -1 | Slightly darker |
-| `.{prop}-light` | +1 | Slightly lighter |
-| `.{prop}-lighter` | +2 | Lighter |
-| `.{prop}-lightest` | +4 | Much lighter |
-
-### Delta Chroma/Hue/Opacity Classes
-
-```
-.{bg,tx,bd,ol}-c+{1-9}   (more saturated)
-.{bg,tx,bd,ol}-c-{1-9}   (less saturated)
-.{bg,tx,bd,ol}-h+{1-9}   (hue shift +)
-.{bg,tx,bd,ol}-h-{1-9}   (hue shift -)
-.{bg,tx,bd,ol}-o+{1-9}   (more opaque)
-.{bg,tx,bd,ol}-o-{1-9}   (more transparent)
-```
+- `.bg-ink` forces level 0, no chroma
+- `.bg-paper` forces level 9, no chroma
 
 ### Apply Classes
 
 Apply the computed color to the CSS property:
 
+| Class | Effect |
+|-------|--------|
+| `.bg` | Apply `background-color` (and set text contrast constraints) |
+| `.tx` | Apply `color` (with contrast constraints) |
+| `.bd` | Apply `border-color` and `border-width` |
+| `.ol` | Apply `outline-color` |
+
+**Important**: Setting modifier classes only sets variables. You must use the apply class to render the color.
+
+### Alpha Classes
+
+Set opacity (0-10 scale, 10 = fully opaque):
+
 ```
-.bg   → applies background-color (and sets text contrast constraints)
-.tx   → applies color (with contrast constraints)
-.bd   → applies border-color (and border-width)
-.ol   → applies outline-color
+.{bg,tx,bd,ol}-a{0-10}
 ```
 
-**Important**: Setting modifier classes (`.bg-primary`, `.bg-8`, etc.) only sets
-variables. You must use `.bg` to actually apply the color.
+Examples:
+```html
+<div class="bg-primary bg-a5 bg">50% opacity</div>
+<div class="bg-primary bg-a0 bg">Transparent</div>
+```
+
+### Blend Classes
+
+Blend the color toward paper or ink:
+
+```
+.{bg,tx,bd,ol}+paper/{1-9}   → blend toward paper
+.{bg,tx,bd,ol}+ink/{1-9}     → blend toward ink
+```
+
+The number indicates blend percentage (1 = 10%, 9 = 90%).
+
+Examples:
+```html
+<div class="bg-primary bg+paper/3 bg">Primary blended 30% toward paper</div>
+<div class="tx-danger tx+ink/2 tx">Danger text blended 20% toward ink</div>
+```
 
 ### Reset Classes
 
 Remove color from a property:
 
 ```
-.bg-no   → --background-o: 0 (transparent via opacity)
-.tx-no   → --text-o: 0
-.bd-no   → --border-o: 0
-.ol-no   → --outline-o: 0
+.bg-no   → --background-alpha: 0
+.tx-no   → --text-alpha: 0
+.bd-no   → --border-alpha: 0
+.ol-no   → --outline-alpha: 0
 
 .nobg    → background-color: transparent (direct CSS)
 .notx    → color: inherit
@@ -190,23 +165,22 @@ Remove color from a property:
 
 ## Automatic Text Contrast
 
-When `.bg` is applied, it automatically sets text luminosity constraints to
-ensure WCAG 4.5:1 contrast ratio:
+When `.bg` is applied, it automatically sets text level constraints to ensure WCAG-compatible contrast:
 
-- Light backgrounds (L >= 6, threshold 5.5) constrain text to dark (L: 0-1)
-- Dark backgrounds (L <= 5, threshold 5.5) constrain text to light (L: 8-9)
+- Dark backgrounds (level <= 4) constrain text to light levels (8-9)
+- Light backgrounds (level >= 5) constrain text to dark levels (0-1)
 
-The threshold at 5.5 means:
-- `bg-5` → text toward paper (light: 8-9, dark: 0-1)
-- `bg-6` → text toward ink (light: 0-1, dark: 8-9)
-
-The `.tx` class respects these constraints by clamping `--text-l` between
-`--text-l-min` and `--text-l-max`.
+The `.tx` class respects these constraints by clamping `--text-level` between `--text-l-min` and `--text-l-max`.
 
 ### Override Contrast
 
-Explicitly setting `.tx-{0-9}` removes the automatic constraint, allowing
-any luminosity value. Use with caution as this may break accessibility.
+Explicitly setting `.tx-{0-9}` removes the automatic constraint:
+
+```html
+<div class="bg-primary-3 bg tx-5 tx">Override: medium text on dark bg</div>
+```
+
+Use with caution as this may break accessibility.
 
 ## Dark Mode
 
@@ -214,98 +188,113 @@ The `.dark` and `.light` classes set mode-specific defaults:
 
 ```css
 .light, :root {
-  --color-page: var(--color-paper);
-  --color-text: var(--color-ink);
   --color-l-direction: 1;
+  background-color: var(--color-paper);
+  color: var(--color-ink);
 }
 
 .dark {
-  --color-page: var(--color-ink);
-  --color-text: var(--color-paper);
   --color-l-direction: -1;
+  background-color: var(--color-ink);
+  color: var(--color-paper);
 }
 ```
 
-The direction-aware luminosity formula automatically inverts the scale in dark mode,
-so `l=7` always means "light shade" regardless of mode.
+With `--color-l-direction: -1`, the level scale inverts:
+- Level 8 in dark mode = dark shade (same visual meaning as level 8 in light mode: "light shade")
+
+This means `.bg-primary-8` always produces a "light shade of primary" regardless of mode.
 
 ## Color Computation Formula
 
-The final color is computed using direction-aware luminosity:
+The final color is computed as:
 
 ```
-L = 0.5 + direction * (l + delta-l - 4.5) / 10
-    direction=1 (light mode):  0→0.05 (near-black), 9→0.95 (near-white)
-    direction=-1 (dark mode):  0→0.95 (near-white), 9→0.05 (near-black)
-
-C = clamp(0, (c + delta-c) / 9 * base-chroma * 2.5 * saturation, 0.4)
-
-H = base-hue + (h + delta-h) * 40 + temperature-shift
-    temperature-shift = temperature * (
-        max(0, L - 0.5) * 2 * warm    // lights shift toward warm
-      - max(0, 0.5 - L) * 2 * cool    // darks shift toward cool
-    )
-
-A = clamp(0, (o + delta-o) / 9, 1)
-
-color = oklch(L C H / A)
-```
-
-The direction-aware luminosity provides automatic dark mode support:
-- In light mode (direction=1): `l=0` produces near-black, `l=9` produces near-white
-- In dark mode (direction=-1): `l=0` produces near-white, `l=9` produces near-black
-
-For text with contrast constraints:
-```
-L = clamp(L-min, L-base, L-max)
-where L-min and L-max are computed using the same direction-aware formula
+effective_level = direction == 1 ? level : (9 - level)
+L = 0.05 + effective_level * 0.1
+base_color = oklch(L, C, H)
+blended = color-mix(in oklch, base_color, blending blend*10%)
+final = oklch(from blended l c h / alpha/10)
 ```
 
 ## Usage Examples
 
 ```html
-<!-- Primary color, light shade, applied to background -->
-<div class="bg-primary bg-8 bg">Light blue background</div>
+<!-- Primary background at default level (5) -->
+<div class="bg-primary bg">Primary background</div>
+
+<!-- Light primary background -->
+<div class="bg-primary-8 bg">Light primary</div>
 
 <!-- Dark background with auto-contrasting text -->
-<div class="bg-neutral bg-2 bg tx">Dark bg, light text (auto)</div>
+<div class="bg-neutral-2 bg tx">Dark bg, light text (auto)</div>
 
-<!-- Danger color, reduced chroma, semi-transparent -->
-<div class="bg-danger bg-5c bg-7o bg">Muted red, 70% opacity</div>
+<!-- Semi-transparent primary -->
+<div class="bg-primary bg-a7 bg">70% opacity</div>
+
+<!-- Blended toward paper for muted effect -->
+<div class="bg-primary-7 bg+paper/2 bg">Muted primary</div>
 
 <!-- Multiple properties -->
-<div class="bg-primary bg-8 bg bd-primary bd-6 bd tx-primary tx">
-  Blue bg, darker blue border, blue text
+<div class="bg-primary-8 bg bd-primary-6 bd tx-primary tx">
+  Light blue bg, medium blue border, blue text
 </div>
 
-<!-- Using delta adjustments for hover states -->
-<button class="bg-primary bg-6 bg hover:bg-l-1">
-  Darkens on hover
-</button>
+<!-- Danger with blend for softer appearance -->
+<div class="bg-danger-7 bg+paper/3 bg tx">Soft danger alert</div>
 ```
 
 ## Controls Integration
 
-Controls (button, input, selector, etc.) use the same variable system:
+Controls (button, input, selector, etc.) use the same variable system with relative level adjustments for states:
 
 ```css
+/* Button defaults */
 button {
-  --background-base: var(--color-neutral);
-  --background-l: 5;
-  --background-o: 9;
+  --background-level: 5;
+  --background-c: 0.02;
+  --background-h: 250;
 }
 
+/* Hover: darken by 1 level */
 button:hover {
-  --background-delta-l: -1;
+  --background-level: calc(var(--background-level) - 1);
 }
 
+/* Active: darken by 2 levels */
 button:active {
-  --background-delta-l: -2;
+  --background-level: calc(var(--background-level) - 2);
 }
 
+/* Color variant */
 button.primary {
-  --background-base: var(--color-primary);
+  --background-c: 0.20;
+  --background-h: 250;
 }
 ```
 
 This ensures consistent color behavior across utilities and components.
+
+## Adding Custom Colors
+
+Custom colors can be added in `tokens.js`:
+
+```javascript
+color: {
+  // ... existing colors
+  brand: "oklch(0.5 0.18 30)",  // custom orange
+}
+```
+
+The build system will generate the 10-step scale and utility classes automatically.
+
+Alternatively, override specific scale positions in CSS:
+
+```css
+:root {
+  --color-brand-0: oklch(0.05 0.18 30);
+  --color-brand-1: oklch(0.15 0.18 30);
+  /* ... */
+  --color-brand-9: oklch(0.95 0.18 30);
+}
+```

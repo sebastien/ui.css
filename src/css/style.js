@@ -55,6 +55,7 @@ export default named({
 		rule(".dim", { opacity: vars.opacity.dim }),
 		rule(".dimmer", { opacity: vars.opacity.dimmer }),
 		rule(".dimmest", { opacity: vars.opacity.dimmest }),
+		// FIXME: Maybe should be deprecated or moved to colors.js
 		// Background opacity variants using new color system
 		rule(".bg-dim", {
 			__background_o: 6,
@@ -87,11 +88,6 @@ export default named({
 	),
 	border: group(
 		rule(".rd", { border_radius: `${vars.border.radius}` }),
-		// Border with computed color from new system
-		rule(".bd", {
-			border_width: vars.border.width,
-			border_style: vars.border.style,
-		}),
 		...times(10, (i) =>
 			rule(`.rd-tl-${i}`, { border_top_left_radius: `${i}px` }),
 		),
@@ -119,7 +115,7 @@ export default named({
 			rule(`.bdw-r-${i}`, { __border_right_width: `${i}px` }),
 		),
 		...Object.keys(sides).map((k) =>
-			rule(`.bd-${k.substring(0, 1)}-styled`, {
+			rule(`.bd-${k.substring(0, 1)}`, {
 				[`border_${sides[k]}_width`]: vars.border.width,
 				[`border_${sides[k]}_style`]: "solid",
 			}),
@@ -185,42 +181,6 @@ export default named({
 			border_left_color: vars.inset.light,
 			border_bottom_color: vars.inset.shadow,
 			border_right_color: vars.inset.shadow,
-		}),
-	),
-	// Dark/light mode handled in colors.js
-	// Legacy mode classes for backwards compatibility
-	mode: group(
-		rule(".m-dark", {
-			__color_page: vars.color.black,
-			__color_text: vars.color.white,
-			// Invert default luminosities for dark mode
-			__background_l: 2,
-			__text_l: 8,
-			__border_l: 3,
-			background_color: vars.color.page,
-			color: vars.color.text,
-		}),
-		rule(".m-light", {
-			__color_page: vars.color.white,
-			__color_text: vars.color.black,
-			// Standard luminosities for light mode
-			__background_l: 8,
-			__text_l: 1,
-			__border_l: 6,
-			background_color: vars.color.page,
-			color: vars.color.text,
-		}),
-		rule(".t-dark", {
-			__text_l: 8,
-			__text_l_min: 0,
-			__text_l_max: 9,
-			color: vars.color.white,
-		}),
-		rule(".t-light", {
-			__text_l: 1,
-			__text_l_min: 0,
-			__text_l_max: 9,
-			color: vars.color.black,
 		}),
 	),
 });
