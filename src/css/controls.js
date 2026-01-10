@@ -64,7 +64,8 @@ export default named({
 			transition_duration: "150ms",
 			// Selectable-specific variables (namespaced to avoid affecting children)
 			__selectable_background_base: vars.color.neutral,
-			__selectable_background_l: 5,
+			// Direction-aware: near paper (8.5) in light mode, near ink (0.5) in dark mode
+			__selectable_background_l: `calc(4.5 + var(--color-l-direction) * 4)`,
 			__selectable_background_c: 5,
 			__selectable_background_h: 0,
 			__selectable_background_o: 0,
@@ -204,9 +205,11 @@ export default named({
 			__text_delta_h: 0,
 			__text_delta_o: 0,
 			// WCAG contrast calculation (threshold 5.5: bg-5 → paper, bg-6 → ink)
+			// bg_is_dark: 1 if background is dark, 0 if light
 			__bg_is_dark: `clamp(0, (5.5 - ${vars.background.l} - ${vars.background.delta.l}) * 10, 1)`,
-			__text_l_min: `calc(${vars.bg.is.dark} * 8)`,
-			__text_l_max: `calc(1 + ${vars.bg.is.dark} * 8)`,
+			// Direction-aware text luminosity: in dark mode (direction=-1), invert the mapping
+			__text_l_min: `calc((1 + ${vars.color.l.direction} * (2 * ${vars.bg.is.dark} - 1)) / 2 * 8)`,
+			__text_l_max: `calc(1 + (1 + ${vars.color.l.direction} * (2 * ${vars.bg.is.dark} - 1)) / 2 * 8)`,
 			// Styling
 			display: "inline-flex",
 			cursor: "pointer",
@@ -241,9 +244,15 @@ export default named({
 		rule([".pill.selected", ".pill[data-selected=true]"], {
 			__background_delta_l: DELTA.selected,
 		}),
-		rule([".pill:not(.outline).selected", ".pill:not(.outline)[data-selected=true]"], {
-			__border_delta_l: DELTA.selected,
-		}),
+		rule(
+			[
+				".pill:not(.outline).selected",
+				".pill:not(.outline)[data-selected=true]",
+			],
+			{
+				__border_delta_l: DELTA.selected,
+			},
+		),
 		rule([".pill.outline.selected", ".pill.outline[data-selected=true]"], {
 			__background_o: SELECTABLE.opacity.selected,
 			__text_delta_l: DELTA.selected * OUTLINE_AMP,
@@ -312,11 +321,14 @@ export default named({
 			__border_o: 7.2,
 		}),
 		// Contrast: force maximum text contrast (0.05 or 0.95 luminosity)
-		// For filled pills: text uses extreme luminosity based on bg darkness
+		// For filled pills: text uses ink color at extreme luminosity based on bg darkness
 		rule(".pill.contrast:not(.outline)", {
-			// Force text to 0 (ink) or 9 (paper) with no range
-			__text_l_min: `calc(${vars.bg.is.dark} * 9)`,
-			__text_l_max: `calc(${vars.bg.is.dark} * 9)`,
+			// Use ink as base for true black/white contrast
+			__text_base: vars.color.ink,
+			__text_c: 0,
+			// Force text to 0 (ink) or 9 (paper) with no range - direction aware
+			__text_l_min: `calc((1 + ${vars.color.l.direction} * (2 * ${vars.bg.is.dark} - 1)) / 2 * 9)`,
+			__text_l_max: `calc((1 + ${vars.color.l.direction} * (2 * ${vars.bg.is.dark} - 1)) / 2 * 9)`,
 		}),
 		// For outline pills: shift text/border halfway toward paper/ink
 		// In light mode (direction=1): darken by moving toward ink (delta-l negative)
@@ -379,9 +391,13 @@ export default named({
 			__text_delta_h: 0,
 			__text_delta_o: 0,
 			// WCAG contrast calculation (threshold 5.5: bg-5 → paper, bg-6 → ink)
+			// bg_is_dark: 1 if background is dark, 0 if light
 			__bg_is_dark: `clamp(0, (5.5 - ${vars.background.l} - ${vars.background.delta.l}) * 10, 1)`,
-			__text_l_min: `calc(${vars.bg.is.dark} * 8)`,
-			__text_l_max: `calc(1 + ${vars.bg.is.dark} * 8)`,
+			// Direction-aware text luminosity: in dark mode (direction=-1), invert the mapping
+			// effective_is_dark = (1 + direction * (2 * bg_is_dark - 1)) / 2
+			// This gives: dir=1,dark=1→1, dir=1,dark=0→0, dir=-1,dark=1→0, dir=-1,dark=0→1
+			__text_l_min: `calc((1 + ${vars.color.l.direction} * (2 * ${vars.bg.is.dark} - 1)) / 2 * 8)`,
+			__text_l_max: `calc(1 + (1 + ${vars.color.l.direction} * (2 * ${vars.bg.is.dark} - 1)) / 2 * 8)`,
 			// Computed colors
 			border_width: "1px",
 			border_style: "solid",
@@ -413,6 +429,8 @@ export default named({
 		rule(["button.icon", ".button.icon"], {
 			__background_o: 0,
 			__border_o: 0,
+			// Direction-aware: near paper (8.5) in light mode, near ink (0.5) in dark mode
+			__background_l: `calc(4.5 + var(--color-l-direction) * 4)`,
 			// Text follows background-l so bg-* modifiers control text luminosity
 			__text_l: vars.background.l,
 			__text_l_min: 0,
@@ -490,6 +508,8 @@ export default named({
 			__background_o: 0,
 			__border_o: 0,
 			__outline_o: 0,
+			// Direction-aware: near paper (8.5) in light mode, near ink (0.5) in dark mode
+			__background_l: `calc(4.5 + var(--color-l-direction) * 4)`,
 			// Text follows background-l so bg-* modifiers control text luminosity
 			__text_l: vars.background.l,
 			__text_l_min: 0,
@@ -500,6 +520,8 @@ export default named({
 		rule(["button.outline", ".button.outline"], {
 			__background_o: 0,
 			__border_o: 7.2,
+			// Direction-aware: near paper (8.5) in light mode, near ink (0.5) in dark mode
+			__background_l: `calc(4.5 + var(--color-l-direction) * 4)`,
 			// Text and border follow background-l so bg-* modifiers control their luminosity
 			__text_l: vars.background.l,
 			__text_l_min: 0,
@@ -513,51 +535,127 @@ export default named({
 			outline_width: FOCUS.width,
 		}),
 		// State: hover (filled)
-		rule(hover("button:not(.outline):not(.blank):not(.icon)", ".button:not(.outline):not(.blank):not(.icon)"), {
-			__background_delta_l: DELTA.hover,
-			__border_delta_l: DELTA.hover,
-		}),
+		rule(
+			hover(
+				"button:not(.outline):not(.blank):not(.icon)",
+				".button:not(.outline):not(.blank):not(.icon)",
+			),
+			{
+				__background_delta_l: DELTA.hover,
+				__border_delta_l: DELTA.hover,
+			},
+		),
 		// State: hover (outline/blank/icon - amplified for visibility, with background)
-		rule(hover("button.outline", ".button.outline", "button.blank", ".button.blank", "button.icon", ".button.icon"), {
-			__background_o: SELECTABLE.opacity.hover,
-			__background_delta_l: DELTA.hover,
-			__border_delta_l: DELTA.hover * OUTLINE_AMP,
-			__text_delta_l: DELTA.hover * OUTLINE_AMP,
-		}),
+		rule(
+			hover(
+				"button.outline",
+				".button.outline",
+				"button.blank",
+				".button.blank",
+				"button.icon",
+				".button.icon",
+			),
+			{
+				__background_o: SELECTABLE.opacity.hover,
+				__background_delta_l: DELTA.hover,
+				__border_delta_l: DELTA.hover * OUTLINE_AMP,
+				__text_delta_l: DELTA.hover * OUTLINE_AMP,
+			},
+		),
 		// State: selected (filled)
-		rule(mods(["button:not(.outline):not(.blank):not(.icon)", ".button:not(.outline):not(.blank):not(.icon)"], "selected"), {
-			__background_delta_l: DELTA.selected,
-			__border_delta_l: DELTA.selected,
-		}),
-		rule(["button:not(.outline):not(.blank):not(.icon)[data-selected=true]", ".button:not(.outline):not(.blank):not(.icon)[data-selected=true]"], {
-			__background_delta_l: DELTA.selected,
-			__border_delta_l: DELTA.selected,
-		}),
+		rule(
+			mods(
+				[
+					"button:not(.outline):not(.blank):not(.icon)",
+					".button:not(.outline):not(.blank):not(.icon)",
+				],
+				"selected",
+			),
+			{
+				__background_delta_l: DELTA.selected,
+				__border_delta_l: DELTA.selected,
+			},
+		),
+		rule(
+			[
+				"button:not(.outline):not(.blank):not(.icon)[data-selected=true]",
+				".button:not(.outline):not(.blank):not(.icon)[data-selected=true]",
+			],
+			{
+				__background_delta_l: DELTA.selected,
+				__border_delta_l: DELTA.selected,
+			},
+		),
 		// State: selected (outline/blank/icon - amplified for visibility, with background)
-		rule(mods(["button.outline", ".button.outline", "button.blank", ".button.blank", "button.icon", ".button.icon"], "selected"), {
-			__background_o: SELECTABLE.opacity.selected,
-			__background_delta_l: DELTA.selected,
-			__border_delta_l: DELTA.selected * OUTLINE_AMP,
-			__text_delta_l: DELTA.selected * OUTLINE_AMP,
-		}),
-		rule(["button.outline[data-selected=true]", ".button.outline[data-selected=true]", "button.blank[data-selected=true]", ".button.blank[data-selected=true]", "button.icon[data-selected=true]", ".button.icon[data-selected=true]"], {
-			__background_o: SELECTABLE.opacity.selected,
-			__background_delta_l: DELTA.selected,
-			__border_delta_l: DELTA.selected * OUTLINE_AMP,
-			__text_delta_l: DELTA.selected * OUTLINE_AMP,
-		}),
+		rule(
+			mods(
+				[
+					"button.outline",
+					".button.outline",
+					"button.blank",
+					".button.blank",
+					"button.icon",
+					".button.icon",
+				],
+				"selected",
+			),
+			{
+				__background_o: SELECTABLE.opacity.selected,
+				__background_delta_l: DELTA.selected,
+				__border_delta_l: DELTA.selected * OUTLINE_AMP,
+				__text_delta_l: DELTA.selected * OUTLINE_AMP,
+			},
+		),
+		rule(
+			[
+				"button.outline[data-selected=true]",
+				".button.outline[data-selected=true]",
+				"button.blank[data-selected=true]",
+				".button.blank[data-selected=true]",
+				"button.icon[data-selected=true]",
+				".button.icon[data-selected=true]",
+			],
+			{
+				__background_o: SELECTABLE.opacity.selected,
+				__background_delta_l: DELTA.selected,
+				__border_delta_l: DELTA.selected * OUTLINE_AMP,
+				__text_delta_l: DELTA.selected * OUTLINE_AMP,
+			},
+		),
 		// State: active (filled)
-		rule(mods(["button:not(.outline):not(.blank):not(.icon)", ".button:not(.outline):not(.blank):not(.icon)"], "active"), {
-			__background_delta_l: DELTA.active,
-			__border_delta_l: DELTA.active,
-		}),
+		rule(
+			mods(
+				[
+					"button:not(.outline):not(.blank):not(.icon)",
+					".button:not(.outline):not(.blank):not(.icon)",
+				],
+				"active",
+			),
+			{
+				__background_delta_l: DELTA.active,
+				__border_delta_l: DELTA.active,
+			},
+		),
 		// State: active (outline/blank/icon - amplified for visibility, with background)
-		rule(mods(["button.outline", ".button.outline", "button.blank", ".button.blank", "button.icon", ".button.icon"], "active"), {
-			__background_o: SELECTABLE.opacity.active,
-			__background_delta_l: DELTA.active,
-			__border_delta_l: DELTA.active * OUTLINE_AMP,
-			__text_delta_l: DELTA.active * OUTLINE_AMP,
-		}),
+		rule(
+			mods(
+				[
+					"button.outline",
+					".button.outline",
+					"button.blank",
+					".button.blank",
+					"button.icon",
+					".button.icon",
+				],
+				"active",
+			),
+			{
+				__background_o: SELECTABLE.opacity.active,
+				__background_delta_l: DELTA.active,
+				__border_delta_l: DELTA.active * OUTLINE_AMP,
+				__text_delta_l: DELTA.active * OUTLINE_AMP,
+			},
+		),
 		// State: disabled
 		rule(mods(["button", ".button"], "disabled"), {
 			opacity: 0.5,
@@ -579,20 +677,39 @@ export default named({
 			},
 		),
 		// Contrast: force maximum text contrast (0.05 or 0.95 luminosity)
-		// For filled buttons: text uses extreme luminosity based on bg darkness
-		rule(["button.contrast:not(.outline):not(.blank):not(.icon)", ".button.contrast:not(.outline):not(.blank):not(.icon)"], {
-			// Force text to 0 (ink) or 9 (paper) with no range
-			__text_l_min: `calc(${vars.bg.is.dark} * 9)`,
-			__text_l_max: `calc(${vars.bg.is.dark} * 9)`,
-		}),
-		// For outline/blank/icon buttons: shift text/border halfway toward paper/ink
-		// In light mode (direction=1): darken by moving toward ink (delta-l negative)
-		// In dark mode (direction=-1): lighten by moving toward paper (delta-l positive)
-		// Halfway = delta of ~2.25 toward ink/paper
-		rule(["button.outline.contrast", ".button.outline.contrast", "button.blank.contrast", ".button.blank.contrast", "button.icon.contrast", ".button.icon.contrast"], {
-			__text_delta_l: `calc(var(--color-l-direction) * -2.25)`,
-			__border_delta_l: `calc(var(--color-l-direction) * -2.25)`,
-		}),
+		// For filled buttons: text uses ink color at extreme luminosity based on bg darkness
+		rule(
+			[
+				"button.contrast:not(.outline):not(.blank):not(.icon)",
+				".button.contrast:not(.outline):not(.blank):not(.icon)",
+			],
+			{
+				// Use ink as base for true black/white contrast
+				__text_base: vars.color.ink,
+				__text_c: 0,
+				// Force text to 0 (ink) or 9 (paper) with no range - direction aware
+				__text_l_min: `calc((1 + ${vars.color.l.direction} * (2 * ${vars.bg.is.dark} - 1)) / 2 * 9)`,
+				__text_l_max: `calc((1 + ${vars.color.l.direction} * (2 * ${vars.bg.is.dark} - 1)) / 2 * 9)`,
+			},
+		),
+		// For outline/blank/icon buttons: shift text/border toward ink for more contrast
+		// Uses base l instead of delta-l so hover/active states can still add deltas
+		// In light mode: 8.5 - 2.25 = 6.25 (darker text)
+		// In dark mode: 0.5 + 2.25 = 2.75 (lighter text)
+		rule(
+			[
+				"button.outline.contrast",
+				".button.outline.contrast",
+				"button.blank.contrast",
+				".button.blank.contrast",
+				"button.icon.contrast",
+				".button.icon.contrast",
+			],
+			{
+				__text_l: `calc(var(--background-l) - var(--color-l-direction) * 2.25)`,
+				__border_l: `calc(var(--background-l) - var(--color-l-direction) * 2.25)`,
+			},
+		),
 	),
 
 	// ------------------------------------------------------------------------
@@ -638,8 +755,9 @@ export default named({
 			__text_delta_o: 0,
 			// WCAG contrast calculation (threshold 5.5: bg-5 → paper, bg-6 → ink)
 			__bg_is_dark: `clamp(0, (5.5 - ${vars.background.l} - ${vars.background.delta.l}) * 10, 1)`,
-			__text_l_min: `calc(${vars.bg.is.dark} * 8)`,
-			__text_l_max: `calc(1 + ${vars.bg.is.dark} * 8)`,
+			// Direction-aware text luminosity: in dark mode (direction=-1), invert the mapping
+			__text_l_min: `calc((1 + ${vars.color.l.direction} * (2 * ${vars.bg.is.dark} - 1)) / 2 * 8)`,
+			__text_l_max: `calc(1 + (1 + ${vars.color.l.direction} * (2 * ${vars.bg.is.dark} - 1)) / 2 * 8)`,
 			// Container styling
 			display: "inline-flex",
 			gap: "0",
@@ -839,9 +957,10 @@ export default named({
 			__input_text_delta_h: 0,
 			__input_text_delta_o: 0,
 			// WCAG contrast calculation for input
-			__input_is_dark: `clamp(0, (5.5 - ${vars.input_background.l} - ${vars.input_background.delta.l}) * 10, 1)`,
-			__input_text_l_min: `calc(${vars.input.is.dark} * 7)`,
-			__input_text_l_max: `calc(2 + ${vars.input.is.dark} * 7)`,
+			__input_is_dark: `clamp(0, ${vars.color.l.direction} * (4.5 - ${vars.input_background.l} - ${vars.input_background.delta.l}) * 10 + 0.5, 1)`,
+			// Direction-aware input text luminosity: in dark mode (direction=-1), invert the mapping
+			__input_text_l_min: `calc((1 + ${vars.color.l.direction} * (2 * ${vars.input.is.dark} - 1)) / 2 * 7)`,
+			__input_text_l_max: `calc(2 + (1 + ${vars.color.l.direction} * (2 * ${vars.input.is.dark} - 1)) / 2 * 7)`,
 			// Computed styling using direction-aware colors
 			border_width: "1px",
 			border_style: "solid",
@@ -1079,6 +1198,7 @@ export default named({
 		),
 		rule(
 			[
+				"input[type=range]",
 				"input.nopad",
 				".input.nopad",
 				"textarea.nopad",

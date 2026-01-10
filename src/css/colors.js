@@ -241,11 +241,23 @@ export default group(
 		__color_page: vars.color.paper,
 		__color_text: vars.color.ink,
 		__color_l_direction: 1,
+		// Apply actual properties
+		background_color: vars.color.paper,
+		color: vars.color.ink,
+		// Set base variables for the color system
+		__background_base: vars.color.paper,
+		__text_base: vars.color.ink,
 	}),
 	rule(".dark", {
 		__color_page: vars.color.ink,
 		__color_text: vars.color.paper,
 		__color_l_direction: -1,
+		// Apply actual properties with swapped colors
+		background_color: vars.color.ink,
+		color: vars.color.paper,
+		// Update base variables for the color system
+		__background_base: vars.color.ink,
+		__text_base: vars.color.paper,
 	}),
 
 	// ------------------------------------------------------------------------
@@ -258,9 +270,10 @@ export default group(
 		// bg-is-dark: 1 if dark, 0 if light
 		// Threshold at 5.5 means bg-5 → text towards paper, bg-6 → text towards ink
 		__bg_is_dark: `clamp(0, (5.5 - ${vars.background.l} - ${vars.background.delta.l}) * 10, 1)`,
-		// Set text constraints: dark bg = light text (8-9), light bg = dark text (0-1)
-		__text_l_min: `calc(${vars.bg.is.dark} * 8)`,
-		__text_l_max: `calc(1 + ${vars.bg.is.dark} * 8)`,
+		// Direction-aware text constraints: in dark mode (direction=-1), invert the mapping
+		// effective_is_dark = (1 + direction * (2 * bg_is_dark - 1)) / 2
+		__text_l_min: `calc((1 + ${vars.color.l.direction} * (2 * ${vars.bg.is.dark} - 1)) / 2 * 8)`,
+		__text_l_max: `calc(1 + (1 + ${vars.color.l.direction} * (2 * ${vars.bg.is.dark} - 1)) / 2 * 8)`,
 	}),
 	// .tx - applies text color with contrast constraints
 	rule(".tx", {
