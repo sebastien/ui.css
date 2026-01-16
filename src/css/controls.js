@@ -1,28 +1,10 @@
 import { cross, named, rule, group, vars, mods } from "../js/littlecss.js";
 
 // ----------------------------------------------------------------------------
-// CONTROL CONSTANTS
-// ----------------------------------------------------------------------------
-// Focus: 2px outline at 15% opacity
-const focus = { width: "2px", alpha: 1.5 }; // 1.5/10 = 0.15
-// Level deltas for states (relative adjustments)
-const levelDelta = { hover: -1, selected: -2, active: -2 };
-// Selectable background alphas
-const selectable = { alpha: { hover: 1.5, selected: 2, active: 2.5 } }; // /10
-// Input background (paper at 90% opacity)
-const input = { backgroundAlpha: 9 }; // 9/10 = 0.9
-
-// ----------------------------------------------------------------------------
 //
 // CONTROLS
 //
 // ----------------------------------------------------------------------------
-// All controls use the simplified color system with level, alpha, blend.
-// State changes (hover, focus, active) use relative level adjustments:
-//   level: calc(var(--background-level) - 1)  // darker on hover
-//
-// Text color automatically adjusts for WCAG-compatible contrast based on
-// background level using the same mechanism as .bg/.tx classes.
 
 function hover(...args) {
 	const res = [];
@@ -49,27 +31,19 @@ export default named({
 			transition_property:
 				"background-color,color,border-color,outline-color,border-width,outline-width,opacity,transform,box-shadow",
 			transition_duration: "150ms",
-			// Selectable-specific variables (namespaced to avoid affecting children)
-			// Direction-aware: level 8.5 in light mode, level 0.5 in dark mode
-			__selectable_background_level: `calc(4.5 + var(--color-l-direction) * 4)`,
-			__selectable_background_c: 0.02,
-			__selectable_background_h: 250,
-			__selectable_background_alpha: 0,
-			__selectable_background_blend: 0,
-			__selectable_background_blending: "transparent",
-			// Outline variables for focus state
-			__selectable_outline_level: 5,
-			__selectable_outline_c: 0.02,
-			__selectable_outline_h: 250,
-			__selectable_outline_alpha: 0,
-			__selectable_outline_blend: 0,
-			__selectable_outline_blending: "transparent",
-			// Computed background color
-			// TODO: background_color: oklchColor("selectable", "background"),
+			__selectable_base: vars.color.ink,
+			__selectable_tint: vars.color.paper,
+			__selectable_outline_opacity: vars.controls.outline.opacity,
+			__selectable_outline_width: vars.outline.width,
+			__selectable_opacity: "0%",
+			// selectable.shade, selectable.opacity defined in tokens
+			__selectable_color: `color-mix(in oklch, var(--selectable-base), var(--selectable-tint) calc(100% - var(--selectable-shade)))`,
+			background_color: `color-mix(in oklch, var(--selectable-color), transparent calc(100% - var(--selectable-opacity)))`,
+			outline_color: `color-mix(in oklch, var(--selectable-color), transparent cacl(100% - var(--selectable-outline-opacity)))`,
+			outline_width: "0px",
 		}),
 		rule(hover(".selectable"), {
-			__selectable_background_alpha: selectable.alpha.hover,
-			__selectable_background_level: `calc(4.5 + var(--color-l-direction) * 4 + ${levelDelta.hover})`,
+			__selectable_opacity: vars.selectable.hover.opacity,
 		}),
 		rule(
 			[
@@ -78,20 +52,18 @@ export default named({
 				".selectable.focus",
 			],
 			{
-				outline: `${focus.width} solid oklch(0.5 0.15 var(--selectable-outline-h) / ${focus.alpha / 10})`,
-				outline_offset: "1px",
+				__selectable_outline_opacity: vars.selectable.active.opacity,
+				outline_width: vars.selectable.outline.width,
 			},
 		),
 		rule([".selectable.selected", ".selectable[data-selected=true]"], {
-			__selectable_background_alpha: selectable.alpha.selected,
-			__selectable_background_level: `calc(4.5 + var(--color-l-direction) * 4 + ${levelDelta.selected})`,
+			__selectable_opacity: vars.selectable.selected.opacity,
 		}),
 		rule([".selectable:active", ".selectable.active"], {
-			__selectable_background_alpha: selectable.alpha.active,
-			__selectable_background_level: `calc(4.5 + var(--color-l-direction) * 4 + ${levelDelta.active})`,
+			__selectable_opacity: vars.selectable.active.opacity,
 		}),
 		rule([".selectable:disabled", ".selectable.disabled"], {
-			opacity: 0.5,
+			opacity: vars.selectable.disabled.opacity,
 			cursor: "not-allowed",
 			pointer_events: "none",
 		}),
@@ -106,7 +78,7 @@ export default named({
 			"danger",
 		].map((color) => {
 			return rule(`.selectable.${color}`, {
-				__selectable_color: vars.color,
+				__selectable_base: vars.color,
 			});
 		}),
 		// Size variants
@@ -140,63 +112,45 @@ export default named({
 			gap: vars.gap[2],
 		}),
 		rule(".pill", {
-			// Color properties
-			__background_level: 5,
-			__background_c: 0.02,
-			__background_h: 250,
-			__background_alpha: 10,
-			__background_blend: 0,
-			__background_blending: "transparent",
-			__border_level: 5,
-			__border_c: 0.02,
-			__border_h: 250,
-			__border_alpha: 10,
-			__border_blend: 0,
-			__border_blending: "transparent",
-			// Text color with WCAG contrast
-			__text_level: 5,
-			__text_c: 0.02,
-			__text_h: 250,
-			__text_alpha: 10,
-			__text_blend: 0,
-			__text_blending: "transparent",
-			// WCAG contrast calculation
-			__bg_is_dark: `clamp(0, (4.5 - var(--background-level)) * 10, 1)`,
-			__text_l_min: `calc((1 + var(--color-l-direction) * (2 * var(--bg-is-dark) - 1)) / 2 * 8)`,
-			__text_l_max: `calc(1 + (1 + var(--color-l-direction) * (2 * var(--bg-is-dark) - 1)) / 2 * 8)`,
-			// Styling
-			display: "inline-flex",
 			cursor: "pointer",
 			user_select: "none",
-			__border_width: "2px",
-			border_width: vars.border.width,
-			border_style: "solid",
-			border_color: vars.border.color,
-			background_color: vars.background.color,
-			color: vars.text.color,
-			padding: `${vars.pad[0]} ${vars.pad[2]}`,
 			transition_property:
 				"background-color,color,border-color,outline-color,border-width,outline-width,opacity,transform,box-shadow",
 			transition_duration: "150ms",
+
+			// Computed colors
+			__pill_base: vars.color.ink,
+			__pill_tint: vars.color.paper,
+			__pill_color: `color-mix(in oklch, var(--pill-base), var(--pill-tint) calc(100% - var(--pill-shade)))`,
+			__pill_border_color: `color-mix(in oklch, var(--pill-base), var(--pill-tint) calc(100% - var(--pill-border-shade)))`,
+			__pill_outline_color: `color-mix(in oklch, var(--pill-base), var(--pill-tint) calc(100% - var(--pill-outline-shade)))`,
+			background_color: `color-mix(in oklch, var(--pill-color), transparent calc(100% - var(--pill-opacity)))`,
+			color: vars.color.ink,
+
+			border_color: `color-mix(in oklch, var(--pill-border-color), transparent calc(100% - var(--pill-border-opacity)))`,
+			border_width: vars.pill.border.width,
+			border_style: "solid",
+
+			outline_color: `color-mix(in oklch, var(--pill-outline-color), transparent calc(100% - var(--pill-outline-opacity)))`,
+			outline_width: "0px",
+			outline_style: "solid",
+
+			// Layout
+			display: "inline-flex",
+			padding: `${vars.pad[0]} ${vars.pad[2]}`,
 			__border_radius: "2lh",
 			border_radius: vars.border.radius,
 		}),
-		rule(".pill:not(.outline)", {
-			__border_level: "var(--background-level)",
-		}),
+		// State: hover (filled)
 		rule(hover(".pill"), {
-			__background_level: `calc(var(--background-level) + ${levelDelta.hover})`,
+			__pill_shade: vars.pill.hover.shade,
 		}),
 		rule(hover(".pill:not(.outline)"), {
-			__border_level: `calc(var(--border-level) + ${levelDelta.hover})`,
+			__pill_border_shade: vars.pill.hover.shade,
 		}),
-		rule(hover(".pill.outline"), {
-			__background_alpha: selectable.alpha.hover,
-			__text_level: `calc(var(--text-level) + ${levelDelta.hover * 2})`,
-			__border_level: `calc(var(--border-level) + ${levelDelta.hover * 2})`,
-		}),
+		// State: selected (filled)
 		rule([".pill.selected", ".pill[data-selected=true]"], {
-			__background_level: `calc(var(--background-level) + ${levelDelta.selected})`,
+			__pill_shade: vars.pill.selected.shade,
 		}),
 		rule(
 			[
@@ -204,28 +158,26 @@ export default named({
 				".pill:not(.outline)[data-selected=true]",
 			],
 			{
-				__border_level: `calc(var(--border-level) + ${levelDelta.selected})`,
+				__pill_border_shade: vars.pill.selected.shade,
 			},
 		),
-		rule([".pill.outline.selected", ".pill.outline[data-selected=true]"], {
-			__background_alpha: selectable.alpha.selected,
-			__text_level: `calc(var(--text-level) + ${levelDelta.selected * 2})`,
-			__border_level: `calc(var(--border-level) + ${levelDelta.selected * 2})`,
-		}),
+		// State: active
 		rule([".pill:active", ".pill.active"], {
-			__background_level: `calc(var(--background-level) + ${levelDelta.active})`,
+			__pill_shade: vars.pill.active.shade,
 		}),
 		rule([".pill:not(.outline):active", ".pill:not(.outline).active"], {
-			__border_level: `calc(var(--border-level) + ${levelDelta.active})`,
+			__pill_border_shade: vars.pill.active.shade,
 		}),
-		rule([".pill.outline:active", ".pill.outline.active"], {
-			__background_alpha: selectable.alpha.active,
-			__text_level: `calc(var(--text-level) + ${levelDelta.active * 2})`,
-			__border_level: `calc(var(--border-level) + ${levelDelta.active * 2})`,
+		// State: focus
+		rule([".pill:focus", ".pill:focus-within", ".pill.focus"], {
+			__pill_outline_opacity: vars.controls.active.delta,
+			outline_width: vars.pill.outline.width,
 		}),
+		// State: disabled
 		rule([".pill:disabled", ".pill.disabled"], {
-			opacity: 0.5,
+			opacity: vars.controls.disabled.opacity,
 			cursor: "not-allowed",
+			pointer_events: "none",
 		}),
 		// Color variants
 		...[
@@ -236,30 +188,31 @@ export default named({
 			"info",
 			"warning",
 			"danger",
-		].map((color) => {
-			return rule(`.pill.${color}`, {
-				__pill_color: vars.color[color],
-			});
-		}),
-		// Style variants
-		// Outline: transparent background, text uses same level as bg
+		].map((color) =>
+			rule(`.pill.${color}`, {
+				__pill_base: vars.color[color],
+			}),
+		),
+		// =====================================================================
+		// OUTLINE
+		// =====================================================================
 		rule(".pill.outline", {
-			__background_alpha: 0,
-			__text_level: "var(--background-level)",
-			__text_l_min: 0,
-			__text_l_max: 9,
-			__border_level: "var(--background-level)",
-			__border_alpha: 7.2,
+			__pill_shade: vars.selectable.shade,
+			__pill_opacity: "0%",
+			__pill_border_opacity: "80%",
+			__pill_border_color: vars.pill.color,
+			__pill_outline_color: vars.pill.color,
+			__pill_shade: "100%",
+			border_width: vars.border.width,
 		}),
-		// Contrast: force maximum text contrast
-		rule(".pill.contrast:not(.outline)", {
-			__text_c: 0,
-			__text_l_min: `calc((1 + var(--color-l-direction) * (2 * var(--bg-is-dark) - 1)) / 2 * 9)`,
-			__text_l_max: `calc((1 + var(--color-l-direction) * (2 * var(--bg-is-dark) - 1)) / 2 * 9)`,
+		rule(hover(".pill.outline"), {
+			__pill_opacity: vars.selectable.hover.opacity,
 		}),
-		rule(".pill.outline.contrast", {
-			__text_level: `calc(var(--background-level) - var(--color-l-direction) * 2.25)`,
-			__border_level: `calc(var(--background-level) - var(--color-l-direction) * 2.25)`,
+		rule([".pill.outline.selected", ".pill.outline[data-selected=true]"], {
+			__pill_opacity: vars.selectable.selected.opacity,
+		}),
+		rule([".pill.outline:active", ".pill.outline.active"], {
+			__pill_opacity: vars.selectable.active.opacity,
 		}),
 	),
 
@@ -270,77 +223,52 @@ export default named({
 	// ------------------------------------------------------------------------
 	button: group(
 		rule(["button", ".button"], {
+			cursor: "pointer",
+			user_select: "none",
+			transition_property:
+				"background-color,color,border-color,outline-color,border-width,outline-width,opacity,transform,box-shadow",
+			transition_duration: "150ms",
+
 			// Font settings
 			__button_font_family: vars.font.controls.family,
 			__button_font_line: vars.font.controls.line,
 			__button_font_weight: vars.font.controls.weight,
 			__button_font_size: vars.font.controls.size,
-			// Color properties
-			__background_level: 5,
-			__background_c: 0.02,
-			__background_h: 250,
-			__background_alpha: 10,
-			__background_blend: 0,
-			__background_blending: "transparent",
-			__border_level: 4,
-			__border_c: 0.02,
-			__border_h: 250,
-			__border_alpha: 10,
-			__border_blend: 0,
-			__border_blending: "transparent",
-			__outline_level: 5,
-			__outline_c: 0.02,
-			__outline_h: 250,
-			__outline_alpha: 0,
-			__outline_blend: 0,
-			__outline_blending: "transparent",
-			// Text color with WCAG contrast
-			__text_level: 5,
-			__text_c: 0.02,
-			__text_h: 250,
-			__text_alpha: 10,
-			__text_blend: 0,
-			__text_blending: "transparent",
-			// WCAG contrast calculation
-			__bg_is_dark: `clamp(0, (4.5 - var(--background-level)) * 10, 1)`,
-			__text_l_min: `calc((1 + var(--color-l-direction) * (2 * var(--bg-is-dark) - 1)) / 2 * 8)`,
-			__text_l_max: `calc(1 + (1 + var(--color-l-direction) * (2 * var(--bg-is-dark) - 1)) / 2 * 8)`,
+
 			// Computed colors
-			border_width: "1px",
+			__button_base: vars.color.ink,
+			__button_tint: vars.color.paper,
+			__button_color: `color-mix(in oklch, var(--button-base), var(--button-tint) calc(100% - var(--button-shade)))`,
+			__button_border_color: `color-mix(in oklch, var(--button-base), var(--button-tint) calc(100% - var(--button-border-shade)))`,
+			__button_outline_color: `color-mix(in oklch, var(--button-base), var(--button-tint) calc(100% - var(--button-border-shade)))`,
+			background_color: `color-mix(in oklch, var(--button-color), transparent calc(100% - var(--button-opacity)))`,
+			// TODO: Color should be computed based on background
+			color: vars.color.ink,
+
+			border_color: `color-mix(in oklch, var(--button-border-color), transparent calc(100% - var(--button-border-opacity)))`,
+			border_width: vars.button.border.width,
 			border_style: "solid",
-			border_color: vars.border.color,
+
+			outline_color: `color-mix(in oklch, var(--button-outline-color), transparent calc(100% - var(--button-outline-opacity)))`,
 			outline_width: "0px",
 			outline_style: "solid",
-			outline_color: vars.outline.color,
-			background_color: vars.background.color,
-			color: vars.text.color,
+
 			// Typography
 			font_family: vars.button.font.family,
 			line_height: vars.button.font.line,
-			height: vars.button.font.line,
 			font_weight: vars.button.font.weight,
 			font_size: vars.button.font.size,
+			height: vars.button.font.line,
 			gap: vars.gap[2],
 			// Layout
-			cursor: "pointer",
 			padding: vars.controls.padding.regular,
 			box_sizing: "content-box",
 			display: "inline-flex",
 			align_items: "center",
 			justify_content: "center",
 			white_space: "nowrap",
-			transition_property:
-				"background-color,color,border-color,outline-color,border-width,outline-width,opacity,transform,box-shadow",
-			transition_duration: "150ms",
 		}),
 		rule(["button.icon", ".button.icon"], {
-			__background_alpha: 0,
-			__border_alpha: 0,
-			// Direction-aware level
-			__background_level: `calc(4.5 + var(--color-l-direction) * 4)`,
-			__text_level: "var(--background-level)",
-			__text_l_min: 0,
-			__text_l_max: 9,
 			padding: "4px",
 			min_width: "0px",
 			width: "min-content",
@@ -375,165 +303,91 @@ export default named({
 			"danger",
 		].map((color) =>
 			rule([`button.${color}`, `.button.${color}`], {
-				__button_color: vars.color[color],
+				__button_base: vars.color[color],
 			}),
 		),
 		rule(["button.shadow", ".button.shadow"], {
 			box_shadow: `${vars.shadow.x} ${vars.shadow.y} ${vars.shadow.spread} ${vars.shadow.color}`,
 		}),
 		rule(["button.blank", ".button.blank"], {
-			__background_alpha: 0,
-			__border_alpha: 0,
-			__outline_alpha: 0,
-			__background_level: `calc(4.5 + var(--color-l-direction) * 4)`,
-			__text_level: "var(--background-level)",
-			__text_l_min: 0,
-			__text_l_max: 9,
+			__button_opacity: "0%",
+			__button_border_opacity: "0%",
+			// We keep the outline and hover states
 		}),
 		// Outline style
-		rule(["button.outline", ".button.outline"], {
-			__background_alpha: 0,
-			__border_alpha: 7.2,
-			__background_level: `calc(4.5 + var(--color-l-direction) * 4)`,
-			__text_level: "var(--background-level)",
-			__text_l_min: 0,
-			__text_l_max: 9,
-			__border_level: "var(--background-level)",
-			border_width: "2px",
-		}),
+		rule(["button.outline", ".button.outline"], {}),
+		// =====================================================================
+		// REGULAR
+		// =====================================================================
 		// State: focus
 		rule(mods(["button", ".button"], "focus", "focus-within"), {
-			__outline_alpha: focus.alpha,
-			outline_width: focus.width,
+			__button_outline_opacity: vars.controls.active.delta,
+			outline_width: vars.button.outline.width,
 		}),
 		// State: hover (filled)
-		rule(
-			hover(
-				"button:not(.outline):not(.blank):not(.icon)",
-				".button:not(.outline):not(.blank):not(.icon)",
-			),
-			{
-				__background_level: `calc(var(--background-level) + ${levelDelta.hover})`,
-				__border_level: `calc(var(--border-level) + ${levelDelta.hover})`,
-			},
-		),
-		// State: hover (outline/blank/icon)
-		rule(
-			hover(
-				"button.outline",
-				".button.outline",
-				"button.blank",
-				".button.blank",
-				"button.icon",
-				".button.icon",
-			),
-			{
-				__background_alpha: selectable.alpha.hover,
-				__background_level: `calc(var(--background-level) + ${levelDelta.hover})`,
-				__border_level: `calc(var(--border-level) + ${levelDelta.hover * 2})`,
-				__text_level: `calc(var(--text-level) + ${levelDelta.hover * 2})`,
-			},
-		),
+		rule(hover("button", ".button"), {
+			__button_shade: vars.button.hover.shade,
+		}),
 		// State: selected (filled)
-		rule(
-			mods(
-				[
-					"button:not(.outline):not(.blank):not(.icon)",
-					".button:not(.outline):not(.blank):not(.icon)",
-				],
-				"selected",
-			),
-			{
-				__background_level: `calc(var(--background-level) + ${levelDelta.selected})`,
-				__border_level: `calc(var(--border-level) + ${levelDelta.selected})`,
-			},
-		),
-		rule(
-			[
-				"button:not(.outline):not(.blank):not(.icon)[data-selected=true]",
-				".button:not(.outline):not(.blank):not(.icon)[data-selected=true]",
-			],
-			{
-				__background_level: `calc(var(--background-level) + ${levelDelta.selected})`,
-				__border_level: `calc(var(--border-level) + ${levelDelta.selected})`,
-			},
-		),
-		// State: selected (outline/blank/icon)
-		rule(
-			mods(
-				[
-					"button.outline",
-					".button.outline",
-					"button.blank",
-					".button.blank",
-					"button.icon",
-					".button.icon",
-				],
-				"selected",
-			),
-			{
-				__background_alpha: selectable.alpha.selected,
-				__background_level: `calc(var(--background-level) + ${levelDelta.selected})`,
-				__border_level: `calc(var(--border-level) + ${levelDelta.selected * 2})`,
-				__text_level: `calc(var(--text-level) + ${levelDelta.selected * 2})`,
-			},
-		),
-		rule(
-			[
-				"button.outline[data-selected=true]",
-				".button.outline[data-selected=true]",
-				"button.blank[data-selected=true]",
-				".button.blank[data-selected=true]",
-				"button.icon[data-selected=true]",
-				".button.icon[data-selected=true]",
-			],
-			{
-				__background_alpha: selectable.alpha.selected,
-				__background_level: `calc(var(--background-level) + ${levelDelta.selected})`,
-				__border_level: `calc(var(--border-level) + ${levelDelta.selected * 2})`,
-				__text_level: `calc(var(--text-level) + ${levelDelta.selected * 2})`,
-			},
-		),
-		// State: active (filled)
-		rule(
-			mods(
-				[
-					"button:not(.outline):not(.blank):not(.icon)",
-					".button:not(.outline):not(.blank):not(.icon)",
-				],
-				"active",
-			),
-			{
-				__background_level: `calc(var(--background-level) + ${levelDelta.active})`,
-				__border_level: `calc(var(--border-level) + ${levelDelta.active})`,
-			},
-		),
-		// State: active (outline/blank/icon)
-		rule(
-			mods(
-				[
-					"button.outline",
-					".button.outline",
-					"button.blank",
-					".button.blank",
-					"button.icon",
-					".button.icon",
-				],
-				"active",
-			),
-			{
-				__background_alpha: selectable.alpha.active,
-				__background_level: `calc(var(--background-level) + ${levelDelta.active})`,
-				__border_level: `calc(var(--border-level) + ${levelDelta.active * 2})`,
-				__text_level: `calc(var(--text-level) + ${levelDelta.active * 2})`,
-			},
-		),
+		rule(mods(["button", ".button"], "selected"), {
+			__button_shade: vars.button.selected.shade,
+		}),
+		// State: active
+		rule(mods(["button", ".button"], "active"), {
+			__button_shade: vars.button.active.shade,
+		}),
 		// State: disabled
 		rule(mods(["button", ".button"], "disabled"), {
-			opacity: 0.5,
+			opacity: vars.controls.disabled.opacity,
 			cursor: "not-allowed",
 			pointer_events: "none",
 		}),
+		// =====================================================================
+		// OUTLINE
+		// =====================================================================
+		rule(["button.outline", ".button.outline"], {
+			__button_shade: vars.selectable.shade,
+			__button_opacity: "0%",
+			__button_border_opacity: "80%",
+			__button_border_color: vars.button.color,
+			__button_outline_color: vars.button.color,
+			// TODO: Should be almost the same as text
+			__button_shade: "100%",
+			border_width: vars.border.width,
+		}),
+		rule(["button.outline.default", ".button.outline.default"], {
+			border_width: `calc(1px + ${vars.border.width})`,
+		}),
+		rule(hover("button.outline", ".button.outline"), {
+			// Same as selectable
+			__button_opacity: vars.selectable.hover.opacity,
+		}),
+		rule(mods(["button.outline", ".button.outline"], "selected"), {
+			__button_opacity: vars.selectable.selected.opacity,
+		}),
+		rule(mods(["button.outline", ".button.outline"], "active"), {
+			__button_opacity: vars.selectable.active.opacity,
+		}),
+
+		// =====================================================================
+		// ICONS
+		// =====================================================================
+		rule(["button.icon", ".button.icon"], {
+			__button_shade: vars.selectable.shade,
+			__button_opacity: "0%",
+			__button_border_opacity: "0%",
+		}),
+		rule(hover("button.icon", ".button.icon"), {
+			// Same as selectable
+			__button_opacity: vars.selectable.hover.opacity,
+		}),
+		rule(mods(["button.icon", ".button.icon"], "selected"), {
+			__button_opacity: vars.selectable.selected.opacity,
+		}),
+		rule(mods(["button.icon", ".button.icon"], "active"), {
+			__button_opacity: vars.selectable.active.opacity,
+		}),
+
 		rule(
 			[
 				"button.square",
@@ -546,32 +400,6 @@ export default named({
 				align_items: "center",
 				justify_content: "center",
 				aspect_ratio: "1",
-			},
-		),
-		// Contrast: force maximum text contrast
-		rule(
-			[
-				"button.contrast:not(.outline):not(.blank):not(.icon)",
-				".button.contrast:not(.outline):not(.blank):not(.icon)",
-			],
-			{
-				__text_c: 0,
-				__text_l_min: `calc((1 + var(--color-l-direction) * (2 * var(--bg-is-dark) - 1)) / 2 * 9)`,
-				__text_l_max: `calc((1 + var(--color-l-direction) * (2 * var(--bg-is-dark) - 1)) / 2 * 9)`,
-			},
-		),
-		rule(
-			[
-				"button.outline.contrast",
-				".button.outline.contrast",
-				"button.blank.contrast",
-				".button.blank.contrast",
-				"button.icon.contrast",
-				".button.icon.contrast",
-			],
-			{
-				__text_level: `calc(var(--background-level) - var(--color-l-direction) * 2.25)`,
-				__border_level: `calc(var(--background-level) - var(--color-l-direction) * 2.25)`,
 			},
 		),
 	),
@@ -587,41 +415,38 @@ export default named({
 			__selector_font_family: vars.font.controls.family,
 			__selector_font_line: vars.font.controls.line,
 			__selector_font_weight: vars.font.controls.weight,
-			// Color properties
-			__background_level: 5,
-			__background_c: 0.02,
-			__background_h: 250,
-			__background_alpha: 0,
-			__background_blend: 0,
-			__background_blending: "transparent",
-			__border_level: 5,
-			__border_c: 0.02,
-			__border_h: 250,
-			__border_alpha: 10,
-			__border_blend: 0,
-			__border_blending: "transparent",
-			// Text color with WCAG contrast
-			__text_level: 5,
-			__text_c: 0.02,
-			__text_h: 250,
-			__text_alpha: 10,
-			__text_blend: 0,
-			__text_blending: "transparent",
-			// WCAG contrast calculation
-			__bg_is_dark: `clamp(0, (4.5 - var(--background-level)) * 10, 1)`,
-			__text_l_min: `calc((1 + var(--color-l-direction) * (2 * var(--bg-is-dark) - 1)) / 2 * 8)`,
-			__text_l_max: `calc(1 + (1 + var(--color-l-direction) * (2 * var(--bg-is-dark) - 1)) / 2 * 8)`,
+
+			// Computed colors
+			__selector_base: vars.color.ink,
+			__selector_tint: vars.color.paper,
+			__selector_color: `color-mix(in oklch, var(--selector-base), var(--selector-tint) calc(100% - var(--selector-shade)))`,
+			__selector_border_color: `color-mix(in oklch, var(--selector-base), var(--selector-tint) calc(100% - var(--selector-border-shade)))`,
+			__selector_outline_color: `color-mix(in oklch, var(--selector-base), var(--selector-tint) calc(100% - var(--selector-outline-shade)))`,
+
 			// Container styling
 			display: "inline-flex",
 			gap: "0",
 			flex_wrap: "nowrap",
 		}),
 		rule([".selector > li", ".selector > .item"], {
-			border_width: "1px",
+			cursor: "pointer",
+			user_select: "none",
+			transition_property:
+				"background-color,color,border-color,outline-color,border-width,outline-width,opacity,transform,box-shadow",
+			transition_duration: "150ms",
+
+			// Colors
+			background_color: `color-mix(in oklch, var(--selector-color), transparent calc(100% - var(--selector-opacity)))`,
+			border_color: `color-mix(in oklch, var(--selector-border-color), transparent calc(100% - var(--selector-border-opacity)))`,
+			outline_color: `color-mix(in oklch, var(--selector-outline-color), transparent calc(100% - var(--selector-outline-opacity)))`,
+			color: vars.color.ink,
+
+			border_width: vars.selector.border.width,
 			border_style: "solid",
-			border_color: vars.border.color,
-			background_color: vars.background.color,
-			color: vars.text.color,
+			outline_width: "0px",
+			outline_style: "solid",
+
+			// Typography & Layout
 			font_family: vars.selector.font.family,
 			line_height: vars.selector.font.line,
 			font_weight: vars.selector.font.weight,
@@ -630,12 +455,7 @@ export default named({
 			justify_content: "center",
 			white_space: "nowrap",
 			padding: "0.35em 0.65em",
-			cursor: "pointer",
-			user_select: "none",
 			box_sizing: "border-box",
-			transition_property:
-				"background-color,color,border-color,outline-color,border-width,outline-width,opacity,transform,box-shadow",
-			transition_duration: "150ms",
 			margin_left: "-1px",
 		}),
 		rule([".selector > li:first-child", ".selector > .item:first-child"], {
@@ -647,11 +467,12 @@ export default named({
 			border_top_right_radius: vars.border.radius[3],
 			border_bottom_right_radius: vars.border.radius[3],
 		}),
+		// State: hover
 		rule(hover(".selector > li", ".selector > .item"), {
-			__background_alpha: selectable.alpha.hover,
-			__background_level: `calc(var(--background-level) + ${levelDelta.hover})`,
+			__selector_opacity: vars.selector.hover.opacity,
 			z_index: "1",
 		}),
+		// State: focus
 		rule(
 			mods(
 				[".selector > li", ".selector > .item"],
@@ -659,11 +480,13 @@ export default named({
 				"focus-within",
 			),
 			{
-				outline: `${focus.width} solid oklch(0.5 0.15 var(--background-h) / ${focus.alpha / 10})`,
+				__selector_outline_opacity: vars.controls.active.delta,
+				outline_width: vars.selector.outline.width,
 				outline_offset: "-2px",
 				z_index: "1",
 			},
 		),
+		// State: selected
 		rule(
 			[
 				".selector > li.selected",
@@ -672,14 +495,19 @@ export default named({
 				".selector > .item[data-selected=true]",
 			],
 			{
-				__background_alpha: 10,
-				__background_level: `calc(var(--background-level) + ${levelDelta.selected})`,
+				__selector_opacity: vars.selector.selected.opacity,
 				z_index: "2",
 			},
 		),
+		// State: active
 		rule(mods([".selector > li", ".selector > .item"], "active"), {
-			__background_alpha: selectable.alpha.active,
-			__background_level: `calc(var(--background-level) + ${levelDelta.active})`,
+			__selector_opacity: vars.selector.active.opacity,
+		}),
+		// State: disabled
+		rule(mods([".selector > li", ".selector > .item"], "disabled"), {
+			opacity: vars.controls.disabled.opacity,
+			cursor: "not-allowed",
+			pointer_events: "none",
 		}),
 		// Color variants
 		...[
@@ -692,19 +520,18 @@ export default named({
 			"danger",
 		].map((color) =>
 			rule(`.selector.${color}`, {
-				__selector_color: vars.color[color],
+				__selector_base: vars.color[color],
 			}),
 		),
+		// Border variant - enable visible borders
+		rule(".selector.bd", {
+			__selector_border_opacity: "80%",
+		}),
 		// Style variants
 		rule(".selector.pills", { gap: vars.gap[1] }),
 		rule([".selector.pills > li", ".selector.pills > .item"], {
 			border_radius: "2lh",
 			margin_left: "0",
-		}),
-		// Disabled state
-		rule(mods([".selector > li", ".selector > .item"], "disabled"), {
-			opacity: 0.5,
-			cursor: "not-allowed",
 		}),
 		// Size variants
 		rule([".selector.largest > li", ".selector.largest > .item"], {
@@ -739,44 +566,24 @@ export default named({
 			__input_font_line: vars.font.controls.line,
 			__input_font_weight: vars.font.controls.weight,
 			__input_font_size: vars.font.controls.size,
-			// Input-specific color variables
-			__input_background_level: 9,
-			__input_background_c: 0,
-			__input_background_h: 0,
-			__input_background_alpha: input.backgroundAlpha,
-			__input_background_blend: 0,
-			__input_background_blending: "transparent",
-			__input_border_level: 4,
-			__input_border_c: 0.02,
-			__input_border_h: 250,
-			__input_border_alpha: 10,
-			__input_border_blend: 0,
-			__input_border_blending: "transparent",
-			__input_outline_level: 5,
-			__input_outline_c: 0.02,
-			__input_outline_h: 250,
-			__input_outline_alpha: 0,
-			__input_outline_blend: 0,
-			__input_outline_blending: "transparent",
-			__input_text_level: 5,
-			__input_text_c: 0,
-			__input_text_h: 0,
-			__input_text_alpha: 10,
-			__input_text_blend: 0,
-			__input_text_blending: "transparent",
-			// WCAG contrast calculation for input
-			__input_is_dark: `clamp(0, var(--color-l-direction) * (4.5 - var(--input-background-level)) * 10 + 0.5, 1)`,
-			__input_text_l_min: `calc((1 + var(--color-l-direction) * (2 * var(--input-is-dark) - 1)) / 2 * 7)`,
-			__input_text_l_max: `calc(2 + (1 + var(--color-l-direction) * (2 * var(--input-is-dark) - 1)) / 2 * 7)`,
-			// Computed styling
-			border_width: "1px",
+
+			// Computed colors
+			__input_base: vars.color.page,
+			__input_tint: vars.color.paper,
+			__input_color: `color-mix(in oklch, var(--input-base), var(--input-tint) calc(100% - var(--input-shade)))`,
+			__input_border_color: `color-mix(in oklch, var(--input-base), var(--input-tint) calc(100% - var(--input-border-shade)))`,
+			__input_outline_color: `color-mix(in oklch, var(--input-base), var(--input-tint) calc(100% - var(--input-outline-shade)))`,
+			background_color: `color-mix(in oklch, var(--input-color), transparent calc(100% - var(--input-opacity)))`,
+			color: vars.color.ink,
+
+			border_color: `color-mix(in oklch, var(--input-border-color), transparent calc(100% - var(--input-border-opacity)))`,
+			border_width: vars.input.border.width,
 			border_style: "solid",
-			// TODO: border_color: oklchColor("input", "border"),
+
+			outline_color: `color-mix(in oklch, var(--input-outline-color), transparent calc(100% - var(--input-outline-opacity)))`,
 			outline_width: "0px",
 			outline_style: "solid",
-			// TODO: outline_color: oklchColor("input", "outline"),
-			// TODO: background_color: oklchColor("input", "background"),
-			// TODO: color: oklchColor("input", "text", { useConstraints: true }),
+
 			// Typography
 			font_family: vars.input.font.family,
 			line_height: vars.input.font.line,
@@ -878,21 +685,14 @@ export default named({
 				"focus-within",
 			),
 			{
-				__input_outline_alpha: focus.alpha,
-				outline_width: focus.width,
+				__input_outline_opacity: vars.input.focus.outline.opacity,
+				__input_opacity: vars.input.focus.opacity,
+				outline_width: vars.input.outline.width,
 			},
 		),
-		// State: hover
-		rule(hover("input", ".input", "textarea", ".textarea"), {
-			__input_border_level: `calc(var(--input-border-level) + ${levelDelta.hover})`,
-		}),
-		// State: active
-		rule(mods(["input", ".input", "textarea", ".textarea"], "active"), {
-			__input_border_level: `calc(var(--input-border-level) + ${levelDelta.active})`,
-		}),
 		// State: disabled
 		rule(mods(["input", ".input", "textarea", ".textarea"], "disabled"), {
-			opacity: 0.5,
+			opacity: vars.controls.disabled.opacity,
 			cursor: "not-allowed",
 		}),
 		// Color variants
@@ -911,7 +711,7 @@ export default named({
 					`.${color}`,
 				),
 				{
-					__input_color: vars.color[color],
+					__input_base: vars.color[color],
 				},
 			),
 		),
@@ -922,24 +722,12 @@ export default named({
 				".danger",
 			),
 			{
-				// TODO
-				// __input_border_c: colors.danger.c,
-				// __input_border_h: colors.danger.h,
-				// __input_outline_c: colors.danger.c,
-				// __input_outline_h: colors.danger.h,
-				// __input_background_c: colors.danger.c,
-				// __input_background_h: colors.danger.h,
-				// __input_background_level: 8,
-				// __input_text_c: colors.danger.c,
-				// __input_text_h: colors.danger.h,
+				__input_base: vars.color.danger,
 			},
 		),
 		rule(cross(["input", ".input", "textarea", ".textarea"], ".missing"), {
-			// TODO
-			// __input_border_c: colors.danger.c,
-			// __input_border_h: colors.danger.h,
-			// __input_outline_c: colors.danger.c,
-			// __input_outline_h: colors.danger.h,
+			__input_base: vars.color.danger,
+			__input_border_opacity: "100%",
 		}),
 		// Blank style
 		rule(
@@ -950,9 +738,9 @@ export default named({
 				".textarea.blank",
 			],
 			{
-				__input_background_alpha: 0,
-				__input_border_alpha: 0,
-				__input_outline_alpha: 0,
+				__input_opacity: "0%",
+				__input_border_opacity: "0%",
+				__input_outline_opacity: "0%",
 			},
 		),
 		// No input styling
@@ -1050,7 +838,7 @@ export default named({
 			transform: "translateX(0)",
 		}),
 		rule(hover(".toggle"), {
-			__toggle_background_level: `calc(var(--toggle-background-level) + ${levelDelta.hover})`,
+			// __toggle_background_level: `calc(var(--toggle-background-level) + ${levelDelta.hover})`,
 		}),
 		rule(
 			[

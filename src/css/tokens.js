@@ -77,6 +77,137 @@ export default group(
 			text: vars.color.ink,
 		},
 	}),
+	tokens({
+		controls: {
+			padding: {
+				largest: "1em 1.25em",
+				larger: "0.85em 1.15em",
+				large: "0.75em 1em",
+				regular: "0.5em 0.75em",
+				small: "0.25em 0.5em",
+				smaller: "0.15em 0.35em",
+				smallest: "0.15em 0.15em",
+			},
+			size: {
+				smallest: vars.textsize.size[0],
+				smaller: vars.textsize.size[1],
+				small: vars.textsize.size[2],
+				regular: vars.textsize.size[3],
+				large: vars.textsize.size[4],
+				larger: vars.textsize.size[5],
+				largest: vars.textsize.size[6],
+			},
+			border: {
+				shade: "50%",
+				opacity: "80%",
+			},
+			outline: {
+				shade: "50%",
+				opacity: "20%",
+			},
+			hover: { delta: "15%" },
+			active: { delta: "20%" },
+			selected: { delta: "25%" },
+			disabled: { opacity: "50%" },
+		},
+		selectable: {
+			shade: "50%",
+			hover: { opacity: vars.controls.hover.delta },
+			active: { opacity: vars.controls.active.delta },
+			selected: { opacity: vars.controls.selected.delta },
+			disabled: { opacity: vars.controls.disabled.opacity },
+		},
+		button: {
+			shade: "50%",
+			opacity: "100%",
+			border: {
+				width: "1px",
+				shade: "80%",
+				opacity: "90%",
+			},
+			outline: {
+				width: "2px",
+				shade: "70%",
+				opacity: "20%",
+			},
+			// We alter the shade by the same amount as base controls opacity
+			hover: {
+				shade: "calc(var(--button-shade) + var(--controls-hover-delta))",
+				opacity: vars.button.opacity,
+			},
+			active: {
+				shade: "calc(var(--button-shade) + var(--controls-active-delta))",
+				opacity: vars.button.opacity,
+			},
+			selected: {
+				shade: "calc(var(--button-shade) + var(--controls-selected-delta))",
+				opacity: vars.button.opacity,
+			},
+		},
+		pill: {
+			shade: "50%",
+			opacity: "100%",
+			border: {
+				width: "2px",
+				shade: "80%",
+				opacity: "90%",
+			},
+			outline: {
+				width: "2px",
+				shade: "70%",
+				opacity: "20%",
+			},
+			hover: {
+				shade: "calc(var(--pill-shade) + var(--controls-hover-delta))",
+				opacity: vars.pill.opacity,
+			},
+			active: {
+				shade: "calc(var(--pill-shade) + var(--controls-active-delta))",
+				opacity: vars.pill.opacity,
+			},
+			selected: {
+				shade: "calc(var(--pill-shade) + var(--controls-selected-delta))",
+				opacity: vars.pill.opacity,
+			},
+		},
+		input: {
+			shade: "25%",
+			opacity: "50%",
+			border: {
+				width: "1px",
+				shade: "50%",
+				opacity: "80%",
+			},
+			outline: {
+				width: "2px",
+				shade: "50%",
+				opacity: "0%",
+			},
+			focus: {
+				opacity: "90%",
+				outline: {
+					opacity: "40%",
+				},
+			},
+		},
+		selector: {
+			shade: "50%",
+			opacity: "0%",
+			border: {
+				width: "1px",
+				shade: "50%",
+				opacity: "0%",
+			},
+			outline: {
+				width: "2px",
+				shade: "50%",
+				opacity: "0%",
+			},
+			hover: { opacity: vars.selectable.hover.opacity },
+			active: { opacity: vars.selectable.active.opacity },
+			selected: { opacity: vars.selectable.selected.opacity },
+		},
+	}),
 	// ------------------------------------------------------------------------
 	//
 	// COLOR PROPERTIES
@@ -88,13 +219,13 @@ export default group(
 		background: {
 			base: vars.color.paper,
 			tint: vars.color.paper,
-			shade: "0%",
+			shade: "100%",
 			opacity: "100%",
 		},
 		text: {
 			base: vars.color.ink,
 			tint: vars.color.paper,
-			shade: "0%",
+			shade: "100%",
 			opacity: "100%",
 		},
 		border: {
@@ -231,26 +362,6 @@ export default group(
 				"calc((var(--heading-base) + var(--heading-amplitude) * ((36 - 12) / (48 - 12))) * var(--heading-unit))", // 5: xl
 				"calc((var(--heading-base) + var(--heading-amplitude) * ((48 - 12) / (48 - 12))) * var(--heading-unit))", // 6: xxl
 			],
-		},
-		controls: {
-			padding: {
-				largest: "1em 1.25em",
-				larger: "0.85em 1.15em",
-				large: "0.75em 1em",
-				regular: "0.5em 0.75em",
-				small: "0.25em 0.5em",
-				smaller: "0.15em 0.35em",
-				smallest: "0.15em 0.15em",
-			},
-			size: {
-				smallest: vars.textsize.size[0],
-				smaller: vars.textsize.size[1],
-				small: vars.textsize.size[2],
-				regular: vars.textsize.size[3],
-				large: vars.textsize.size[4],
-				larger: vars.textsize.size[5],
-				largest: vars.textsize.size[6],
-			},
 		},
 	}),
 );

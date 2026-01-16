@@ -23,6 +23,9 @@ const times = (n, f) => {
 };
 
 function* properties(value, k) {
+	if (value === null || value === undefined) {
+		return;
+	}
 	if (Object.getPrototypeOf(value) === Object.prototype) {
 		for (const kk in value) {
 			for (const v of properties(
@@ -125,7 +128,9 @@ class Scope {
 		target[property] = value;
 	}
 	constructor(name, parent) {
-		this._name = parent?._name ? `${parent._name}-${kebab(name)}` : kebab(name);
+		this._name = parent?._name
+			? `${parent._name}-${kebab(name)}`
+			: kebab(name);
 		// TODO: This should define properties
 	}
 	*walk() {

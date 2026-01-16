@@ -23,6 +23,8 @@ import { group, vars, rule } from "../js/littlecss.js";
 const colors = [
 	"paper",
 	"ink",
+	"page",
+	"text",
 	"neutral",
 	"primary",
 	"secondary",
@@ -114,12 +116,12 @@ const grades = [
 ];
 
 const shades = {
-	darkest: { target: vars.color.ink, value: 15 },
-	darker: { target: vars.color.ink, value: 10 },
-	dark: { target: vars.color.ink, value: 5 },
-	light: { target: vars.color.paper, value: 5 },
-	lighter: { target: vars.color.paper, value: 10 },
-	lightest: { target: vars.color.paper, value: 15 },
+	darkest: { target: vars.color.ink, value: 85 },
+	darker: { target: vars.color.ink, value: 90 },
+	dark: { target: vars.color.ink, value: 95 },
+	light: { target: vars.color.paper, value: 95 },
+	lighter: { target: vars.color.paper, value: 90 },
+	lightest: { target: vars.color.paper, value: 85 },
 };
 
 // ----------------------------------------------------------------------------
@@ -155,39 +157,39 @@ export default group(
 	// .bg - applies background color and sets text contrast constraints
 	rule(".bg", {
 		background_color: vars.background.color,
-		__background_color: `color-mix(in oklch, var(--background-base), var(--background-tint) var(--background-shade))`,
+		__background_color: `color-mix(in oklch, var(--background-base), var(--background-tint) calc(100% - var(--background-shade)))`,
 	}),
 	// .tx - applies text color with contrast constraints
 	rule(".tx", {
 		background_color: vars.text.color,
-		__text_color: `color-mix(in oklch, var(--text-base), var(--text-tint) var(--text-shade))`,
+		__text_color: `color-mix(in oklch, var(--text-base), var(--text-tint) calc(100% - var(--text-shade)))`,
 	}),
 	// .bd - applies border color
 	rule(".bd", {
 		border_color: vars.border.color,
 		border_width: vars.border.width,
 		border_style: vars.border.style,
-		__border_color: `color-mix(in oklch, var(--border-base), var(--border-tint) var(--border-shade))`,
+		__border_color: `color-mix(in oklch, var(--border-base), var(--border-tint) calc(100% - var(--border-shade)))`,
 	}),
 	Object.entries(sides).map(([short, side]) =>
 		rule(`.bd-${short}`, {
 			[`border_${side.name}_color`]: vars.border.color,
 			[`border_${side.name}_width`]: vars.border.width,
 			[`border_${side.name}_style`]: vars.border.style,
-			[`__border_${side.css}_color`]: `color-mix(in oklch, var(--border-base), var(--border-tint) var(--border-shade))`,
+			[`__border_${side.css}_color`]: `color-mix(in oklch, var(--border-base), var(--border-tint) calc(100% - var(--border-shade)))`,
 		}),
 	),
 	// .ol - applies outline color
 	rule(".ol", {
 		outline_color: vars.outline.color,
-		__outline_color: `color-mix(in oklch, var(--outline-base), var(--outline-tint) var(--outline-shade))`,
+		__outline_color: `color-mix(in oklch, var(--outline-base), var(--outline-tint) calc(100% - var(--outline-shade)))`,
 	}),
 	Object.entries(sides).map(([short, side]) =>
 		rule(`.ot-${short}`, {
 			[`outline_${side.name}_color`]: vars.outline.color,
 			[`outline_${side.name}_width`]: vars.outline.width,
 			[`outline_${side.name}_style`]: vars.outline.style,
-			[`__outline_${side.css}_color`]: `color-mix(in oklch, var(--outline-base), var(--outline-tint) var(--outline-shade))`,
+			[`__outline_${side.css}_color`]: `color-mix(in oklch, var(--outline-base), var(--outline-tint) calc(100% - var(--outline-shade)))`,
 		}),
 	),
 	// ------------------------------------------------------------------------

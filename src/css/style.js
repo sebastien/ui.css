@@ -114,6 +114,7 @@ export default named({
 		...times(10, (i) =>
 			rule(`.bdw-r-${i}`, { __border_right_width: `${i}px` }),
 		),
+		...times(10, (i) => rule(`.bd-${i}`, { __border_width: `${i}px` })),
 		...Object.keys(sides).map((k) =>
 			rule(`.bd-${k.substring(0, 1)}`, {
 				[`border_${sides[k]}_width`]: vars.border.width,
