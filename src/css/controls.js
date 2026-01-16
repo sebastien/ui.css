@@ -1,11 +1,4 @@
 import { cross, named, rule, group, vars, mods } from "../js/littlecss.js";
-import {
-	computeColor,
-	oklchColor,
-	props,
-	colors,
-	colorNames,
-} from "./colors.js";
 
 // ----------------------------------------------------------------------------
 // CONTROL CONSTANTS
@@ -40,12 +33,6 @@ function hover(...args) {
 	return res;
 }
 
-// Get color properties (c, h) for a color name
-function getColorProps(name) {
-	const color = colors[name] || colors.neutral;
-	return { c: color.c, h: color.h };
-}
-
 export default named({
 	// ------------------------------------------------------------------------
 	//
@@ -78,7 +65,7 @@ export default named({
 			__selectable_outline_blend: 0,
 			__selectable_outline_blending: "transparent",
 			// Computed background color
-			background_color: oklchColor("selectable", "background"),
+			// TODO: background_color: oklchColor("selectable", "background"),
 		}),
 		rule(hover(".selectable"), {
 			__selectable_background_alpha: selectable.alpha.hover,
@@ -118,12 +105,8 @@ export default named({
 			"warning",
 			"danger",
 		].map((color) => {
-			const { c, h } = getColorProps(color);
 			return rule(`.selectable.${color}`, {
-				__selectable_background_c: c,
-				__selectable_background_h: h,
-				__selectable_outline_c: c,
-				__selectable_outline_h: h,
+				__selectable_color: vars.color,
 			});
 		}),
 		// Size variants
@@ -188,9 +171,9 @@ export default named({
 			__border_width: "2px",
 			border_width: vars.border.width,
 			border_style: "solid",
-			border_color: computeColor(props[2]),
-			background_color: computeColor(props[0]),
-			color: computeColor(props[1], true),
+			border_color: vars.border.color,
+			background_color: vars.background.color,
+			color: vars.text.color,
 			padding: `${vars.pad[0]} ${vars.pad[2]}`,
 			transition_property:
 				"background-color,color,border-color,outline-color,border-width,outline-width,opacity,transform,box-shadow",
@@ -254,14 +237,8 @@ export default named({
 			"warning",
 			"danger",
 		].map((color) => {
-			const { c, h } = getColorProps(color);
 			return rule(`.pill.${color}`, {
-				__background_c: c,
-				__background_h: h,
-				__border_c: c,
-				__border_h: h,
-				__text_c: c,
-				__text_h: h,
+				__pill_color: vars.color[color],
 			});
 		}),
 		// Style variants
@@ -331,12 +308,12 @@ export default named({
 			// Computed colors
 			border_width: "1px",
 			border_style: "solid",
-			border_color: computeColor(props[2]),
+			border_color: vars.border.color,
 			outline_width: "0px",
 			outline_style: "solid",
-			outline_color: computeColor(props[3]),
-			background_color: computeColor(props[0]),
-			color: computeColor(props[1], true),
+			outline_color: vars.outline.color,
+			background_color: vars.background.color,
+			color: vars.text.color,
 			// Typography
 			font_family: vars.button.font.family,
 			line_height: vars.button.font.line,
@@ -396,19 +373,11 @@ export default named({
 			"info",
 			"warning",
 			"danger",
-		].map((color) => {
-			const { c, h } = getColorProps(color);
-			return rule([`button.${color}`, `.button.${color}`], {
-				__background_c: c,
-				__background_h: h,
-				__border_c: c,
-				__border_h: h,
-				__outline_c: c,
-				__outline_h: h,
-				__text_c: c,
-				__text_h: h,
-			});
-		}),
+		].map((color) =>
+			rule([`button.${color}`, `.button.${color}`], {
+				__button_color: vars.color[color],
+			}),
+		),
 		rule(["button.shadow", ".button.shadow"], {
 			box_shadow: `${vars.shadow.x} ${vars.shadow.y} ${vars.shadow.spread} ${vars.shadow.color}`,
 		}),
@@ -650,9 +619,9 @@ export default named({
 		rule([".selector > li", ".selector > .item"], {
 			border_width: "1px",
 			border_style: "solid",
-			border_color: computeColor(props[2]),
-			background_color: computeColor(props[0]),
-			color: computeColor(props[1], true),
+			border_color: vars.border.color,
+			background_color: vars.background.color,
+			color: vars.text.color,
 			font_family: vars.selector.font.family,
 			line_height: vars.selector.font.line,
 			font_weight: vars.selector.font.weight,
@@ -721,17 +690,11 @@ export default named({
 			"info",
 			"warning",
 			"danger",
-		].map((color) => {
-			const { c, h } = getColorProps(color);
-			return rule(`.selector.${color}`, {
-				__background_c: c,
-				__background_h: h,
-				__border_c: c,
-				__border_h: h,
-				__text_c: c,
-				__text_h: h,
-			});
-		}),
+		].map((color) =>
+			rule(`.selector.${color}`, {
+				__selector_color: vars.color[color],
+			}),
+		),
 		// Style variants
 		rule(".selector.pills", { gap: vars.gap[1] }),
 		rule([".selector.pills > li", ".selector.pills > .item"], {
@@ -808,12 +771,12 @@ export default named({
 			// Computed styling
 			border_width: "1px",
 			border_style: "solid",
-			border_color: oklchColor("input", "border"),
+			// TODO: border_color: oklchColor("input", "border"),
 			outline_width: "0px",
 			outline_style: "solid",
-			outline_color: oklchColor("input", "outline"),
-			background_color: oklchColor("input", "background"),
-			color: oklchColor("input", "text", { useConstraints: true }),
+			// TODO: outline_color: oklchColor("input", "outline"),
+			// TODO: background_color: oklchColor("input", "background"),
+			// TODO: color: oklchColor("input", "text", { useConstraints: true }),
 			// Typography
 			font_family: vars.input.font.family,
 			line_height: vars.input.font.line,
@@ -941,26 +904,17 @@ export default named({
 			"info",
 			"warning",
 			"danger",
-		].map((color) => {
-			const { c, h } = getColorProps(color);
-			return rule(
+		].map((color) =>
+			rule(
 				cross(
 					["input", ".input", "textarea", ".textarea"],
 					`.${color}`,
 				),
 				{
-					__input_border_c: c,
-					__input_border_h: h,
-					__input_outline_c: c,
-					__input_outline_h: h,
-					__input_background_c: c,
-					__input_background_h: h,
-					__input_background_level: 8,
-					__input_text_c: c,
-					__input_text_h: h,
+					__input_color: vars.color[color],
 				},
-			);
-		}),
+			),
+		),
 		rule(
 			cross(
 				["input", ".input", "textarea", ".textarea"],
@@ -968,22 +922,24 @@ export default named({
 				".danger",
 			),
 			{
-				__input_border_c: colors.danger.c,
-				__input_border_h: colors.danger.h,
-				__input_outline_c: colors.danger.c,
-				__input_outline_h: colors.danger.h,
-				__input_background_c: colors.danger.c,
-				__input_background_h: colors.danger.h,
-				__input_background_level: 8,
-				__input_text_c: colors.danger.c,
-				__input_text_h: colors.danger.h,
+				// TODO
+				// __input_border_c: colors.danger.c,
+				// __input_border_h: colors.danger.h,
+				// __input_outline_c: colors.danger.c,
+				// __input_outline_h: colors.danger.h,
+				// __input_background_c: colors.danger.c,
+				// __input_background_h: colors.danger.h,
+				// __input_background_level: 8,
+				// __input_text_c: colors.danger.c,
+				// __input_text_h: colors.danger.h,
 			},
 		),
 		rule(cross(["input", ".input", "textarea", ".textarea"], ".missing"), {
-			__input_border_c: colors.danger.c,
-			__input_border_h: colors.danger.h,
-			__input_outline_c: colors.danger.c,
-			__input_outline_h: colors.danger.h,
+			// TODO
+			// __input_border_c: colors.danger.c,
+			// __input_border_h: colors.danger.h,
+			// __input_outline_c: colors.danger.c,
+			// __input_outline_h: colors.danger.h,
 		}),
 		// Blank style
 		rule(
@@ -1063,15 +1019,15 @@ export default named({
 			__toggle_border_blend: 0,
 			__toggle_border_blending: "transparent",
 			// Active color (when checked) - store the target c/h
-			__toggle_active_c: colors.primary.c,
-			__toggle_active_h: colors.primary.h,
+			// TODO: __toggle_active_c: colors.primary.c,
+			// TODO: __toggle_active_h: colors.primary.h,
 			// Base styling
 			display: "inline-block",
 			position: "relative",
 			width: vars.toggle.track.width,
 			height: vars.toggle.track.height,
-			background: oklchColor("toggle", "background"),
-			border: `${vars.toggle.track.border.width} solid ${oklchColor("toggle", "border")}`,
+			// TODO: background: oklchColor("toggle", "background"),
+			// TODO: border: `${vars.toggle.track.border.width} solid ${oklchColor("toggle", "border")}`,
 			border_radius: vars.toggle.track.border.radius,
 			cursor: "pointer",
 			user_select: "none",
@@ -1122,13 +1078,10 @@ export default named({
 		),
 		// Color variants (for active state)
 		...["primary", "secondary", "success", "warning", "danger"].map(
-			(color) => {
-				const { c, h } = getColorProps(color);
-				return rule(`.toggle.${color}`, {
-					__toggle_active_c: c,
-					__toggle_active_h: h,
-				});
-			},
+			(color) =>
+				rule(`.toggle.${color}`, {
+					__toggle_color: vars.color[color],
+				}),
 		),
 		// Disabled state
 		rule([".toggle:disabled", ".toggle.disabled"], {

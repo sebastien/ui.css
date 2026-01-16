@@ -86,29 +86,45 @@ export default group(
 	// See spec-colors.md for full documentation
 	tokens({
 		background: {
-			// Level: 0-9 scale position (0=dark, 9=light)
-			level: 7,
-			// Chroma and hue from base color
-			c: 0.02,
-			h: 250,
-			// Alpha: 0-10 opacity (10=opaque)
-			alpha: 10,
-			// Blend: 0-9 amount to blend toward blending target
-			blend: 0,
-			blending: "transparent",
+			base: vars.color.paper,
+			tint: vars.color.paper,
+			shade: "0%",
+			opacity: "100%",
 		},
 		text: {
-			level: 1 /* dark text by default */,
-			c: 0.02,
-			h: 250,
-			alpha: 10,
-			blend: 0,
-			blending: "transparent",
-			// Contrast constraints (set by .bg for accessibility)
-			l: {
-				min: 0,
-				max: 9,
-			},
+			base: vars.color.ink,
+			tint: vars.color.paper,
+			shade: "0%",
+			opacity: "100%",
+		},
+		border: {
+			base: vars.color.ink,
+			tint: vars.color.paper,
+			shade: "50%",
+			width: "1px",
+			opacity: "90%",
+			style: "solid",
+			// FIXME: Should move this out
+			// Non-color properties
+			sizes: sizes.map((_, i) => `${i}px`),
+			radius: [
+				"1px", // 0:xxs
+				"2px", // 1:xs
+				"4px", // 2:s
+				"6px", // 3:m
+				"8px", // 4:l
+				"12px", // 5:xl
+				"16px", // 6:xxl
+			],
+			style: "solid",
+		},
+		outline: {
+			width: "2px",
+			base: vars.color.ink,
+			tint: vars.color.paper,
+			opacity: "80%",
+			shade: "30%",
+			style: "solid",
 		},
 		// Text sizing properties (separate from text color)
 		textsize: {
@@ -126,36 +142,6 @@ export default group(
 				"calc((var(--textsize-base) + var(--textsize-amplitude) * ((16 - 6) / (18 - 6))) * var(--textsize-unit))", // 5: xl
 				"calc((var(--textsize-base) + var(--textsize-amplitude) * ((18 - 6) / (18 - 6))) * var(--textsize-unit))", // 6: xxl
 			],
-		},
-		border: {
-			level: 6,
-			c: 0.02,
-			h: 250,
-			alpha: 10,
-			blend: 0,
-			blending: "transparent",
-			width: "1px",
-			// Non-color properties
-			sizes: sizes.map((_, i) => `${i}px`),
-			radius: [
-				"1px", // 0:xxs
-				"2px", // 1:xs
-				"4px", // 2:s
-				"6px", // 3:m
-				"8px", // 4:l
-				"12px", // 5:xl
-				"16px", // 6:xxl
-			],
-			style: "solid",
-		},
-		outline: {
-			level: 5,
-			c: 0.02,
-			h: 250,
-			alpha: 10,
-			blend: 0,
-			blending: "transparent",
-			width: "2px",
 		},
 	}),
 	// ------------------------------------------------------------------------
