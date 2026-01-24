@@ -1,4 +1,4 @@
-import { layers } from "@littlecss.js";
+import { layers } from "../js/littlecss.js";
 import tokens from "./tokens.js";
 import reset from "./reset.js";
 import layout from "./layout.js";
