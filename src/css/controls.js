@@ -1,4 +1,4 @@
-import { cross, named, rule, group, vars, mods } from "../js/littlecss.js";
+import { cross, group, mods, named, rule, vars } from "../js/littlecss.js";
 
 // ----------------------------------------------------------------------------
 //
@@ -54,7 +54,7 @@ export default named({
 			{
 				__selectable_outline_opacity: vars.selectable.active.opacity,
 				outline_width: vars.selectable.outline.width,
-			},
+			}
 		),
 		rule([".selectable.selected", ".selectable[data-selected=true]"], {
 			__selectable_opacity: vars.selectable.selected.opacity,
@@ -89,14 +89,17 @@ export default named({
 		rule(".selectable.smaller", { padding: vars.controls.padding.smaller }),
 		rule(".selectable.smallest", {
 			padding: vars.controls.padding.smallest,
-		}),
+		})
 	),
 
 	action: group(
 		rule(".action", {
 			cursor: "pointer",
 			user_select: "none",
-		}),
+			transition_property:
+				"background-color,color,border-color,outline-color,border-width,outline-width,opacity,transform,box-shadow",
+			transition_duration: "150ms",
+		})
 	),
 
 	// ------------------------------------------------------------------------
@@ -159,7 +162,7 @@ export default named({
 			],
 			{
 				__pill_border_shade: vars.pill.selected.shade,
-			},
+			}
 		),
 		// State: active
 		rule([".pill:active", ".pill.active"], {
@@ -191,7 +194,7 @@ export default named({
 		].map((color) =>
 			rule(`.pill.${color}`, {
 				__pill_base: vars.color[color],
-			}),
+			})
 		),
 		// =====================================================================
 		// OUTLINE
@@ -213,7 +216,7 @@ export default named({
 		}),
 		rule([".pill.outline:active", ".pill.outline.active"], {
 			__pill_opacity: vars.selectable.active.opacity,
-		}),
+		})
 	),
 
 	// ------------------------------------------------------------------------
@@ -230,26 +233,19 @@ export default named({
 			transition_duration: "150ms",
 
 			// Font settings
-			__button_font_family: vars.font.controls.family,
-			__button_font_line: vars.font.controls.line,
-			__button_font_weight: vars.font.controls.weight,
-			__button_font_size: vars.font.controls.size,
-
 			// Computed colors
-			__button_base: vars.color.ink,
-			__button_tint: vars.color.paper,
-			__button_color: `color-mix(in oklch, var(--button-base), var(--button-tint) calc(100% - var(--button-shade)))`,
-			__button_border_color: `color-mix(in oklch, var(--button-base), var(--button-tint) calc(100% - var(--button-border-shade)))`,
-			__button_outline_color: `color-mix(in oklch, var(--button-base), var(--button-tint) calc(100% - var(--button-border-shade)))`,
-			background_color: `color-mix(in oklch, var(--button-color), transparent calc(100% - var(--button-opacity)))`,
+			__button_current_color: `color-mix(in oklch, var(--button-base), var(--button-tint) calc(100% - var(--button-shade)))`,
+			__button_current_border_color: `color-mix(in oklch, var(--button-base), var(--button-tint) calc(100% - var(--button-border-shade)))`,
+			__button_curent_outline_color: `color-mix(in oklch, var(--button-base), var(--button-tint) calc(100% - var(--button-border-shade)))`,
+			background_color: `color-mix(in oklch, var(--button-current-color), transparent calc(100% - var(--button-opacity)))`,
 			// TODO: Color should be computed based on background
-			color: vars.color.ink,
+			color: vars.text.color,
 
-			border_color: `color-mix(in oklch, var(--button-border-color), transparent calc(100% - var(--button-border-opacity)))`,
+			border_color: `color-mix(in oklch, var(--button-current-border-color), transparent calc(100% - var(--button-border-opacity)))`,
 			border_width: vars.button.border.width,
 			border_style: "solid",
 
-			outline_color: `color-mix(in oklch, var(--button-outline-color), transparent calc(100% - var(--button-outline-opacity)))`,
+			outline_color: `color-mix(in oklch, var(--button-current-outline-color), transparent calc(100% - var(--button-outline-opacity)))`,
 			outline_width: "0px",
 			outline_style: "solid",
 
@@ -258,11 +254,10 @@ export default named({
 			line_height: vars.button.font.line,
 			font_weight: vars.button.font.weight,
 			font_size: vars.button.font.size,
-			height: vars.button.font.line,
 			gap: vars.gap[2],
 			// Layout
 			padding: vars.controls.padding.regular,
-			box_sizing: "content-box",
+			box_sizing: "border-box",
 			display: "inline-flex",
 			align_items: "center",
 			justify_content: "center",
@@ -304,7 +299,7 @@ export default named({
 		].map((color) =>
 			rule([`button.${color}`, `.button.${color}`], {
 				__button_base: vars.color[color],
-			}),
+			})
 		),
 		rule(["button.shadow", ".button.shadow"], {
 			box_shadow: `${vars.shadow.x} ${vars.shadow.y} ${vars.shadow.spread} ${vars.shadow.color}`,
@@ -346,11 +341,12 @@ export default named({
 		// OUTLINE
 		// =====================================================================
 		rule(["button.outline", ".button.outline"], {
+			// FIXME: Should that be curent?
 			__button_shade: vars.selectable.shade,
 			__button_opacity: "0%",
 			__button_border_opacity: "80%",
-			__button_border_color: vars.button.color,
-			__button_outline_color: vars.button.color,
+			__button_border_color: vars.button.current.color,
+			__button_outline_color: vars.button.current.color,
 			// TODO: Should be almost the same as text
 			__button_shade: "100%",
 			border_width: vars.border.width,
@@ -400,8 +396,8 @@ export default named({
 				align_items: "center",
 				justify_content: "center",
 				aspect_ratio: "1",
-			},
-		),
+			}
+		)
 	),
 
 	// ------------------------------------------------------------------------
@@ -477,14 +473,14 @@ export default named({
 			mods(
 				[".selector > li", ".selector > .item"],
 				"focus",
-				"focus-within",
+				"focus-within"
 			),
 			{
 				__selector_outline_opacity: vars.controls.active.delta,
 				outline_width: vars.selector.outline.width,
 				outline_offset: "-2px",
 				z_index: "1",
-			},
+			}
 		),
 		// State: selected
 		rule(
@@ -497,7 +493,7 @@ export default named({
 			{
 				__selector_opacity: vars.selector.selected.opacity,
 				z_index: "2",
-			},
+			}
 		),
 		// State: active
 		rule(mods([".selector > li", ".selector > .item"], "active"), {
@@ -521,7 +517,7 @@ export default named({
 		].map((color) =>
 			rule(`.selector.${color}`, {
 				__selector_base: vars.color[color],
-			}),
+			})
 		),
 		// Border variant - enable visible borders
 		rule(".selector.bd", {
@@ -551,7 +547,7 @@ export default named({
 		}),
 		rule([".selector.smallest > li", ".selector.smallest > .item"], {
 			padding: vars.controls.padding.smallest,
-		}),
+		})
 	),
 
 	// ------------------------------------------------------------------------
@@ -561,33 +557,27 @@ export default named({
 	// ------------------------------------------------------------------------
 	input: group(
 		rule([".input", "input", "textarea", ".textarea"], {
-			// Font settings
-			__input_font_family: vars.font.controls.family,
-			__input_font_line: vars.font.controls.line,
-			__input_font_weight: vars.font.controls.weight,
-			__input_font_size: vars.font.controls.size,
-
 			// Computed colors
-			__input_base: vars.color.page,
-			__input_tint: vars.color.paper,
-			__input_color: `color-mix(in oklch, var(--input-base), var(--input-tint) calc(100% - var(--input-shade)))`,
-			__input_border_color: `color-mix(in oklch, var(--input-base), var(--input-tint) calc(100% - var(--input-border-shade)))`,
-			__input_outline_color: `color-mix(in oklch, var(--input-base), var(--input-tint) calc(100% - var(--input-outline-shade)))`,
-			background_color: `color-mix(in oklch, var(--input-color), transparent calc(100% - var(--input-opacity)))`,
-			color: vars.color.ink,
+			__border_color: vars.input.border.color,
+			__text_color: vars.input.color,
+			__input_current_color: `color-mix(in oklch, var(--input-base), var(--input-tint) calc(100% - var(--input-shade)))`,
+			__input_current_border_color: `color-mix(in oklch, var(--border-color), var(--input-tint) calc(100% - var(--input-border-shade)))`,
+			__input_current_outline_color: `color-mix(in oklch, var(--border-color), var(--input-tint) calc(100% - var(--input-outline-shade)))`,
+			__input_current_outline_opacity: vars.input.outline.opacity,
+			background_color: `color-mix(in oklch, var(--input-current-color), transparent calc(100% - var(--input-opacity)))`,
 
-			border_color: `color-mix(in oklch, var(--input-border-color), transparent calc(100% - var(--input-border-opacity)))`,
+			color: vars.text.color,
+			border_color: `color-mix(in oklch, var(--input-current-border-color), transparent calc(100% - var(--input-border-opacity)))`,
 			border_width: vars.input.border.width,
 			border_style: "solid",
 
-			outline_color: `color-mix(in oklch, var(--input-outline-color), transparent calc(100% - var(--input-outline-opacity)))`,
+			outline_color: `color-mix(in oklch, var(--input-current-outline-color), transparent calc(100% - var(--input-current-outline-opacity)))`,
 			outline_width: "0px",
 			outline_style: "solid",
 
 			// Typography
 			font_family: vars.input.font.family,
 			line_height: vars.input.font.line,
-			height: vars.input.font.line,
 			font_weight: vars.input.font.weight,
 			font_size: vars.input.font.size,
 			gap: vars.gap[2],
@@ -597,7 +587,7 @@ export default named({
 			white_space: "nowrap",
 			align_items: "center",
 			padding: vars.controls.padding.regular,
-			box_sizing: "content-box",
+			box_sizing: "border-box",
 			transition_property:
 				"background-color,color,border-color,outline-color,border-width,outline-width,opacity,transform,box-shadow",
 			transition_duration: "150ms",
@@ -607,6 +597,24 @@ export default named({
 			field_sizing: "content",
 			resize: "none",
 		}),
+		// State: hover
+		rule(hover(".input", "input", ".textarea", "textarea"), {
+			// FIXME: Not ideal, we should adjust the current
+			__input_border_shade: "100%",
+		}),
+		// State: focus
+		rule(
+			mods(
+				["input", ".input", "textarea", ".textarea"],
+				"focus",
+				"focus-within"
+			),
+			{
+				__input_current_outline_opacity: "80%",
+				outline_width: vars.input.outline.width,
+			}
+		),
+
 		// Size variants
 		rule(
 			[
@@ -615,7 +623,7 @@ export default named({
 				"textarea.largest",
 				".textarea.largest",
 			],
-			{ padding: vars.controls.padding.largest },
+			{ padding: vars.controls.padding.largest }
 		),
 		rule(
 			[
@@ -627,7 +635,7 @@ export default named({
 			{
 				padding: vars.controls.padding.larger,
 				font_size: vars.controls.size.larger,
-			},
+			}
 		),
 		rule(
 			[
@@ -639,7 +647,7 @@ export default named({
 			{
 				padding: vars.controls.padding.large,
 				font_size: vars.controls.size.large,
-			},
+			}
 		),
 		rule(
 			[
@@ -651,7 +659,7 @@ export default named({
 			{
 				padding: vars.controls.padding.small,
 				font_size: vars.controls.size.small,
-			},
+			}
 		),
 		rule(
 			[
@@ -663,7 +671,7 @@ export default named({
 			{
 				padding: vars.controls.padding.smaller,
 				font_size: vars.controls.size.smaller,
-			},
+			}
 		),
 		rule(
 			[
@@ -675,20 +683,21 @@ export default named({
 			{
 				padding: vars.controls.padding.smallest,
 				font_size: vars.controls.size.smallest,
-			},
+			}
 		),
 		// State: focus
 		rule(
 			mods(
 				["input", ".input", "textarea", ".textarea"],
 				"focus",
-				"focus-within",
+				"focus-within"
 			),
 			{
-				__input_outline_opacity: vars.input.focus.outline.opacity,
+				__input_current_outline_opacity:
+					vars.input.focus.outline.opacity,
 				__input_opacity: vars.input.focus.opacity,
 				outline_width: vars.input.outline.width,
-			},
+			}
 		),
 		// State: disabled
 		rule(mods(["input", ".input", "textarea", ".textarea"], "disabled"), {
@@ -708,26 +717,34 @@ export default named({
 			rule(
 				cross(
 					["input", ".input", "textarea", ".textarea"],
-					`.${color}`,
+					`.${color}`
 				),
 				{
 					__input_base: vars.color[color],
-				},
-			),
+				}
+			)
 		),
 		rule(
 			cross(
 				["input", ".input", "textarea", ".textarea"],
 				".error",
-				".danger",
+				".danger"
 			),
 			{
 				__input_base: vars.color.danger,
-			},
+			}
 		),
 		rule(cross(["input", ".input", "textarea", ".textarea"], ".missing"), {
 			__input_base: vars.color.danger,
 			__input_border_opacity: "100%",
+		}),
+		// Checkbox
+		rule(["input[type=checkbox]"], {
+			cursor: "pointer",
+			box_sizing: "content-box",
+			aspect_ratio: "1",
+			padding: "0em",
+			width: "1em",
 		}),
 		// Blank style
 		rule(
@@ -741,7 +758,7 @@ export default named({
 				__input_opacity: "0%",
 				__input_border_opacity: "0%",
 				__input_outline_opacity: "0%",
-			},
+			}
 		),
 		// No input styling
 		rule(
@@ -756,7 +773,7 @@ export default named({
 				"focus",
 				"focus-within",
 				"active",
-				"hover",
+				"hover"
 			),
 			{
 				background_color: "transparent",
@@ -764,7 +781,7 @@ export default named({
 				outline: "none",
 				min_width: "0px",
 				padding: "0px",
-			},
+			}
 		),
 		rule(
 			[
@@ -774,8 +791,8 @@ export default named({
 				"textarea.nopad",
 				".textarea.nopad",
 			],
-			{ padding: "0em" },
-		),
+			{ padding: "0em" }
+		)
 	),
 
 	// ------------------------------------------------------------------------
@@ -852,7 +869,7 @@ export default named({
 				__toggle_background_level: 5,
 				__toggle_border_c: "var(--toggle-active-c)",
 				__toggle_border_h: "var(--toggle-active-h)",
-			},
+			}
 		),
 		rule(
 			[
@@ -862,14 +879,14 @@ export default named({
 			],
 			{
 				transform: `translateX(calc(${vars.toggle.track.width} - ${vars.toggle.slider.size} - ${vars.toggle.slider.offset} * 2))`,
-			},
+			}
 		),
 		// Color variants (for active state)
 		...["primary", "secondary", "success", "warning", "danger"].map(
 			(color) =>
 				rule(`.toggle.${color}`, {
 					__toggle_color: vars.color[color],
-				}),
+				})
 		),
 		// Disabled state
 		rule([".toggle:disabled", ".toggle.disabled"], {
@@ -886,7 +903,7 @@ export default named({
 			__toggle_track_width: "3.5em",
 			__toggle_track_height: "1.75em",
 			__toggle_slider_size: "calc(1.75em - 4px)",
-		}),
+		})
 	),
 });
 // EOF

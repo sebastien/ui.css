@@ -1,4 +1,1 @@
-{
-"tabWidth":4,
-"useTabs":true,
-}
+deps/sdk/etc/_prettierrc

@@ -1,15 +1,1 @@
-[*.js]
-indent_style = tab
-indent_size = 4
-
-[*.css]
-indent_style = tab
-indent_size = 4
-
-[*.html]
-indent_style = tab
-indent_size = 2
-
-[*.xml]
-indent_style = tab
-indent_size = 2
+deps/sdk/etc/_editorconfig

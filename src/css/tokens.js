@@ -60,6 +60,8 @@ export default group(
 		color: {
 			// Scale endpoint colors
 			ink: "#000000",
+			action: "#A0A0A0",
+			border: "#A0A0A0",
 			paper: "#FFFFFF",
 			// Luminosity direction: 1 = normal (light mode), -1 = inverted (dark mode)
 			l: { direction: 1 },
@@ -118,8 +120,16 @@ export default group(
 			disabled: { opacity: vars.controls.disabled.opacity },
 		},
 		button: {
-			shade: "50%",
+			shade: "75%",
 			opacity: "100%",
+			base: vars.color.action,
+			tint: vars.color.paper,
+			font: {
+				family: vars.font.controls.family,
+				line: vars.font.controls.line,
+				weight: vars.font.controls.weight,
+				size: vars.font.controls.size,
+			},
 			border: {
 				width: "1px",
 				shade: "80%",
@@ -171,12 +181,22 @@ export default group(
 			},
 		},
 		input: {
+			base: vars.color.page,
+			tint: vars.color.paper,
+			color: vars.color.ink,
 			shade: "25%",
 			opacity: "50%",
+			font: {
+				family: vars.font.controls.family,
+				line: vars.font.controls.line,
+				weight: vars.font.controls.weight,
+				size: vars.font.controls.size,
+			},
 			border: {
 				width: "1px",
 				shade: "50%",
 				opacity: "80%",
+				color: vars.color.ink,
 			},
 			outline: {
 				width: "2px",
@@ -188,6 +208,19 @@ export default group(
 				outline: {
 					opacity: "40%",
 				},
+			},
+			// We alter the shade by the same amount as base controls opacity
+			hover: {
+				shade: "calc(var(--button-shade) + var(--controls-hover-delta))",
+				opacity: vars.button.opacity,
+			},
+			active: {
+				shade: "calc(var(--button-shade) + var(--controls-active-delta))",
+				opacity: vars.button.opacity,
+			},
+			selected: {
+				shade: "calc(var(--button-shade) + var(--controls-selected-delta))",
+				opacity: vars.button.opacity,
 			},
 		},
 		selector: {
@@ -221,16 +254,19 @@ export default group(
 			tint: vars.color.paper,
 			shade: "100%",
 			opacity: "100%",
+			color: `color-mix(in oklch, var(--background-base), var(--background-tint) calc(100% - var(--background-shade)))`,
 		},
 		text: {
 			base: vars.color.ink,
 			tint: vars.color.paper,
 			shade: "100%",
 			opacity: "100%",
+			color: `color-mix(in oklch, var(--text-base), var(--text-tint) calc(100% - var(--text-shade)))`,
 		},
 		border: {
 			base: vars.color.ink,
 			tint: vars.color.paper,
+			color: `color-mix(in oklch, var(--border-base), var(--border-tint) calc(100% - var(--border-shade)))`,
 			shade: "50%",
 			width: "1px",
 			opacity: "90%",
@@ -363,7 +399,7 @@ export default group(
 				"calc((var(--heading-base) + var(--heading-amplitude) * ((48 - 12) / (48 - 12))) * var(--heading-unit))", // 6: xxl
 			],
 		},
-	}),
+	})
 );
 
 // EOF
