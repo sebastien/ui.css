@@ -1,13 +1,13 @@
 import {
-	sides,
+	blended,
 	classes,
-	sizes,
+	group,
 	named,
 	rule,
-	group,
-	vars,
+	sides,
+	sizes,
 	times,
-	blended,
+	vars,
 } from "../js/littlecss.js";
 import { inputs } from "./lib/tags.js";
 
@@ -32,7 +32,7 @@ export default named({
 			margin_right: ".75rem",
 			display: "block",
 			rotate: "45deg",
-		}),
+		})
 	),
 
 	tree: group(
@@ -87,7 +87,7 @@ export default named({
 
 		rule("details.tree details details details details details", {
 			__tree_depth: 5,
-		}),
+		})
 	),
 
 	section: group(
@@ -130,6 +130,100 @@ export default named({
 
 		rule("details.section > *:not(summary)", {
 			padding: `${vars.pad[2]}`,
+		})
+	),
+
+	panels: group(
+		rule(".panels", {
+			width: "100%",
+			position: "relative",
+			overflow: "hidden",
+			__panels_current: "0",
+			__panels_count: "2",
 		}),
+
+		rule(".panels > .horizontal", {
+			position: "relative",
+			display: "grid",
+			left: "calc(-100% * var(--panels-current))",
+			width: "calc(100% * var(--panels-count))",
+			min_width: "100%",
+			height: "100%",
+			grid_template_columns: "repeat(var(--panels-count), 1fr)",
+			transition: "left 0.3s ease-in-out",
+		}),
+
+		rule(".panels > .horizontal > *", {
+			height: "100%",
+			max_height: "100%",
+			min_height: "100%",
+			overflow: "auto",
+			border: "0px solid transparent",
+			box_sizing: "border-box",
+		}),
+
+		rule(".panels > .vertical", {
+			position: "relative",
+			display: "grid",
+			top: "calc(-100% * var(--panels-current))",
+			height: "calc(100% * var(--panels-count))",
+			min_height: "100%",
+			width: "100%",
+			grid_template_rows: "repeat(var(--panels-count), 1fr)",
+			transition: "top 0.3s ease-in-out",
+		}),
+
+		rule(".panels > .vertical > *", {
+			height: "100%",
+			max_height: "100%",
+			min_height: "100%",
+			overflow: "auto",
+			border: "0px solid transparent",
+			box_sizing: "border-box",
+		}),
+
+		rule('.panels[data-panels="2"]', {
+			__panels_count: "2",
+		}),
+
+		rule('.panels[data-panels="3"]', {
+			__panels_count: "3",
+		}),
+
+		rule('.panels[data-panels="4"]', {
+			__panels_count: "4",
+		}),
+
+		rule('.panels[data-panels="5"]', {
+			__panels_count: "5",
+		}),
+
+		rule('.panels[data-panels="6"]', {
+			__panels_count: "6",
+		}),
+
+		rule('.panels[data-panel="0"]', {
+			__panels_current: "0",
+		}),
+
+		rule('.panels[data-panel="1"]', {
+			__panels_current: "1",
+		}),
+
+		rule('.panels[data-panel="2"]', {
+			__panels_current: "2",
+		}),
+
+		rule('.panels[data-panel="3"]', {
+			__panels_current: "3",
+		}),
+
+		rule('.panels[data-panel="4"]', {
+			__panels_current: "4",
+		}),
+
+		rule('.panels[data-panel="5"]', {
+			__panels_current: "5",
+		})
 	),
 });

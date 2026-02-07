@@ -9,6 +9,11 @@ import {
 } from "../js/littlecss.js";
 
 export default named({
+	style: rule(".base", {
+		font_family: vars.font.family,
+		font_size: vars.font.size,
+		line_height: vars.font.line_height,
+	}),
 	style: group(
 		rule([".nolink", ".nolink:hover"], {
 			color: "unset",
@@ -16,6 +21,7 @@ export default named({
 		}),
 		rule(".noresize", { resize: "none" }),
 		rule(".nolh", { line_height: "0em" }),
+		rule(".noblur", { __shadow_spread: "0" }),
 		rule(".nogap", { gap: "0em" }),
 		rule([".nostyle", ":hover .hover-nostyle", ".hover-nostyle:hover"], {
 			appearance: "none",
@@ -28,7 +34,7 @@ export default named({
 			width: "unset",
 			min_width: "unset",
 			max_width: "unset",
-		}),
+		})
 	),
 
 	interaction: group(
@@ -41,7 +47,7 @@ export default named({
 		rule(".grabbing", { cursor: "grabbing" }),
 		rule(".resize-w", { cursor: "col-resize", user_select: "none" }),
 		rule(".resize-h", { cursor: "row-resize", user_select: "none" }),
-		rule(".resize-lr", { cursor: "nwse-resize" }),
+		rule(".resize-lr", { cursor: "nwse-resize" })
 	),
 	font: group(
 		rule(".lll", { font_weight: 100 }),
@@ -49,7 +55,7 @@ export default named({
 		rule(".l", { font_weight: 300 }),
 		rule(".b", { font_weight: 600 }),
 		rule(".bb", { font_weight: 700 }),
-		rule(".bbb", { font_weight: 800 }),
+		rule(".bbb", { font_weight: 800 })
 	),
 	opacity: group(
 		rule(".dim", { opacity: vars.opacity.dim }),
@@ -65,12 +71,12 @@ export default named({
 		}),
 		rule(".bg-dimmest", {
 			__background_o: 2,
-		}),
+		})
 	),
 	visibility: group(
 		rule(".skip", { display: "none !important" }),
 		rule(".invisible", { opacity: "0 !important" }),
-		rule(".hidden", { visibility: "hidden !important" }),
+		rule(".hidden", { visibility: "hidden !important" })
 	),
 	rounding: group(
 		rule(".rounded", {
@@ -84,53 +90,53 @@ export default named({
 		rule(".roundest", {
 			__border_radius: "1.5lh",
 			border_radius: vars.border.radius,
-		}),
+		})
 	),
 	border: group(
 		rule(".rd", { border_radius: `${vars.border.radius}` }),
 		...times(10, (i) =>
-			rule(`.rd-tl-${i}`, { border_top_left_radius: `${i}px` }),
+			rule(`.rd-tl-${i}`, { border_top_left_radius: `${i}px` })
 		),
 		...times(10, (i) =>
-			rule(`.rd-tr-${i}`, { border_top_right_radius: `${i}px` }),
+			rule(`.rd-tr-${i}`, { border_top_right_radius: `${i}px` })
 		),
 		...times(10, (i) =>
-			rule(`.rd-bl-${i}`, { border_bottom_left_radius: `${i}px` }),
+			rule(`.rd-bl-${i}`, { border_bottom_left_radius: `${i}px` })
 		),
 		...times(10, (i) =>
-			rule(`.rd-br-${i}`, { border_bottom_right_radius: `${i}px` }),
+			rule(`.rd-br-${i}`, { border_bottom_right_radius: `${i}px` })
 		),
 		...times(10, (i) => rule(`.rd-${i}`, { __border_radius: `${i}px` })),
 		...times(10, (i) => rule(`.bdw-${i}`, { __border_width: `${i}px` })),
 		...times(10, (i) =>
-			rule(`.bdw-t-${i}`, { __border_top_width: `${i}px` }),
+			rule(`.bdw-t-${i}`, { __border_top_width: `${i}px` })
 		),
 		...times(10, (i) =>
-			rule(`.bdw-b-${i}`, { __border_bottom_width: `${i}px` }),
+			rule(`.bdw-b-${i}`, { __border_bottom_width: `${i}px` })
 		),
 		...times(10, (i) =>
-			rule(`.bdw-l-${i}`, { __border_left_width: `${i}px` }),
+			rule(`.bdw-l-${i}`, { __border_left_width: `${i}px` })
 		),
 		...times(10, (i) =>
-			rule(`.bdw-r-${i}`, { __border_right_width: `${i}px` }),
+			rule(`.bdw-r-${i}`, { __border_right_width: `${i}px` })
 		),
 		...times(10, (i) => rule(`.bd-${i}`, { __border_width: `${i}px` })),
 		...Object.keys(sides).map((k) =>
 			rule(`.bd-${k.substring(0, 1)}`, {
 				[`border_${sides[k]}_width`]: vars.border.width,
 				[`border_${sides[k]}_style`]: "solid",
-			}),
+			})
 		),
 		...times(10, (i) => rule(`.olw-${i}`, { __outline_width: `${i}px` })),
 		rule(".dashed", { border_style: "dashed" }),
-		rule(".dotted", { border_style: "dotted" }),
+		rule(".dotted", { border_style: "dotted" })
 	),
 	shadow: group(
 		...times(10, (i) =>
 			rule(`.sh-${i}`, {
 				box_shadow: `calc(${vars.shadow.x}*${i}) calc(${vars.shadow.y}*${i}) calc(${vars.shadow.spread}*${i}) ${vars.shadow.color}`,
-			}),
-		),
+			})
+		)
 	),
 	table: group(
 		rule("table", {
@@ -143,7 +149,7 @@ export default named({
 		}),
 		rule(["table.lined tr:last-child td", "table.lined tr:last-child th"], {
 			border_bottom_width: "0px",
-		}),
+		})
 	),
 	sep: group(
 		rule(".sep > *:after", {
@@ -157,12 +163,12 @@ export default named({
 		}),
 		rule(".sep:not(.trailing) > *:last-child:after", {
 			content: `""`,
-		}),
+		})
 	),
 	striped: group(
 		rule(".striped > *:nth-child(even)", {
 			__background_l: 7,
-		}),
+		})
 	),
 	depth: group(
 		rule(mods([".inset"], undefined, "focus", "hover", "active"), {
@@ -182,7 +188,7 @@ export default named({
 			border_left_color: vars.inset.light,
 			border_bottom_color: vars.inset.shadow,
 			border_right_color: vars.inset.shadow,
-		}),
+		})
 	),
 });
 // EOF

@@ -1,5 +1,12 @@
 import { tokens, group, sizes, vars } from "../js/littlecss.js";
 
+const REM_PIXELS = 16;
+function pem(px, scale = undefined) {
+	return scale
+		? `calc( 1em * ${scale} * ${px} / ${REM_PIXELS} )`
+		: `calc( 1em * ${px} / ${REM_PIXELS} )`;
+}
+
 // Module: tokens
 // This defines the main parameters for the style. They can be overriden
 // at will to theme everything.
@@ -9,9 +16,9 @@ export default group(
 			mono: "monospace",
 			sans: "sans-serif",
 			serif: "serif",
-			size: "1rem",
 			cursive: "cursive",
 			base: 14,
+			size: `calc(1rem * var(--font-base) / ${REM_PIXELS})`,
 			line: "1.25em",
 			text: {
 				family: `${vars.font.sans}`,
@@ -47,6 +54,9 @@ export default group(
 		},
 		block: {
 			width: "140px",
+		},
+		scaling: {
+			pad: 1.5,
 		},
 	}),
 	// ------------------------------------------------------------------------
@@ -295,19 +305,14 @@ export default group(
 		},
 		// Text sizing properties (separate from text color)
 		textsize: {
-			min: 9,
-			max: 22,
-			unit: "var(--page-unit)",
-			base: "var(--textsize-min)",
-			amplitude: "calc(var(--textsize-max) - var(--textsize-min))",
 			size: [
-				"calc((var(--textsize-base) + var(--textsize-amplitude) * ((6  - 6) / (18 - 6))) * var(--textsize-unit))", // 0: xxs
-				"calc((var(--textsize-base) + var(--textsize-amplitude) * ((8  - 6) / (18 - 6))) * var(--textsize-unit))", // 1: xs
-				"calc((var(--textsize-base) + var(--textsize-amplitude) * ((10 - 6) / (18 - 6))) * var(--textsize-unit))", // 2: s
-				"calc((var(--textsize-base) + var(--textsize-amplitude) * ((12 - 6) / (18 - 6))) * var(--textsize-unit))", // 3: m
-				"calc((var(--textsize-base) + var(--textsize-amplitude) * ((14 - 6) / (18 - 6))) * var(--textsize-unit))", // 4: l
-				"calc((var(--textsize-base) + var(--textsize-amplitude) * ((16 - 6) / (18 - 6))) * var(--textsize-unit))", // 5: xl
-				"calc((var(--textsize-base) + var(--textsize-amplitude) * ((18 - 6) / (18 - 6))) * var(--textsize-unit))", // 6: xxl
+				"40%", // 0: xxs
+				"60%", // 1: xs
+				"80%", // 2: s
+				"120%", // 3: m
+				"140%", // 4: l
+				"180%", // 5: xl
+				"200%", // 6: xxl
 			],
 		},
 	}),
@@ -318,46 +323,46 @@ export default group(
 	// ------------------------------------------------------------------------
 	tokens({
 		size: [
-			"5px", //  0:xxs
-			"10px", // 1:xs
-			"15px", // 2:s
-			"30px", // 3:m
-			"40px", // 4:l
-			"50px", // 5:xl
-			"60px", // 6:xxl
+			pem(5), //  0:xxs
+			pem(10), // 1:xs
+			pem(15), // 2:s
+			pem(30), // 3:m
+			pem(40), // 4:l
+			pem(50), // 5:xl
+			pem(60), // 6:xxl
 		],
 		margin: [
-			"5px", // 0: xxs
-			"10px", // 1: xs
-			"15px", // 2: s
-			"30px", // 3: m
-			"40px", // 4: l
-			"50px", // 5: xl
-			"60px", // 6: xxl
+			pem(5), // 0: xxs
+			pem(10), // 1: xs
+			pem(15), // 2: s
+			pem(30), // 3: m
+			pem(40), // 4: l
+			pem(50), // 5: xl
+			pem(60), // 6: xxl
 		],
 		pad: [
-			"2px", // 0: xxs
-			"4px", // 1: xs
-			"6px", // 2: s
-			"8px", // 3: m
-			"12px", // 4: l
-			"16px", // 5: xl
-			"24px", // 6: xxl
-			"32px", // 7: xxxl
-			"48px", // 8: xxxxl
-			"64px", // 9: xxxxxl
+			pem(2, vars.scaling.pad), // 0: xxs
+			pem(4, vars.scaling.pad), // 1: xs
+			pem(6, vars.scaling.pad), // 2: s
+			pem(8, vars.scaling.pad), // 3: m
+			pem(12, vars.scaling.pad), // 4: l
+			pem(16, vars.scaling.pad), // 5: xl
+			pem(24, vars.scaling.pad), // 6: xxl
+			pem(32, vars.scaling.pad), // 7: xxxl
+			pem(48, vars.scaling.pad), // 8: xxxxl
+			pem(64, vars.scaling.pad), // 9: xxxxxl
 		],
 		gap: [
-			"2px", // 0: xxs
-			"4px", // 1: xs
-			"6px", // 2: s
-			"8px", // 3: m
-			"12px", // 4: l
-			"16px", // 5: xl
-			"24px", // 6: xxl
-			"32px", // 7: xxxl
-			"64px", // 8: xxxxl
-			"96px", // 9: xxxxxl
+			pem(2), // 0: xxs
+			pem(4), // 1: xs
+			pem(6), // 2: s
+			pem(8), // 3: m
+			pem(12), // 4: l
+			pem(16), // 5: xl
+			pem(24), // 6: xxl
+			pem(32), // 7: xxxl
+			pem(64), // 8: xxxxl
+			pem(96), // 9: xxxxxl
 		],
 		opacity: {
 			dim: 0.65,
@@ -368,7 +373,9 @@ export default group(
 			x: "2px",
 			y: "2px",
 			spread: "1px",
-			color: "oklch(0 0 0 / 0.05)",
+			base: vars.color.ink,
+			opacity: 0.25,
+			color: `color-mix(in oklch, var(--shadow-base), transparent calc(100% - 100% * var(--shadow-opacity)))`,
 		},
 		limit: {
 			text: "80ch",
@@ -390,13 +397,13 @@ export default group(
 			base: "var(--heading-min)",
 			amplitude: "calc(var(--heading-max) - var(--heading-min))",
 			size: [
-				"calc((var(--heading-base) + var(--heading-amplitude) * ((12 - 12) / (48 - 12))) * var(--heading-unit))", // 0: xxs
-				"calc((var(--heading-base) + var(--heading-amplitude) * ((14 - 12) / (48 - 12))) * var(--heading-unit))", // 1: xs
-				"calc((var(--heading-base) + var(--heading-amplitude) * ((18 - 12) / (48 - 12))) * var(--heading-unit))", // 2: s
-				"calc((var(--heading-base) + var(--heading-amplitude) * ((24 - 12) / (48 - 12))) * var(--heading-unit))", // 3: m
-				"calc((var(--heading-base) + var(--heading-amplitude) * ((32 - 12) / (48 - 12))) * var(--heading-unit))", // 4: l
-				"calc((var(--heading-base) + var(--heading-amplitude) * ((36 - 12) / (48 - 12))) * var(--heading-unit))", // 5: xl
-				"calc((var(--heading-base) + var(--heading-amplitude) * ((48 - 12) / (48 - 12))) * var(--heading-unit))", // 6: xxl
+				"80%", // 0: xxs
+				"100%", // 1: xs
+				"115%", // 2: s
+				"130%", // 3: m
+				"160%", // 4: l
+				"200%", // 5: xl
+				"240%", // 6: xxl
 			],
 		},
 	})
