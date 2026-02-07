@@ -233,18 +233,18 @@ export default named({
 
 			// Font settings
 			// Computed colors
-			__button_current_color: `color-mix(in oklch, var(--button-base), var(--button-tint) calc(100% - var(--button-shade)))`,
-			__button_current_border_color: `color-mix(in oklch, var(--button-base), var(--button-tint) calc(100% - var(--button-border-shade)))`,
-			__button_curent_outline_color: `color-mix(in oklch, var(--button-base), var(--button-tint) calc(100% - var(--button-border-shade)))`,
-			background_color: `color-mix(in oklch, var(--button-current-color), transparent calc(100% - var(--button-opacity)))`,
+			__button_base: vars.color.ink,
+			__button_tint: vars.color.paper,
+			__button_color: `color-mix(in oklch, var(--button-base), var(--button-tint) calc(100% - var(--button-shade)))`,
+			background_color: `color-mix(in oklch, var(--button-color), transparent calc(100% - var(--button-opacity)))`,
 			// TODO: Color should be computed based on background
 			color: vars.text.color,
 
-			border_color: `color-mix(in oklch, var(--button-current-border-color), transparent calc(100% - var(--button-border-opacity)))`,
+			border_color: `color-mix(in oklch, var(--button-color), transparent calc(100% - var(--button-border-opacity)))`,
 			border_width: vars.button.border.width,
 			border_style: "solid",
 
-			outline_color: `color-mix(in oklch, var(--button-current-outline-color), transparent calc(100% - var(--button-outline-opacity)))`,
+			outline_color: `color-mix(in oklch, var(--button-color), transparent calc(100% - var(--button-outline-opacity)))`,
 			outline_width: "0px",
 			outline_style: "solid",
 
@@ -340,13 +340,8 @@ export default named({
 		// OUTLINE
 		// =====================================================================
 		rule(["button.outline", ".button.outline"], {
-			// FIXME: Should that be curent?
-			__button_shade: vars.selectable.shade,
 			__button_opacity: "0%",
 			__button_border_opacity: "80%",
-			__button_border_color: vars.button.current.color,
-			__button_outline_color: vars.button.current.color,
-			// TODO: Should be almost the same as text
 			__button_shade: "100%",
 			border_width: vars.border.width,
 		}),
@@ -368,7 +363,6 @@ export default named({
 		// ICONS
 		// =====================================================================
 		rule(["button.icon", ".button.icon"], {
-			__button_shade: vars.selectable.shade,
 			__button_opacity: "0%",
 			__button_border_opacity: "0%",
 		}),
@@ -548,20 +542,17 @@ export default named({
 	input: group(
 		rule([".input", "input", "textarea", ".textarea"], {
 			// Computed colors
-			__border_color: vars.input.border.color,
-			__text_color: vars.input.color,
-			__input_current_color: `color-mix(in oklch, var(--input-base), var(--input-tint) calc(100% - var(--input-shade)))`,
-			__input_current_border_color: `color-mix(in oklch, var(--border-color), var(--input-tint) calc(100% - var(--input-border-shade)))`,
-			__input_current_outline_color: `color-mix(in oklch, var(--border-color), var(--input-tint) calc(100% - var(--input-outline-shade)))`,
-			__input_current_outline_opacity: vars.input.outline.opacity,
-			background_color: `color-mix(in oklch, var(--input-current-color), transparent calc(100% - var(--input-opacity)))`,
+			__input_base: vars.color.ink,
+			__input_tint: vars.color.paper,
+			__input_color: `color-mix(in oklch, var(--input-base), var(--input-tint) calc(100% - var(--input-shade)))`,
+			background_color: `color-mix(in oklch, var(--input-color), transparent calc(100% - var(--input-opacity)))`,
 
 			color: vars.text.color,
-			border_color: `color-mix(in oklch, var(--input-current-border-color), transparent calc(100% - var(--input-border-opacity)))`,
+			border_color: `color-mix(in oklch, var(--input-color), transparent calc(100% - var(--input-border-opacity)))`,
 			border_width: vars.input.border.width,
 			border_style: "solid",
 
-			outline_color: `color-mix(in oklch, var(--input-current-outline-color), transparent calc(100% - var(--input-current-outline-opacity)))`,
+			outline_color: `color-mix(in oklch, var(--input-color), transparent calc(100% - var(--input-outline-opacity)))`,
 			outline_width: "0px",
 			outline_style: "solid",
 
@@ -587,11 +578,6 @@ export default named({
 			field_sizing: "content",
 			resize: "none",
 		}),
-		// State: hover
-		rule(hover(".input", "input", ".textarea", "textarea"), {
-			// FIXME: Not ideal, we should adjust the current
-			__input_border_shade: "100%",
-		}),
 		// State: focus
 		rule(
 			mods(
@@ -600,7 +586,7 @@ export default named({
 				"focus-within",
 			),
 			{
-				__input_current_outline_opacity: "80%",
+				__input_outline_opacity: "80%",
 				outline_width: vars.input.outline.width,
 			},
 		),
@@ -662,7 +648,7 @@ export default named({
 				"focus-within",
 			),
 			{
-				__input_current_outline_opacity: vars.input.focus.outline.opacity,
+				__input_outline_opacity: vars.input.focus.outline.opacity,
 				__input_opacity: vars.input.focus.opacity,
 				outline_width: vars.input.outline.width,
 			},
@@ -756,28 +742,18 @@ export default named({
 			__toggle_slider_size: "calc(1.5em - 4px)",
 			__toggle_slider_offset: "2px",
 			// Toggle-specific color variables
-			__toggle_background_level: 7,
-			__toggle_background_c: 0.02,
-			__toggle_background_h: 250,
-			__toggle_background_alpha: 10,
-			__toggle_background_blend: 0,
-			__toggle_background_blending: "transparent",
-			__toggle_border_level: 5,
-			__toggle_border_c: 0.02,
-			__toggle_border_h: 250,
-			__toggle_border_alpha: 10,
-			__toggle_border_blend: 0,
-			__toggle_border_blending: "transparent",
-			// Active color (when checked) - store the target c/h
-			// TODO: __toggle_active_c: colors.primary.c,
-			// TODO: __toggle_active_h: colors.primary.h,
+			__toggle_base: vars.color.ink,
+			__toggle_tint: vars.color.paper,
+			__toggle_color: `color-mix(in oklch, var(--toggle-base), var(--toggle-tint) calc(100% - var(--toggle-shade)))`,
+			background_color: `color-mix(in oklch, var(--toggle-color), transparent calc(100% - var(--toggle-opacity)))`,
+			border_color: `color-mix(in oklch, var(--toggle-color), transparent calc(100% - var(--toggle-border-opacity)))`,
+			border_width: vars.toggle.track.border.width,
+			border_style: "solid",
 			// Base styling
 			display: "inline-block",
 			position: "relative",
 			width: vars.toggle.track.width,
 			height: vars.toggle.track.height,
-			// TODO: background: oklchColor("toggle", "background"),
-			// TODO: border: `${vars.toggle.track.border.width} solid ${oklchColor("toggle", "border")}`,
 			border_radius: vars.toggle.track.border.radius,
 			cursor: "pointer",
 			user_select: "none",
@@ -809,11 +785,7 @@ export default named({
 				"input[type=checkbox]:checked + .toggle",
 			],
 			{
-				__toggle_background_c: "var(--toggle-active-c)",
-				__toggle_background_h: "var(--toggle-active-h)",
-				__toggle_background_level: 5,
-				__toggle_border_c: "var(--toggle-active-c)",
-				__toggle_border_h: "var(--toggle-active-h)",
+				__toggle_shade: vars.toggle.active.shade,
 			},
 		),
 		rule(
@@ -829,7 +801,7 @@ export default named({
 		// Color variants (for active state)
 		...["primary", "secondary", "success", "warning", "danger"].map((color) =>
 			rule(`.toggle.${color}`, {
-				__toggle_color: vars.color[color],
+				__toggle_base: vars.color[color],
 			}),
 		),
 		// Disabled state
