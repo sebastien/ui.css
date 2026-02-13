@@ -1,6 +1,4 @@
 SOURCES_CSSJS=$(wildcard src/css/*.js)
 SOURCES_JS=$(wildcard src/js/*.js wildcard src/js/*/*.js)
-PRODUCT_CSS=$(patsubst src/css/%.js,dist/www/lib/css/%.css,$(filter-out %/tags.js,$(SOURCES_CSSJS)))
-BUILD_ALL+=$(PRODUCT_CSS)
-DIST_ALL+=$(PRODUCT_CSS)
-CLOUDFLARE_PAGES_ALL=$(PRODUCT_CSS)
+BUILD_ALL+=
+DIST_ALL+=dist/littlecss.css

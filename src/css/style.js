@@ -173,6 +173,7 @@ export default named({
 		}),
 	),
 	depth: group(
+		...times(11, (i) => rule(`.z-${i}`, { z_index: i * 10 })),
 		rule(mods([".inset"], undefined, "focus", "hover", "active"), {
 			__inset_shadow: `oklch(0 0 0 / 0.1)`,
 			__inset_light: `oklch(1 0 0 / 0.5)`,

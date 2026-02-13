@@ -15,13 +15,17 @@ case $1 in
 	fi
 	;;
 *)
-	for ARG in $@; do
-		if [ "$#" == "1" ]; then
-			bun -e "import mod from './$ARG';import css from '$BASE/src/js/littlecss.js';console.log([...css(mod)].join('\n'));"
-		else
-			bun -e "import mod from './$ARG';import css, {layers} from '$BASE/src/js/littlecss.js';console.log([...css(layers({['$ARG'.split('.').at(0)]:mod}))].join('\n'));"
-		fi
-	done
+	if [ -z "$1" ]; then
+		bun -e "import all from '$BASE/src/css/all.js';import css from '$BASE/src/js/littlecss.js';console.log([...css(all())].join('\n'));"
+	else
+		for ARG in $@; do
+			if [ "$#" == "1" ]; then
+				bun -e "import mod from './$ARG';import css from '$BASE/src/js/littlecss.js';console.log([...css(mod)].join('\n'));"
+			else
+				bun -e "import mod from './$ARG';import css, {layers} from '$BASE/src/js/littlecss.js';console.log([...css(layers({['$ARG'.split('.').at(0)]:mod}))].join('\n'));"
+			fi
+		done
+	fi
 	;;
 esac
 # EOF
