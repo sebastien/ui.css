@@ -76,28 +76,30 @@ const blended = (name, color, other, percentage = 0.5, opacity = undefined) => {
 // ----------------------------------------------------------------------------
 
 const sizes = [
-	"xxs", // 0
-	"xs", // 1
-	"s", // 2
-	"m", // 3
-	"l", // 4
-	"xl", // 5
-	"xxl", // 6
-	"xxxl", // 7
-	"xxxxl", // 8
-	"xxxxxl", // 9
+	"no", // 0
+	"xxs", // 1
+	"xs", // 2
+	"s", // 3
+	"m", // 4
+	"l", // 5
+	"xl", // 6
+	"xxl", // 7
+	"xxxl", // 8
+	"xxxxl", // 9
+	"xxxxxl", // 10
 ];
 const sizenames = {
-	smallest: 0, //"xxs",
-	smaller: 1, //"xs",
-	small: 2, //"s",
-	medium: 3, //"m",
-	large: 4, //"l",
-	larger: 5, // "xl",
-	largest: 6, //"xxl",
-	huge: 7, //"xxxl",
-	huger: 8, //"xxxxl",
-	hugest: 9, //"xxxxxl",
+	no: 0,
+	smallest: 1, //"xxs",
+	smaller: 2, //"xs",
+	small: 3, //"s",
+	medium: 4, //"m",
+	large: 5, //"l",
+	larger: 6, // "xl",
+	largest: 7, //"xxl",
+	huge: 8, //"xxxl",
+	huger: 9, //"xxxxl",
+	hugest: 10, //"xxxxxl",
 };
 const sides = { l: "left", t: "top", r: "right", b: "bottom" };
 // ----------------------------------------------------------------------------
@@ -128,9 +130,7 @@ class Scope {
 		target[property] = value;
 	}
 	constructor(name, parent) {
-		this._name = parent?._name
-			? `${parent._name}-${kebab(name)}`
-			: kebab(name);
+		this._name = parent?._name ? `${parent._name}-${kebab(name)}` : kebab(name);
 		// TODO: This should define properties
 	}
 	*walk() {
@@ -240,9 +240,7 @@ function rule(selector, ...body) {
 				}
 				const i = line.indexOf(":");
 				if (!line.startsWith("//") && i >= 0) {
-					props[line.substring(0, i).trim()] = line
-						.substring(i + 1)
-						.trim();
+					props[line.substring(0, i).trim()] = line.substring(i + 1).trim();
 				}
 			}
 		} else {
@@ -370,9 +368,7 @@ class Token {
 			type: "Token",
 			name: this.ref,
 			value: `${this.value}`,
-			path: path
-				? [...path, this.name]
-				: ["tokens", ...this.name.split(".")],
+			path: path ? [...path, this.name] : ["tokens", ...this.name.split(".")],
 		};
 	}
 
