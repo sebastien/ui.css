@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <title>LittleCSS Specimen</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/palette.css" />
     <script type="importmap">
       {"imports": {
       "@littlecss.js": "../js/littlecss.js",
@@ -19,6 +20,7 @@
       <h4 class="t">Color Families</h4>
       <p><code class="t">.bg-{color}, .tx-{color}, .bd-{color}, .ol-{color}</code> — Semantic and utility colors for backgrounds, text, borders, and outlines.</p>
       <p class="t-small dim"><strong>Note:</strong> When using color classes, you must also include the base class: use <code class="t">.bg .bg-primary</code> (not just <code class="t">.bg-primary</code>), <code class="t">.tx .tx-primary</code>, and <code class="t">.bd .bd-primary</code>.</p>
+      <h5 class="t">All Colors</h5>
       <div class="stack g-3" id="colors">
       </div>
     </div>
@@ -32,9 +34,10 @@
     </template>
     <script type="module">
       import all from "@littlecss/all"
-      import css from "@littlecss.js"
       import {COLORS} from "@littlecss/colors"
+      import css from "@littlecss.js"
           import {ui} from "@select/ui"
+
         const ColorSampler = ui("#ColorSampler").does({
         class: (self,{name,color}) => `w-10ch p-4 rounded bg bg-${color}`
       })

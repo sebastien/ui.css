@@ -4,10 +4,12 @@
     <meta charset="utf-8" />
     <title>LittleCSS Specimen</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/palette.css" />
     <script type="importmap">
       {"imports": {
       "@littlecss.js": "../js/littlecss.js",
-      "@littlecss/": "../css/",
+      "@littlecss/all": "../css/all.js",
+      "@littlecss/colors": "../css/colors.js",
       "@select/ui": "../../deps/select.js/src/js/select.ui.js",
       "@select/cells": "../../deps/select.js/src/js/select.cells.js"
       }}
@@ -186,137 +188,157 @@
               <h3 class="b t-larger">Color System</h3>
             </div>
             <div class="ModuleSection p-4 bd rounded stack g-4">
-              <h4 class="t">Color Families</h4>
-              <p><code class="t">.bg-{color}, .tx-{color}, .bd-{color}, .ol-{color}</code> — Semantic and utility colors for backgrounds, text, borders, and outlines.</p>
-              <p class="t-small dim"><strong>Note:</strong> When using color classes, you must also include the base class: use <code class="t">.bg .bg-primary</code> (not just <code class="t">.bg-primary</code>), <code class="t">.tx .tx-primary</code>, and <code class="t">.bd .bd-primary</code>.</p>
+              <h4 class="t">Semantic Colors</h4>
+              <p><code class="t">neutral, primary, secondary, tertiary, success, info, warning, danger, accent</code> — Predefined semantic color mappings.</p>
+              <p class="t-small dim"><strong>Note:</strong> Semantic classes can be used standalone: <code class="t">.bg-primary</code>, <code class="t">.tx-primary</code>, etc. The base <code class="t">.bg</code> or <code class="t">.tx</code> class is optional.</p>
               <div class="stack g-3">
                 <div class="row g-2 wrap">
-                  <div class="bg-paper bd p-3 rounded stack g-1" style="min-width: 120px;">
-                    <code class="t-small">.bg-paper</code>
+                  <div class="bg bg-paper bd bd-gray p-3 rounded stack g-1" style="min-width: 120px;">
+                    <code class="t-small">.bg .bg-paper</code>
                   </div>
-                  <div class="bg-ink tx-paper bd bd-paper p-3 rounded stack g-1" style="min-width: 120px;">
-                    <code class="t-small">.bg-ink</code>
+                  <div class="bg bg-ink tx tx-paper bd bd-gray p-3 rounded stack g-1" style="min-width: 120px;">
+                    <code class="t-small">.bg .bg-ink .tx .tx-paper</code>
                   </div>
-                  <div class="bg-neutral bd p-3 rounded stack g-1" style="min-width: 120px;">
-                    <code class="t-small">.bg-neutral</code>
-                  </div>
-                </div>
-                <div class="row g-2 wrap">
-                  <div class="bg-primary tx-paper bd bd-paper p-3 rounded stack g-1" style="min-width: 120px;">
-                    <code class="t-small">.bg-primary</code>
-                  </div>
-                  <div class="bg-secondary tx-paper bd bd-paper p-3 rounded stack g-1" style="min-width: 120px;">
-                    <code class="t-small">.bg-secondary</code>
-                  </div>
-                  <div class="bg-tertiary tx-paper bd bd-paper p-3 rounded stack g-1" style="min-width: 120px;">
-                    <code class="t-small">.bg-tertiary</code>
+                  <div class="bg bg-neutral bd bd-gray p-3 rounded stack g-1" style="min-width: 120px;">
+                    <code class="t-small">.bg .bg-neutral</code>
                   </div>
                 </div>
                 <div class="row g-2 wrap">
-                  <div class="bg-success tx-paper bd bd-paper p-3 rounded stack g-1" style="min-width: 120px;">
-                    <code class="t-small">.bg-success</code>
+                  <div class="bg bg-primary bd bd-paper p-3 rounded stack g-1" style="min-width: 120px;">
+                    <code class="t-small">.bg .bg-primary (calm blue)</code>
                   </div>
-                  <div class="bg-info tx-paper bd bd-paper p-3 rounded stack g-1" style="min-width: 120px;">
-                    <code class="t-small">.bg-info</code>
+                  <div class="bg bg-secondary bd bd-paper p-3 rounded stack g-1" style="min-width: 120px;">
+                    <code class="t-small">.bg .bg-secondary (violet)</code>
                   </div>
-                  <div class="bg-warning tx-paper bd bd-paper p-3 rounded stack g-1" style="min-width: 120px;">
-                    <code class="t-small">.bg-warning</code>
+                  <div class="bg bg-tertiary bd bd-paper p-3 rounded stack g-1" style="min-width: 120px;">
+                    <code class="t-small">.bg .bg-tertiary (teal)</code>
                   </div>
-                  <div class="bg-danger tx-paper bd bd-paper p-3 rounded stack g-1" style="min-width: 120px;">
-                    <code class="t-small">.bg-danger</code>
+                </div>
+                <div class="row g-2 wrap">
+                  <div class="bg bg-success tx tx-paper bd bd-paper p-3 rounded stack g-1" style="min-width: 120px;">
+                    <code class="t-small">.bg .bg-success (green)</code>
+                  </div>
+                  <div class="bg bg-info tx tx-paper bd bd-paper p-3 rounded stack g-1" style="min-width: 120px;">
+                    <code class="t-small">.bg .bg-info (cyan-blue)</code>
+                  </div>
+                  <div class="bg bg-warning bd bd-paper p-3 rounded stack g-1" style="min-width: 120px;">
+                    <code class="t-small">.bg .bg-warning (amber)</code>
+                  </div>
+                  <div class="bg bg-danger tx tx-paper bd bd-paper p-3 rounded stack g-1" style="min-width: 120px;">
+                    <code class="t-small">.bg .bg-danger (red)</code>
+                  </div>
+                  <div class="bg bg-accent bd bd-paper p-3 rounded stack g-1" style="min-width: 120px;">
+                    <code class="t-small">.bg .bg-accent (aliased to primary)</code>
                   </div>
                 </div>
               </div>
             </div>
             <div class="ModuleSection p-4 bd rounded stack g-4">
-              <h4 class="t">Shade Variants</h4>
-              <p><code class="t">.bg-{shade}, .tx-{shade}</code> — Mix colors with paper or ink for lighter/darker variants.</p>
-              <div class="stack g-3">
-                <div class="row g-2 wrap">
-                  <div class="bg-darkest tx-paper p-3 rounded" style="min-width: 100px;">
-                    <code class="t-small">.bg-darkest</code>
-                  </div>
-                  <div class="bg-darker tx-paper p-3 rounded" style="min-width: 100px;">
-                    <code class="t-small">.bg-darker</code>
-                  </div>
-                  <div class="bg-dark tx-paper p-3 rounded" style="min-width: 100px;">
-                    <code class="t-small">.bg-dark</code>
-                  </div>
-                  <div class="bg-light bd p-3 rounded" style="min-width: 100px;">
-                    <code class="t-small">.bg-light</code>
-                  </div>
-                  <div class="bg-lighter bd p-3 rounded" style="min-width: 100px;">
-                    <code class="t-small">.bg-lighter</code>
-                  </div>
-                  <div class="bg-lightest bd p-3 rounded" style="min-width: 100px;">
-                    <code class="t-small">.bg-lightest</code>
-                  </div>
-                </div>
-                <div class="bg-neutral p-3 rounded stack g-2">
-                  <span class="tx-darkest">.tx-darkest</span>
-                  <span class="tx-darker">.tx-darker</span>
-                  <span class="tx-dark">.tx-dark</span>
-                  <span class="tx-light">.tx-light</span>
-                  <span class="tx-lighter">.tx-lighter</span>
-                  <span class="tx-lightest">.tx-lightest</span>
-                </div>
-              </div>
-            </div>
-            <div class="ModuleSection p-4 bd rounded stack g-4">
-              <h4 class="t">Ink & Paper Grades</h4>
-              <p><code class="t">.bg-ink-{n}, .bg-paper-{n}</code> — Fine-grained blending with 10 levels (0-9).</p>
-              <div class="stack g-2">
-                <div class="row g-1 wrap">
-                  <div class="bg-primary bg-ink-0 tx-paper p-2 rounded t-small">ink-0</div>
-                  <div class="bg-primary bg-ink-1 tx-paper p-2 rounded t-small">ink-1</div>
-                  <div class="bg-primary bg-ink-2 tx-paper p-2 rounded t-small">ink-2</div>
-                  <div class="bg-primary bg-ink-3 tx-paper p-2 rounded t-small">ink-3</div>
-                  <div class="bg-primary bg-ink-4 tx-paper p-2 rounded t-small">ink-4</div>
-                  <div class="bg-primary bg-ink-5 tx-paper p-2 rounded t-small">ink-5</div>
-                  <div class="bg-primary bg-ink-6 tx-paper p-2 rounded t-small">ink-6</div>
-                  <div class="bg-primary bg-ink-7 tx-paper p-2 rounded t-small">ink-7</div>
-                  <div class="bg-primary bg-ink-8 tx-paper p-2 rounded t-small">ink-8</div>
-                  <div class="bg-primary bg-ink-9 tx-paper p-2 rounded t-small">ink-9</div>
-                </div>
-                <div class="row g-1 wrap">
-                  <div class="bg-neutral bg-paper-0 p-2 rounded t-small bd">paper-0</div>
-                  <div class="bg-neutral bg-paper-1 p-2 rounded t-small bd">paper-1</div>
-                  <div class="bg-neutral bg-paper-2 p-2 rounded t-small bd">paper-2</div>
-                  <div class="bg-neutral bg-paper-3 p-2 rounded t-small bd">paper-3</div>
-                  <div class="bg-neutral bg-paper-4 p-2 rounded t-small bd">paper-4</div>
-                  <div class="bg-neutral bg-paper-5 p-2 rounded t-small bd">paper-5</div>
-                  <div class="bg-neutral bg-paper-6 p-2 rounded t-small bd">paper-6</div>
-                  <div class="bg-neutral bg-paper-7 p-2 rounded t-small bd">paper-7</div>
-                  <div class="bg-neutral bg-paper-8 p-2 rounded t-small bd">paper-8</div>
-                  <div class="bg-neutral bg-paper-9 p-2 rounded t-small bd">paper-9</div>
-                </div>
-              </div>
-            </div>
-            <div class="ModuleSection p-4 bd rounded stack g-4">
-              <h4 class="t">Opacity Grades</h4>
-              <p><code class="t">.bg-{n}p, .tx-{n}p</code> — Percentage-based opacity (0p-95p).</p>
+              <h4 class="t">Color Index Variants (0-10)</h4>
+              <p><code class="t">.bg-{color}-{0-10}</code> — 11 luminosity steps per color. Index 0 is darkest (950), 10 is lightest (50). In dark mode, these invert automatically.</p>
               <div class="bg-neutral p-3 rounded stack g-2">
-                <div class="bg-primary bg-0p p-2 rounded t-small">0p</div>
-                <div class="bg-primary bg-2p p-2 rounded t-small">20p</div>
-                <div class="bg-primary bg-4p p-2 rounded t-small">40p</div>
-                <div class="bg-primary bg-6p p-2 rounded t-small">60p</div>
-                <div class="bg-primary bg-8p p-2 rounded t-small">80p</div>
-                <div class="bg-primary bg-9p tx-paper p-2 rounded t-small">95p</div>
+                <div class="row g-1 wrap">
+                  <div class="bg bg-blue-0 tx tx-paper p-2 rounded t-small">0</div>
+                  <div class="bg bg-blue-1 tx tx-paper p-2 rounded t-small">1</div>
+                  <div class="bg bg-blue-2 tx tx-paper p-2 rounded t-small">2</div>
+                  <div class="bg bg-blue-3 tx tx-paper p-2 rounded t-small">3</div>
+                  <div class="bg bg-blue-4 tx tx-paper p-2 rounded t-small">4</div>
+                  <div class="bg bg-blue-5 tx tx-paper p-2 rounded t-small">5</div>
+                  <div class="bg bg-blue-6 p-2 rounded t-small">6</div>
+                  <div class="bg bg-blue-7 p-2 rounded t-small">7</div>
+                  <div class="bg bg-blue-8 p-2 rounded t-small">8</div>
+                  <div class="bg bg-blue-9 p-2 rounded t-small">9</div>
+                  <div class="bg bg-blue-10 p-2 rounded t-small">10</div>
+                </div>
+                <div class="row g-1 wrap">
+                  <div class="bg bg-red-0 tx tx-paper p-2 rounded t-small">0</div>
+                  <div class="bg bg-red-1 tx tx-paper p-2 rounded t-small">1</div>
+                  <div class="bg bg-red-2 tx tx-paper p-2 rounded t-small">2</div>
+                  <div class="bg bg-red-3 tx tx-paper p-2 rounded t-small">3</div>
+                  <div class="bg bg-red-4 tx tx-paper p-2 rounded t-small">4</div>
+                  <div class="bg bg-red-5 tx tx-paper p-2 rounded t-small">5</div>
+                  <div class="bg bg-red-6 p-2 rounded t-small">6</div>
+                  <div class="bg bg-red-7 p-2 rounded t-small">7</div>
+                  <div class="bg bg-red-8 p-2 rounded t-small">8</div>
+                  <div class="bg bg-red-9 p-2 rounded t-small">9</div>
+                  <div class="bg bg-red-10 p-2 rounded t-small">10</div>
+                </div>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Opacity Control (0o-10o)</h4>
+              <p><code class="t">.bg-{n}o, .tx-{n}o, .bd-{n}o, .ol-{n}o</code> — Opacity control from 0 (transparent) to 10 (opaque).</p>
+              <div class="bg-neutral p-3 rounded">
+                <div class="row g-2 wrap">
+                  <div class="bg bg-primary bg-10o p-3 rounded t-small">10o (100%)</div>
+                  <div class="bg bg-primary bg-8o p-3 rounded t-small">8o (80%)</div>
+                  <div class="bg bg-primary bg-6o p-3 rounded t-small">6o (60%)</div>
+                  <div class="bg bg-primary bg-4o p-3 rounded t-small">4o (40%)</div>
+                  <div class="bg bg-primary bg-2o p-3 rounded t-small">2o (20%)</div>
+                  <div class="bg bg-primary bg-0o p-3 rounded t-small">0o (0%)</div>
+                </div>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Blend Control (0b-10b)</h4>
+              <p><code class="t">.bg-{n}b, .tx-{n}b, .bd-{n}b, .ol-{n}b</code> — Blend toward tint color. 0b = 100% tint, 10b = 100% base.</p>
+              <div class="bg-neutral p-3 rounded">
+                <div class="row g-1 wrap">
+                  <div class="bg bg-primary bg-0b p-3 rounded t-small">0b</div>
+                  <div class="bg bg-primary bg-2b p-3 rounded t-small">2b</div>
+                  <div class="bg bg-primary bg-4b p-3 rounded t-small">4b</div>
+                  <div class="bg bg-primary bg-6b p-3 rounded t-small">6b</div>
+                  <div class="bg bg-primary bg-8b p-3 rounded t-small">8b</div>
+                  <div class="bg bg-primary bg-10b p-3 rounded t-small">10b</div>
+                </div>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Tint Color Classes</h4>
+              <p><code class="t">.bg-to-{color}-{index}</code> — Set the tint color for blending operations. Also supports <code class="t">.bg-to-paper</code>, <code class="t">.bg-to-ink</code>, and <code class="t">.bg-to-transparent</code>.</p>
+              <div class="bg-neutral p-3 rounded stack g-3">
+                <div class="row g-2 wrap">
+                  <div class="bg bg-red bg-5b bg-to-blue-5 p-3 rounded t-small">.bg .bg-red .bg-5b .bg-to-blue-5</div>
+                  <div class="bg bg-yellow bg-5b bg-to-blue-5 p-3 rounded t-small">.bg .bg-yellow .bg-5b .bg-to-blue-5</div>
+                </div>
+                <div class="row g-2 wrap">
+                  <div class="bg bg-primary bg-5b bg-to-paper p-3 rounded t-small">.bg .bg-primary .bg-5b .bg-to-paper</div>
+                  <div class="bg bg-primary bg-5b bg-to-ink p-3 rounded t-small">.bg .bg-primary .bg-5b .bg-to-ink</div>
+                </div>
               </div>
             </div>
             <div class="ModuleSection p-4 bd rounded stack g-4">
               <h4 class="t">Side-Specific Borders</h4>
               <p><code class="t">.bd-{side}</code> — Apply borders to specific sides: t, r, b, l.</p>
               <p class="t-small dim"><strong>Note:</strong> When using colored border classes like <code class="t">.bd-primary</code>, you must also include <code class="t">.bd</code> to enable borders first, and include the side class like <code class="t">.bd-t</code> or <code class="t">.bd-r</code>.</p>
-              <div class="row g-4 wrap">
-                <div class="bg-paper p-4 rounded bd-t bd-primary"><code class="t-small">.bd-t</code></div>
-                <div class="bg-paper p-4 rounded bd-r bd-secondary"><code class="t-small">.bd-r</code></div>
-                <div class="bg-paper p-4 rounded bd-b bd-success"><code class="t-small">.bd-b</code></div>
-                <div class="bg-paper p-4 rounded bd-l bd-danger"><code class="t-small">.bd-l</code></div>
-              </div>
+                <div class="row g-4 wrap">
+                  <div class="bg bg-paper bd bd-t bd-gray bd-primary p-4 rounded"><code class="t-small">.bg .bg-paper .bd .bd-t .bd-primary</code></div>
+                  <div class="bg bg-paper bd bd-r bd-gray bd-secondary p-4 rounded"><code class="t-small">.bg .bg-paper .bd .bd-r .bd-secondary</code></div>
+                  <div class="bg bg-paper bd bd-b bd-gray bd-success p-4 rounded"><code class="t-small">.bg .bg-paper .bd .bd-b .bd-success</code></div>
+                  <div class="bg bg-paper bd bd-l bd-gray bd-danger p-4 rounded"><code class="t-small">.bg .bg-paper .bd .bd-l .bd-danger</code></div>
+                </div>
             </div>
             <div class="ModuleSection p-4 bd rounded stack g-4">
-              <h4 class="t">Reset Classes</h4>
+              <h4 class="t">Text Colors</h4>
+              <p><code class="t">.tx-paper, .tx-ink, .tx-{color}</code> — Explicit text colors for contrast control. Use <code class="t">.tx-paper</code> (white) for dark backgrounds and <code class="t">.tx-ink</code> (black) for light backgrounds.</p>
+              <div class="bg-neutral p-3 rounded stack g-2">
+                <div class="row g-2 wrap">
+                  <div class="bg bg-red-0 tx-paper p-3 rounded t-small">Red-0 + tx-paper</div>
+                  <div class="bg bg-red-5 tx-paper p-3 rounded t-small">Red-5 + tx-paper</div>
+                  <div class="bg bg-red-10 tx-ink p-3 rounded t-small">Red-10 + tx-ink</div>
+                </div>
+                <div class="row g-2 wrap">
+                  <div class="bg bg-blue-0 tx-paper p-3 rounded t-small">Blue-0 + tx-paper</div>
+                  <div class="bg bg-blue-5 tx-paper p-3 rounded t-small">Blue-5 + tx-paper</div>
+                  <div class="bg bg-blue-10 tx-ink p-3 rounded t-small">Blue-10 + tx-ink</div>
+                </div>
+                <div class="row g-2 wrap">
+                  <div class="bg bg-yellow-5 tx-ink p-3 rounded t-small">Yellow-5 + tx-ink</div>
+                  <div class="bg bg-green-5 tx-paper p-3 rounded t-small">Green-5 + tx-paper</div>
+                  <div class="bg bg-purple-5 tx-paper p-3 rounded t-small">Purple-5 + tx-paper</div>
+                </div>
+              </div>
+            </div>
               <p><code class="t">.bg-no, .nobg, .tx-no, .notx</code> — Remove colors.</p>
               <div class="bg-primary tx-paper p-3 rounded stack g-2">
                 <div class="bg-no bd bd-paper p-2 rounded">.bg-no</div>

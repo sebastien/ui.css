@@ -1,10 +1,14 @@
-import { tokens, group, sizes, vars } from "../js/littlecss.js";
+import { group, sizes, tokens, vars } from "../js/littlecss.js";
 
 const REM_PIXELS = 16;
 function pem(px, scale = undefined) {
 	return scale
 		? `calc( 1em * ${scale} * ${px} / ${REM_PIXELS} )`
 		: `calc( 1em * ${px} / ${REM_PIXELS} )`;
+}
+
+function color(name) {
+	return `color-mix(in oklch, color-mix(in oklch, var(--${name}-base), var(--${name}-tint) calc((1 - var(--${name}-blend)) * 100%)), transparent calc((1 - var(--${name}-opacity)) * 100%))`;
 }
 
 // Module: tokens
@@ -69,21 +73,23 @@ export default group(
 	tokens({
 		color: {
 			// Scale endpoint colors
-			ink: "#000000",
-			action: "#A0A0A0",
-			border: "#A0A0A0",
+			white: "#FFFFFF",
+			black: "#000000",
+			ink: "var(--color-slate-950)",
+			action: "var(--color-slate-400)",
+			border: "var(--color-slate-400)",
 			paper: "#FFFFFF",
 			// Luminosity direction: 1 = normal (light mode), -1 = inverted (dark mode)
 			l: { direction: 1 },
-			// Semantic colors (all at L=0.5, chroma and hue preserved in scales)
-			neutral: "oklch(0.5 0.02 250)" /* near-gray, very low chroma */,
-			primary: "oklch(0.5 0.20 250)" /* calm blue */,
-			secondary: "oklch(0.5 0.20 280)" /* violet */,
-			tertiary: "oklch(0.5 0.20 160)" /* teal */,
-			success: "oklch(0.5 0.24 145)" /* green */,
-			info: "oklch(0.5 0.22 220)" /* cyan-blue */,
-			warning: "oklch(0.5 0.24 90)" /* amber */,
-			danger: "oklch(0.5 0.28 25)" /* red */,
+			// Semantic colors (reference palette.css variables)
+			neutral: "var(--color-gray-500)",
+			primary: "var(--color-blue-500)",
+			secondary: "var(--color-violet-500)",
+			tertiary: "var(--color-teal-500)",
+			success: "var(--color-green-500)",
+			info: "var(--color-cyan-500)",
+			warning: "var(--color-amber-500)",
+			danger: "var(--color-red-500)",
 			// Mode-dependent colors (defaults to light mode, swapped by .dark)
 			page: vars.color.paper,
 			text: vars.color.ink,
@@ -111,11 +117,11 @@ export default group(
 				largest: vars.textsize.size[6],
 			},
 			border: {
-				shade: "50%",
+				blend: "50%",
 				opacity: "80%",
 			},
 			outline: {
-				shade: "50%",
+				blend: "50%",
 				opacity: "20%",
 			},
 			hover: { delta: "15%" },
@@ -124,14 +130,14 @@ export default group(
 			disabled: { opacity: "50%" },
 		},
 		selectable: {
-			shade: "50%",
+			blend: "50%",
 			hover: { opacity: vars.controls.hover.delta },
 			active: { opacity: vars.controls.active.delta },
 			selected: { opacity: vars.controls.selected.delta },
 			disabled: { opacity: vars.controls.disabled.opacity },
 		},
 		button: {
-			shade: "75%",
+			blend: "75%",
 			opacity: "100%",
 			base: vars.color.action,
 			tint: vars.color.paper,
@@ -143,51 +149,51 @@ export default group(
 			},
 			border: {
 				width: "1px",
-				shade: "80%",
+				blend: "80%",
 				opacity: "90%",
 			},
 			outline: {
 				width: "2px",
-				shade: "70%",
+				blend: "70%",
 				opacity: "20%",
 			},
-			// We alter the shade by the same amount as base controls opacity
+			// We alter the blend by the same amount as base controls opacity
 			hover: {
-				shade: "calc(var(--button-shade) + var(--controls-hover-delta))",
+				blend: "calc(var(--button-blend) + var(--controls-hover-delta))",
 				opacity: vars.button.opacity,
 			},
 			active: {
-				shade: "calc(var(--button-shade) + var(--controls-active-delta))",
+				blend: "calc(var(--button-blend) + var(--controls-active-delta))",
 				opacity: vars.button.opacity,
 			},
 			selected: {
-				shade: "calc(var(--button-shade) + var(--controls-selected-delta))",
+				blend: "calc(var(--button-blend) + var(--controls-selected-delta))",
 				opacity: vars.button.opacity,
 			},
 		},
 		pill: {
-			shade: "50%",
+			blend: "50%",
 			opacity: "100%",
 			border: {
 				width: "2px",
-				shade: "80%",
+				blend: "80%",
 				opacity: "90%",
 			},
 			outline: {
 				width: "2px",
-				shade: "70%",
+				blend: "70%",
 				opacity: "20%",
 			},
 			hover: {
-				shade: "calc(var(--pill-shade) + var(--controls-hover-delta))",
+				blend: "calc(var(--pill-blend) + var(--controls-hover-delta))",
 				opacity: vars.pill.opacity,
 			},
 			active: {
-				shade: "calc(var(--pill-shade) + var(--controls-active-delta))",
+				blend: "calc(var(--pill-blend) + var(--controls-active-delta))",
 				opacity: vars.pill.opacity,
 			},
 			selected: {
-				shade: "calc(var(--pill-shade) + var(--controls-selected-delta))",
+				blend: "calc(var(--pill-blend) + var(--controls-selected-delta))",
 				opacity: vars.pill.opacity,
 			},
 		},
@@ -195,7 +201,7 @@ export default group(
 			base: vars.color.page,
 			tint: vars.color.paper,
 			color: vars.color.ink,
-			shade: "25%",
+			blend: "25%",
 			opacity: "50%",
 			font: {
 				family: vars.font.controls.family,
@@ -205,13 +211,13 @@ export default group(
 			},
 			border: {
 				width: "1px",
-				shade: "50%",
+				blend: "50%",
 				opacity: "80%",
 				color: vars.color.ink,
 			},
 			outline: {
 				width: "2px",
-				shade: "50%",
+				blend: "50%",
 				opacity: "0%",
 			},
 			focus: {
@@ -220,36 +226,47 @@ export default group(
 					opacity: "40%",
 				},
 			},
-			// We alter the shade by the same amount as base controls opacity
+			// We alter the blend by the same amount as base controls opacity
 			hover: {
-				shade: "calc(var(--button-shade) + var(--controls-hover-delta))",
+				blend: "calc(var(--button-blend) + var(--controls-hover-delta))",
 				opacity: vars.button.opacity,
 			},
 			active: {
-				shade: "calc(var(--button-shade) + var(--controls-active-delta))",
+				blend: "calc(var(--button-blend) + var(--controls-active-delta))",
 				opacity: vars.button.opacity,
 			},
 			selected: {
-				shade: "calc(var(--button-shade) + var(--controls-selected-delta))",
+				blend: "calc(var(--button-blend) + var(--controls-selected-delta))",
 				opacity: vars.button.opacity,
 			},
 		},
 		selector: {
-			shade: "50%",
+			blend: "50%",
 			opacity: "0%",
 			border: {
 				width: "1px",
-				shade: "50%",
+				blend: "50%",
 				opacity: "0%",
 			},
 			outline: {
 				width: "2px",
-				shade: "50%",
+				blend: "50%",
 				opacity: "0%",
 			},
 			hover: { opacity: vars.selectable.hover.opacity },
 			active: { opacity: vars.selectable.active.opacity },
 			selected: { opacity: vars.selectable.selected.opacity },
+		},
+		toggle: {
+			blend: "50%",
+			opacity: "90%",
+			border: {
+				opacity: "100%",
+				blend: "50%",
+			},
+			active: {
+				blend: "80%",
+			},
 		},
 	}),
 	// ------------------------------------------------------------------------
@@ -263,24 +280,24 @@ export default group(
 		background: {
 			base: vars.color.paper,
 			tint: vars.color.paper,
-			shade: "100%",
-			opacity: "100%",
-			color: `color-mix(in oklch, var(--background-base), var(--background-tint) calc(100% - var(--background-shade)))`,
+			blend: 1.0,
+			opacity: 1.0,
+			color: color("background"),
 		},
 		text: {
 			base: vars.color.ink,
 			tint: vars.color.paper,
-			shade: "100%",
-			opacity: "100%",
-			color: `color-mix(in oklch, var(--text-base), var(--text-tint) calc(100% - var(--text-shade)))`,
+			blend: 1.0,
+			opacity: 1.0,
+			color: color("text"),
 		},
 		border: {
 			base: vars.color.ink,
 			tint: vars.color.paper,
-			color: `color-mix(in oklch, var(--border-base), var(--border-tint) calc(100% - var(--border-shade)))`,
-			shade: "50%",
+			blend: 0.5,
+			opacity: 0.9,
+			color: color("border"),
 			width: "1px",
-			opacity: "90%",
 			style: "solid",
 			// FIXME: Should move this out
 			// Non-color properties
@@ -297,11 +314,12 @@ export default group(
 			style: "solid",
 		},
 		outline: {
-			width: "2px",
 			base: vars.color.ink,
 			tint: vars.color.paper,
-			opacity: "80%",
-			shade: "30%",
+			blend: 0.3,
+			opacity: 0.8,
+			color: color("outline"),
+			width: "2px",
 			style: "solid",
 		},
 		// Text sizing properties (separate from text color)

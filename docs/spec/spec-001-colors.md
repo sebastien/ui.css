@@ -88,14 +88,14 @@ The following colors are semantic:
 
 LittleCSS using the following variables to compute the final applied color:
 
-- `--{type}-color-base` for the base color (eg. `--color-zinc-1`)
-- `--{type}-color-alpha` for affecting opacity, 0=transparent,10=opaque (default 10)
-- `--{type}-color-target` the target color to blend to (default paper)
-- `--{type}-color-blend` 0=100% target, 10=100% base (default 10)
+- `--{type}-base` for the base color (eg. `--background-base` or `--text-base`)
+- `--{type}-opacity` for affecting opacity, 0=transparent,10=opaque (default 10)
+- `--{type}-tint` the tint color to blend to (default paper)
+- `--{type}-blend` 0=100% tint, 10=100% base (default 10)
 
 ## Using colors
 
-Current colors are mapped to `--{background,border,text,outline}-color-base`. To assign
+Current colors are mapped to `--{background,border,text,outline}-base`. To assign
 a given color to the corresponding CSS variable, use `.{bg,bd,tx,ol}-{color}-{index}`,
 like `.bg-zinc-4`. Note that because we use the index here, this will work nicely
 when switching from dark to light.
@@ -103,11 +103,21 @@ when switching from dark to light.
 To apply the current color to the background, border, text or outline, use `.{bg,bd,tx,ol}`. Without
 it, only the CSS variable is changed.
 
+## Contrast Colors
+
+The `.tx-contrast` class automatically sets the text color to ensure maximum contrast against the
+background. This uses CSS `contrast-color()` to dynamically select between paper (light) and ink (dark)
+based on the computed background color.
+
+```
+.bg-primary.tx-contrast  → Text color automatically contrasts with primary background
+```
+
 ## Altering colors
 
-- Changing alpha can be done through `.{bg,bd,tx,ol}-{0,1,2,3,4,5,6,7,8,9,10}a`
+- Changing opacity can be done through `.{bg,bd,tx,ol}-{0,1,2,3,4,5,6,7,8,9,10}o`
 - Changing blend can be done through `.{bg,bd,tx,ol}-{0,1,2,3,4,5,6,7,8,9,10}b`
-- Changing target be done through `.{bg,bd,tx,ol}-to-{name}-{index}`
+- Changing tint can be done through `.{bg,bd,tx,ol}-to-{name}-{index}`
 
 
 ### Reset Classes

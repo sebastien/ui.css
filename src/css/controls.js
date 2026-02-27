@@ -1,4 +1,5 @@
 import { cross, group, mods, named, rule, vars } from "../js/littlecss.js";
+import { SEMANTIC } from "./colors.js";
 
 // ----------------------------------------------------------------------------
 //
@@ -23,7 +24,7 @@ export default named({
 	// ------------------------------------------------------------------------
 	// Selectable elements are wrapper/container interactive items that change
 	// appearance on hover/focus/active/selected states. They use their own
-	// namespaced variables (--selectable-*) to avoid affecting child elements.
+	// namespaced variables (--{background,border,outline}-*) to avoid affecting child elements.
 	selectable: group(
 		rule(".selectable", {
 			cursor: "pointer",
@@ -31,52 +32,50 @@ export default named({
 			transition_property:
 				"background-color,color,border-color,outline-color,border-width,outline-width,opacity,transform,box-shadow",
 			transition_duration: "150ms",
-			__selectable_base: vars.color.ink,
-			__selectable_tint: vars.color.paper,
-			__selectable_outline_opacity: vars.controls.outline.opacity,
-			__selectable_outline_width: vars.outline.width,
-			__selectable_opacity: "0%",
-			// selectable.shade, selectable.opacity defined in tokens
-			__selectable_color: `color-mix(in oklch, var(--selectable-base), var(--selectable-tint) calc(100% - var(--selectable-shade)))`,
-			background_color: `color-mix(in oklch, var(--selectable-color), transparent calc(100% - var(--selectable-opacity)))`,
-			outline_color: `color-mix(in oklch, var(--selectable-color), transparent calc(100% - var(--selectable-outline-opacity)))`,
+			// Color system: base, tint, opacity, blend (0=100% tint, 10=100% base)
+			__background_base: vars.color.ink,
+			__background_tint: vars.color.paper,
+			__background_opacity: "0%",
+			__background_blend: vars.selectable.blend,
+			__outline_opacity: vars.controls.outline.opacity,
+			__outline_width: vars.outline.width,
+			// Apply computed background color
+			background_color: `color-mix(in oklch, color-mix(in oklch, var(--background-base), var(--background-tint) calc((1 - var(--background-blend)) * 100%)), transparent calc((1 - var(--background-opacity)) * 100%))`,
+			outline_color: `color-mix(in oklch, color-mix(in oklch, var(--background-base), var(--background-tint) calc((1 - var(--outline-blend, var(--background-blend))) * 100%)), transparent calc((1 - var(--outline-opacity)) * 100%))`,
 			outline_width: "0px",
 		}),
 		rule(hover(".selectable"), {
-			__selectable_opacity: vars.selectable.hover.opacity,
+			__background_opacity: vars.selectable.hover.opacity,
 		}),
 		rule(
 			[".selectable:focus", ".selectable:focus-within", ".selectable.focus"],
 			{
-				__selectable_outline_opacity: vars.selectable.active.opacity,
+				__outline_opacity: vars.selectable.active.opacity,
 				outline_width: vars.selectable.outline.width,
 			},
 		),
 		rule([".selectable.selected", ".selectable[data-selected=true]"], {
-			__selectable_opacity: vars.selectable.selected.opacity,
+			__background_opacity: vars.selectable.selected.opacity,
 		}),
 		rule([".selectable:active", ".selectable.active"], {
-			__selectable_opacity: vars.selectable.active.opacity,
+			__background_opacity: vars.selectable.active.opacity,
 		}),
 		rule([".selectable:disabled", ".selectable.disabled"], {
 			opacity: vars.selectable.disabled.opacity,
 			cursor: "not-allowed",
 			pointer_events: "none",
 		}),
-		// Color variants
-		...[
-			"primary",
-			"secondary",
-			"tertiary",
-			"success",
-			"info",
-			"warning",
-			"danger",
-		].map((color) => {
-			return rule(`.selectable.${color}`, {
-				__selectable_base: vars.color,
-			});
-		}),
+		// Semantic color variants - map to CSS color variables for theming
+		...Object.keys(SEMANTIC).map((semantic) =>
+			rule(`.selectable.${semantic}`, {
+				__background_base:
+					SEMANTIC[semantic] === "white"
+						? "#FFFFFF"
+						: SEMANTIC[semantic] === "black"
+							? "#000000"
+							: `var(--color-${SEMANTIC[semantic]}-500)`,
+			}),
+		),
 		// Size variants
 		rule(".selectable.largest", { padding: vars.controls.padding.largest }),
 		rule(".selectable.larger", { padding: vars.controls.padding.larger }),
@@ -117,45 +116,53 @@ export default named({
 				"background-color,color,border-color,outline-color,border-width,outline-width,opacity,transform,box-shadow",
 			transition_duration: "150ms",
 
-			// Computed colors
-			__pill_base: vars.color.ink,
-			__pill_tint: vars.color.paper,
-			__pill_color: `color-mix(in oklch, var(--pill-base), var(--pill-tint) calc(100% - var(--pill-shade)))`,
-			background_color: `color-mix(in oklch, var(--pill-color), transparent calc(100% - var(--pill-opacity)))`,
-			color: vars.color.ink,
+			// Color system: base, tint, opacity, blend
+			__background_base: vars.color.ink,
+			__background_tint: vars.color.paper,
+			__background_opacity: vars.pill.opacity,
+			__background_blend: vars.pill.blend,
+			__border_base: vars.color.ink,
+			__border_tint: vars.color.paper,
+			__border_opacity: vars.pill.border.opacity,
+			__border_blend: vars.pill.border.blend,
+			__outline_base: vars.color.ink,
+			__outline_tint: vars.color.paper,
+			__outline_opacity: vars.pill.outline.opacity,
+			__outline_blend: vars.pill.outline.blend,
 
-			border_color: `color-mix(in oklch, var(--pill-color), transparent calc(100% - var(--pill-border-opacity)))`,
+			// Computed colors
+			background_color: `color-mix(in oklch, color-mix(in oklch, var(--background-base), var(--background-tint) calc((1 - var(--background-blend)) * 100%)), transparent calc((1 - var(--background-opacity)) * 100%))`,
+			color: vars.color.ink,
+			border_color: `color-mix(in oklch, color-mix(in oklch, var(--border-base), var(--border-tint) calc((1 - var(--border-blend)) * 100%)), transparent calc((1 - var(--border-opacity)) * 100%))`,
 			border_width: vars.pill.border.width,
 			border_style: "solid",
-
-			outline_color: `color-mix(in oklch, var(--pill-color), transparent calc(100% - var(--pill-outline-opacity)))`,
+			outline_color: `color-mix(in oklch, color-mix(in oklch, var(--outline-base), var(--outline-tint) calc((1 - var(--outline-blend)) * 100%)), transparent calc((1 - var(--outline-opacity)) * 100%))`,
 			outline_width: "0px",
 			outline_style: "solid",
 
 			// Layout
 			display: "inline-flex",
 			padding: `${vars.pad[0]} ${vars.pad[2]}`,
-			__border_radius: "2lh",
 			border_radius: vars.border.radius,
 		}),
 		// State: hover
 		rule(hover(".pill"), {
-			__pill_shade: vars.pill.hover.shade,
+			__background_blend: vars.pill.hover.blend,
 		}),
 		// State: selected
 		rule([".pill.selected", ".pill[data-selected=true]"], {
-			__pill_shade: vars.pill.selected.shade,
+			__background_blend: vars.pill.selected.blend,
 		}),
 		// State: active
 		rule([".pill:active", ".pill.active"], {
-			__pill_shade: vars.pill.active.shade,
+			__background_blend: vars.pill.active.blend,
 		}),
 		rule(hover(".pill:not(.outline)"), {
-			__pill_border_shade: vars.pill.hover.shade,
+			__border_blend: vars.pill.hover.blend,
 		}),
 		// State: selected (filled)
 		rule([".pill.selected", ".pill[data-selected=true]"], {
-			__pill_shade: vars.pill.selected.shade,
+			__background_blend: vars.pill.selected.blend,
 		}),
 		rule(
 			[
@@ -163,19 +170,19 @@ export default named({
 				".pill:not(.outline)[data-selected=true]",
 			],
 			{
-				__pill_border_shade: vars.pill.selected.shade,
+				__border_blend: vars.pill.selected.blend,
 			},
 		),
 		// State: active
 		rule([".pill:active", ".pill.active"], {
-			__pill_shade: vars.pill.active.shade,
+			__background_blend: vars.pill.active.blend,
 		}),
 		rule([".pill:not(.outline):active", ".pill:not(.outline).active"], {
-			__pill_border_shade: vars.pill.active.shade,
+			__border_blend: vars.pill.active.blend,
 		}),
 		// State: focus
 		rule([".pill:focus", ".pill:focus-within", ".pill.focus"], {
-			__pill_outline_opacity: vars.controls.active.delta,
+			__outline_opacity: vars.controls.active.delta,
 			outline_width: vars.pill.outline.width,
 		}),
 		// State: disabled
@@ -184,37 +191,40 @@ export default named({
 			cursor: "not-allowed",
 			pointer_events: "none",
 		}),
-		// Color variants
-		...[
-			"primary",
-			"secondary",
-			"tertiary",
-			"success",
-			"info",
-			"warning",
-			"danger",
-		].map((color) =>
-			rule(`.pill.${color}`, {
-				__pill_base: vars.color[color],
+		// Semantic color variants
+		...Object.keys(SEMANTIC).map((semantic) =>
+			rule(`.pill.${semantic}`, {
+				__background_base:
+					SEMANTIC[semantic] === "white"
+						? "#FFFFFF"
+						: SEMANTIC[semantic] === "black"
+							? "#000000"
+							: `var(--color-${SEMANTIC[semantic]}-500)`,
+				__border_base:
+					SEMANTIC[semantic] === "white"
+						? "#FFFFFF"
+						: SEMANTIC[semantic] === "black"
+							? "#000000"
+							: `var(--color-${SEMANTIC[semantic]}-500)`,
 			}),
 		),
 		// =====================================================================
 		// OUTLINE
 		// =====================================================================
 		rule(".pill.outline", {
-			__pill_opacity: "0%",
-			__pill_border_opacity: "80%",
-			__pill_shade: "100%",
+			__background_opacity: "0%",
+			__border_opacity: "80%",
+			__background_blend: "100%",
 			border_width: vars.border.width,
 		}),
 		rule(hover(".pill.outline"), {
-			__pill_opacity: vars.selectable.hover.opacity,
+			__background_opacity: vars.selectable.hover.opacity,
 		}),
 		rule([".pill.outline.selected", ".pill.outline[data-selected=true]"], {
-			__pill_opacity: vars.selectable.selected.opacity,
+			__background_opacity: vars.selectable.selected.opacity,
 		}),
 		rule([".pill.outline:active", ".pill.outline.active"], {
-			__pill_opacity: vars.selectable.active.opacity,
+			__background_opacity: vars.selectable.active.opacity,
 		}),
 	),
 
@@ -232,19 +242,27 @@ export default named({
 			transition_duration: "150ms",
 
 			// Font settings
-			// Computed colors
-			__button_base: vars.color.ink,
-			__button_tint: vars.color.paper,
-			__button_color: `color-mix(in oklch, var(--button-base), var(--button-tint) calc(100% - var(--button-shade)))`,
-			background_color: `color-mix(in oklch, var(--button-color), transparent calc(100% - var(--button-opacity)))`,
-			// TODO: Color should be computed based on background
-			color: vars.text.color,
+			// Color system: base, tint, opacity, blend
+			__background_base: vars.color.ink,
+			__background_tint: vars.color.paper,
+			__background_opacity: vars.button.opacity,
+			__background_blend: vars.button.blend,
+			__border_base: vars.color.ink,
+			__border_tint: vars.color.paper,
+			__border_opacity: vars.button.border.opacity,
+			__border_blend: vars.button.border.blend,
+			__outline_base: vars.color.ink,
+			__outline_tint: vars.color.paper,
+			__outline_opacity: vars.button.outline.opacity,
+			__outline_blend: vars.button.outline.blend,
 
-			border_color: `color-mix(in oklch, var(--button-color), transparent calc(100% - var(--button-border-opacity)))`,
+			// Computed colors
+			background_color: `color-mix(in oklch, color-mix(in oklch, var(--background-base), var(--background-tint) calc((1 - var(--background-blend)) * 100%)), transparent calc((1 - var(--background-opacity)) * 100%))`,
+			color: vars.text.color,
+			border_color: `color-mix(in oklch, color-mix(in oklch, var(--border-base), var(--border-tint) calc((1 - var(--border-blend)) * 100%)), transparent calc((1 - var(--border-opacity)) * 100%))`,
 			border_width: vars.button.border.width,
 			border_style: "solid",
-
-			outline_color: `color-mix(in oklch, var(--button-color), transparent calc(100% - var(--button-outline-opacity)))`,
+			outline_color: `color-mix(in oklch, color-mix(in oklch, var(--outline-base), var(--outline-tint) calc((1 - var(--outline-blend)) * 100%)), transparent calc((1 - var(--outline-opacity)) * 100%))`,
 			outline_width: "0px",
 			outline_style: "solid",
 
@@ -286,26 +304,29 @@ export default named({
 		rule(["button.smallest", ".button.smallest"], {
 			padding: vars.controls.padding.smallest,
 		}),
-		// Color variants
-		...[
-			"primary",
-			"secondary",
-			"tertiary",
-			"success",
-			"info",
-			"warning",
-			"danger",
-		].map((color) =>
-			rule([`button.${color}`, `.button.${color}`], {
-				__button_base: vars.color[color],
+		// Semantic color variants
+		...Object.keys(SEMANTIC).map((semantic) =>
+			rule([`button.${semantic}`, `.button.${semantic}`], {
+				__background_base:
+					SEMANTIC[semantic] === "white"
+						? "#FFFFFF"
+						: SEMANTIC[semantic] === "black"
+							? "#000000"
+							: `var(--color-${SEMANTIC[semantic]}-500)`,
+				__border_base:
+					SEMANTIC[semantic] === "white"
+						? "#FFFFFF"
+						: SEMANTIC[semantic] === "black"
+							? "#000000"
+							: `var(--color-${SEMANTIC[semantic]}-500)`,
 			}),
 		),
 		rule(["button.shadow", ".button.shadow"], {
 			box_shadow: `${vars.shadow.x} ${vars.shadow.y} ${vars.shadow.spread} ${vars.shadow.color}`,
 		}),
 		rule(["button.blank", ".button.blank"], {
-			__button_opacity: "0%",
-			__button_border_opacity: "0%",
+			__background_opacity: "0%",
+			__border_opacity: "0%",
 			// We keep the outline and hover states
 		}),
 		// Outline style
@@ -315,20 +336,20 @@ export default named({
 		// =====================================================================
 		// State: focus
 		rule(mods(["button", ".button"], "focus", "focus-within"), {
-			__button_outline_opacity: vars.controls.active.delta,
+			__outline_opacity: vars.controls.active.delta,
 			outline_width: vars.button.outline.width,
 		}),
 		// State: hover (filled)
 		rule(hover("button", ".button"), {
-			__button_shade: vars.button.hover.shade,
+			__background_blend: vars.button.hover.blend,
 		}),
 		// State: selected (filled)
 		rule(mods(["button", ".button"], "selected"), {
-			__button_shade: vars.button.selected.shade,
+			__background_blend: vars.button.selected.blend,
 		}),
 		// State: active
 		rule(mods(["button", ".button"], "active"), {
-			__button_shade: vars.button.active.shade,
+			__background_blend: vars.button.active.blend,
 		}),
 		// State: disabled
 		rule(mods(["button", ".button"], "disabled"), {
@@ -340,9 +361,9 @@ export default named({
 		// OUTLINE
 		// =====================================================================
 		rule(["button.outline", ".button.outline"], {
-			__button_opacity: "0%",
-			__button_border_opacity: "80%",
-			__button_shade: "100%",
+			__background_opacity: "0%",
+			__border_opacity: "80%",
+			__background_blend: "100%",
 			border_width: vars.border.width,
 		}),
 		rule(["button.outline.default", ".button.outline.default"], {
@@ -350,31 +371,31 @@ export default named({
 		}),
 		rule(hover("button.outline", ".button.outline"), {
 			// Same as selectable
-			__button_opacity: vars.selectable.hover.opacity,
+			__background_opacity: vars.selectable.hover.opacity,
 		}),
 		rule(mods(["button.outline", ".button.outline"], "selected"), {
-			__button_opacity: vars.selectable.selected.opacity,
+			__background_opacity: vars.selectable.selected.opacity,
 		}),
 		rule(mods(["button.outline", ".button.outline"], "active"), {
-			__button_opacity: vars.selectable.active.opacity,
+			__background_opacity: vars.selectable.active.opacity,
 		}),
 
 		// =====================================================================
 		// ICONS
 		// =====================================================================
 		rule(["button.icon", ".button.icon"], {
-			__button_opacity: "0%",
-			__button_border_opacity: "0%",
+			__background_opacity: "0%",
+			__border_opacity: "0%",
 		}),
 		rule(hover("button.icon", ".button.icon"), {
 			// Same as selectable
-			__button_opacity: vars.selectable.hover.opacity,
+			__background_opacity: vars.selectable.hover.opacity,
 		}),
 		rule(mods(["button.icon", ".button.icon"], "selected"), {
-			__button_opacity: vars.selectable.selected.opacity,
+			__background_opacity: vars.selectable.selected.opacity,
 		}),
 		rule(mods(["button.icon", ".button.icon"], "active"), {
-			__button_opacity: vars.selectable.active.opacity,
+			__background_opacity: vars.selectable.active.opacity,
 		}),
 
 		rule(
@@ -400,12 +421,19 @@ export default named({
 			__selector_font_line: vars.font.controls.line,
 			__selector_font_weight: vars.font.controls.weight,
 
-			// Computed colors
-			__selector_base: vars.color.ink,
-			__selector_tint: vars.color.paper,
-			__selector_color: `color-mix(in oklch, var(--selector-base), var(--selector-tint) calc(100% - var(--selector-shade)))`,
-			__selector_border_color: `color-mix(in oklch, var(--selector-base), var(--selector-tint) calc(100% - var(--selector-border-shade)))`,
-			__selector_outline_color: `color-mix(in oklch, var(--selector-base), var(--selector-tint) calc(100% - var(--selector-outline-shade)))`,
+			// Color system: base, tint, opacity, blend for items
+			__background_base: vars.color.ink,
+			__background_tint: vars.color.paper,
+			__background_opacity: vars.selector.opacity,
+			__background_blend: vars.selector.blend,
+			__border_base: vars.color.ink,
+			__border_tint: vars.color.paper,
+			__border_opacity: vars.selector.border.opacity,
+			__border_blend: vars.selector.border.blend,
+			__outline_base: vars.color.ink,
+			__outline_tint: vars.color.paper,
+			__outline_opacity: vars.selector.outline.opacity,
+			__outline_blend: vars.selector.outline.blend,
 
 			// Container styling
 			display: "inline-flex",
@@ -419,10 +447,10 @@ export default named({
 				"background-color,color,border-color,outline-color,border-width,outline-width,opacity,transform,box-shadow",
 			transition_duration: "150ms",
 
-			// Colors
-			background_color: `color-mix(in oklch, var(--selector-color), transparent calc(100% - var(--selector-opacity)))`,
-			border_color: `color-mix(in oklch, var(--selector-border-color), transparent calc(100% - var(--selector-border-opacity)))`,
-			outline_color: `color-mix(in oklch, var(--selector-outline-color), transparent calc(100% - var(--selector-outline-opacity)))`,
+			// Colors - inherit from parent .selector
+			background_color: `color-mix(in oklch, color-mix(in oklch, var(--background-base), var(--background-tint) calc((1 - var(--background-blend)) * 100%)), transparent calc((1 - var(--background-opacity)) * 100%))`,
+			border_color: `color-mix(in oklch, color-mix(in oklch, var(--border-base), var(--border-tint) calc((1 - var(--border-blend)) * 100%)), transparent calc((1 - var(--border-opacity)) * 100%))`,
+			outline_color: `color-mix(in oklch, color-mix(in oklch, var(--outline-base), var(--outline-tint) calc((1 - var(--outline-blend)) * 100%)), transparent calc((1 - var(--outline-opacity)) * 100%))`,
 			color: vars.color.ink,
 
 			border_width: vars.selector.border.width,
@@ -453,14 +481,14 @@ export default named({
 		}),
 		// State: hover
 		rule(hover(".selector > li", ".selector > .item"), {
-			__selector_opacity: vars.selector.hover.opacity,
+			__background_opacity: vars.selector.hover.opacity,
 			z_index: "1",
 		}),
 		// State: focus
 		rule(
 			mods([".selector > li", ".selector > .item"], "focus", "focus-within"),
 			{
-				__selector_outline_opacity: vars.controls.active.delta,
+				__outline_opacity: vars.controls.active.delta,
 				outline_width: vars.selector.outline.width,
 				outline_offset: "-2px",
 				z_index: "1",
@@ -475,13 +503,13 @@ export default named({
 				".selector > .item[data-selected=true]",
 			],
 			{
-				__selector_opacity: vars.selector.selected.opacity,
+				__background_opacity: vars.selector.selected.opacity,
 				z_index: "2",
 			},
 		),
 		// State: active
 		rule(mods([".selector > li", ".selector > .item"], "active"), {
-			__selector_opacity: vars.selector.active.opacity,
+			__background_opacity: vars.selector.active.opacity,
 		}),
 		// State: disabled
 		rule(mods([".selector > li", ".selector > .item"], "disabled"), {
@@ -489,18 +517,21 @@ export default named({
 			cursor: "not-allowed",
 			pointer_events: "none",
 		}),
-		// Color variants
-		...[
-			"primary",
-			"secondary",
-			"tertiary",
-			"success",
-			"info",
-			"warning",
-			"danger",
-		].map((color) =>
-			rule(`.selector.${color}`, {
-				__selector_base: vars.color[color],
+		// Semantic color variants
+		...Object.keys(SEMANTIC).map((semantic) =>
+			rule(`.selector.${semantic}`, {
+				__background_base:
+					SEMANTIC[semantic] === "white"
+						? "#FFFFFF"
+						: SEMANTIC[semantic] === "black"
+							? "#000000"
+							: `var(--color-${SEMANTIC[semantic]}-500)`,
+				__border_base:
+					SEMANTIC[semantic] === "white"
+						? "#FFFFFF"
+						: SEMANTIC[semantic] === "black"
+							? "#000000"
+							: `var(--color-${SEMANTIC[semantic]}-500)`,
 			}),
 		),
 		// Border variant - enable visible borders
@@ -541,18 +572,27 @@ export default named({
 	// ------------------------------------------------------------------------
 	input: group(
 		rule([".input", "input", "textarea", ".textarea"], {
-			// Computed colors
-			__input_base: vars.color.ink,
-			__input_tint: vars.color.paper,
-			__input_color: `color-mix(in oklch, var(--input-base), var(--input-tint) calc(100% - var(--input-shade)))`,
-			background_color: `color-mix(in oklch, var(--input-color), transparent calc(100% - var(--input-opacity)))`,
+			// Color system: base, tint, opacity, blend
+			__background_base: vars.color.ink,
+			__background_tint: vars.color.paper,
+			__background_opacity: vars.input.opacity,
+			__background_blend: vars.input.blend,
+			__border_base: vars.color.ink,
+			__border_tint: vars.color.paper,
+			__border_opacity: vars.input.border.opacity,
+			__border_blend: vars.input.border.blend,
+			__outline_base: vars.color.ink,
+			__outline_tint: vars.color.paper,
+			__outline_opacity: vars.input.outline.opacity,
+			__outline_blend: vars.input.outline.blend,
 
+			background_color: `color-mix(in oklch, color-mix(in oklch, var(--background-base), var(--background-tint) calc((1 - var(--background-blend)) * 100%)), transparent calc((1 - var(--background-opacity)) * 100%))`,
 			color: vars.text.color,
-			border_color: `color-mix(in oklch, var(--input-color), transparent calc(100% - var(--input-border-opacity)))`,
+			border_color: `color-mix(in oklch, color-mix(in oklch, var(--border-base), var(--border-tint) calc((1 - var(--border-blend)) * 100%)), transparent calc((1 - var(--border-opacity)) * 100%))`,
 			border_width: vars.input.border.width,
 			border_style: "solid",
 
-			outline_color: `color-mix(in oklch, var(--input-color), transparent calc(100% - var(--input-outline-opacity)))`,
+			outline_color: `color-mix(in oklch, color-mix(in oklch, var(--outline-base), var(--outline-tint) calc((1 - var(--outline-blend)) * 100%)), transparent calc((1 - var(--outline-opacity)) * 100%))`,
 			outline_width: "0px",
 			outline_style: "solid",
 
@@ -648,8 +688,8 @@ export default named({
 				"focus-within",
 			),
 			{
-				__input_outline_opacity: vars.input.focus.outline.opacity,
-				__input_opacity: vars.input.focus.opacity,
+				__outline_opacity: vars.input.focus.outline.opacity,
+				__background_opacity: vars.input.focus.opacity,
 				outline_width: vars.input.outline.width,
 			},
 		),
@@ -658,29 +698,36 @@ export default named({
 			opacity: vars.controls.disabled.opacity,
 			cursor: "not-allowed",
 		}),
-		// Color variants
-		...[
-			"primary",
-			"secondary",
-			"tertiary",
-			"success",
-			"info",
-			"warning",
-			"danger",
-		].map((color) =>
-			rule(cross(["input", ".input", "textarea", ".textarea"], `.${color}`), {
-				__input_base: vars.color[color],
-			}),
+		// Semantic color variants
+		...Object.keys(SEMANTIC).map((semantic) =>
+			rule(
+				cross(["input", ".input", "textarea", ".textarea"], `.${semantic}`),
+				{
+					__background_base:
+						SEMANTIC[semantic] === "white"
+							? "#FFFFFF"
+							: SEMANTIC[semantic] === "black"
+								? "#000000"
+								: `var(--color-${SEMANTIC[semantic]}-500)`,
+					__border_base:
+						SEMANTIC[semantic] === "white"
+							? "#FFFFFF"
+							: SEMANTIC[semantic] === "black"
+								? "#000000"
+								: `var(--color-${SEMANTIC[semantic]}-500)`,
+				},
+			),
 		),
 		rule(
 			cross(["input", ".input", "textarea", ".textarea"], ".error", ".danger"),
 			{
-				__input_base: vars.color.danger,
+				__background_base: `var(--color-${SEMANTIC.danger}-500)`,
+				__border_base: `var(--color-${SEMANTIC.danger}-500)`,
 			},
 		),
 		rule(cross(["input", ".input", "textarea", ".textarea"], ".missing"), {
-			__input_base: vars.color.danger,
-			__input_border_opacity: "100%",
+			__background_base: `var(--color-${SEMANTIC.danger}-500)`,
+			__border_opacity: "100%",
 		}),
 		// Checkbox
 		rule(["input[type=checkbox]"], {
@@ -692,9 +739,9 @@ export default named({
 		}),
 		// Blank style
 		rule(["input.blank", ".input.blank", "textarea.blank", ".textarea.blank"], {
-			__input_opacity: "0%",
-			__input_border_opacity: "0%",
-			__input_outline_opacity: "0%",
+			__background_opacity: "0%",
+			__border_opacity: "0%",
+			__outline_opacity: "0%",
 		}),
 		// No input styling
 		rule(
@@ -731,6 +778,7 @@ export default named({
 	// TOGGLE
 	//
 	// ------------------------------------------------------------------------
+	// Toggle elements are interactive on/off switches with a sliding indicator.
 	toggle: group(
 		rule(".toggle", {
 			// Toggle track dimensions
@@ -741,12 +789,17 @@ export default named({
 			// Toggle slider
 			__toggle_slider_size: "calc(1.5em - 4px)",
 			__toggle_slider_offset: "2px",
-			// Toggle-specific color variables
-			__toggle_base: vars.color.ink,
-			__toggle_tint: vars.color.paper,
-			__toggle_color: `color-mix(in oklch, var(--toggle-base), var(--toggle-tint) calc(100% - var(--toggle-shade)))`,
-			background_color: `color-mix(in oklch, var(--toggle-color), transparent calc(100% - var(--toggle-opacity)))`,
-			border_color: `color-mix(in oklch, var(--toggle-color), transparent calc(100% - var(--toggle-border-opacity)))`,
+			// Color system: base, tint, opacity, blend
+			__background_base: vars.color.ink,
+			__background_tint: vars.color.paper,
+			__background_opacity: vars.toggle.opacity,
+			__background_blend: vars.toggle.blend,
+			__border_base: vars.color.ink,
+			__border_tint: vars.color.paper,
+			__border_opacity: vars.toggle.border.opacity,
+			__border_blend: vars.toggle.border.blend,
+			background_color: `color-mix(in oklch, color-mix(in oklch, var(--background-base), var(--background-tint) calc((1 - var(--background-blend)) * 100%)), transparent calc((1 - var(--background-opacity)) * 100%))`,
+			border_color: `color-mix(in oklch, color-mix(in oklch, var(--border-base), var(--border-tint) calc((1 - var(--border-blend)) * 100%)), transparent calc((1 - var(--border-opacity)) * 100%))`,
 			border_width: vars.toggle.track.border.width,
 			border_style: "solid",
 			// Base styling
@@ -776,7 +829,7 @@ export default named({
 			transform: "translateX(0)",
 		}),
 		rule(hover(".toggle"), {
-			// __toggle_background_level: `calc(var(--toggle-background-level) + ${levelDelta.hover})`,
+			// Hover state if needed
 		}),
 		rule(
 			[
@@ -785,8 +838,35 @@ export default named({
 				"input[type=checkbox]:checked + .toggle",
 			],
 			{
-				__toggle_shade: vars.toggle.active.shade,
+				__background_blend: vars.toggle.active.blend,
 			},
+		),
+		rule(
+			[
+				".toggle.checked::before",
+				".toggle[data-checked=true]::before",
+				"input[type=checkbox]:checked + .toggle::before",
+			],
+			{
+				transform: `translateX(calc(${vars.toggle.track.width} - ${vars.toggle.slider.size} - ${vars.toggle.slider.offset} * 2))`,
+			},
+		),
+		// Semantic color variants (for active state)
+		...Object.keys(SEMANTIC).map((semantic) =>
+			rule(`.toggle.${semantic}`, {
+				__background_base:
+					SEMANTIC[semantic] === "white"
+						? "#FFFFFF"
+						: SEMANTIC[semantic] === "black"
+							? "#000000"
+							: `var(--color-${SEMANTIC[semantic]}-500)`,
+				__border_base:
+					SEMANTIC[semantic] === "white"
+						? "#FFFFFF"
+						: SEMANTIC[semantic] === "black"
+							? "#000000"
+							: `var(--color-${SEMANTIC[semantic]}-500)`,
+			}),
 		),
 		rule(
 			[
