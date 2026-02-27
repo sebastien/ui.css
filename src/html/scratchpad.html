@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>LittleCSS Specimen</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="importmap">
+      {"imports": {
+      "@littlecss.js": "../js/littlecss.js",
+      "@littlecss/": "../css/",
+      "@select/ui": "../../deps/select.js/src/js/select.ui.js",
+      "@select/cells": "../../deps/select.js/src/js/select.cells.js"
+      }}
+    </script>
+  </head>
+  <body class="p-8">
+    <h1 class="t">LittleCSS Scratchpad</h1>
+    <div class="ModuleSection p-4 bd rounded stack g-4">
+      <h4 class="t">Color Families</h4>
+      <p><code class="t">.bg-{color}, .tx-{color}, .bd-{color}, .ol-{color}</code> — Semantic and utility colors for backgrounds, text, borders, and outlines.</p>
+      <p class="t-small dim"><strong>Note:</strong> When using color classes, you must also include the base class: use <code class="t">.bg .bg-primary</code> (not just <code class="t">.bg-primary</code>), <code class="t">.tx .tx-primary</code>, and <code class="t">.bd .bd-primary</code>.</p>
+      <div class="stack g-3" id="colors">
+      </div>
+    </div>
+    <template id="ColorSampler">
+      <li out:class="class">
+        <span out="name"></span>
+      </li>
+    </template>
+    <template id="ColorList">
+      <ul class="row wrap" out="items"></ul>
+    </template>
+    <script type="module">
+      import all from "@littlecss/all"
+      import css from "@littlecss.js"
+      import {COLORS} from "@littlecss/colors"
+          import {ui} from "@select/ui"
+        const ColorSampler = ui("#ColorSampler").does({
+        class: (self,{name,color}) => `w-10ch p-4 rounded bg bg-${color}`
+      })
+      const ColorList = ui("#ColorList").does({
+        items: (self, {colors})=>colors.map(color => ColorSampler({name: color, color}))
+      })
+      ColorList.new().set({colors:COLORS}).mount("#colors");
+      css.mount(all())
+    </script>
+  </body>
+</html>

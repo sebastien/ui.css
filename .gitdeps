@@ -1,1 +1,2 @@
 deps/sdk	git@github.com:littletoolkit/littlesdk.git	main
+deps/select.js git@github.com:sebastien/select.js.git main

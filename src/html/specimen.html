@@ -2,92 +2,718 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Color Specimen</title>
+    <title>LittleCSS Specimen</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script type="importmap">
       {"imports": {
       "@littlecss.js": "../js/littlecss.js",
       "@littlecss/": "../css/",
-      "@select/ui": "../js/select.ui.js",
-      "@select/cells": "../js/select.cells.js"
+      "@select/ui": "../../deps/select.js/src/js/select.ui.js",
+      "@select/cells": "../../deps/select.js/src/js/select.cells.js"
       }}
     </script>
-    <style>
-      html body  {
-      		--color-paper: #fff59a;
-      		--color-ink: #011118;
-      		--color-neutral: var(--color-paper);
-      		--color-primary: #ffd10f;
-      		--color-secondary: #fff176;
-      }
-    </style>
   </head>
-  <body>
-    <section class="stack g-4 rounder m-4 p-4 bg bg-neutral bg-9">
-      <h3 class="t">Color Specimen</h3>
-      <div class="stack g-4" id="colors"></div>
-      <template id="ColorSwatches">
-        <fieldset class="grid-2 g-2">
-          <label class="b">Color</label>
-          <span out="selectedColor">No color selected</span>
-          <label class="b">Shade</label>
-          <span out="selectedShade">No shade selected</span>
+  <body class="fit-screen">
+    <main class="row fit stretch">
+      <aside class="stack bd-r w-2bl">
+        <div class="fill bd-b">
+          <h2 class="b t-large p-4">LittleCSS</h2>
         </div>
-      </fieldset>
-      <div out="colors" class="row g-3"></div>
-      <div out="shades" class="row g-3"></div>
-      <div class="stack g-4">
-        <div class="row g-2">
-          <button out:class="buttonClass">Button</button>
-          <button class="contrast" out:class="buttonClass">Contrast Button</button>
-          <button class="outline" out:class="buttonClass">Outline Button</button>
-          <button class="label" out:class="buttonClass">Label Button</button>
-          <button class="icon" out:class="buttonClass">Icon Button</button>
-          <button class="blank" out:class="buttonClass">Blank Button</button>
-        </div>
-        <div class="row g-2">
-          <input out:class="buttonClass" type="text" out:value="color" placeholder="Default"/>
-        </div>
-        <div class="row g-2">
-          <div class="pill" out:class="buttonClass" out="selectedColor">Default</div>
-          <div class="pill outline" out:class="buttonClass" out="selectedColor">Default</div>
+        <nav id="modules" class="stack lined g-0">
+        </nav>
+      </aside>
+      <div id="sections" class="stack fill lined rel">
+        <div class="fit overflow p-4">
+          <section id="controls-demo" class="Module stack p-4 g-6 pt-6 pb-6">
+            <div class="stack g-1">
+              <div class="dim b">Controls</div>
+              <h3 class="b t-larger">Interactive Components</h3>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Selectable</h4>
+              <p><code class="t">.selectable</code> — Interactive wrapper elements that respond to hover, focus, selected, and active states with smooth transitions.</p>
+              <div class="row g-2 wrap">
+                <div class="selectable p-3 rounded">Normal</div>
+                <div class="selectable hover p-3 rounded">Hover</div>
+                <div class="selectable selected p-3 rounded">Selected</div>
+                <div class="selectable active p-3 rounded">Active</div>
+                <div class="selectable disabled p-3 rounded">Disabled</div>
+              </div>
+              <div class="row g-2 wrap">
+                <div class="selectable primary p-3 rounded">Primary</div>
+                <div class="selectable secondary p-3 rounded">Secondary</div>
+                <div class="selectable success p-3 rounded">Success</div>
+                <div class="selectable warning p-3 rounded">Warning</div>
+                <div class="selectable danger p-3 rounded">Danger</div>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Button</h4>
+              <p><code class="t">button, .button</code> — Versatile buttons with multiple styles, sizes, and color variants. Supports regular, outline, and icon modes.</p>
+              <div class="stack g-3">
+                <div class="row g-2 wrap">
+                  <button>Default</button>
+                  <button class="primary">Primary</button>
+                  <button class="secondary">Secondary</button>
+                  <button class="success">Success</button>
+                  <button class="warning">Warning</button>
+                  <button class="danger">Danger</button>
+                </div>
+                <div class="row g-2 wrap">
+                  <button class="outline">Outline</button>
+                  <button class="outline primary">Outline Primary</button>
+                  <button class="outline danger">Outline Danger</button>
+                </div>
+                <div class="row g-2 wrap">
+                  <button class="icon">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/></svg>
+                  </button>
+                  <button class="icon primary">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/></svg>
+                  </button>
+                </div>
+                <div class="row g-2 wrap items-center">
+                  <button class="smallest">Tiny</button>
+                  <button class="small">Small</button>
+                  <button>Regular</button>
+                  <button class="large">Large</button>
+                  <button class="larger">Larger</button>
+                  <button class="largest">Largest</button>
+                </div>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Pill</h4>
+              <p><code class="t">.pill</code> — Compact, rounded tags or badges with interactive states. Perfect for filters, labels, and tags.</p>
+              <div class="pills">
+                <span class="pill">Default</span>
+                <span class="pill primary">Primary</span>
+                <span class="pill success">Success</span>
+                <span class="pill warning">Warning</span>
+                <span class="pill danger">Danger</span>
+              </div>
+              <div class="pills">
+                <span class="pill outline">Outline</span>
+                <span class="pill outline primary">Primary</span>
+                <span class="pill outline success">Success</span>
+                <span class="pill outline selected">Selected</span>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Selector</h4>
+              <p><code class="t">.selector</code> — Connected button groups for mutually exclusive choices. Items share borders with no gaps.</p>
+              <ul class="selector">
+                <li class="selected">Option 1</li>
+                <li>Option 2</li>
+                <li>Option 3</li>
+                <li>Option 4</li>
+              </ul>
+              <ul class="selector pills primary">
+                <li>Pill 1</li>
+                <li class="selected">Pill 2</li>
+                <li>Pill 3</li>
+              </ul>
+              <ul class="selector bd success large">
+                <li class="selected">Large</li>
+                <li>Bordered</li>
+                <li>Success</li>
+              </ul>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Input</h4>
+              <p><code class="t">input, .input, textarea, .textarea</code> — Form inputs with focus states, validation styling, and size variants.</p>
+              <div class="stack g-3">
+                <div class="row g-2 wrap">
+                  <input type="text" placeholder="Default input" />
+                  <input type="text" class="primary" placeholder="Primary" />
+                  <input type="text" class="success" placeholder="Success" />
+                  <input type="text" class="danger" placeholder="Danger/Error" />
+                </div>
+                <div class="row g-2 wrap items-center">
+                  <input type="text" class="smallest" placeholder="Tiny" />
+                  <input type="text" class="small" placeholder="Small" />
+                  <input type="text" placeholder="Regular" />
+                  <input type="text" class="large" placeholder="Large" />
+                  <input type="text" class="larger" placeholder="Larger" />
+                  <input type="text" class="largest" placeholder="Largest" />
+                </div>
+                <div class="row g-2 wrap">
+                  <textarea placeholder="Textarea"></textarea>
+                  <textarea class="small" placeholder="Small textarea"></textarea>
+                </div>
+                <div class="row g-2 wrap">
+                  <label><input type="checkbox" /> Checkbox</label>
+                  <label><input type="radio" name="radio" /> Radio 1</label>
+                  <label><input type="radio" name="radio" /> Radio 2</label>
+                </div>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Toggle</h4>
+              <p><code class="t">.toggle</code> — Switch-style checkboxes with sliding animation. Supports multiple sizes and colors.</p>
+              <div class="row g-4 wrap items-center">
+                <label class="row g-2 items-center">
+                  <input type="checkbox" hidden />
+                  <span class="toggle small"></span>
+                  <span>Small</span>
+                </label>
+                <label class="row g-2 items-center">
+                  <input type="checkbox" hidden checked />
+                  <span class="toggle"></span>
+                  <span>Default</span>
+                </label>
+                <label class="row g-2 items-center">
+                  <input type="checkbox" hidden checked />
+                  <span class="toggle large"></span>
+                  <span>Large</span>
+                </label>
+                <label class="row g-2 items-center">
+                  <input type="checkbox" hidden checked />
+                  <span class="toggle primary checked"></span>
+                  <span>Primary</span>
+                </label>
+                <label class="row g-2 items-center">
+                  <input type="checkbox" hidden checked />
+                  <span class="toggle success checked"></span>
+                  <span>Success</span>
+                </label>
+              </div>
+            </div>
+          </section>
+          <section id="colors-demo" class="Module stack p-4 g-6 pt-6 pb-6">
+            <div class="stack g-1">
+              <div class="dim b">Colors</div>
+              <h3 class="b t-larger">Color System</h3>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Color Families</h4>
+              <p><code class="t">.bg-{color}, .tx-{color}, .bd-{color}, .ol-{color}</code> — Semantic and utility colors for backgrounds, text, borders, and outlines.</p>
+              <p class="t-small dim"><strong>Note:</strong> When using color classes, you must also include the base class: use <code class="t">.bg .bg-primary</code> (not just <code class="t">.bg-primary</code>), <code class="t">.tx .tx-primary</code>, and <code class="t">.bd .bd-primary</code>.</p>
+              <div class="stack g-3">
+                <div class="row g-2 wrap">
+                  <div class="bg-paper bd p-3 rounded stack g-1" style="min-width: 120px;">
+                    <code class="t-small">.bg-paper</code>
+                  </div>
+                  <div class="bg-ink tx-paper bd bd-paper p-3 rounded stack g-1" style="min-width: 120px;">
+                    <code class="t-small">.bg-ink</code>
+                  </div>
+                  <div class="bg-neutral bd p-3 rounded stack g-1" style="min-width: 120px;">
+                    <code class="t-small">.bg-neutral</code>
+                  </div>
+                </div>
+                <div class="row g-2 wrap">
+                  <div class="bg-primary tx-paper bd bd-paper p-3 rounded stack g-1" style="min-width: 120px;">
+                    <code class="t-small">.bg-primary</code>
+                  </div>
+                  <div class="bg-secondary tx-paper bd bd-paper p-3 rounded stack g-1" style="min-width: 120px;">
+                    <code class="t-small">.bg-secondary</code>
+                  </div>
+                  <div class="bg-tertiary tx-paper bd bd-paper p-3 rounded stack g-1" style="min-width: 120px;">
+                    <code class="t-small">.bg-tertiary</code>
+                  </div>
+                </div>
+                <div class="row g-2 wrap">
+                  <div class="bg-success tx-paper bd bd-paper p-3 rounded stack g-1" style="min-width: 120px;">
+                    <code class="t-small">.bg-success</code>
+                  </div>
+                  <div class="bg-info tx-paper bd bd-paper p-3 rounded stack g-1" style="min-width: 120px;">
+                    <code class="t-small">.bg-info</code>
+                  </div>
+                  <div class="bg-warning tx-paper bd bd-paper p-3 rounded stack g-1" style="min-width: 120px;">
+                    <code class="t-small">.bg-warning</code>
+                  </div>
+                  <div class="bg-danger tx-paper bd bd-paper p-3 rounded stack g-1" style="min-width: 120px;">
+                    <code class="t-small">.bg-danger</code>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Shade Variants</h4>
+              <p><code class="t">.bg-{shade}, .tx-{shade}</code> — Mix colors with paper or ink for lighter/darker variants.</p>
+              <div class="stack g-3">
+                <div class="row g-2 wrap">
+                  <div class="bg-darkest tx-paper p-3 rounded" style="min-width: 100px;">
+                    <code class="t-small">.bg-darkest</code>
+                  </div>
+                  <div class="bg-darker tx-paper p-3 rounded" style="min-width: 100px;">
+                    <code class="t-small">.bg-darker</code>
+                  </div>
+                  <div class="bg-dark tx-paper p-3 rounded" style="min-width: 100px;">
+                    <code class="t-small">.bg-dark</code>
+                  </div>
+                  <div class="bg-light bd p-3 rounded" style="min-width: 100px;">
+                    <code class="t-small">.bg-light</code>
+                  </div>
+                  <div class="bg-lighter bd p-3 rounded" style="min-width: 100px;">
+                    <code class="t-small">.bg-lighter</code>
+                  </div>
+                  <div class="bg-lightest bd p-3 rounded" style="min-width: 100px;">
+                    <code class="t-small">.bg-lightest</code>
+                  </div>
+                </div>
+                <div class="bg-neutral p-3 rounded stack g-2">
+                  <span class="tx-darkest">.tx-darkest</span>
+                  <span class="tx-darker">.tx-darker</span>
+                  <span class="tx-dark">.tx-dark</span>
+                  <span class="tx-light">.tx-light</span>
+                  <span class="tx-lighter">.tx-lighter</span>
+                  <span class="tx-lightest">.tx-lightest</span>
+                </div>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Ink & Paper Grades</h4>
+              <p><code class="t">.bg-ink-{n}, .bg-paper-{n}</code> — Fine-grained blending with 10 levels (0-9).</p>
+              <div class="stack g-2">
+                <div class="row g-1 wrap">
+                  <div class="bg-primary bg-ink-0 tx-paper p-2 rounded t-small">ink-0</div>
+                  <div class="bg-primary bg-ink-1 tx-paper p-2 rounded t-small">ink-1</div>
+                  <div class="bg-primary bg-ink-2 tx-paper p-2 rounded t-small">ink-2</div>
+                  <div class="bg-primary bg-ink-3 tx-paper p-2 rounded t-small">ink-3</div>
+                  <div class="bg-primary bg-ink-4 tx-paper p-2 rounded t-small">ink-4</div>
+                  <div class="bg-primary bg-ink-5 tx-paper p-2 rounded t-small">ink-5</div>
+                  <div class="bg-primary bg-ink-6 tx-paper p-2 rounded t-small">ink-6</div>
+                  <div class="bg-primary bg-ink-7 tx-paper p-2 rounded t-small">ink-7</div>
+                  <div class="bg-primary bg-ink-8 tx-paper p-2 rounded t-small">ink-8</div>
+                  <div class="bg-primary bg-ink-9 tx-paper p-2 rounded t-small">ink-9</div>
+                </div>
+                <div class="row g-1 wrap">
+                  <div class="bg-neutral bg-paper-0 p-2 rounded t-small bd">paper-0</div>
+                  <div class="bg-neutral bg-paper-1 p-2 rounded t-small bd">paper-1</div>
+                  <div class="bg-neutral bg-paper-2 p-2 rounded t-small bd">paper-2</div>
+                  <div class="bg-neutral bg-paper-3 p-2 rounded t-small bd">paper-3</div>
+                  <div class="bg-neutral bg-paper-4 p-2 rounded t-small bd">paper-4</div>
+                  <div class="bg-neutral bg-paper-5 p-2 rounded t-small bd">paper-5</div>
+                  <div class="bg-neutral bg-paper-6 p-2 rounded t-small bd">paper-6</div>
+                  <div class="bg-neutral bg-paper-7 p-2 rounded t-small bd">paper-7</div>
+                  <div class="bg-neutral bg-paper-8 p-2 rounded t-small bd">paper-8</div>
+                  <div class="bg-neutral bg-paper-9 p-2 rounded t-small bd">paper-9</div>
+                </div>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Opacity Grades</h4>
+              <p><code class="t">.bg-{n}p, .tx-{n}p</code> — Percentage-based opacity (0p-95p).</p>
+              <div class="bg-neutral p-3 rounded stack g-2">
+                <div class="bg-primary bg-0p p-2 rounded t-small">0p</div>
+                <div class="bg-primary bg-2p p-2 rounded t-small">20p</div>
+                <div class="bg-primary bg-4p p-2 rounded t-small">40p</div>
+                <div class="bg-primary bg-6p p-2 rounded t-small">60p</div>
+                <div class="bg-primary bg-8p p-2 rounded t-small">80p</div>
+                <div class="bg-primary bg-9p tx-paper p-2 rounded t-small">95p</div>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Side-Specific Borders</h4>
+              <p><code class="t">.bd-{side}</code> — Apply borders to specific sides: t, r, b, l.</p>
+              <p class="t-small dim"><strong>Note:</strong> When using colored border classes like <code class="t">.bd-primary</code>, you must also include <code class="t">.bd</code> to enable borders first, and include the side class like <code class="t">.bd-t</code> or <code class="t">.bd-r</code>.</p>
+              <div class="row g-4 wrap">
+                <div class="bg-paper p-4 rounded bd-t bd-primary"><code class="t-small">.bd-t</code></div>
+                <div class="bg-paper p-4 rounded bd-r bd-secondary"><code class="t-small">.bd-r</code></div>
+                <div class="bg-paper p-4 rounded bd-b bd-success"><code class="t-small">.bd-b</code></div>
+                <div class="bg-paper p-4 rounded bd-l bd-danger"><code class="t-small">.bd-l</code></div>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Reset Classes</h4>
+              <p><code class="t">.bg-no, .nobg, .tx-no, .notx</code> — Remove colors.</p>
+              <div class="bg-primary tx-paper p-3 rounded stack g-2">
+                <div class="bg-no bd bd-paper p-2 rounded">.bg-no</div>
+                <div class="nobg bd bd-paper p-2 rounded">.nobg</div>
+                <div class="tx-no p-2 rounded">.tx-no</div>
+                <div class="notx p-2 rounded">.notx</div>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Dark Mode</h4>
+              <p><code class="t">.light, .dark</code> — Color scheme switching with automatic inversion.</p>
+              <div class="row g-4 wrap">
+                <div class="light bg-page p-4 rounded bd stack g-2" style="min-width: 200px;">
+                  <strong>.light</strong>
+                  <span>Background: paper</span>
+                  <span class="tx-text">Text: ink</span>
+                </div>
+                <div class="dark bg-page p-4 rounded bd bd-paper stack g-2" style="min-width: 200px;">
+                  <strong>.dark</strong>
+                  <span>Background: ink</span>
+                  <span class="tx-text">Text: paper</span>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section id="layout-demo" class="Module stack p-4 g-6 pt-6 pb-6">
+            <div class="stack g-1">
+              <div class="dim b">Layout</div>
+              <h3 class="b t-larger">Layout System</h3>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Flexbox Layouts</h4>
+              <p><code class="t">.row, .stack</code> — Primary flexbox containers for horizontal and vertical layouts with automatic gap spacing.</p>
+              <div class="stack g-3">
+                <div class="row g-2">
+                  <div class="bg-primary tx-paper p-2 rounded">.row item 1</div>
+                  <div class="bg-secondary tx-paper p-2 rounded">.row item 2</div>
+                  <div class="bg-tertiary tx-paper p-2 rounded">.row item 3</div>
+                </div>
+                <div class="stack g-1" style="height: 120px;">
+                  <div class="bg-success tx-paper p-2 rounded">.stack item 1</div>
+                  <div class="bg-info tx-paper p-2 rounded">.stack item 2</div>
+                  <div class="bg-warning tx-paper p-2 rounded">.stack item 3</div>
+                </div>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Grid System</h4>
+              <p><code class="t">.col-{n}</code> — CSS Grid with 1-7 columns and automatic gaps.</p>
+              <div class="stack g-2">
+                <div class="col-3">
+                  <div class="bg-primary tx-paper p-2 rounded t-small">col-3 item</div>
+                  <div class="bg-secondary tx-paper p-2 rounded t-small">col-3 item</div>
+                  <div class="bg-tertiary tx-paper p-2 rounded t-small">col-3 item</div>
+                </div>
+                <div class="col-4">
+                  <div class="bg-success p-2 rounded t-small">col-4</div>
+                  <div class="bg-info p-2 rounded t-small">col-4</div>
+                  <div class="bg-warning p-2 rounded t-small">col-4</div>
+                  <div class="bg-danger tx-paper p-2 rounded t-small">col-4</div>
+                </div>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Spacing</h4>
+              <p><code class="t">.p-{n}, .m-{n}, .g-{n}</code> — Padding, margin, and gap utilities with numeric sizes.</p>
+              <div class="stack g-3">
+                <div class="bg-neutral p-1 rounded"><code class="t-small">.p-1</code></div>
+                <div class="bg-neutral p-2 rounded"><code class="t-small">.p-2</code></div>
+                <div class="bg-neutral p-3 rounded"><code class="t-small">.p-3</code></div>
+                <div class="bg-neutral p-4 rounded"><code class="t-small">.p-4</code></div>
+                <div class="row g-1">
+                  <div class="bg-primary tx-paper p-2 rounded">.g-1</div>
+                  <div class="bg-secondary tx-paper p-2 rounded">gap</div>
+                </div>
+                <div class="row g-3">
+                  <div class="bg-success tx-paper p-2 rounded">.g-3</div>
+                  <div class="bg-info tx-paper p-2 rounded">gap</div>
+                </div>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Sizing</h4>
+              <p><code class="t">.fit, .fit-w, .fit-h, .fill, .w-{n}, .h-{n}</code> — Comprehensive sizing utilities.</p>
+              <div class="stack g-3">
+                <div class="row g-2">
+                  <div class="bg-primary w-1 tx-paper p-2 rounded t-small">.w-1</div>
+                  <div class="bg-secondary w-2 tx-paper p-2 rounded t-small">.w-2</div>
+                  <div class="bg-tertiary w-3 tx-paper p-2 rounded t-small">.w-3</div>
+                </div>
+                <div class="bg-neutral p-3 rounded" style="height: 100px;">
+                  <div class="fit bg-primary tx-paper p-2 rounded">.fit (fills container)</div>
+                </div>
+                <div class="row g-2">
+                  <div class="bg-success w-33p tx-paper p-2 rounded t-small">.w-33p</div>
+                  <div class="bg-info w-66p tx-paper p-2 rounded t-small">.w-66p</div>
+                </div>
+                <div class="row g-2 wrap">
+                  <div class="bg-primary w-1bl tx-paper p-2 rounded t-small">.w-1bl</div>
+                  <div class="bg-secondary w-2bl tx-paper p-2 rounded t-small">.w-2bl</div>
+                  <div class="bg-tertiary w-3bl tx-paper p-2 rounded t-small">.w-3bl</div>
+                </div>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Positioning</h4>
+              <p><code class="t">.rel, .abs, .fix, .sticky, .cover, .to-{direction}</code> — Position utilities.</p>
+              <div class="stack g-2">
+                <div class="rel bg-neutral p-4 rounded" style="height: 80px;">
+                  <span class="abs bg-primary tx-paper p-2 rounded" style="top: 8px; left: 8px;">.abs positioned</span>
+                  <span>.rel container</span>
+                </div>
+                <div class="row g-2">
+                  <div class="bg-success tx-paper p-2 rounded">.row</div>
+                  <div class="fill bg-secondary tx-paper p-2 rounded">.fill (flex grow)</div>
+                </div>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Display Types</h4>
+              <p><code class="t">.il, .ibl, .bl, .fl, .ifl</code> — Display mode utilities.</p>
+              <div class="stack g-2">
+                <div class="bg-neutral p-2 rounded">
+                  <span class="il bg-primary tx-paper p-2 rounded">.il</span>
+                  <span class="il bg-secondary tx-paper p-2 rounded">inline</span>
+                </div>
+                <div class="bg-neutral p-2 rounded">
+                  <div class="ibl bg-success tx-paper p-2 rounded">.ibl inline-block</div>
+                  <div class="ibl bg-info tx-paper p-2 rounded">inline-block</div>
+                </div>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Shapes</h4>
+              <p><code class="t">.square, .circle</code> — Aspect ratio utilities.</p>
+              <div class="row g-4">
+                <div class="bg-primary tx-paper square p-3 rounded">.square</div>
+                <div class="bg-secondary tx-paper circle p-3">.circle</div>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Alignment & Flex Utilities</h4>
+              <p><code class="t">.centered, .stretch, .top, .wrap</code> — Flex alignment and wrapping.</p>
+              <div class="stack g-3">
+                <div class="centered bg-neutral" style="height: 80px;">
+                  <div class="bg-primary tx-paper p-3 rounded">.centered</div>
+                </div>
+                <div class="row stretch g-2" style="height: 60px;">
+                  <div class="bg-success tx-paper p-2 rounded">.row.stretch</div>
+                  <div class="bg-info tx-paper p-2 rounded">stretches items</div>
+                </div>
+                <div class="row wrap g-2">
+                  <div class="bg-primary tx-paper p-2 rounded">.row.wrap</div>
+                  <div class="bg-secondary tx-paper p-2 rounded">wraps</div>
+                  <div class="bg-tertiary tx-paper p-2 rounded">content</div>
+                  <div class="bg-success tx-paper p-2 rounded">to</div>
+                  <div class="bg-info tx-paper p-2 rounded">next</div>
+                  <div class="bg-warning tx-paper p-2 rounded">line</div>
+                </div>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Overflow & Limits</h4>
+              <p><code class="t">.overflow, .nooverflow, .limit-{type}</code> — Content overflow and width limits.</p>
+              <div class="stack g-3">
+                <div class="overflow bg-neutral p-2 rounded" style="height: 60px; width: 200px;">
+                  <div style="height: 100px;">.overflow container with scrollable content that exceeds the container height.</div>
+                </div>
+                <div class="bg-primary limit-text p-3 rounded">
+                  <code class="t-small">.limit-text</code> — Constrains to optimal text reading width
+                </div>
+              </div>
+            </div>
+          </section>
+          <section id="text-demo" class="Module stack p-4 g-6 pt-6 pb-6">
+            <div class="stack g-1">
+              <div class="dim b">Text</div>
+              <h3 class="b t-larger">Typography System</h3>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Headings</h4>
+              <p><code class="t">h1.t - h6.t</code> — Semantic heading hierarchy with proper spacing and typography.</p>
+              <div class="stack g-2">
+                <h1 class="t">Heading 1</h1>
+                <h2 class="t">Heading 2</h2>
+                <h3 class="t">Heading 3</h3>
+                <h4 class="t">Heading 4</h4>
+                <h5 class="t">Heading 5</h5>
+                <h6 class="t">Heading 6</h6>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Text Sizes</h4>
+              <p><code class="t">.t-{size}</code> — Text size utilities from tiny to huge.</p>
+              <div class="stack g-2">
+                <span class="t-tiny">.t-tiny — The smallest text size</span>
+                <span class="t-small">.t-small — Small text for labels and metadata</span>
+                <span class="t">.t — Normal body text (default)</span>
+                <span class="t-large">.t-large — Large text for emphasis</span>
+                <span class="t-larger">.t-larger — Even larger text</span>
+                <span class="t-largest">.t-largest — The largest text size</span>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Font Weights</h4>
+              <p><code class="t">.thin, .light, .r, .sb, .b, .bolder, .boldest</code> — Font weight utilities.</p>
+              <div class="stack g-2">
+                <span class="thin">.thin (100) — Ultra light text</span>
+                <span class="light">.light (200) — Light text</span>
+                <span class="r">.r (400) — Regular weight</span>
+                <span class="sb">.sb (500) — Semi-bold text</span>
+                <span class="b">.b (600) — Bold text</span>
+                <span class="bolder">.bolder (700) — Bolder text</span>
+                <span class="boldest">.boldest (800) — Extra bold</span>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Font Families</h4>
+              <p><code class="t">.sans, .serif, .mono, .code, .heading</code> — Font family utilities.</p>
+              <div class="stack g-2">
+                <span class="sans">.sans — Sans-serif font family</span>
+                <span class="serif">.serif — Serif font family</span>
+                <span class="mono">.mono — Monospace font</span>
+                <span class="code">.code — Code font family</span>
+                <span class="heading">.heading — Heading font family</span>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Text Alignment</h4>
+              <p><code class="t">.t-left, .t-center, .t-right, .t-justify</code> — Text alignment utilities.</p>
+              <div class="stack g-2">
+                <p class="t-left">.t-left — Left-aligned text (default)</p>
+                <p class="t-center">.t-center — Center-aligned text</p>
+                <p class="t-right">.t-right — Right-aligned text</p>
+                <p class="t-justify">.t-justify — Justified text that fills the entire line width evenly by adjusting spacing between words.</p>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Text Transform</h4>
+              <p><code class="t">.upper, .lower, .cap</code> — Text case transformation.</p>
+              <div class="stack g-2">
+                <span class="upper">.upper — THIS IS UPPERCASE</span>
+                <span class="lower">.lower — this is lowercase</span>
+                <span class="cap">.cap — This Is Capitalized</span>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Inline Text Styles</h4>
+              <p><code class="t">.em, .b, .striked, .ul, .ol</code> — Inline text formatting.</p>
+              <div class="stack g-2">
+                <span><span class="em">.em</span> — italic text</span>
+                <span><span class="b">.b</span> — bold text</span>
+                <span><span class="striked">.striked</span> — strikethrough</span>
+                <span><span class="ul">.ul</span> — underlined text</span>
+                <span><span class="ol">.ol</span> — overlined text</span>
+                <span class="tight">.tight — tighter letter spacing</span>
+                <span class="tighter">.tighter — even tighter spacing</span>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Whitespace Control</h4>
+              <p><code class="t">.nowrap, .wrap, .pre, .ellipsis</code> — Control text wrapping and overflow.</p>
+              <div class="stack g-2">
+                <div class="nowrap bg-neutral p-2 rounded" style="width: 200px;">
+                  .nowrap — This text does not wrap to the next line even if it overflows
+                </div>
+                <div class="wrap bg-neutral p-2 rounded" style="width: 150px; word-break: break-all;">
+                  .wrap — ThisLongWordWillBreak
+                </div>
+                <div class="ellipsis bg-neutral p-2 rounded" style="width: 200px;">
+                  .ellipsis — This text will be truncated with dots when it overflows the container
+                </div>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Lists</h4>
+              <p><code class="t">ul.t, ol.t, dl.t</code> — Styled lists with proper spacing.</p>
+              <div class="row g-4">
+                <ul class="t">
+                  <li>Unordered item 1</li>
+                  <li>Unordered item 2</li>
+                  <li>Unordered item 3</li>
+                </ul>
+                <ol class="t">
+                  <li>Ordered item 1</li>
+                  <li>Ordered item 2</li>
+                  <li>Ordered item 3</li>
+                </ol>
+                <dl class="t">
+                  <dt>Term 1</dt>
+                  <dd>Definition for term 1</dd>
+                  <dt>Term 2</dt>
+                  <dd>Definition for term 2</dd>
+                </dl>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Decorations</h4>
+              <p><code class="t">.parens, .brackets, .sqbrackets</code> — Automatic wrapper decorations.</p>
+              <div class="stack g-2">
+                <span class="parens">.parens</span>
+                <span class="brackets">.brackets</span>
+                <span class="sqbrackets">.sqbrackets</span>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Text Direction</h4>
+              <p><code class="t">.t-ltr, .t-rtl</code> — Text direction for internationalization.</p>
+              <div class="stack g-2">
+                <p class="t-ltr">.t-ltr — Left-to-right text direction (default)</p>
+                <p class="t-rtl">.t-rtl — Right-to-left text direction</p>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Delimiters</h4>
+              <p><code class="t">.sep-path, .sep-comma, .sep-dash</code> — Automatic separators between children.</p>
+              <div class="stack g-2">
+                <div class="row sep-path">
+                  <span>Home</span>
+                  <span>Products</span>
+                  <span>Details</span>
+                </div>
+                <div class="row sep-comma">
+                  <span>Apple</span>
+                  <span>Banana</span>
+                  <span>Cherry</span>
+                </div>
+                <div class="row sep-dash">
+                  <span>First</span>
+                  <span>Second</span>
+                  <span>Third</span>
+                </div>
+              </div>
+            </div>
+            <div class="ModuleSection p-4 bd rounded stack g-4">
+              <h4 class="t">Rich Text Content</h4>
+              <p><code class="t">.t</code> — Container class for rich text with all styles applied.</p>
+              <div class="t bg-neutral p-4 rounded">
+                <p>This is a paragraph within a <code>.t</code> container. It has <strong>bold text</strong>, <em>italic text</em>, and <a href="#">links</a>.</p>
+                <blockquote>This is a blockquote with a left border.</blockquote>
+                <pre><code>// This is a code block
+function example() {
+  return "Hello World";
+}</code></pre>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
-    </template>
-    <template id="ColorSwatch">
-      <li class="selectable rounded stack p-1 g-1" out:class="selected" style="width:64px" on:click>
-        <div class="square bd-paper bd" out:data-color="color"  out:class="class" ></div>
-        <div class="t-center t-small" out="name">Untitled</div>
-      </li>
-    </template>
-  </section>
+    </main>
+  </body>
   <script type="module">
-    import css, {layers} from "@littlecss.js"
     import all from "@littlecss/all"
-    css.mount(all)
-  </script>
-  <script type="module">
-    import {ui} from "@select/ui"
+    import {COLORS} from "@littlecss/colors"
+    import css from "@littlecss.js"
     import cell from "@select/cells"
-    import {COLOR_NAMES} from "@littlecss/colors"
-    console.log("COLOR_NAMES:", COLOR_NAMES)
-    const selectedColor = cell()
-    const selectedShade = cell()
-    const ColorSwatch = ui("#ColorSwatch").does({
-      		selected: (self, {color,shade,selectedColor,selectpdShade}) =>
-          (selectedColor?.value === color ?? "neutral") || (selectedShade?.value!== undefined && selectedShade?.value === shade)  ? "selected" : "",
-      		"class": (self, {color,shade,selectedColor,selectpdShade}) => [`bg-${color ?? "neutral"} bg`, `bg-${shade ?? 5}`],
-          click: (self, {color,shade},event)=>({selectedColor:color,selectedShade:shade})
-    });
-     			const SHADES = new Array(10).fill(0).map((_,i)=>i);
-    const ColorSwatches = ui("#ColorSwatches").init(()=>{
-      return {selectedColor,selectedShade}
-    }).does({
-      colors: (self,{selectedColor}) => COLOR_NAMES.map(color => ColorSwatch({color,selectedColor:selectedColor,name:color})),
-     	shades: (self,{selectedColor,selectedShade}) => SHADES.map(shade => ColorSwatch({color:selectedColor.value,shade,selectedShade,name:shade})),
-      buttonClass: (self,{selectedColor,selectedShade}) => [selectedColor?.value, selectedShade?.value !== undefined ? `bg-${selectedShade.value}` : null]
+    import {ui} from "@select/ui"
+
+    css.mount(all())
+
+    const activeModule = cell(null)
+
+    // Introspect sections from DOM
+    const SectionItem = (props) => {
+      const {sectionId, section, name, activeModule} = props
+      const li = document.createElement("li")
+      li.className = `selectable p-2 ${sectionId === activeModule.value ? "selected" : ""}`
+      li.textContent = name
+      li.addEventListener("click", () => {
+        activeModule.set(sectionId)
+        section?.scrollIntoView({behavior: "smooth"})
+      })
+      return li
+    }
+
+    const SectionNav = ui("#modules").init(() => ({activeModule})).does({
+      content: (self, {activeModule}) => {
+        const sections = document.querySelectorAll("#sections > section[id]")
+        const items = Array.from(sections).map(section => {
+          const sectionId = section.id
+          const heading = section.querySelector("h3")
+          const name = heading ? heading.textContent : sectionId
+          return SectionItem({sectionId, section, name, activeModule})
+        })
+        return items
+      }
     })
-    ColorSwatches.new().set().mount("#colors")
+
+    // Initialize after DOM is ready
+    requestAnimationFrame(() => {
+      SectionNav.new().set().mount()
+
+      // Set first section as active initially
+      const firstSection = document.querySelector("#sections > section[id]")
+      if (firstSection) {
+        activeModule.set(firstSection.id)
+      }
+    })
   </script>
-</body>
 </html>
