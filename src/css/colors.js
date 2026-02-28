@@ -1,4 +1,4 @@
-import { group, rule, vars } from "../js/littlecss.js";
+import { contrast, group, rule, vars } from "../js/littlecss.js";
 
 // ----------------------------------------------------------------------------
 //
@@ -101,6 +101,11 @@ const luminosityScale = [
 	50, // 10 - lightest
 ];
 
+function colormix(base, tint, blend, opacity) {
+	const color = `color-mix(in srgb,${tint},${base} ${blend})`;
+	return `color-mix(in srgb, transparent, ${color} ${opacity})`;
+}
+
 // ----------------------------------------------------------------------------
 //
 // EXPORTS
@@ -149,6 +154,10 @@ function colors(colors = COLORS) {
 		// .tx - applies the computed text color
 		rule(".tx", {
 			color: `color-mix(in oklch, color-mix(in oklch, var(--text-base), var(--text-tint) calc((1 - var(--text-blend)) * 100%)), transparent calc((1 - var(--text-opacity)) * 100%))`,
+		}),
+		// .tx-contrast - automatically selects paper or ink for maximum contrast
+		rule(".tx-contrast", {
+			color: contrast("var(--text-base)"),
 		}),
 		// .bd - applies the computed border color
 		rule(".bd", {
@@ -313,6 +322,6 @@ function times(n, f) {
 	return r;
 }
 
-export { COLORS, SEMANTIC };
+export { COLORS, SEMANTIC, colormix };
 export default colors;
 // EOF

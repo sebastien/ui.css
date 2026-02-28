@@ -2,50 +2,41 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>LittleCSS Specimen</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LittleCSS Scratchpad</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="../css/palette.css" />
     <script type="importmap">
-      {"imports": {
-      "@littlecss.js": "../js/littlecss.js",
-      "@littlecss/": "../css/",
-      "@select/ui": "../../deps/select.js/src/js/select.ui.js",
-      "@select/cells": "../../deps/select.js/src/js/select.cells.js"
-      }}
+      {"imports": {"@littlecss.js": "../js/littlecss.js", "@littlecss/": "../css/"}}
     </script>
   </head>
   <body class="p-8">
     <h1 class="t">LittleCSS Scratchpad</h1>
-    <div class="ModuleSection p-4 bd rounded stack g-4">
-      <h4 class="t">Color Families</h4>
-      <p><code class="t">.bg-{color}, .tx-{color}, .bd-{color}, .ol-{color}</code> — Semantic and utility colors for backgrounds, text, borders, and outlines.</p>
-      <p class="t-small dim"><strong>Note:</strong> When using color classes, you must also include the base class: use <code class="t">.bg .bg-primary</code> (not just <code class="t">.bg-primary</code>), <code class="t">.tx .tx-primary</code>, and <code class="t">.bd .bd-primary</code>.</p>
-      <h5 class="t">All Colors</h5>
-      <div class="stack g-3" id="colors">
-      </div>
-    </div>
-    <template id="ColorSampler">
-      <li out:class="class">
-        <span out="name"></span>
-      </li>
-    </template>
-    <template id="ColorList">
-      <ul class="row wrap" out="items"></ul>
-    </template>
+    <section>
+      <h2>Buttons</h2>
+      <h3>State</h3>
+      <blockquote>
+        <button >Default</button>
+        <button class="focus">Focus</button>
+        <button class="hover">Hover</button>
+        <button class="active">Active</button>
+        <button class="selected">Selected</button>
+        <button disabled>Disabled</button>
+      </blockquote>
+      <h3>Color</h3>
+      <blockquote>
+        <button class="neutral">Neutral</button>
+        <button class="primary">Primary</button>
+        <button class="secondary">Secondary</button>
+        <button class="tertiary">Tertiary</button>
+        <button class="success">Success</button>
+        <button class="warning">Warning</button>
+        <button class="danger">Danger</button>
+      </blockquote>
+    </section>
     <script type="module">
-      import all from "@littlecss/all"
-      import {COLORS} from "@littlecss/colors"
-      import css from "@littlecss.js"
-          import {ui} from "@select/ui"
-
-        const ColorSampler = ui("#ColorSampler").does({
-        class: (self,{name,color}) => `w-10ch p-4 rounded bg bg-${color}`
-      })
-      const ColorList = ui("#ColorList").does({
-        items: (self, {colors})=>colors.map(color => ColorSampler({name: color, color}))
-      })
-      ColorList.new().set({colors:COLORS}).mount("#colors");
-      css.mount(all())
+      import all from "@littlecss/all";
+      import css from "@littlecss.js";
+      css.mount(all());
     </script>
   </body>
 </html>

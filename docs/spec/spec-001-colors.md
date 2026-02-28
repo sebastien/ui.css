@@ -89,9 +89,9 @@ The following colors are semantic:
 LittleCSS using the following variables to compute the final applied color:
 
 - `--{type}-base` for the base color (eg. `--background-base` or `--text-base`)
-- `--{type}-opacity` for affecting opacity, 0=transparent,10=opaque (default 10)
 - `--{type}-tint` the tint color to blend to (default paper)
 - `--{type}-blend` 0=100% tint, 10=100% base (default 10)
+- `--{type}-opacity` for affecting opacity, 0=transparent,10=opaque (default 10)
 
 ## Using colors
 
@@ -118,7 +118,6 @@ based on the computed background color.
 - Changing opacity can be done through `.{bg,bd,tx,ol}-{0,1,2,3,4,5,6,7,8,9,10}o`
 - Changing blend can be done through `.{bg,bd,tx,ol}-{0,1,2,3,4,5,6,7,8,9,10}b`
 - Changing tint can be done through `.{bg,bd,tx,ol}-to-{name}-{index}`
-
 
 ### Reset Classes
 

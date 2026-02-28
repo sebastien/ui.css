@@ -51,6 +51,11 @@ const blend = (color, other, percentage = 0.5, opacity = undefined) => {
 		: r;
 };
 
+const contrast = (color) => {
+	// CSS contrast-color() selects white or black automatically based on background luminance
+	return `contrast-color(${color})`;
+};
+
 const dim = (color, percentage = 0.5) => {
 	return `color-mix(in oklab, ${color}, transparent ${percent(1 - percentage)})`;
 };
@@ -546,7 +551,19 @@ css.mount = (...values) => {
 
 const mods = (classes, ...modifiers) =>
 	modifiers
-		.flatMap((_) => (_ ? [`:${_}`, `.${_}`] : ""))
+		.flatMap((_) => {
+			switch (_) {
+				case "disabled":
+					return ["[disabled]", ".disabled"];
+				case "hover":
+				case "active":
+					return [(`:${_}`, `.${_}`)];
+				case "focus":
+					return [":focus", ":focus-within", ".focus"];
+				default:
+					return _ ? `.${_}` : "";
+			}
+		})
 		.flatMap((m) => classes.map((c) => `${c}${m}`));
 
 // --
@@ -572,6 +589,7 @@ export {
 	Vars,
 	blended,
 	blend,
+	contrast,
 	dim,
 	classes,
 	cross,

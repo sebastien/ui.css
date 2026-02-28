@@ -87,188 +87,18 @@ export default group(
 			secondary: "var(--color-violet-500)",
 			tertiary: "var(--color-teal-500)",
 			success: "var(--color-green-500)",
+			valid: "var(--color-green-500)",
 			info: "var(--color-cyan-500)",
 			warning: "var(--color-amber-500)",
+			issue: "var(--color-amber-500)",
 			danger: "var(--color-red-500)",
+			error: "var(--color-red-500)",
 			// Mode-dependent colors (defaults to light mode, swapped by .dark)
 			page: vars.color.paper,
 			text: vars.color.ink,
 		},
 	}),
-	tokens({
-		controls: {
-			padding: {
-				no: "0em 0em",
-				largest: "1em 1.25em",
-				larger: "0.85em 1.15em",
-				large: "0.75em 1em",
-				regular: "0.5em 0.75em",
-				small: "0.25em 0.5em",
-				smaller: "0.15em 0.35em",
-				smallest: "0.15em 0.15em",
-			},
-			size: {
-				smallest: vars.textsize.size[0],
-				smaller: vars.textsize.size[1],
-				small: vars.textsize.size[2],
-				regular: vars.textsize.size[3],
-				large: vars.textsize.size[4],
-				larger: vars.textsize.size[5],
-				largest: vars.textsize.size[6],
-			},
-			border: {
-				blend: "50%",
-				opacity: "80%",
-			},
-			outline: {
-				blend: "50%",
-				opacity: "20%",
-			},
-			hover: { delta: "15%" },
-			active: { delta: "20%" },
-			selected: { delta: "25%" },
-			disabled: { opacity: "50%" },
-		},
-		selectable: {
-			blend: "50%",
-			hover: { opacity: vars.controls.hover.delta },
-			active: { opacity: vars.controls.active.delta },
-			selected: { opacity: vars.controls.selected.delta },
-			disabled: { opacity: vars.controls.disabled.opacity },
-		},
-		button: {
-			blend: "75%",
-			opacity: "100%",
-			base: vars.color.action,
-			tint: vars.color.paper,
-			font: {
-				family: vars.font.controls.family,
-				line: vars.font.controls.line,
-				weight: vars.font.controls.weight,
-				size: vars.font.controls.size,
-			},
-			border: {
-				width: "1px",
-				blend: "80%",
-				opacity: "90%",
-			},
-			outline: {
-				width: "2px",
-				blend: "70%",
-				opacity: "20%",
-			},
-			// We alter the blend by the same amount as base controls opacity
-			hover: {
-				blend: "calc(var(--button-blend) + var(--controls-hover-delta))",
-				opacity: vars.button.opacity,
-			},
-			active: {
-				blend: "calc(var(--button-blend) + var(--controls-active-delta))",
-				opacity: vars.button.opacity,
-			},
-			selected: {
-				blend: "calc(var(--button-blend) + var(--controls-selected-delta))",
-				opacity: vars.button.opacity,
-			},
-		},
-		pill: {
-			blend: "50%",
-			opacity: "100%",
-			border: {
-				width: "2px",
-				blend: "80%",
-				opacity: "90%",
-			},
-			outline: {
-				width: "2px",
-				blend: "70%",
-				opacity: "20%",
-			},
-			hover: {
-				blend: "calc(var(--pill-blend) + var(--controls-hover-delta))",
-				opacity: vars.pill.opacity,
-			},
-			active: {
-				blend: "calc(var(--pill-blend) + var(--controls-active-delta))",
-				opacity: vars.pill.opacity,
-			},
-			selected: {
-				blend: "calc(var(--pill-blend) + var(--controls-selected-delta))",
-				opacity: vars.pill.opacity,
-			},
-		},
-		input: {
-			base: vars.color.page,
-			tint: vars.color.paper,
-			color: vars.color.ink,
-			blend: "25%",
-			opacity: "50%",
-			font: {
-				family: vars.font.controls.family,
-				line: vars.font.controls.line,
-				weight: vars.font.controls.weight,
-				size: vars.font.controls.size,
-			},
-			border: {
-				width: "1px",
-				blend: "50%",
-				opacity: "80%",
-				color: vars.color.ink,
-			},
-			outline: {
-				width: "2px",
-				blend: "50%",
-				opacity: "0%",
-			},
-			focus: {
-				opacity: "90%",
-				outline: {
-					opacity: "40%",
-				},
-			},
-			// We alter the blend by the same amount as base controls opacity
-			hover: {
-				blend: "calc(var(--button-blend) + var(--controls-hover-delta))",
-				opacity: vars.button.opacity,
-			},
-			active: {
-				blend: "calc(var(--button-blend) + var(--controls-active-delta))",
-				opacity: vars.button.opacity,
-			},
-			selected: {
-				blend: "calc(var(--button-blend) + var(--controls-selected-delta))",
-				opacity: vars.button.opacity,
-			},
-		},
-		selector: {
-			blend: "50%",
-			opacity: "0%",
-			border: {
-				width: "1px",
-				blend: "50%",
-				opacity: "0%",
-			},
-			outline: {
-				width: "2px",
-				blend: "50%",
-				opacity: "0%",
-			},
-			hover: { opacity: vars.selectable.hover.opacity },
-			active: { opacity: vars.selectable.active.opacity },
-			selected: { opacity: vars.selectable.selected.opacity },
-		},
-		toggle: {
-			blend: "50%",
-			opacity: "90%",
-			border: {
-				opacity: "100%",
-				blend: "50%",
-			},
-			active: {
-				blend: "80%",
-			},
-		},
-	}),
+
 	// ------------------------------------------------------------------------
 	//
 	// COLOR PROPERTIES
@@ -434,6 +264,58 @@ export default group(
 				"200%", // 5: xl
 				"240%", // 6: xxl
 			],
+		},
+	}),
+	// ------------------------------------------------------------------------
+	//
+	// CONTROLS
+	//
+	// ------------------------------------------------------------------------
+	tokens({
+		button: {
+			font: {
+				family: vars.font.controls.family,
+				line: vars.font.controls.line,
+				weight: vars.font.controls.weight,
+				size: vars.font.controls.size,
+			},
+			// Background and text
+			color: {
+				base: vars.color.neutral[300],
+				primary: vars.color.primary,
+				secondary: vars.color.secondary,
+				tertiary: vars.color.tertiary,
+				success: vars.color.success,
+				warning: vars.color.warning,
+				danger: vars.color.danger,
+				tint: vars.color.paper,
+				blend: "0%",
+				opacity: "100%",
+			},
+			// Outline
+			focus: {
+				tint: vars.color.paper,
+				blend: "100%",
+				opacity: "50%",
+			},
+			// Background
+			selected: {
+				tint: vars.color.ink,
+				blend: "70%",
+				opacity: "100%",
+			},
+			// Background
+			hover: {
+				tint: vars.color.ink,
+				blend: "50%",
+				opacity: "50%",
+			},
+			// Background
+			active: {
+				tint: vars.color.paper,
+				blend: "80%",
+				opacity: "100%",
+			},
 		},
 	}),
 );
