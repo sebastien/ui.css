@@ -67,6 +67,10 @@ function button(colors) {
 			border: "0px solid transparent",
 			transition:
 				"background 0.2s ease, color 0.2s ease, border 0.2s ease, outline-color 0.2s ease",
+			font_family: vars.button.font.family,
+			font_line: vars.button.font.line,
+			font_weight: vars.button.font.weight,
+			font_size: vars.button.font.size,
 			...colorvars("button", "color"),
 			background: "var(--button-current-color)",
 		}),
@@ -158,11 +162,138 @@ function button(colors) {
 
 // ----------------------------------------------------------------------------
 //
+// INPUT
+//
+// ----------------------------------------------------------------------------
+function input(colors) {
+	const name = ["input", ".input"];
+	return group(
+		rule(name, {
+			padding: "0.75em",
+			outline: "0px solid transparent",
+			border: "0px solid transparent",
+			transition:
+				"background 0.2s ease, color 0.2s ease, border 0.2s ease, outline-color 0.2s ease",
+			font_family: vars.input.font.family,
+			font_line: vars.input.font.line,
+			font_weight: vars.input.font.weight,
+			font_size: vars.input.font.size,
+			...colorvars("input", "color"),
+			border_width: "1px",
+			border_color: colormix(
+				vars.input.current.color,
+				vars.color.paper,
+				"25%",
+				"90%",
+			),
+			background: colormix(
+				vars.input.current.color,
+				vars.color.paper,
+				"5%",
+				"100%",
+			),
+		}),
+		// ====================================================================
+		// COLORS
+		// ====================================================================
+		...colors.map((variant) =>
+			rule(mods(name, variant), {
+				__input_color_base: vars.input.color[variant],
+				background: colormix(
+					vars.input.current.color,
+					vars.color.paper,
+					"20%",
+					"100%",
+				),
+				color: contrast(vars.input.current.color),
+			}),
+		),
+		// ====================================================================
+		// STATES
+		// ====================================================================
+		rule(mods(name, "hover"), {}),
+		rule(mods(name, "focus"), {
+			outline_width: "2px",
+			outline_color: colormix(
+				vars.input.current.color,
+				vars.input.focus.tint,
+				vars.input.focus.blend,
+				vars.input.focus.opacity,
+			),
+			background_color: colormix(
+				vars.input.current.color,
+				vars.color.paper,
+				"0%",
+				"100%",
+			),
+		}),
+		rule(mods(name, "active"), {
+			border_color: colormix(
+				vars.input.current.color,
+				vars.input.active.tint,
+				vars.input.active.blend,
+				vars.input.active.opacity,
+			),
+		}),
+		rule(mods(name, "disabled"), {
+			cursor: "default",
+			background: colormix(vars.colo.neutral, vars.color.paper, "50%", "75%"),
+			color: colormix(vars.color.neutral, vars.color.ink, "50%", "75%"),
+		}),
+		// ====================================================================
+		// STYLE
+		// ====================================================================
+		rule(mods(name, "default"), {
+			border_width: "3px",
+			border_color: vars.input.current.color,
+			font_weight: "bold",
+		}),
+		rule(mods(name, "outline"), {
+			border_width: "1px",
+			background: "transparent",
+			border_color: colormix(
+				vars.input.current.color,
+				vars.color.paper,
+				"80%",
+				"50%",
+			),
+			color: colormix(vars.input.current.color, vars.color.ink, "50%", "100%"),
+		}),
+		rule(cross(name, [".blank"]), {
+			background: "transparent",
+			border_color: "transparent",
+			__input_color_opacity: "50%",
+		}),
+		rule(cross(name, [".icon"]), {
+			background: "transparent",
+			__input_color_opacity: "50%",
+			aspect_ratio: "1",
+		}),
+		rule(cross(name, [".bare"], STATES), {
+			background: "transparent",
+			outline_width: "0px",
+			border_width: "0px",
+			__input_color_opacity: "100%",
+		}),
+	);
+}
+
+// ----------------------------------------------------------------------------
+//
 // EXPORTS
 //
 // ----------------------------------------------------------------------------
 
+const colors = [
+	"primary",
+	"secondary",
+	"tertiary",
+	"success",
+	"warning",
+	"danger",
+];
 export default named({
-	button: button(SEMANTIC),
+	button: button(colors),
+	input: input(colors),
 });
 // EOF

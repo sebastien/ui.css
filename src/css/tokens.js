@@ -272,6 +272,9 @@ export default group(
 	//
 	// ------------------------------------------------------------------------
 	tokens({
+		// ====================================================================
+		// BUTTON
+		// ====================================================================
 		button: {
 			font: {
 				family: vars.font.controls.family,
@@ -297,6 +300,54 @@ export default group(
 				tint: vars.color.paper,
 				blend: "100%",
 				opacity: "50%",
+			},
+			// Background
+			selected: {
+				tint: vars.color.ink,
+				blend: "70%",
+				opacity: "100%",
+			},
+			// Background
+			hover: {
+				tint: vars.color.ink,
+				blend: "50%",
+				opacity: "50%",
+			},
+			// Background
+			active: {
+				tint: vars.color.paper,
+				blend: "80%",
+				opacity: "100%",
+			},
+		},
+		// ====================================================================
+		// INPUTS
+		// ====================================================================
+		input: {
+			font: {
+				family: vars.font.controls.family,
+				line: vars.font.controls.line,
+				weight: vars.font.controls.weight,
+				size: vars.font.controls.size,
+			},
+			// Background and text
+			color: {
+				base: vars.color.neutral,
+				primary: vars.color.primary,
+				secondary: vars.color.secondary,
+				tertiary: vars.color.tertiary,
+				success: vars.color.success,
+				warning: vars.color.warning,
+				danger: vars.color.danger,
+				tint: vars.color.paper,
+				blend: "0%",
+				opacity: "100%",
+			},
+			// Outline
+			focus: {
+				tint: vars.color.paper,
+				blend: "100%",
+				opacity: "10%",
 			},
 			// Background
 			selected: {
