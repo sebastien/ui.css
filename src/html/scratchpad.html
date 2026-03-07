@@ -9,8 +9,8 @@
       {"imports": {"@littlecss.js": "../js/littlecss.js", "@littlecss/": "../css/"}}
     </script>
   </head>
-  <body class="p-8">
-    <h1 class="t">LittleCSS Scratchpad</h1>
+  <body class="p-8 t">
+    <h1>LittleCSS Scratchpad</h1>
     <section>
       <h2>Buttons</h2>
       <h3>State</h3>
@@ -101,33 +101,76 @@
         <div>
           <h3>State</h3>
           <blockquote class="stack g-2 bg-neutral-9 bg p-4">
-            <input                  placeholder="Default" />
-            <input class="focus"    placeholder="Focus" />
-            <input class="hover"    placeholder="Hover" />
-            <input class="active"   placeholder="Active" />
-            <input class="selected" placeholder="Selected" />
-            <input disabled placeholder="Disabled" />
+            <textarea                  placeholder="Default"></textarea>
+            <textarea class="focus"    placeholder="Focus"></textarea>
+            <textarea class="hover"    placeholder="Hover"></textarea>
+            <textarea class="active"   placeholder="Active"></textarea>
+            <textarea class="selected" placeholder="Selected"></textarea>
+            <textarea disabled placeholder="Disabled"></textarea>
           </blockquote>
         </div>
         <div>
           <h3>Color</h3>
           <blockquote class="stack g-2 bg-neutral-9 bg p-4">
-            <input class="neutral"   placeholder="Neutral" />
-            <input class="primary"   placeholder="Primary" />
-            <input class="secondary" placeholder="Secondary" />
-            <input class="tertiary"  placeholder="Tertiary" />
-            <input class="success"   placeholder="Success" />
-            <input class="warning"   placeholder="Warning" />
-            <input class="danger"    placeholder="Danger" />
+            <textarea class="neutral"   placeholder="Neutral"></textarea>
+            <textarea class="primary"   placeholder="Primary"></textarea>
+            <textarea class="secondary" placeholder="Secondary"></textarea>
+            <textarea class="tertiary"  placeholder="Tertiary"></textarea>
+            <textarea class="success"   placeholder="Success"></textarea>
+            <textarea class="warning"   placeholder="Warning"></textarea>
+            <textarea class="danger"    placeholder="Danger"></textarea>
           </blockquote>
         </div>
         <div>
           <h3>Style</h3>
           <blockquote class="stack g-2 bg-neutral-9 bg p-4">
-            <input class="default"   placeholder="Default" />
-            <input class="outline"   placeholder="Outline" />
-            <input class="blank" placeholder="Blank" />
-            <input class="bare"  placeholder="Bare" />
+            <textarea class="default"   placeholder="Default"></textarea>
+            <textarea class="outline"   placeholder="Outline"></textarea>
+            <textarea class="blank" placeholder="Blank"></textarea>
+            <textarea class="bare"  placeholder="Bare"></textarea>
+          </blockquote>
+        </div>
+      </div>
+    </section>
+    <section>
+      <h2>Checkbox</h2>
+      <div class="row stretch g-4">
+        <div>
+          <h3>Value</h3>
+          <blockquote class="stack g-2 bg-neutral-9 bg p-4">
+            <label class="row g-2"><input type="checkbox" /> Empty (unchecked)</label>
+            <label class="row g-2"><input type="checkbox" data-state="partial" /> Partial (indeterminate)</label>
+            <label class="row g-2"><input type="checkbox" checked /> Checked</label>
+          </blockquote>
+        </div>
+        <div>
+          <h3>State</h3>
+          <blockquote class="stack g-2 bg-neutral-9 bg p-4">
+            <label class="row g-2"><input type="checkbox" class="focus" /> Focus</label>
+            <label class="row g-2"><input type="checkbox" class="hover" /> Hover</label>
+            <label class="row g-2"><input type="checkbox" class="active" /> Active</label>
+            <label class="row g-2"><input type="checkbox" disabled /> Disabled</label>
+          </blockquote>
+        </div>
+        <div>
+          <h3>Color</h3>
+          <blockquote class="stack g-2 bg-neutral-9 bg p-4">
+            <label class="row g-2"><input type="checkbox" class="neutral" /> Neutral</label>
+            <label class="row g-2"><input type="checkbox" class="primary" /> Primary</label>
+            <label class="row g-2"><input type="checkbox" class="secondary" /> Secondary</label>
+            <label class="row g-2"><input type="checkbox" class="tertiary" /> Tertiary</label>
+            <label class="row g-2"><input type="checkbox" class="success" /> Success</label>
+            <label class="row g-2"><input type="checkbox" class="warning" /> Warning</label>
+            <label class="row g-2"><input type="checkbox" class="danger" /> Danger</label>
+          </blockquote>
+        </div>
+        <div>
+          <h3>Style</h3>
+          <blockquote class="stack g-2 bg-neutral-9 bg p-4">
+            <label class="row g-2"><input type="checkbox" class="default" /> Default</label>
+            <label class="row g-2"><input type="checkbox" class="outline" /> Outline</label>
+            <label class="row g-2"><input type="checkbox" class="blank" /> Blank</label>
+            <label class="row g-2"><input type="checkbox" class="bare" /> Bare</label>
           </blockquote>
         </div>
       </div>
@@ -135,7 +178,13 @@
     <script type="module">
       import all from "@littlecss/all";
       import css from "@littlecss.js";
+
       css.mount(all());
+
+      // Set indeterminate state for partial checkboxes
+      document.querySelectorAll('input[type="checkbox"][data-state="partial"]').forEach(cb => {
+        cb.indeterminate = true;
+      });
     </script>
   </body>
 </html>

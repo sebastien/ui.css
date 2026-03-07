@@ -280,6 +280,293 @@ function input(colors) {
 
 // ----------------------------------------------------------------------------
 //
+// TEXTAREA
+//
+// ----------------------------------------------------------------------------
+function textarea(colors) {
+	const name = ["textarea", ".textarea"];
+	return group(
+		rule(name, {
+			padding: "0.75em",
+			outline: "0px solid transparent",
+			border: "0px solid transparent",
+			transition:
+				"background 0.2s ease, color 0.2s ease, border 0.2s ease, outline-color 0.2s ease",
+			font_family: vars.textarea.font.family,
+			font_line: vars.textarea.font.line,
+			font_weight: vars.textarea.font.weight,
+			font_size: vars.textarea.font.size,
+			...colorvars("textarea", "color"),
+			border_width: "1px",
+			border_color: colormix(
+				vars.textarea.current.color,
+				vars.color.paper,
+				"25%",
+				"90%",
+			),
+			background: colormix(
+				vars.textarea.current.color,
+				vars.color.paper,
+				"5%",
+				"100%",
+			),
+		}),
+		// ====================================================================
+		// COLORS
+		// ====================================================================
+		...colors.map((variant) =>
+			rule(mods(name, variant), {
+				__textarea_color_base: vars.textarea.color[variant],
+				background: colormix(
+					vars.textarea.current.color,
+					vars.color.paper,
+					"20%",
+					"100%",
+				),
+				color: contrast(vars.textarea.current.color),
+			}),
+		),
+		// ====================================================================
+		// STATES
+		// ====================================================================
+		rule(mods(name, "hover"), {}),
+		rule(mods(name, "focus"), {
+			outline_width: "2px",
+			outline_color: colormix(
+				vars.textarea.current.color,
+				vars.textarea.focus.tint,
+				vars.textarea.focus.blend,
+				vars.textarea.focus.opacity,
+			),
+			background_color: colormix(
+				vars.textarea.current.color,
+				vars.color.paper,
+				"0%",
+				"100%",
+			),
+		}),
+		rule(mods(name, "active"), {
+			border_color: colormix(
+				vars.textarea.current.color,
+				vars.textarea.active.tint,
+				vars.textarea.active.blend,
+				vars.textarea.active.opacity,
+			),
+		}),
+		rule(mods(name, "disabled"), {
+			cursor: "default",
+			background: colormix(vars.colo.neutral, vars.color.paper, "50%", "75%"),
+			color: colormix(vars.color.neutral, vars.color.ink, "50%", "75%"),
+		}),
+		// ====================================================================
+		// STYLE
+		// ====================================================================
+		rule(mods(name, "default"), {
+			border_width: "3px",
+			border_color: vars.textarea.current.color,
+			font_weight: "bold",
+		}),
+		rule(mods(name, "outline"), {
+			border_width: "1px",
+			background: "transparent",
+			border_color: colormix(
+				vars.textarea.current.color,
+				vars.color.paper,
+				"80%",
+				"50%",
+			),
+			color: colormix(
+				vars.textarea.current.color,
+				vars.color.ink,
+				"50%",
+				"100%",
+			),
+		}),
+		rule(cross(name, [".blank"]), {
+			background: "transparent",
+			border_color: "transparent",
+			__textarea_color_opacity: "50%",
+		}),
+		rule(cross(name, [".icon"]), {
+			background: "transparent",
+			__textarea_color_opacity: "50%",
+			aspect_ratio: "1",
+		}),
+		rule(cross(name, [".bare"], STATES), {
+			background: "transparent",
+			outline_width: "0px",
+			border_width: "0px",
+			__textarea_color_opacity: "100%",
+		}),
+	);
+}
+
+// ----------------------------------------------------------------------------
+//
+// CHECKBOX
+//
+// ----------------------------------------------------------------------------
+function checkbox(colors) {
+	const name = ['input[type="checkbox"]', ".checkbox"];
+	return group(
+		rule(name, {
+			padding: "0.75em",
+			outline: "0px solid transparent",
+			border: "0px solid transparent",
+			transition:
+				"background 0.2s ease, color 0.2s ease, border 0.2s ease, outline-color 0.2s ease",
+			font_family: vars.checkbox.font.family,
+			font_line: vars.checkbox.font.line,
+			font_weight: vars.checkbox.font.weight,
+			font_size: vars.checkbox.font.size,
+			...colorvars("checkbox", "color"),
+			border_width: "1px",
+			border_color: colormix(
+				vars.checkbox.current.color,
+				vars.color.paper,
+				"25%",
+				"90%",
+			),
+			background: colormix(
+				vars.checkbox.current.color,
+				vars.color.paper,
+				"5%",
+				"100%",
+			),
+		}),
+		// ====================================================================
+		// COLORS
+		// ====================================================================
+		...colors.map((variant) =>
+			rule(mods(name, variant), {
+				__checkbox_color_base: vars.checkbox.color[variant],
+				background: colormix(
+					vars.checkbox.current.color,
+					vars.color.paper,
+					"20%",
+					"100%",
+				),
+				color: contrast(vars.checkbox.current.color),
+			}),
+		),
+		// ====================================================================
+		// STATES
+		// ====================================================================
+		rule(mods(name, "hover"), {}),
+		rule(mods(name, "focus"), {
+			outline_width: "2px",
+			outline_color: colormix(
+				vars.checkbox.current.color,
+				vars.checkbox.focus.tint,
+				vars.checkbox.focus.blend,
+				vars.checkbox.focus.opacity,
+			),
+			background_color: colormix(
+				vars.checkbox.current.color,
+				vars.color.paper,
+				"0%",
+				"100%",
+			),
+		}),
+		rule(mods(name, "active"), {
+			border_color: colormix(
+				vars.checkbox.current.color,
+				vars.checkbox.active.tint,
+				vars.checkbox.active.blend,
+				vars.checkbox.active.opacity,
+			),
+		}),
+		rule(mods(name, "disabled"), {
+			cursor: "default",
+			background: colormix(vars.colo.neutral, vars.color.paper, "50%", "75%"),
+			color: colormix(vars.color.neutral, vars.color.ink, "50%", "75%"),
+		}),
+		// ====================================================================
+		// CHECKED & PARTIAL CONTENT
+		// ====================================================================
+		rule(
+			name.map((n) => `${n}:checked`),
+			{
+				appearance: "none",
+				position: "relative",
+			},
+		),
+		rule(
+			name.map((n) => `${n}:checked::after`),
+			{
+				content: vars.checkbox.content.checked,
+				position: "absolute",
+				top: "50%",
+				left: "50%",
+				transform: "translate(-50%, -50%)",
+				font_size: "1.2em",
+				color: contrast(vars.checkbox.current.color),
+			},
+		),
+		rule(
+			name.map((n) => `${n}:indeterminate`),
+			{
+				appearance: "none",
+				position: "relative",
+			},
+		),
+		rule(
+			name.map((n) => `${n}:indeterminate::after`),
+			{
+				content: vars.checkbox.content.partial,
+				position: "absolute",
+				top: "50%",
+				left: "50%",
+				transform: "translate(-50%, -50%)",
+				font_size: "1.2em",
+				color: contrast(vars.checkbox.current.color),
+			},
+		),
+		// ====================================================================
+		// STYLE
+		// ====================================================================
+		rule(mods(name, "default"), {
+			border_width: "3px",
+			border_color: vars.checkbox.current.color,
+			font_weight: "bold",
+		}),
+		rule(mods(name, "outline"), {
+			border_width: "1px",
+			background: "transparent",
+			border_color: colormix(
+				vars.checkbox.current.color,
+				vars.color.paper,
+				"80%",
+				"50%",
+			),
+			color: colormix(
+				vars.checkbox.current.color,
+				vars.color.ink,
+				"50%",
+				"100%",
+			),
+		}),
+		rule(cross(name, [".blank"]), {
+			background: "transparent",
+			border_color: "transparent",
+			__checkbox_color_opacity: "50%",
+		}),
+		rule(cross(name, [".icon"]), {
+			background: "transparent",
+			__checkbox_color_opacity: "50%",
+			aspect_ratio: "1",
+		}),
+		rule(cross(name, [".bare"], STATES), {
+			background: "transparent",
+			outline_width: "0px",
+			border_width: "0px",
+			__checkbox_color_opacity: "100%",
+		}),
+	);
+}
+
+// ----------------------------------------------------------------------------
+//
 // EXPORTS
 //
 // ----------------------------------------------------------------------------
@@ -295,5 +582,7 @@ const colors = [
 export default named({
 	button: button(colors),
 	input: input(colors),
+	textarea: textarea(colors),
+	checkbox: checkbox(colors),
 });
 // EOF
