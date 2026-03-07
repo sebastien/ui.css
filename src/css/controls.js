@@ -19,6 +19,17 @@ const SIZES = [
 	"largest",
 ];
 
+const STATES = [
+	"",
+	":hover",
+	"hover",
+	":active",
+	".active",
+	":focus",
+	":focus-within",
+	".focus",
+];
+
 function colorvars(name, mode = "color") {
 	return {
 		[`--${name}-current-color-base`]: vars[name][mode].base,
@@ -107,6 +118,40 @@ function button(colors) {
 				"50%",
 				"75%",
 			),
+		}),
+		// ====================================================================
+		// STYLE
+		// ====================================================================
+		rule(mods(name, "default"), {
+			border_width: "3px",
+			border_color: vars.button.current.color,
+			font_weight: "bold",
+		}),
+		rule(mods(name, "outline"), {
+			border_width: "1px",
+			background: "transparent",
+			border_color: colormix(
+				vars.button.current.color,
+				vars.color.ink,
+				"80%",
+				"100%",
+			),
+			color: colormix(vars.button.current.color, vars.color.ink, "50%", "100%"),
+		}),
+		rule(cross(name, [".blank"]), {
+			background: "transparent",
+			__button_color_opacity: "50%",
+		}),
+		rule(cross(name, [".icon"]), {
+			background: "transparent",
+			__button_color_opacity: "50%",
+			aspect_ratio: "1",
+		}),
+		rule(cross(name, [".bare"], STATES), {
+			background: "transparent",
+			outline_width: "0px",
+			border_width: "0px",
+			__button_color_opacity: "100%",
 		}),
 	);
 }
