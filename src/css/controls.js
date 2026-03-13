@@ -52,6 +52,31 @@ function state(name, mode = "color") {
 	};
 }
 
+function bare(name, variant) {
+	return rule(
+		[
+			...cross(name, [".bare"]),
+			...cross(
+				name,
+				[".bare"],
+				STATES.filter((_) => _),
+			),
+		],
+		{
+			margin: "0px",
+			padding: "0px",
+			background: "transparent",
+			border: "0px solid transparent",
+			outline: "0px solid transparent",
+			border_radius: "0px",
+			box_shadow: "none",
+			transition: "none",
+			appearance: "none",
+			[`__${variant}_color_opacity`]: "100%",
+		},
+	);
+}
+
 // ----------------------------------------------------------------------------
 //
 // BUTTON
@@ -68,7 +93,7 @@ function button(colors) {
 			transition:
 				"background 0.2s ease, color 0.2s ease, border 0.2s ease, outline-color 0.2s ease",
 			font_family: vars.button.font.family,
-			font_line: vars.button.font.line,
+			line_height: vars.button.font.line,
 			font_weight: vars.button.font.weight,
 			font_size: vars.button.font.size,
 			...colorvars("button", "color"),
@@ -88,15 +113,8 @@ function button(colors) {
 		// ====================================================================
 		// STATES
 		// ====================================================================
-		rule(mods(name, "hover"), {
-			background: colormix(
-				vars.button.current.color,
-				vars.button.hover.tint,
-				vars.button.hover.blend,
-				vars.button.hover.opacity,
-			),
-		}),
-		rule(mods(name, "focus"), {
+
+		rule(cross(name, [":focus-visible", ".focus"]), {
 			outline_width: "2px",
 			outline_color: colormix(
 				vars.button.current.color,
@@ -111,6 +129,14 @@ function button(colors) {
 				vars.button.active.tint,
 				vars.button.active.blend,
 				vars.button.active.opacity,
+			),
+		}),
+		rule(mods(name, "hover"), {
+			background: colormix(
+				vars.button.current.color,
+				vars.button.hover.tint,
+				vars.button.hover.blend,
+				vars.button.hover.opacity,
 			),
 		}),
 		rule(mods(name, "disabled"), {
@@ -147,16 +173,34 @@ function button(colors) {
 			__button_color_opacity: "50%",
 		}),
 		rule(cross(name, [".icon"]), {
-			background: "transparent",
 			__button_color_opacity: "50%",
-			aspect_ratio: "1",
-		}),
-		rule(cross(name, [".bare"], STATES), {
 			background: "transparent",
-			outline_width: "0px",
-			border_width: "0px",
-			__button_color_opacity: "100%",
+			padding: "0.25em",
+			display: "inline-flex",
+			justify_content: "center",
+			align_items: "center",
+			width: "1em",
+			height: "1em",
+			aspect_ratio: "1",
+			box_sizing: "content-box",
 		}),
+		rule(cross(name, [".outline", ".icon"], [":hover", ".hover"]), {
+			background: colormix(
+				vars.button.current.color,
+				vars.button.hover.tint,
+				vars.button.hover.blend,
+				vars.button.hover.opacity,
+			),
+		}),
+		rule(cross(name, [".outline", ".icon"], [":active", ".active"]), {
+			background: colormix(
+				vars.button.current.color,
+				vars.button.active.tint,
+				vars.button.active.blend,
+				vars.button.active.opacity,
+			),
+		}),
+		bare(name, "button"),
 	);
 }
 
@@ -175,10 +219,13 @@ function input(colors) {
 			transition:
 				"background 0.2s ease, color 0.2s ease, border 0.2s ease, outline-color 0.2s ease",
 			font_family: vars.input.font.family,
-			font_line: vars.input.font.line,
+			line_height: vars.input.font.line,
 			font_weight: vars.input.font.weight,
 			font_size: vars.input.font.size,
 			...colorvars("input", "color"),
+			display: "inline-flex",
+			justify_content: "stretch",
+			align_items: "center",
 			border_width: "1px",
 			border_color: colormix(
 				vars.input.current.color,
@@ -269,12 +316,7 @@ function input(colors) {
 			__input_color_opacity: "50%",
 			aspect_ratio: "1",
 		}),
-		rule(cross(name, [".bare"], STATES), {
-			background: "transparent",
-			outline_width: "0px",
-			border_width: "0px",
-			__input_color_opacity: "100%",
-		}),
+		bare(name, "input"),
 	);
 }
 
@@ -293,7 +335,7 @@ function textarea(colors) {
 			transition:
 				"background 0.2s ease, color 0.2s ease, border 0.2s ease, outline-color 0.2s ease",
 			font_family: vars.textarea.font.family,
-			font_line: vars.textarea.font.line,
+			line_height: vars.textarea.font.line,
 			font_weight: vars.textarea.font.weight,
 			font_size: vars.textarea.font.size,
 			...colorvars("textarea", "color"),
@@ -392,12 +434,7 @@ function textarea(colors) {
 			__textarea_color_opacity: "50%",
 			aspect_ratio: "1",
 		}),
-		rule(cross(name, [".bare"], STATES), {
-			background: "transparent",
-			outline_width: "0px",
-			border_width: "0px",
-			__textarea_color_opacity: "100%",
-		}),
+		bare(name, "textarea"),
 	);
 }
 
@@ -417,7 +454,7 @@ function checkbox(colors) {
 			transition:
 				"background 0.2s ease, color 0.2s ease, border 0.2s ease, outline-color 0.2s ease",
 			font_family: vars.checkbox.font.family,
-			font_line: vars.checkbox.font.line,
+			line_height: vars.checkbox.font.line,
 			font_weight: vars.checkbox.font.weight,
 			font_size: vars.checkbox.font.size,
 			...colorvars("checkbox", "color"),
@@ -557,12 +594,7 @@ function checkbox(colors) {
 			__checkbox_color_opacity: "50%",
 			aspect_ratio: "1",
 		}),
-		rule(cross(name, [".bare"], STATES), {
-			background: "transparent",
-			outline_width: "0px",
-			border_width: "0px",
-			__checkbox_color_opacity: "100%",
-		}),
+		bare(name, "checkbox"),
 	);
 }
 
@@ -583,7 +615,7 @@ function radio(colors) {
 			transition:
 				"background 0.2s ease, color 0.2s ease, border 0.2s ease, outline-color 0.2s ease",
 			font_family: vars.radio.font.family,
-			font_line: vars.radio.font.line,
+			line_height: vars.radio.font.line,
 			font_weight: vars.radio.font.weight,
 			font_size: vars.radio.font.size,
 			...colorvars("radio", "color"),
@@ -690,12 +722,7 @@ function radio(colors) {
 			__radio_color_opacity: "50%",
 			aspect_ratio: "1",
 		}),
-		rule(cross(name, [".bare"], STATES), {
-			background: "transparent",
-			outline_width: "0px",
-			border_width: "0px",
-			__radio_color_opacity: "100%",
-		}),
+		bare(name, "radio"),
 	);
 }
 

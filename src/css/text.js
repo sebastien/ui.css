@@ -12,14 +12,14 @@ export default named({
 		...sizes.map((k, i) =>
 			rule([times(7, (i) => `h${i + 1}.${k}`)], {
 				font_size: `${vars.heading.size[i]}`,
-			})
+			}),
 		),
 		// .hX rules do not have padding
 		...times(7, (i) =>
 			rule(`.h${i + 1}`, {
 				font_size: `${vars.heading.size[6 - i]}`,
 				font_weight: "600",
-			})
+			}),
 		),
 		// hX.t have padding/margin
 		...times(7, (i) =>
@@ -29,8 +29,8 @@ export default named({
 				margin_top: `${vars.margin[2]}`,
 				margin_bottom: `${vars.margin[2]}`,
 				padding_bottom: `${vars.pad[0]}`,
-			})
-		)
+			}),
+		),
 	),
 	lists: group(
 		rule(["p.t", ".t p"], {
@@ -135,7 +135,7 @@ export default named({
 		rule([".t dd", "dd.t"], {
 			margin_top: "0.5em",
 			margin_bottom: "1.5em",
-		})
+		}),
 	),
 	whitespace: group(
 		rule(".nobreak", { white_space: "nobreak" }),
@@ -160,18 +160,18 @@ export default named({
 		}),
 		rule(".pre", { white_space: "pre" }),
 		rule(".pre-lines", { white_space: "pre-line" }),
-		rule(".ellipsis", { text_overflow: "ellipsis", overflow: "hidden" })
+		rule(".ellipsis", { text_overflow: "ellipsis", overflow: "hidden" }),
 	),
 	transform: group(
 		rule(".upper", { text_transform: "uppercase" }),
 		rule(".lower", { text_transform: "lowercase" }),
-		rule(".cap", { text_transform: "capitalize" })
+		rule(".cap", { text_transform: "capitalize" }),
 	),
 	alignment: group(
 		rule(".t-center", { text_align: "center" }),
 		rule(".t-right", { text_align: "right" }),
 		rule(".t-left", { text_align: "left" }),
-		rule(".t-justify", { text_align: "justify" })
+		rule(".t-justify", { text_align: "justify" }),
 	),
 	direction: group(
 		rule(".t-rtl", {
@@ -180,7 +180,7 @@ export default named({
 		}),
 		rule(".t-ltr", {
 			direction: "ltr",
-		})
+		}),
 	),
 	delimiter: group(
 		rule(".sep-path>*:after", { content: '"/"' }),
@@ -192,22 +192,22 @@ export default named({
 				".sep-comma>*:last-child:after",
 				".sep-dash>*:last-child:after",
 			],
-			{ display: "none" }
-		)
+			{ display: "none" },
+		),
 	),
 	overflow: group(rule(".ellipsis", { text_overflow: "ellipsis" })),
 	decorations: named({
 		parens: group(
 			rule(".parens:before", { content: '"("' }),
-			rule(".parens:after", { content: '")"' })
+			rule(".parens:after", { content: '")"' }),
 		),
 		brackets: group(
 			rule(".brackets:before", { content: '"{"' }),
-			rule(".brackets:after", { content: '"}"' })
+			rule(".brackets:after", { content: '"}"' }),
 		),
 		sqbrackets: group(
 			rule(".sqbrackets:before", { content: '"["' }),
-			rule(".sqbrackets:after", { content: '"]"' })
+			rule(".sqbrackets:after", { content: '"]"' }),
 		),
 	}),
 	font: group(
@@ -235,11 +235,11 @@ export default named({
 		rule(".ul", { text_decoration: "underline" }),
 		rule(".ol", { text_decoration: "overline" }),
 		...Object.keys(sizenames).map((k, i) =>
-			rule(`.t-${k}`, { font_size: `${vars.textsize.size[i]}` })
+			group(
+				rule(`.t-${k}`, { font_size: `calc(1rem * ${vars.textsize.size[i]})` }),
+				rule(`.${k}`, { font_size: `calc(1em * ${vars.textsize.size[i]})` }),
+			),
 		),
-		...Object.keys(sizes).map((k, i) =>
-			rule(`.t-${k}`, { font_size: `${vars.textsize.size[i]}` })
-		)
 	),
 });
 // EOF

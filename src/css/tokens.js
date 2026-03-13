@@ -155,13 +155,13 @@ export default group(
 		// Text sizing properties (separate from text color)
 		textsize: {
 			size: [
-				"40%", // 0: xxs
-				"60%", // 1: xs
-				"80%", // 2: s
-				"120%", // 3: m
-				"140%", // 4: l
-				"180%", // 5: xl
-				"200%", // 6: xxl
+				"0.40", // 0: xxs
+				"0.60", // 1: xs
+				"0.80", // 2: s
+				"1.20", // 3: m
+				"1.40", // 4: l
+				"1.80", // 5: xl
+				"2.00", // 6: xxl
 			],
 		},
 	}),
@@ -284,7 +284,7 @@ export default group(
 			},
 			// Background and text
 			color: {
-				base: vars.color.neutral[300],
+				base: vars.color.neutral,
 				primary: vars.color.primary,
 				secondary: vars.color.secondary,
 				tertiary: vars.color.tertiary,

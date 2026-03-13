@@ -552,16 +552,16 @@ css.mount = (...values) => {
 const mods = (classes, ...modifiers) =>
 	modifiers
 		.flatMap((_) => {
-			switch (_) {
-				case "disabled":
-					return ["[disabled]", ".disabled"];
-				case "hover":
-				case "active":
-					return [(`:${_}`, `.${_}`)];
-				case "focus":
-					return [":focus", ":focus-within", ".focus"];
-				default:
-					return _ ? `.${_}` : "";
+				switch (_) {
+					case "disabled":
+						return ["[disabled]", ".disabled"];
+					case "hover":
+					case "active":
+						return [`:${_}`, `.${_}`];
+					case "focus":
+						return [":focus", ":focus-within", ".focus"];
+					default:
+						return _ ? `.${_}` : "";
 			}
 		})
 		.flatMap((m) => classes.map((c) => `${c}${m}`));
