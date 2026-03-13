@@ -158,10 +158,10 @@ export default group(
 				"0.40", // 0: xxs
 				"0.60", // 1: xs
 				"0.80", // 2: s
-				"1.20", // 3: m
-				"1.40", // 4: l
-				"1.80", // 5: xl
-				"2.00", // 6: xxl
+				"1.00", // 3: m
+				"1.20", // 5: l
+				"1.60", // 6: xl
+				"1.80", // 7: xxl
 			],
 		},
 	}),
@@ -318,6 +318,49 @@ export default group(
 				tint: vars.color.paper,
 				blend: "80%",
 				opacity: "100%",
+			},
+		},
+		// ====================================================================
+		// BUTTON
+		// ====================================================================
+		selectable: {
+			font: {
+				family: vars.font.controls.family,
+				line: vars.font.controls.line,
+				weight: vars.font.controls.weight,
+				size: vars.font.controls.size,
+			},
+			color: {
+				base: vars.color.neutral,
+				primary: vars.color.primary,
+				secondary: vars.color.secondary,
+				tertiary: vars.color.tertiary,
+				success: vars.color.success,
+				warning: vars.color.warning,
+				danger: vars.color.danger,
+				tint: vars.color.paper,
+				blend: "0%",
+				opacity: "100%",
+			},
+			focus: {
+				tint: vars.color.paper,
+				blend: "100%",
+				opacity: "25%",
+			},
+			selected: {
+				tint: vars.color.ink,
+				blend: "70%",
+				opacity: "25%",
+			},
+			hover: {
+				tint: vars.color.ink,
+				blend: "50%",
+				opacity: "25%",
+			},
+			active: {
+				tint: vars.color.paper,
+				blend: "80%",
+				opacity: "25%",
 			},
 		},
 		// ====================================================================

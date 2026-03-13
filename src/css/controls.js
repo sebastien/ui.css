@@ -84,6 +84,8 @@ function bare(name, variant) {
 // ----------------------------------------------------------------------------
 function button(colors) {
 	const name = ["button", ".button"];
+	const selectable = [".selectable"];
+	const controls = [...name, ...selectable];
 	return group(
 		rule(name, {
 			cursor: "pointer",
@@ -96,8 +98,27 @@ function button(colors) {
 			line_height: vars.button.font.line,
 			font_weight: vars.button.font.weight,
 			font_size: vars.button.font.size,
+			display: "inline-flex",
+			justify_content: "center",
+			align_items: "center",
 			...colorvars("button", "color"),
 			background: "var(--button-current-color)",
+		}),
+		rule(selectable, {
+			cursor: "pointer",
+			outline: "0px solid transparent",
+			border: "0px solid transparent",
+			transition:
+				"background 0.2s ease, color 0.2s ease, border 0.2s ease, outline-color 0.2s ease",
+			font_family: vars.selectable.font.family,
+			line_height: vars.selectable.font.line,
+			font_weight: vars.selectable.font.weight,
+			font_size: vars.selectable.font.size,
+			justify_content: "center",
+			align_items: "center",
+			...colorvars("selectable", "color"),
+			background: "transparent",
+			color: "inherit",
 		}),
 		// ====================================================================
 		// COLORS
@@ -108,6 +129,12 @@ function button(colors) {
 					__button_color_base: vars.button.color[variant],
 					background: "var(--button-current-color)",
 					color: contrast("var(--button-current-color)"),
+				}),
+		),
+		...["primary", "secondary", "tertiary", "success", "warning", "danger"].map(
+			(variant) =>
+				rule(mods(selectable, variant), {
+					__selectable_color_base: vars.selectable.color[variant],
 				}),
 		),
 		// ====================================================================
@@ -121,6 +148,15 @@ function button(colors) {
 				vars.button.focus.tint,
 				vars.button.focus.blend,
 				vars.button.focus.opacity,
+			),
+		}),
+		rule(cross(selectable, [":focus-visible", ".focus"]), {
+			outline_width: "2px",
+			outline_color: colormix(
+				vars.selectable.current.color,
+				vars.selectable.focus.tint,
+				vars.selectable.focus.blend,
+				vars.selectable.focus.opacity,
 			),
 		}),
 		rule(mods(name, "active"), {
@@ -139,6 +175,38 @@ function button(colors) {
 				vars.button.hover.opacity,
 			),
 		}),
+		rule(mods(name, "selected"), {
+			background: colormix(
+				vars.button.current.color,
+				vars.button.selected.tint,
+				vars.button.selected.blend,
+				vars.button.selected.opacity,
+			),
+		}),
+		rule(mods(selectable, "hover"), {
+			background: colormix(
+				vars.selectable.current.color,
+				vars.selectable.hover.tint,
+				vars.selectable.hover.blend,
+				vars.selectable.hover.opacity,
+			),
+		}),
+		rule(mods(selectable, "active"), {
+			background: colormix(
+				vars.selectable.current.color,
+				vars.selectable.active.tint,
+				vars.selectable.active.blend,
+				vars.selectable.active.opacity,
+			),
+		}),
+		rule(mods(selectable, "selected"), {
+			background: colormix(
+				vars.selectable.current.color,
+				vars.selectable.selected.tint,
+				vars.selectable.selected.blend,
+				vars.selectable.selected.opacity,
+			),
+		}),
 		rule(mods(name, "disabled"), {
 			color: contrast("var(--button-current-color)"),
 			cursor: "default",
@@ -149,15 +217,25 @@ function button(colors) {
 				"75%",
 			),
 		}),
+		rule(mods(selectable, "disabled"), {
+			cursor: "default",
+			background: "transparent",
+			color: "inherit",
+		}),
 		// ====================================================================
 		// STYLE
 		// ====================================================================
-		rule(mods(name, "default"), {
+		rule(mods(controls, "default"), {
 			border_width: "3px",
 			border_color: vars.button.current.color,
 			font_weight: "bold",
 		}),
-		rule(mods(name, "outline"), {
+		rule(mods(selectable, "default"), {
+			border_width: "3px",
+			border_color: vars.selectable.current.color,
+			font_weight: "bold",
+		}),
+		rule(mods(controls, "outline"), {
 			border_width: "1px",
 			background: "transparent",
 			border_color: colormix(
@@ -168,21 +246,42 @@ function button(colors) {
 			),
 			color: colormix(vars.button.current.color, vars.color.ink, "50%", "100%"),
 		}),
-		rule(cross(name, [".blank"]), {
+		rule(mods(selectable, "outline"), {
+			border_width: "1px",
+			background: "transparent",
+			border_color: colormix(
+				vars.selectable.current.color,
+				vars.color.ink,
+				"80%",
+				"100%",
+			),
+			color: colormix(
+				vars.selectable.current.color,
+				vars.color.ink,
+				"50%",
+				"100%",
+			),
+		}),
+		rule(cross(controls, [".blank"]), {
 			background: "transparent",
 			__button_color_opacity: "50%",
+		}),
+		rule(cross(selectable, [".blank"]), {
+			background: "transparent",
+			__selectable_color_opacity: "50%",
 		}),
 		rule(cross(name, [".icon"]), {
 			__button_color_opacity: "50%",
 			background: "transparent",
 			padding: "0.25em",
-			display: "inline-flex",
-			justify_content: "center",
-			align_items: "center",
 			width: "1em",
 			height: "1em",
 			aspect_ratio: "1",
 			box_sizing: "content-box",
+		}),
+		rule(cross(selectable, [".icon"]), {
+			__selectable_color_opacity: "50%",
+			background: "transparent",
 		}),
 		rule(cross(name, [".outline", ".icon"], [":hover", ".hover"]), {
 			background: colormix(
@@ -200,7 +299,39 @@ function button(colors) {
 				vars.button.active.opacity,
 			),
 		}),
-		bare(name, "button"),
+		rule(cross(name, [".outline", ".icon"], [".selected"]), {
+			background: colormix(
+				vars.button.current.color,
+				vars.button.selected.tint,
+				vars.button.selected.blend,
+				vars.button.selected.opacity,
+			),
+		}),
+		rule(cross(selectable, [".outline", ".icon"], [":hover", ".hover"]), {
+			background: colormix(
+				vars.selectable.current.color,
+				vars.selectable.hover.tint,
+				vars.selectable.hover.blend,
+				vars.selectable.hover.opacity,
+			),
+		}),
+		rule(cross(selectable, [".outline", ".icon"], [":active", ".active"]), {
+			background: colormix(
+				vars.selectable.current.color,
+				vars.selectable.active.tint,
+				vars.selectable.active.blend,
+				vars.selectable.active.opacity,
+			),
+		}),
+		rule(cross(selectable, [".outline", ".icon"], [".selected"]), {
+			background: colormix(
+				vars.selectable.current.color,
+				vars.selectable.selected.tint,
+				vars.selectable.selected.blend,
+				vars.selectable.selected.opacity,
+			),
+		}),
+		bare(controls, "button"),
 	);
 }
 

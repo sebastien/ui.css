@@ -94,17 +94,13 @@ const sizes = [
 	"xxxxxl", // 10
 ];
 const sizenames = {
-	no: 0,
-	smallest: 1, //"xxs",
-	smaller: 2, //"xs",
-	small: 3, //"s",
-	medium: 4, //"m",
-	large: 5, //"l",
-	larger: 6, // "xl",
-	largest: 7, //"xxl",
-	huge: 8, //"xxxl",
-	huger: 9, //"xxxxl",
-	hugest: 10, //"xxxxxl",
+	smallest: 0, //"xxs",
+	smaller: 1, //"xs",
+	small: 2, //"s",
+	medium: 3, //"m",
+	large: 4, //"l",
+	larger: 5, // "xl",
+	largest: 6, //"xxl",
 };
 const sides = { l: "left", t: "top", r: "right", b: "bottom" };
 // ----------------------------------------------------------------------------
@@ -552,16 +548,16 @@ css.mount = (...values) => {
 const mods = (classes, ...modifiers) =>
 	modifiers
 		.flatMap((_) => {
-				switch (_) {
-					case "disabled":
-						return ["[disabled]", ".disabled"];
-					case "hover":
-					case "active":
-						return [`:${_}`, `.${_}`];
-					case "focus":
-						return [":focus", ":focus-within", ".focus"];
-					default:
-						return _ ? `.${_}` : "";
+			switch (_) {
+				case "disabled":
+					return ["[disabled]", ".disabled"];
+				case "hover":
+				case "active":
+					return [`:${_}`, `.${_}`];
+				case "focus":
+					return [":focus", ":focus-within", ".focus"];
+				default:
+					return _ ? `.${_}` : "";
 			}
 		})
 		.flatMap((m) => classes.map((c) => `${c}${m}`));
