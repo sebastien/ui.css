@@ -410,7 +410,8 @@ function checkbox(colors) {
 	const name = ['input[type="checkbox"]', ".checkbox"];
 	return group(
 		rule(name, {
-			padding: "0.75em",
+			cursor: "pointer",
+			padding: "0.65em",
 			outline: "0px solid transparent",
 			border: "0px solid transparent",
 			transition:
@@ -567,6 +568,139 @@ function checkbox(colors) {
 
 // ----------------------------------------------------------------------------
 //
+// RADIO
+//
+// ----------------------------------------------------------------------------
+function radio(colors) {
+	const name = ['input[type="radio"]', ".radio"];
+	return group(
+		rule(name, {
+			cursor: "pointer",
+			padding: "0.65em",
+			outline: "0px solid transparent",
+			border: "0px solid transparent",
+			border_radius: "50%",
+			transition:
+				"background 0.2s ease, color 0.2s ease, border 0.2s ease, outline-color 0.2s ease",
+			font_family: vars.radio.font.family,
+			font_line: vars.radio.font.line,
+			font_weight: vars.radio.font.weight,
+			font_size: vars.radio.font.size,
+			...colorvars("radio", "color"),
+			border_width: "1px",
+			border_color: colormix(
+				vars.color.neutral,
+				vars.color.paper,
+				"25%",
+				"90%",
+			),
+			background: vars.color.paper,
+		}),
+		// ====================================================================
+		// COLORS - affect the dot when checked
+		// ====================================================================
+		...colors.map((variant) =>
+			rule(cross(name, [`.${variant}`], [":checked"]), {
+				__radio_color_base: vars.radio.color[variant],
+			}),
+		),
+		...colors.map((variant) =>
+			rule(cross(name, [`.${variant}`], [":checked::after"]), {
+				color: vars.radio.color[variant],
+			}),
+		),
+		// ====================================================================
+		// STATES
+		// ====================================================================
+		rule(mods(name, "hover"), {}),
+		rule(mods(name, "focus"), {
+			outline_width: "2px",
+			outline_color: colormix(
+				vars.color.neutral,
+				vars.radio.focus.tint,
+				vars.radio.focus.blend,
+				vars.radio.focus.opacity,
+			),
+		}),
+		rule(mods(name, "active"), {
+			border_color: colormix(
+				vars.color.neutral,
+				vars.radio.active.tint,
+				vars.radio.active.blend,
+				vars.radio.active.opacity,
+			),
+		}),
+		rule(mods(name, "disabled"), {
+			cursor: "default",
+			background: colormix(vars.colo.neutral, vars.color.paper, "50%", "75%"),
+			border_color: colormix(
+				vars.color.neutral,
+				vars.color.paper,
+				"50%",
+				"75%",
+			),
+		}),
+		// ====================================================================
+		// CHECKED CONTENT
+		// ====================================================================
+		rule(
+			name.map((n) => `${n}:checked`),
+			{
+				appearance: "none",
+				position: "relative",
+			},
+		),
+		rule(
+			name.map((n) => `${n}:checked::after`),
+			{
+				content: vars.radio.content.checked,
+				position: "absolute",
+				top: "50%",
+				left: "50%",
+				transform: "translate(-50%, -50%)",
+				font_size: "1.2em",
+				color: vars.color.neutral,
+			},
+		),
+		// ====================================================================
+		// STYLE
+		// ====================================================================
+		rule(mods(name, "default"), {
+			border_width: "3px",
+			border_color: vars.color.neutral,
+			font_weight: "bold",
+		}),
+		rule(mods(name, "outline"), {
+			border_width: "1px",
+			background: "transparent",
+			border_color: colormix(
+				vars.color.neutral,
+				vars.color.paper,
+				"80%",
+				"50%",
+			),
+		}),
+		rule(cross(name, [".blank"]), {
+			background: "transparent",
+			border_color: "transparent",
+			__radio_color_opacity: "50%",
+		}),
+		rule(cross(name, [".icon"]), {
+			background: "transparent",
+			__radio_color_opacity: "50%",
+			aspect_ratio: "1",
+		}),
+		rule(cross(name, [".bare"], STATES), {
+			background: "transparent",
+			outline_width: "0px",
+			border_width: "0px",
+			__radio_color_opacity: "100%",
+		}),
+	);
+}
+
+// ----------------------------------------------------------------------------
+//
 // EXPORTS
 //
 // ----------------------------------------------------------------------------
@@ -584,5 +718,6 @@ export default named({
 	input: input(colors),
 	textarea: textarea(colors),
 	checkbox: checkbox(colors),
+	radio: radio(colors),
 });
 // EOF
