@@ -262,6 +262,11 @@ function button(colors) {
 				"100%",
 			),
 		}),
+		rule(mods(name, "ghost"), {
+			background: "transparent",
+			border_color: "transparent",
+			color: colormix(vars.button.current.color, vars.color.ink, "50%", "100%"),
+		}),
 		rule(cross(controls, [".blank"]), {
 			background: "transparent",
 			__button_color_opacity: "50%",
@@ -300,6 +305,30 @@ function button(colors) {
 			),
 		}),
 		rule(cross(name, [".outline", ".icon"], [".selected"]), {
+			background: colormix(
+				vars.button.current.color,
+				vars.button.selected.tint,
+				vars.button.selected.blend,
+				vars.button.selected.opacity,
+			),
+		}),
+		rule(cross(name, [".ghost"], [":hover", ".hover"]), {
+			background: colormix(
+				vars.button.current.color,
+				vars.button.hover.tint,
+				vars.button.hover.blend,
+				vars.button.hover.opacity,
+			),
+		}),
+		rule(cross(name, [".ghost"], [":active", ".active"]), {
+			background: colormix(
+				vars.button.current.color,
+				vars.button.active.tint,
+				vars.button.active.blend,
+				vars.button.active.opacity,
+			),
+		}),
+		rule(cross(name, [".ghost"], [".selected"]), {
 			background: colormix(
 				vars.button.current.color,
 				vars.button.selected.tint,
@@ -437,6 +466,11 @@ function input(colors) {
 			),
 			color: colormix(vars.input.current.color, vars.color.ink, "50%", "100%"),
 		}),
+		rule(mods(name, "ghost"), {
+			background: "transparent",
+			border_color: "transparent",
+			color: colormix(vars.input.current.color, vars.color.ink, "50%", "100%"),
+		}),
 		rule(cross(name, [".blank"]), {
 			background: "transparent",
 			border_color: "transparent",
@@ -548,6 +582,16 @@ function textarea(colors) {
 				"80%",
 				"50%",
 			),
+			color: colormix(
+				vars.textarea.current.color,
+				vars.color.ink,
+				"50%",
+				"100%",
+			),
+		}),
+		rule(mods(name, "ghost"), {
+			background: "transparent",
+			border_color: "transparent",
 			color: colormix(
 				vars.textarea.current.color,
 				vars.color.ink,
