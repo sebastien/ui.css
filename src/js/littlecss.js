@@ -1,0 +1,709 @@
+// ----------------------------------------------------------------------------
+//
+// UTILITIES
+//
+// ----------------------------------------------------------------------------
+
+// Function: kebab
+// Normalizes a name to kebab-case for CSS keys and variables.
+const kebab = (str) =>
+	str === undefined || str === null
+		? ""
+		: str
+				// Look for any lowercase letter followed by an uppercase letter
+				.replaceAll("_", "-")
+				.replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+				// Convert the entire string to lowercase
+				.toLowerCase();
+
+// Function: times
+// Builds an array by calling a mapper function n times.
+const times = (n, f) => {
+	const r = new Array(n);
+	for (let i = 0; i < n; i++) {
+		r[i] = f(i);
+	}
+	return r;
+};
+
+// Function: percent
+// Formats a decimal number as a rounded percentage string.
+const percent = (v) => `${Math.round(v * 10000) / 100}%`;
+
+// Function: properties
+// Flattens nested property objects into `[key, value]` CSS pairs.
+function* properties(value, k) {
+	if (value === null || value === undefined) {
+		return;
+	}
+	if (Object.getPrototypeOf(value) === Object.prototype) {
+		for (const kk in value) {
+			for (const v of properties(
+				value[kk],
+				k ? `${kebab(k)}-${kebab(kk)}` : kebab(kk),
+			)) {
+				yield v;
+			}
+		}
+	} else {
+		yield k ? [k, value] : [null, value];
+	}
+}
+
+// Function: classes
+// Prefixes each class name with a `.` selector marker.
+const classes = (...values) => values.map((_) => `.${_}`);
+
+// Function: cross
+// Builds the cartesian product of selector fragments.
+const cross = (...sets) =>
+	sets.reduce((r, v) =>
+		r
+			? (Array.isArray(r) ? r : [r]).flatMap((_) =>
+					(Array.isArray(v) ? v : [v]).map((w) => `${_}${w}`),
+				)
+			: Array.isArray(v)
+				? v
+				: [v],
+	);
+
+// ----------------------------------------------------------------------------
+//
+// COLOR UTILITIES
+//
+// ----------------------------------------------------------------------------
+
+// Function: blend
+// Mixes two colors in oklab space with optional transparency.
+const blend = (color, other, percentage = 0.5, opacity = undefined) => {
+	const r = `color-mix(in oklab, ${color}, ${other} ${percent(percentage)})`;
+	return opacity
+		? `color-mix(in oklab,${r}, transparent ${percent(1 - opacity)})`
+		: r;
+};
+
+// Function: contrast
+// Returns a CSS contrast-color expression for a background color.
+const contrast = (color) => {
+	// CSS contrast-color() selects white or black automatically based on background luminance
+	return `contrast-color(${color})`;
+};
+
+// Function: dim
+// Applies transparency to a color using color-mix.
+const dim = (color, percentage = 0.5) => {
+	return `color-mix(in oklab, ${color}, transparent ${percent(1 - percentage)})`;
+};
+
+// Function: blended
+// Builds one or more CSS variables from a blended color recipe.
+const blended = (name, color, other, percentage = 0.5, opacity = undefined) => {
+	const base = blend(color, other, percentage);
+	name = name.replaceAll("_", "-");
+	const temp = `${name.startsWith("--") ? "" : "--"}${name}-base`;
+	return opacity
+		? {
+				[temp]: base,
+				[name]: `rgba(${base}, ${percent(opacity)}`,
+			}
+		: {
+				[name]: base,
+			};
+};
+
+// ----------------------------------------------------------------------------
+//
+// CONSTANTS
+//
+// ----------------------------------------------------------------------------
+
+// Constant: sizes
+// Ordered size scale labels used by spacing and sizing utilities.
+const sizes = [
+	"no", // 0
+	"xxs", // 1
+	"xs", // 2
+	"s", // 3
+	"m", // 4
+	"l", // 5
+	"xl", // 6
+	"xxl", // 7
+	"xxxl", // 8
+	"xxxxl", // 9
+	"xxxxxl", // 10
+];
+
+// Constant: sizenames
+// Named aliases that map semantic size names to scale indexes.
+const sizenames = {
+	smallest: 0, //"xxs",
+	smaller: 1, //"xs",
+	small: 2, //"s",
+	medium: 3, //"m",
+	large: 4, //"l",
+	larger: 5, // "xl",
+	largest: 6, //"xxl",
+};
+
+// Constant: sides
+// Short side aliases expanded to full CSS side names.
+const sides = { l: "left", t: "top", r: "right", b: "bottom" };
+
+// Constant: percentages
+// Common percentage steps used by utility builders.
+const percentages = [5, 10, 15, 20, 25, 33, 50, 66, 75, 80, 90, 100];
+
+// ----------------------------------------------------------------------------
+//
+// META
+//
+// ----------------------------------------------------------------------------
+
+// Class: Meta
+// Base wrapper for values that carry non-rule metadata.
+class Meta {
+	constructor(value) {
+		this.value = value;
+	}
+}
+
+// ----------------------------------------------------------------------------
+//
+// DOCUMENTATION
+//
+// ----------------------------------------------------------------------------
+
+// Class: Documentation
+// Metadata node used to attach documentation payloads.
+class Documentation extends Meta {}
+
+// Function: doc
+// Creates a documentation metadata wrapper.
+const doc = (value) => new Documentation(value);
+
+// ----------------------------------------------------------------------------
+//
+// URL
+//
+// ----------------------------------------------------------------------------
+
+// Class: ImportURL
+// Represents a CSS `@import url(...)` directive.
+class ImportURL {
+	constructor(url) {
+		this.url = url;
+	}
+	*lines() {
+		yield `@import url('${this.url}');`;
+	}
+}
+
+// Function: url
+// Creates an `ImportURL` value for stylesheet imports.
+const url = (value) => new ImportURL(value);
+
+// ----------------------------------------------------------------------------
+//
+// SCOPE
+//
+// ----------------------------------------------------------------------------
+
+// --
+// Scope defines variables, and allows to keep track of them.
+// Class: Scope
+// Tracks nested CSS variable scopes and lazily creates child scopes.
+class Scope {
+	// NOTE: It is a bit awkward
+	static get(target, property) {
+		if (
+			typeof property === "string" &&
+			property !== "_name" &&
+			property !== "walk"
+		) {
+			if (target[property] === undefined) {
+				target[property] = scope(property, target);
+			}
+			return target[property];
+		}
+		return target[property];
+	}
+	static set(target, property, value) {
+		// TODO: We should have the vars in a map instead
+		target[property] = value;
+	}
+	constructor(name, parent) {
+		this._name = parent?._name ? `${parent._name}-${kebab(name)}` : kebab(name);
+		// TODO: This should define properties
+	}
+	*walk() {
+		for (const k in this) {
+			if (typeof k === "string" && k !== "_name") {
+				if (this[k] instanceof Scope) {
+					for (const _ of this[k].walk()) {
+						yield _;
+					}
+				} else {
+					yield this._name;
+				}
+			}
+		}
+	}
+	toString() {
+		return `var(--${this._name})`;
+	}
+}
+
+// Function: scope
+// Wraps a scope instance in a proxy that autovivifies nested paths.
+const scope = (name, parent) =>
+	new Proxy(name instanceof Scope ? name : new Scope(name, parent), Scope);
+
+// Constant: Vars
+// Root scope object used as the source of CSS variable trees.
+const Vars = new Scope();
+
+// Constant: vars
+// Proxied root scope for ergonomic variable access.
+const vars = scope(Vars);
+
+// ----------------------------------------------------------------------------
+//
+// SELECTORS
+//
+// ----------------------------------------------------------------------------
+
+// Function: pseudo
+// Appends a pseudo-selector to each selector in a flat list.
+const pseudo = (type, ...selectors) => {
+	let res = [];
+	for (const s of selectors) {
+		if (Array.isArray(s)) {
+			res = res.concat(pseudo(type, ...s));
+		} else {
+			res.push(`${s}:${type}`);
+		}
+	}
+	return res;
+};
+
+// Constant: on
+// Dynamic pseudo-selector helpers (for example `on.hover(".btn")`).
+const on = new Proxy(
+	{},
+	{
+		get: (target, property) => {
+			if (typeof property === "string") {
+				if (target[property] === undefined) {
+					target[property] = (...sel) => pseudo(property, ...sel);
+				}
+				return target[property];
+			}
+			return target[property];
+		},
+	},
+);
+
+// Function: mods
+// Expands class modifiers into complete selector combinations.
+const mods = (classes, ...modifiers) =>
+	modifiers
+		.flatMap((_) => {
+			switch (_) {
+				case "disabled":
+					return ["[disabled]", ".disabled"];
+				case "hover":
+				case "active":
+					return [`:${_}`, `.${_}`];
+				case "focus":
+					return [":focus", ":focus-within", ".focus"];
+				default:
+					return _ ? `.${_}` : "";
+			}
+		})
+		.flatMap((m) => classes.map((c) => `${c}${m}`));
+
+// ----------------------------------------------------------------------------
+//
+// RULES AND GROUPS
+//
+// ----------------------------------------------------------------------------
+
+// Class: Rule
+// Represents a CSS selector block and its declaration properties.
+class Rule {
+	constructor(selectors, properties) {
+		this.selectors = selectors;
+		this.properties = properties;
+	}
+	*lines(compact) {
+		const sel = this.selectors
+			? this.selectors.join(compact ? "," : ", ")
+			: "*";
+		yield compact ? `${sel}{` : `${sel} {`;
+		for (const k in this.properties) {
+			yield compact
+				? `${k}:${this.properties[k]};`
+				: `\t${k}: ${this.properties[k]};`;
+		}
+		yield "}";
+	}
+
+	*rules() {
+		yield [...this.lines(true)].join("\n");
+	}
+	*docs(path) {
+		for (const name of this.selectors) {
+			yield {
+				type: "Rule",
+				name,
+				path,
+				definition: Object.keys(this.properties).reduce((r, k) => {
+					r[k] = `${this.properties[k]}`;
+					return r;
+				}, {}),
+			};
+		}
+	}
+}
+
+// Function: rule
+// Creates a `Rule` from selectors and mixed body inputs.
+function rule(selector, ...body) {
+	// TODO: We could do basic selector parsing to extract classnames, tagnames
+	// and ids.
+	const sel = Array.isArray(selector) ? selector : [selector];
+	const props = {};
+	for (const b of body) {
+		if (typeof b === "string") {
+			for (let line of b.split("\n")) {
+				line = line.trim("");
+				if (line.endsWith(";")) {
+					line = line.substring(0, line.length - 1);
+				}
+				const i = line.indexOf(":");
+				if (!line.startsWith("//") && i >= 0) {
+					props[line.substring(0, i).trim()] = line.substring(i + 1).trim();
+				}
+			}
+		} else {
+			for (const [k, v] of properties(b)) {
+				props[k] = v;
+			}
+		}
+		return new Rule(sel, props);
+	}
+}
+
+// Class: Group
+// Collects rules and nested groups into a traversable unit.
+class Group {
+	constructor(contents, name = undefined) {
+		this.contents = [];
+		for (const v of contents) {
+			if (Array.isArray(v)) {
+				this.contents = this.contents.concat(v);
+			} else {
+				this.contents.push(v);
+			}
+		}
+		this.name = name;
+	}
+	*rules() {
+		for (const r of this.contents) {
+			if (r instanceof Meta) {
+				// pass
+			} else if (r instanceof Group) {
+				for (const _ of r.rules()) {
+					yield _;
+				}
+			} else {
+				yield r;
+			}
+		}
+	}
+
+	*docs(path = undefined) {
+		path = this.name ? (path ? [...path, this.name] : [this.name]) : null;
+		for (const r of this.contents) {
+			for (const _ of r.docs(path)) {
+				yield _;
+			}
+		}
+	}
+
+	*lines(compact = true) {
+		if (!compact && this.name) {
+			yield `/* @${this.constructor.name.toLowerCase()} ${this.name} */`;
+		}
+		for (const r of this.contents) {
+			for (const _ of r.lines(compact)) {
+				yield _;
+			}
+		}
+		if (!compact && this.name) {
+			yield `/* @end ${this.name} */`;
+		}
+	}
+}
+
+// Function: group
+// Shorthand for creating a `Group` from rule values.
+const group = (...rules) => new Group(rules);
+
+// Class: Layer
+// Specialized group that emits its content inside `@layer`.
+class Layer extends Group {
+	*lines(compact = true) {
+		if (this.name) {
+			yield `@layer ${this.name} {`;
+		}
+		for (const line of super.lines(compact)) {
+			yield line;
+		}
+		if (this.name) {
+			yield `}`;
+		}
+	}
+}
+
+// Function: layer
+// Shorthand for creating a `Layer` from rule values.
+const layer = (...rules) => new Layer(rules);
+
+// Function: layers
+// Converts an object of named groups into layer instances.
+const layers = (layers) => {
+	const res = [];
+	for (const k in layers) {
+		const l = layer(layers[k]);
+		l.name = k;
+		res.push(l);
+	}
+	return res;
+};
+
+// Function: named
+// Converts a key/value map into named groups for organization.
+const named = (mapping) => {
+	const items = [];
+	for (const k in mapping) {
+		const v = mapping[k];
+		if (v instanceof Group) {
+			v.name = k;
+			items.push(v);
+		} else {
+			items.push(new Group(Array.isArray(v) ? v : v ? [v] : [], k));
+		}
+	}
+	return new Group(items);
+};
+
+// ----------------------------------------------------------------------------
+//
+// TOKENS
+//
+// ----------------------------------------------------------------------------
+
+// Class: Token
+// Represents a single design token rendered as a CSS variable.
+class Token {
+	constructor(name, value) {
+		this.name = name;
+		this.value = value;
+		this.ref = `--${this.name.replaceAll(".", "-").toLowerCase()}`;
+	}
+	*lines() {
+		yield `${this.ref}: ${this.value};`;
+	}
+	*rules() {}
+	*docs(path) {
+		yield {
+			type: "Token",
+			name: this.ref,
+			value: `${this.value}`,
+			path: path ? [...path, this.name] : ["tokens", ...this.name.split(".")],
+		};
+	}
+
+	toString() {
+		return `var(${this.ref}: ${this.value})`;
+	}
+}
+
+// Class: Tokens
+// Group wrapper that expands objects into token declarations.
+class Tokens extends Group {
+	static *Expand(collection, prefix = undefined) {
+		if (Array.isArray(collection)) {
+			for (const v of collection) {
+				for (const w of Tokens.Expand(v, prefix)) {
+					yield w;
+				}
+			}
+		} else {
+			for (const k in collection) {
+				const v = collection[k];
+				// Strip trailing underscore from key before processing
+				const cleanKey = k.endsWith("_") ? k.slice(0, -1) : k;
+				const p = prefix
+					? `${prefix}.${cleanKey.replaceAll("_", ".")}`
+					: cleanKey.replaceAll("_", ".");
+				switch (v?.constructor) {
+					case Object:
+						for (const _ of Tokens.Expand(v, p)) {
+							yield _;
+						}
+						break;
+					case Array:
+						for (let i = 0; i < v.length; i++) {
+							yield new Token(p ? `${p}.${i}` : `${i}`, v[i]);
+						}
+						break;
+					case undefined:
+						console.warn(`[littlecss] Undefined key '${k}' in`, {
+							collection,
+						});
+						break;
+					default:
+						yield new Token(p, v);
+						break;
+				}
+			}
+		}
+	}
+	*lines() {
+		yield "/* @tokens */";
+		yield ":root {";
+		for (const token of this.contents) {
+			for (const line of token.lines()) {
+				yield line;
+			}
+		}
+		yield "}";
+	}
+	*rules() {
+		const lines = [...this.lines()];
+		lines.splice(0, 1);
+		yield lines.join("\n");
+	}
+}
+
+// Function: tokens
+// Creates a `Tokens` group from one or more token collections.
+const tokens = (...values) => {
+	return new Tokens([...Tokens.Expand(values)]);
+};
+
+// ----------------------------------------------------------------------------
+//
+// OUTPUT
+//
+// ----------------------------------------------------------------------------
+
+// Function: css
+// Recursively renders values that expose a `lines()` generator.
+function* css(...values) {
+	// yield `/* Generated by LittleCSS */`;
+	for (const v of values) {
+		if (v.constructor === Array) {
+			for (const w of v) {
+				yield* css(w);
+			}
+		} else if (v.constructor === Object) {
+			yield* css(Object.values(v));
+		} else if (v && typeof v.lines === "function") {
+			for (const l of v.lines(true)) {
+				yield l;
+			}
+		}
+		// Skip primitive values that don't have a lines method
+	}
+}
+
+// Function: docs
+// Recursively emits documentation entries from documentable values.
+function* docs(...values) {
+	for (const v of values) {
+		if (v.constructor === Object) {
+			yield docs(...Object.values(v));
+		} else {
+			for (const _ of v.docs()) {
+				yield _;
+			}
+		}
+	}
+}
+
+// --
+// Injects the styles directly as stylesheets into the DOM.
+// Function: css.mount
+// Mounts generated style blocks into `document.head` when available.
+css.mount = (...values) => {
+	const res = [];
+	for (const v of values.flat()) {
+		const styles = [];
+		if (v instanceof Rule || v instanceof Group) {
+			styles.push(v);
+		} else if (Object.getPrototypeOf(v) === Object.prototype) {
+			for (const k in v) {
+				styles.push(v[k]);
+			}
+		} else {
+			throw new Error(`Unsupported type: ${v}`);
+		}
+		for (const s of styles) {
+			// NOTE: Leaving this here for now, that's for wev components
+			// const style = new CSSStyleSheet();
+			// for (const r of s.rules()) {
+			// 	style.insertRule(r, style.cssRules.length);
+			// }
+			// res.push(style);
+			if (globalThis.document) {
+				const style = globalThis.document.createElement("style");
+				if (s.name) {
+					style.setAttribute("id", `littlecss-${s.name}`);
+				}
+				style.textContent = [...s.lines()].join("\n");
+				globalThis.document.head.appendChild(style);
+			}
+		}
+	}
+	return res;
+};
+
+// ----------------------------------------------------------------------------
+//
+// EXPORTS
+//
+// ----------------------------------------------------------------------------
+
+export {
+	Vars,
+	blended,
+	blend,
+	contrast,
+	dim,
+	classes,
+	cross,
+	css,
+	doc,
+	docs,
+	group,
+	layer,
+	layers,
+	mods,
+	named,
+	on,
+	percent,
+	percentages,
+	rule,
+	sides,
+	sizenames,
+	sizes,
+	times,
+	tokens,
+	url,
+	vars,
+};
+export default Object.assign(css, { rule, vars, group, layer });
+// EOF
