@@ -53,7 +53,7 @@ const COLORS = [
 const SEMANTIC = {
 	paper: "white", // Special: maps to #FFFFFF
 	ink: "black", // Special: maps to #000000
-	neutral: "gray",
+	neutral: "slate",
 	primary: "blue",
 	secondary: "violet",
 	tertiary: "teal",
@@ -200,11 +200,7 @@ function colors(colors = COLORS) {
 		Object.keys(shorthands).flatMap((short) =>
 			Object.keys(SEMANTIC).map((semantic) =>
 				rule(`.${short}-${semantic}`, {
-					[`--${shorthands[short].name}-base`]: SPECIAL_COLORS[
-						SEMANTIC[semantic]
-					]
-						? SPECIAL_COLORS[SEMANTIC[semantic]]
-						: `var(--color-${SEMANTIC[semantic]}-500)`,
+					[`--${shorthands[short].name}-base`]: `var(--color-${semantic})`,
 				}),
 			),
 		),
@@ -229,19 +225,11 @@ function colors(colors = COLORS) {
 		// Semantic index variants (handle paper/ink specially - they don't have scales)
 		Object.keys(shorthands).flatMap((short) =>
 			Object.keys(SEMANTIC).flatMap((semantic) =>
-				SPECIAL_COLORS[SEMANTIC[semantic]]
-					? // For paper/ink, just use the same value for all indices
-						times(11, (index) =>
-							rule(`.${short}-${semantic}-${index}`, {
-								[`--${shorthands[short].name}-base`]:
-									SPECIAL_COLORS[SEMANTIC[semantic]],
-							}),
-						)
-					: luminosityScale.map((luma, index) =>
-							rule(`.${short}-${semantic}-${index}`, {
-								[`--${shorthands[short].name}-base`]: `var(--color-${SEMANTIC[semantic]}-${luma})`,
-							}),
-						),
+				luminosityScale.map((luma, index) =>
+					rule(`.${short}-${semantic}-${index}`, {
+						[`--${shorthands[short].name}-base`]: `var(--color-${semantic}-${luma})`,
+					}),
+				),
 			),
 		),
 

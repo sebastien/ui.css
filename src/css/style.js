@@ -45,9 +45,13 @@ export default named({
 		rule(".help", { cursor: "help" }),
 		rule(".grab", { cursor: "grab" }),
 		rule(".grabbing", { cursor: "grabbing" }),
+		rule(".move", { cursor: "move" }),
 		rule(".resize-w", { cursor: "col-resize", user_select: "none" }),
 		rule(".resize-h", { cursor: "row-resize", user_select: "none" }),
-		rule(".resize-lr", { cursor: "nwse-resize" }),
+		rule([".resize", ".resize-lr"], {
+			cursor: "nwse-resize",
+			user_select: "none",
+		}),
 	),
 	font: group(
 		rule(".lll", { font_weight: 100 }),

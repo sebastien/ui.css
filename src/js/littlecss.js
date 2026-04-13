@@ -394,6 +394,110 @@ function rule(selector, ...body) {
 	}
 }
 
+// Function: blockselectors
+// Normalizes a selector value into a flat selector list.
+const blockselectors = (selector) =>
+	(Array.isArray(selector) ? selector : [selector])
+		.flatMap((_) => `${_}`.split(","))
+		.map((_) => _.trim())
+		.filter(Boolean);
+
+// Function: blockcompose
+// Composes parent and child selectors, including `&` replacement.
+const blockcompose = (parents, selector) => {
+	const children = blockselectors(selector);
+	if (!parents || parents.length === 0) {
+		return children;
+	}
+	const res = [];
+	for (const parent of parents) {
+		for (const child of children) {
+			res.push(
+				child.includes("&")
+					? child.replaceAll("&", parent)
+					: `${parent} ${child}`,
+			);
+		}
+	}
+	return res;
+};
+
+// Function: blockmappings
+// Normalizes nested block payloads into selector maps.
+function* blockmappings(value) {
+	if (value === null || value === undefined) {
+		return;
+	}
+	if (Array.isArray(value)) {
+		for (const _ of value) {
+			yield* blockmappings(_);
+		}
+		return;
+	}
+	if (Object.getPrototypeOf(value) === Object.prototype) {
+		yield value;
+		return;
+	}
+	throw new Error(`Unsupported nested block value: ${value}`);
+}
+
+// Function: blockbody
+// Expands a block body into concrete rules.
+const blockbody = (selectors, body, rules) => {
+	if (body === null || body === undefined) {
+		return;
+	}
+	if (Array.isArray(body)) {
+		for (const _ of body) {
+			blockbody(selectors, _, rules);
+		}
+		return;
+	}
+	if (Object.getPrototypeOf(body) !== Object.prototype) {
+		throw new Error(`Unsupported block body: ${body}`);
+	}
+	const props = {};
+	const nested = [];
+	for (const key in body) {
+		const value = body[key];
+		if (key === "...") {
+			for (const mapping of blockmappings(value)) {
+				for (const selector in mapping) {
+					nested.push([blockcompose(selectors, selector), mapping[selector]]);
+				}
+			}
+		} else if (Object.getPrototypeOf(value) === Object.prototype) {
+			nested.push([blockcompose(selectors, key), value]);
+		} else {
+			props[key] = value;
+		}
+	}
+	if (Object.keys(props).length > 0) {
+		const style = {};
+		for (const [k, v] of properties(props)) {
+			style[k] = v;
+		}
+		rules.push(new Rule(selectors, style));
+	}
+	for (const [nestedSelectors, nestedBody] of nested) {
+		blockbody(nestedSelectors, nestedBody, rules);
+	}
+};
+
+// Function: block
+// Creates a `Group` from nested selector maps.
+const block = (...values) => {
+	const rules = [];
+	for (const value of values.flat()) {
+		for (const mapping of blockmappings(value)) {
+			for (const selector in mapping) {
+				blockbody(blockcompose(undefined, selector), mapping[selector], rules);
+			}
+		}
+	}
+	return new Group(rules);
+};
+
 // Class: Group
 // Collects rules and nested groups into a traversable unit.
 class Group {
@@ -681,6 +785,7 @@ export {
 	Vars,
 	blended,
 	blend,
+	block,
 	contrast,
 	dim,
 	classes,
@@ -705,5 +810,5 @@ export {
 	url,
 	vars,
 };
-export default Object.assign(css, { rule, vars, group, layer });
+export default Object.assign(css, { rule, block, vars, group, layer });
 // EOF
