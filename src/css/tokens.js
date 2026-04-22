@@ -1,4 +1,4 @@
-import { group, sizes, tokens, vars } from "../js/littlecss.js";
+import { group, sizes, tokens, vars } from "../js/uicss.js";
 
 const REM_PIXELS = 16;
 function pem(px, scale = undefined) {

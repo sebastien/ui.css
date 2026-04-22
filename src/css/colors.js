@@ -1,4 +1,4 @@
-import { contrast, group, rule, vars } from "../js/littlecss.js";
+import { contrast, group, rule, vars } from "../js/uicss.js";
 
 // ----------------------------------------------------------------------------
 //

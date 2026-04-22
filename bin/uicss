@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+BASE="$(dirname "$(dirname "$(readlink -f "$0")")")"
+case $1 in
+-d | --doc)
+	shift
+	items=()
+	items+=("import {docs} from '$BASE/src/js/uicss.js';const res={};")
+	for ARG in $@; do
+		i="${#items[@]}"
+		items+=("import mod$i from './$ARG';res['$ARG']=[...docs(mod$i)];")
+	done
+	items="${items[@]}"
+	if ! bun -e "$items;console.log(JSON.stringify(res))"; then
+		echo "!!! ERR Could not process: $@"
+	fi
+	;;
+*)
+	if [ -z "$1" ]; then
+		bun -e "import all from '$BASE/src/css/all.js';import css from '$BASE/src/js/uicss.js';console.log([...css(all())].join('\n'));"
+	else
+		for ARG in $@; do
+			if [ "$#" == "1" ]; then
+				bun -e "import mod from './$ARG';import css from '$BASE/src/js/uicss.js';console.log([...css(mod)].join('\n'));"
+			else
+				bun -e "import mod from './$ARG';import css, {layers} from '$BASE/src/js/uicss.js';console.log([...css(layers({['$ARG'.split('.').at(0)]:mod}))].join('\n'));"
+			fi
+		done
+	fi
+	;;
+esac
+# EOF

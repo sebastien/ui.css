@@ -1,4 +1,4 @@
-import { vars, on, rule, layer, times } from "../js/littlecss.js";
+import { vars, on, rule, layer, times } from "../js/uicss.js";
 import { all, inputs, controls } from "./lib/tags.js";
 
 export default layer(

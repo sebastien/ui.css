@@ -1,15 +1,13 @@
 # Colors
 
-LittleCSS uses a simplified color system based on pre-computed 10-step
-luminosity scales.
+ui.css uses a simplified color system based on pre-computed palette scales and
+property-specific color variables.
 
-## Color Types
+## Palette Colors
 
-### Palette Color
+The core palette is defined in `src/css/colors.js` as `COLORS`:
 
-At the core, colors are defined based on a palette of named colors:
-
-```
+```text
 red
 orange
 amber
@@ -38,96 +36,136 @@ mist
 olive
 ```
 
-default color names are defined in the `COLORS` export of the `colors.js` module.
+Each palette color has 11 luminosity steps defined in `src/css/palette.css`:
 
-Each color has 11 variations based on an OKLCH luminosity gradient, where 0 is the lightest
-and 1000 the darkest:
+1. `50`
+2. `100`
+3. `200`
+4. `300`
+5. `400`
+6. `500`
+7. `600`
+8. `700`
+9. `800`
+10. `900`
+11. `950`
 
-1. 50
-2. 100
-3. 200
-4. 300
-5. 400
-6. 500
-7. 600
-8. 700
-9. 800
-10. 900
-11. 950
-
-This follows the TailwindCSS colors <https://tailwindcss.com/docs/colors>. Each
-color has corresponding css variable `--color-{name}-{luminosity}`, eg `--color-zinc-950`.
-
-Depending on the mode (light or dark), each color is then mapped to its
-corresponding index 0 to 10 inclusive. In light mode `color-zinc-10` will alias to `color-zinc-950`
-but in dark mode, it will alias to `color-zinc-10`.
-
-### Base colors
-
-Two base colors define the paper and ink, which is useful for dark and light
-modes, where they are inverted:
-
-- `paper`: white point (#FFFFFF)
-- `ink`: black point (#000000)
+These are exposed as CSS variables such as `--color-zinc-950`.
 
 ## Semantic Colors
 
-The following colors are semantic:
+The semantic color aliases are defined in `src/css/colors.js` as `SEMANTIC`:
 
-- `neutral`, near-gray, very low chroma
-- `primary` , main brand color, calm blue
-- `secondary` , secondary brand color, violet
-- `tertiary` , tertiary accent, teal
-- `success` , positive feedback, green
-- `info` , informational, cyan-blue
-- `warning` , caution, amber
-- `danger` , error/destructive, red
-- `accent`, typically aliased to primary
+- `paper` -> `white`
+- `ink` -> `black`
+- `neutral` -> `slate`
+- `primary` -> `blue`
+- `secondary` -> `violet`
+- `tertiary` -> `teal`
+- `success` -> `green`
+- `info` -> `cyan`
+- `warning` -> `amber`
+- `danger` -> `red`
+- `accent` -> `blue`
 
-## Color computation
+These aliases are emitted as root CSS variables such as `--color-primary`.
 
-LittleCSS using the following variables to compute the final applied color:
+## Indexed Color Classes
 
-- `--{type}-base` for the base color (eg. `--background-base` or `--text-base`)
-- `--{type}-tint` the tint color to blend to (default paper)
-- `--{type}-blend` 0=100% tint, 10=100% base (default 10)
-- `--{type}-opacity` for affecting opacity, 0=transparent,10=opaque (default 10)
+The color module exposes indexed classes of the form
+`.{bg,tx,bd,ol}-{color}-{index}`.
 
-## Using colors
+The current implementation maps indexes directly to the following luminosity
+steps:
 
-Current colors are mapped to `--{background,border,text,outline}-base`. To assign
-a given color to the corresponding CSS variable, use `.{bg,bd,tx,ol}-{color}-{index}`,
-like `.bg-zinc-4`. Note that because we use the index here, this will work nicely
-when switching from dark to light.
+- `0` -> `950`
+- `1` -> `900`
+- `2` -> `800`
+- `3` -> `700`
+- `4` -> `600`
+- `5` -> `500`
+- `6` -> `400`
+- `7` -> `300`
+- `8` -> `200`
+- `9` -> `100`
+- `10` -> `50`
 
-To apply the current color to the background, border, text or outline, use `.{bg,bd,tx,ol}`. Without
-it, only the CSS variable is changed.
+This mapping is fixed. The `.dark` class currently swaps page and text defaults,
+but does not invert indexed color classes.
 
-## Contrast Colors
+## Color Variables
 
-The `.tx-contrast` class automatically sets the text color to ensure maximum contrast against the
-background. This uses CSS `contrast-color()` to dynamically select between paper (light) and ink (dark)
-based on the computed background color.
+ui.css computes applied colors from these variables:
 
+- `--{background,text,border,outline}-base`
+- `--{background,text,border,outline}-tint`
+- `--{background,text,border,outline}-blend`
+- `--{background,text,border,outline}-opacity`
+
+The computed color is a color-mix of base and tint, then mixed with transparent
+through the corresponding opacity value.
+
+## Using Colors
+
+Color classes set the base variable for a property:
+
+- `.bg-blue`
+- `.tx-zinc-3`
+- `.bd-warning`
+- `.ol-rose-7`
+
+Apply classes emit the corresponding CSS property:
+
+- `.bg` -> `background-color`
+- `.tx` -> `color`
+- `.bd` -> `border-color`, plus default border width and style
+- `.ol` -> `outline-color`
+
+Side-specific helpers are also available for borders and outlines:
+
+- `.bd-t`, `.bd-r`, `.bd-b`, `.bd-l`
+- `.ol-t`, `.ol-r`, `.ol-b`, `.ol-l`
+
+## Altering Colors
+
+Opacity helpers:
+
+- `.{bg,tx,bd,ol}-{0..10}o`
+- `0` means fully transparent
+- `10` means fully opaque
+
+Blend helpers:
+
+- `.{bg,tx,bd,ol}-{0..10}b`
+- `0` means 100% tint
+- `10` means 100% base
+
+Tint helpers:
+
+- `.{bg,tx,bd,ol}-to-{color}-{0..10}`
+- `.{bg,tx,bd,ol}-to-paper`
+- `.{bg,tx,bd,ol}-to-ink`
+- `.{bg,tx,bd,ol}-to-transparent`
+
+`to-transparent` sets opacity to `0`; it does not assign a tint color.
+
+## Contrast Text
+
+The `.tx-contrast` helper sets:
+
+```text
+color: contrast-color(var(--text-base))
 ```
-.bg-primary.tx-contrast  → Text color automatically contrasts with primary background
+
+It currently derives contrast from `--text-base`.
+
+## Reset Classes
+
+The color module also exposes direct reset helpers:
+
+```text
+.nobg  -> background-color: transparent
+.notx  -> color: inherit
+.nobd  -> border-color: transparent
+.nool  -> outline-color: transparent
 ```
-
-## Altering colors
-
-- Changing opacity can be done through `.{bg,bd,tx,ol}-{0,1,2,3,4,5,6,7,8,9,10}o`
-- Changing blend can be done through `.{bg,bd,tx,ol}-{0,1,2,3,4,5,6,7,8,9,10}b`
-- Changing tint can be done through `.{bg,bd,tx,ol}-to-{name}-{index}`
-
-### Reset Classes
-
-```
-.nobg    → background-color: transparent (direct CSS)
-.notx    → color: inherit
-.nobd    → border-color: transparent
-.nool    → outline-color: transparent
-```
-
-### Dark modes
-
-By using `dark` or `light`, the indices in color are switched, so that in light 10 maps to 950, while in dark it maps to 50.

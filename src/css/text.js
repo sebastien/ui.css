@@ -6,7 +6,7 @@ import {
 	group,
 	vars,
 	times,
-} from "../js/littlecss.js";
+} from "../js/uicss.js";
 export default named({
 	headings: group(
 		...sizes.map((k, i) =>

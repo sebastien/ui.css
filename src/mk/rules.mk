@@ -2,13 +2,13 @@
 run:
 	@
 
-dist/littlecss.css:
+dist/ui.css:
 	@mkdir -p dist
-	./bin/littlecss > "$@"
+	./bin/uicss > "$@"
 
 deploy: $(DIST_ALL)
 	@
-	rsync -rv dist/www/ pgs.sh:/littlecss
+	rsync -rv dist/www/ pgs.sh:/ui.css
 
 
 # EOF

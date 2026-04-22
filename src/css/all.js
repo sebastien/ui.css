@@ -1,4 +1,4 @@
-import { layers, group, rule } from "../js/littlecss.js";
+import { layers, group, rule } from "../js/uicss.js";
 import tokens from "./tokens.js";
 import reset from "./reset.js";
 import layout from "./layout.js";

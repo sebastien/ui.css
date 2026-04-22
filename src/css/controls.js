@@ -6,7 +6,7 @@ import {
 	named,
 	rule,
 	vars,
-} from "../js/littlecss.js";
+} from "../js/uicss.js";
 import { colormix, SEMANTIC } from "./colors.js";
 
 const SIZES = [

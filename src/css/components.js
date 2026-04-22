@@ -8,7 +8,7 @@ import {
 	sizes,
 	times,
 	vars,
-} from "../js/littlecss.js";
+} from "../js/uicss.js";
 import { inputs } from "./lib/tags.js";
 
 export default named({

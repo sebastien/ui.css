@@ -1,4 +1,4 @@
 #!/usr/bin/bash
-appenv_name littlecss
+appenv_name ui.css
 appenv_prepend PATH "$APPENV_DIR/bin"
 # EOF

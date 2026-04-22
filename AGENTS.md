@@ -1,13 +1,13 @@
-# AGENTS.md - LittleCSS Repository Guide
+# AGENTS.md - ui.css Repository Guide
 
-This file is for coding agents working in `littlecss`.
+This file is for coding agents working in `ui.css`.
 It documents build, lint, and test commands plus the code conventions already in use.
 
 ## Scope
-- Repository root: `littlecss`
+- Repository root: `ui.css`
 - Primary language: JavaScript ES modules
 - Build system: LittleSDK via `make`
-- Main artifact: generated CSS, especially `dist/littlecss.css`
+- Main artifact: generated CSS, especially `dist/ui.css`
 - Runtime/tooling: Bun, Biome, mise, shell scripts
 
 ## Rule Files
@@ -22,7 +22,7 @@ It documents build, lint, and test commands plus the code conventions already in
 - `src/css/` - utility and component style modules
 - `src/html/` - scratch HTML assets
 - `src/mk/` - repository-specific Make config and rules
-- `bin/littlecss` - CLI entrypoint that renders CSS with Bun
+- `bin/uicss` - CLI entrypoint that renders CSS with Bun
 - `dist/` - generated outputs
 - `deps/sdk/` - LittleSDK bootstrap and shared rules
 
@@ -33,12 +33,12 @@ It documents build, lint, and test commands plus the code conventions already in
 - `make prep` - materialize SDK-managed dotfiles and tool setup
 - `make shell` - open a shell with the repo environment configured
 - `make build` - run SDK build phase; mainly prepares JS build artifacts
-- `make dist` - generate distribution outputs, including `dist/littlecss.css`
-- `make dist/littlecss.css` - build only the main stylesheet
-- `./bin/littlecss > dist/littlecss.css` - direct stylesheet generation without make
-- `./bin/littlecss src/css/colors.js` - render a single CSS module
-- `./bin/littlecss src/css/colors.js src/css/layout.js` - render multiple modules as layers
-- `./bin/littlecss --doc src/css/colors.js` - emit module docs as JSON
+- `make dist` - generate distribution outputs, including `dist/ui.css`
+- `make dist/ui.css` - build only the main stylesheet
+- `./bin/uicss > dist/ui.css` - direct stylesheet generation without make
+- `./bin/uicss src/css/colors.js` - render a single CSS module
+- `./bin/uicss src/css/colors.js src/css/layout.js` - render multiple modules as layers
+- `./bin/uicss --doc src/css/colors.js` - emit module docs as JSON
 
 ## Lint, Format, And Typecheck Commands
 - `make check` - main lint/check entrypoint; currently runs JS linting via Biome and enabled SDK checks
@@ -85,13 +85,13 @@ It documents build, lint, and test commands plus the code conventions already in
 - Keep imports at the top of the file
 - Group imported names in a stable, readable order
 - Default exports are common for top-level CSS modules
-- Shared helpers from `src/js/littlecss.js` are frequently imported as named exports
+- Shared helpers from `src/js/uicss.js` are frequently imported as named exports
 
 ## File Structure Conventions
 - Typical order: imports, local constants/helpers, main declarations, exports at the end
 - Large files often use banner comments to separate major sections
 - CSS modules usually export a single `named(...)`, `group(...)`, `layer(...)`, or function composition
-- `src/js/littlecss.js` is the main source of internal DSL conventions
+- `src/js/uicss.js` is the main source of internal DSL conventions
 
 ## Naming Conventions
 - Classes use PascalCase, for example `Scope`, `Rule`, `Group`
@@ -120,7 +120,7 @@ It documents build, lint, and test commands plus the code conventions already in
 - Throw `Error` for unsupported input shapes that should stop execution
 - Use `console.warn(...)` for recoverable or diagnostic conditions
 - Do not silently swallow invalid states that would corrupt generated CSS
-- Keep CLI failures terse and readable; `bin/littlecss` prints `!!! ERR ...` on doc-generation failure
+- Keep CLI failures terse and readable; `bin/uicss` prints `!!! ERR ...` on doc-generation failure
 
 ## Comments And Documentation
 - Prefer concise comments that explain intent, not obvious syntax
@@ -131,9 +131,9 @@ It documents build, lint, and test commands plus the code conventions already in
 
 ## Shell And CLI Style
 - Shell scripts use `bash`
-- Match the existing Bash style in `bin/littlecss`
+- Match the existing Bash style in `bin/uicss`
 - Keep CLI output terse and friendly to pipes
-- Resolve repository-relative paths the way `bin/littlecss` does instead of assuming the caller's cwd
+- Resolve repository-relative paths the way `bin/uicss` does instead of assuming the caller's cwd
 
 ## Agent Workflow Expectations
 - Prefer `make` targets over ad hoc commands when both exist
@@ -149,8 +149,8 @@ It documents build, lint, and test commands plus the code conventions already in
 - Some SDK-managed dotfiles appear only after `make prep` or another make invocation
 
 ## Practical Defaults For Agents
-- For the shipped stylesheet, use `make dist/littlecss.css`
+- For the shipped stylesheet, use `make dist/ui.css`
 - For JS/CSS validation, use `make check`
 - For automatic fixes, use `make fmt`
-- For one-off CSS inspection, use `./bin/littlecss`
+- For one-off CSS inspection, use `./bin/uicss`
 - For new tests, put them in `tests/` and run them with `make js-test TESTS_JS=...`

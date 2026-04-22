@@ -6,7 +6,7 @@ import {
 	sides,
 	times,
 	vars,
-} from "../js/littlecss.js";
+} from "../js/uicss.js";
 
 export default named({
 	base: rule(".base", {

@@ -6,7 +6,7 @@ import {
 	vars,
 	times,
 	percentages,
-} from "../js/littlecss.js";
+} from "../js/uicss.js";
 
 const t = { top: "0px" };
 const b = { bottom: "0px" };

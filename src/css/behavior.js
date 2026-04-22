@@ -1,4 +1,4 @@
-import { vars, named, group, rule } from "../js/littlecss.js";
+import { vars, named, group, rule } from "../js/uicss.js";
 
 export default named({
 	undim: group(

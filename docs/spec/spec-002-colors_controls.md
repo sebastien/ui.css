@@ -1,55 +1,137 @@
 # Controls
 
-We want to implement a controls stylesheet `src/css/control.js` that covers the
-following:
+Uses: spec-001
 
-- Selectable: a generic selectable item (typically used in lists)
-- Button: buttons
-- Input: input fields
-- Textarea: textarea
-- Checkbox: supporting both checkbox and radio
+This spec describes the controls stylesheet implemented in
+`src/css/controls.js`.
 
-Each comes in the following variants:
-- State: normal, focus, hover, active, selected, disabled
-- Colors: neutral, primary, secondary, tertiary, success/valid, warning/issue, danger/error
-- Variants: default, outline, blank, bare (no styling, even on interaction)
-- Sizes: smallest, smaller, small, regular, large, larger, largest
+## Components
 
-All of these variants are specified with classnames `.${variant}`.
+The current implementation exports these control groups:
 
-All of the controls are parameterized by the follow properties defined in `token.js`:
-- `--${type}-bg-base-${color}` base background color
-- `--${type}-bg-${tint,blend,opacity}` base background color
-- `--${type}-tx-base-${color}` base tx color
-- `--${type}-tx-${tint,blend,opacity}` blending parameters for text
-- `--${type}-bd-${tint,blend,opacity}` blending parameters for border
-- `--${type}-ol-${tint,blend,opacity}` blending parameters for outline
-- `--${type}-{state}-{bg,tx,bd,ol}-${tint,blend,opacity}` override parameters for state
+- `button`
+- `selectable`
+- `input`
+- `textarea`
+- `checkbox`
+- `radio`
 
-While the base color can be defined through control color classes, it can also be overriden
-by explicit colors classes from the color module. `bg-red-4` would then set the base
-color to that.
+`button` and `selectable` share part of their behavior, but remain distinct
+selectors. `radio` is implemented as its own control, not as a checkbox variant.
 
-The displayed background/text/outline/border color is blended from the base color variable
-and its supporting tint/blend/opacity variables according to `spec-001`
+## Supported Modifiers
 
-All components should:
-- Have pseudo `:hover` and explicit `.hover` selectors for states (when a pseudo exists)
-- Sizing should vary  padding and font-size, although both may move at different scales
+The controls implementation currently supports these modifier families.
 
-Buttons:
-- Should have their text adapt to the background for good contrast
-- Have no border by default
+States:
 
-Inputs/Textarea:
-- Background defaulting to paper
-- Slight tint of base on top of paper (backround) or ink (text) when colored
-- Have no border by default
+- `hover`
+- `active`
+- `focus`
+- `selected`
+- `disabled`
+
+Color variants:
+
+- `primary`
+- `secondary`
+- `tertiary`
+- `success`
+- `warning`
+- `danger`
+
+Style variants:
+
+- `default`
+- `outline`
+- `blank`
+- `bare`
+
+Additional style variants currently implemented:
+
+- `ghost`
+- `icon`
+
+Named size modifiers are not currently implemented, even though a size list
+exists in the source.
+
+## Token Model
+
+Controls are driven by control-specific token trees from `src/css/tokens.js`.
+
+Each control defines:
+
+- `--{control}-color-base`
+- `--{control}-color-tint`
+- `--{control}-color-blend`
+- `--{control}-color-opacity`
+- `--{control}-current-color-base`
+- `--{control}-current-color-tint`
+- `--{control}-current-color-blend`
+- `--{control}-current-color-opacity`
+- `--{control}-current-color`
+- `--{control}-{focus|selected|hover|active}-{tint|blend|opacity}`
+
+Checkbox and radio also define tokenized content values for checked states.
+
+## Relationship With Generic Color Utilities
+
+Generic color utility classes from `spec-001` do not currently redefine the
+internal control color pipeline.
+
+Controls compute their own `background`, `color`, `border-color`, and
+`outline-color` values from control-specific variables such as
+`--button-current-color` and `--input-current-color`.
+
+Control color variants such as `.primary` and `.danger` set control-specific
+base variables like `--button-color-base` or `--input-color-base`.
+
+## Base Styling
+
+Buttons and selectable items:
+
+- use control font tokens
+- default to a filled background derived from the current control color
+- have no visible border by default
+- use contrast text on filled button color variants
+
+Inputs and textareas:
+
+- use control font tokens
+- default to a paper-tinted background based on the control color
+- default to a tinted `1px` border
+- use a stronger paper tint on focus
 
 Checkboxes:
-- Should have checkbox unselected/partial/checked
-- Should have radio variant
-- Have no border
-- Use the same background and text styling as the inputs
 
+- use the same paper-tinted surface model as inputs
+- default to a tinted `1px` border
+- render a checked mark for `:checked`
+- render a partial mark for `:indeterminate`
 
+Radios:
+
+- are separate from checkboxes
+- default to a circular paper surface with a tinted `1px` border
+- render a checked dot for `:checked`
+- apply color variants to the checked indicator
+
+## State Selectors
+
+Where supported, controls use both pseudo-class and explicit class selectors:
+
+- hover: `:hover` and `.hover`
+- active: `:active` and `.active`
+- focus: `:focus`, `:focus-within`, or `.focus` depending on the control
+- disabled: `[disabled]` and `.disabled`
+
+Selected state is class-driven in the current implementation.
+
+## Variant Semantics
+
+- `default` adds a stronger visible border
+- `outline` removes the filled background and keeps a visible border
+- `blank` reduces emphasis by clearing background and lowering color opacity
+- `bare` removes visual styling and interaction chrome
+- `ghost` is implemented for buttons, inputs, and textareas
+- `icon` is implemented as a compact low-emphasis variant
