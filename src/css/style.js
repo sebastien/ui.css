@@ -11,9 +11,9 @@ import {
 
 export default named({
 	base: rule(".base", {
-		font_family: vars.font.family,
+		font_family: `${vars.font.family}`,
 		font_size: vars.font.size,
-		line_height: vars.font.line_height,
+		line_height: `${vars.font.line_height}`,
 	}),
 	style: group(
 		rule([".nolink", ".nolink:hover"], {
@@ -225,7 +225,7 @@ export default named({
 	table: group(
 		rule("table", {
 			border_collapse: "separate",
-			border_spacing: `0px ${vars.gap}`,
+			border_spacing: `0px ${vars.gap[3]}`,
 		}),
 		rule(["table.lined tbody th", "table.lined tbody td"], {
 			border_bottom_width: vars.border.width,

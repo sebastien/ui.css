@@ -121,12 +121,12 @@ export default named({
 		rule(".fit-max", {
 			width: "max-content",
 		}),
-		rule(".fit-page", {
-			max_width: vars.page.width,
-		}),
-		rule(".fit-text", {
-			max_width: vars.text.width,
-		}),
+			rule(".fit-page", {
+				max_width: `${vars.page.width}`,
+			}),
+			rule(".fit-text", {
+				max_width: `${vars.text.width}`,
+			}),
 		rule(".fit-content", {
 			max_width: "fit-content",
 		}),
@@ -152,7 +152,7 @@ export default named({
 			rule(`.limit-${_}`, { max_width: `${vars.limit[_]}` }),
 		),
 		...times(3, (i) =>
-			rule(`.limit-0b`, { max_width: `${vars.limit.block[i]}` }),
+			rule(`.limit-${i}b`, { max_width: `${vars.limit.block[i]}` }),
 		),
 	),
 	sizing: group(
@@ -234,11 +234,11 @@ export default named({
 		rule(".circle", { aspect_ratio: "1/1", border_radius: "50%" }),
 	),
 	row: group(
-		rule(".row", {
-			display: "flex",
-			align_items: "center",
-			gap: `${vars.gap}`,
-		}),
+			rule(".row", {
+				display: "flex",
+				align_items: "center",
+				gap: `${vars.gap[3]}`,
+			}),
 		rule(".row.stretch", {
 			align_items: "stretch",
 		}),
@@ -254,11 +254,11 @@ export default named({
 		}),
 	),
 	stack: group(
-		rule(".stack", {
-			display: "flex",
-			flex_direction: "column",
-			gap: `${vars.gap}`,
-		}),
+			rule(".stack", {
+				display: "flex",
+				flex_direction: "column",
+				gap: `${vars.gap[3]}`,
+			}),
 		rule(".stack > .right", {
 			align_self: "flex-end",
 		}),
@@ -291,13 +291,13 @@ export default named({
 		}),
 	),
 	grid: group(
-		...times(7, (_) =>
-			rule(`.col-${_ + 1}`, {
-				display: "grid",
-				grid_template_columns: `repeat(${_ + 1}, 1fr)`,
-				grid_column_gap: `${vars.gap}`,
-			}),
-		),
+			...times(7, (_) =>
+				rule(`.col-${_ + 1}`, {
+					display: "grid",
+					grid_template_columns: `repeat(${_ + 1}, 1fr)`,
+					grid_column_gap: `${vars.gap[3]}`,
+				}),
+			),
 	),
 	table: group(
 		rule(

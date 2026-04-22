@@ -55,9 +55,20 @@ export default group(
 				line: "1em",
 				weight: 500,
 			},
+			family: `${vars.font.text.family}`,
+			line_height: `${vars.font.line}`,
+			control: {
+				family: `${vars.font.controls.family}`,
+				size: `${vars.font.controls.size}`,
+				line: `${vars.font.controls.line}`,
+				weight: `${vars.font.controls.weight}`,
+			},
 		},
 		block: {
 			width: "140px",
+		},
+		column: {
+			width: `${vars.block.width}`,
 		},
 		scaling: {
 			pad: 1.5,
@@ -94,8 +105,8 @@ export default group(
 			danger: "var(--color-red-500)",
 			error: "var(--color-red-500)",
 			// Mode-dependent colors (defaults to light mode, swapped by .dark)
-			page: vars.color.paper,
-			text: vars.color.ink,
+			page: `${vars.color.paper}`,
+			text: `${vars.color.ink}`,
 		},
 	}),
 
@@ -108,24 +119,28 @@ export default group(
 	// See spec-colors.md for full documentation
 	tokens({
 		background: {
-			base: vars.color.paper,
-			tint: vars.color.paper,
+			base: `${vars.color.paper}`,
+			tint: `${vars.color.paper}`,
 			blend: 1.0,
 			opacity: 1.0,
+			l: 5,
+			o: 9,
 			color: color("background"),
 		},
 		text: {
-			base: vars.color.ink,
-			tint: vars.color.paper,
+			base: `${vars.color.ink}`,
+			tint: `${vars.color.paper}`,
 			blend: 1.0,
 			opacity: 1.0,
 			color: color("text"),
 		},
 		border: {
-			base: vars.color.ink,
-			tint: vars.color.paper,
+			base: `${vars.color.ink}`,
+			tint: `${vars.color.paper}`,
 			blend: 0.5,
 			opacity: 0.9,
+			l: 5,
+			o: 9,
 			color: color("border"),
 			width: "1px",
 			style: "solid",
@@ -141,11 +156,10 @@ export default group(
 				"12px", // 5:xl
 				"16px", // 6:xxl
 			],
-			style: "solid",
 		},
 		outline: {
-			base: vars.color.ink,
-			tint: vars.color.paper,
+			base: `${vars.color.ink}`,
+			tint: `${vars.color.paper}`,
 			blend: 0.3,
 			opacity: 0.8,
 			color: color("outline"),
@@ -171,6 +185,103 @@ export default group(
 	//
 	// ------------------------------------------------------------------------
 	tokens({
+		theme: {
+			text: {
+				body: {
+					line: `${vars.font.line}`,
+					color: `${vars.color.text}`,
+				},
+				heading: {
+					line: `${vars.font.heading.line}`,
+					weight: 600,
+					color: `${vars.color.ink}`,
+				},
+			},
+			surface: {
+				page: `${vars.color.page}`,
+				text: `${vars.color.text}`,
+				code: {
+					background: "rgba(128, 128, 128, 0.1)",
+					radius: "4px",
+				},
+			},
+			motion: {
+				duration: {
+					fast: "0.1s",
+					normal: "0.2s",
+					slow: "0.3s",
+				},
+				easing: {
+					standard: "ease",
+					emphasized: "ease-in-out",
+				},
+				shift: {
+					hover_dx: "20%",
+				},
+			},
+		},
+		ui: {
+			control: {
+				transition: `background ${vars.theme.motion.duration.normal} ${vars.theme.motion.easing.standard}, color ${vars.theme.motion.duration.normal} ${vars.theme.motion.easing.standard}, border ${vars.theme.motion.duration.normal} ${vars.theme.motion.easing.standard}, outline-color ${vars.theme.motion.duration.normal} ${vars.theme.motion.easing.standard}`,
+				border: {
+					width: "1px",
+				},
+				focus: {
+					ring: {
+						width: "2px",
+					},
+				},
+				style: {
+					default: {
+						border: {
+							width: "3px",
+						},
+					},
+					outline: {
+						border: {
+							width: "1px",
+						},
+					},
+				},
+				icon: {
+					padding: "0.25em",
+					size: "1em",
+				},
+				disabled: {
+					blend: "50%",
+					opacity: "75%",
+				},
+			},
+			prose: {
+				stack: "0.75em",
+				line_min_height: "1.5em",
+				list_indent: "1.5em",
+				list_indent_ordered: "2em",
+				list_item_gap: "0.5em",
+				blockquote: {
+					border_width: "4px",
+					padding_x: "1em",
+					padding_y: "0.25em",
+					opacity: 0.85,
+				},
+				code: {
+					padding_y: "0.75em",
+					padding_x: "1em",
+				},
+				dt: {
+					margin_top: "1.5em",
+					margin_bottom: "0.5em",
+					opacity: 0.75,
+				},
+				dd: {
+					margin_top: "0.5em",
+					margin_bottom: "1.5em",
+				},
+				inline: {
+					subsup_size: "0.75em",
+				},
+			},
+		},
 		size: [
 			"0em",
 			pem(5), // 1:xxs
@@ -232,13 +343,13 @@ export default group(
 			x: "2px",
 			y: "2px",
 			spread: "1px",
-			base: vars.color.ink,
+			base: `${vars.color.ink}`,
 			opacity: 0.25,
 			color: `color-mix(in oklch, var(--shadow-base), transparent calc(100% - 100% * var(--shadow-opacity)))`,
 		},
 		limit: {
 			text: "80ch",
-			block: ["360px", "720px", "960"],
+			block: ["360px", "720px", "960px"],
 			content: "960px",
 			page: "960px",
 		},
@@ -265,6 +376,9 @@ export default group(
 				"240%", // 6: xxl
 			],
 		},
+		text: {
+			width: `${vars.limit.text}`,
+		},
 	}),
 	// ------------------------------------------------------------------------
 	//
@@ -277,45 +391,52 @@ export default group(
 		// ====================================================================
 		button: {
 			font: {
-				family: vars.font.controls.family,
-				line: vars.font.controls.line,
-				weight: vars.font.controls.weight,
-				size: vars.font.controls.size,
+				family: `${vars.font.controls.family}`,
+				line: `${vars.font.controls.line}`,
+				weight: `${vars.font.controls.weight}`,
+				size: `${vars.font.controls.size}`,
+			},
+			box: {
+				padding: {
+					x: "1em",
+					y: "0.65em",
+				},
+				radius: `${vars.border.radius[1]}`,
 			},
 			// Background and text
 			color: {
-				base: vars.color.neutral,
-				primary: vars.color.primary,
-				secondary: vars.color.secondary,
-				tertiary: vars.color.tertiary,
-				success: vars.color.success,
-				warning: vars.color.warning,
-				danger: vars.color.danger,
-				tint: vars.color.paper,
+				base: `${vars.color.neutral}`,
+				primary: `${vars.color.primary}`,
+				secondary: `${vars.color.secondary}`,
+				tertiary: `${vars.color.tertiary}`,
+				success: `${vars.color.success}`,
+				warning: `${vars.color.warning}`,
+				danger: `${vars.color.danger}`,
+				tint: `${vars.color.paper}`,
 				blend: "0%",
 				opacity: "100%",
 			},
 			// Outline
 			focus: {
-				tint: vars.color.paper,
+				tint: `${vars.color.paper}`,
 				blend: "100%",
 				opacity: "50%",
 			},
 			// Background
 			selected: {
-				tint: vars.color.ink,
+				tint: `${vars.color.ink}`,
 				blend: "70%",
 				opacity: "100%",
 			},
 			// Background
 			hover: {
-				tint: vars.color.ink,
+				tint: `${vars.color.ink}`,
 				blend: "50%",
 				opacity: "50%",
 			},
 			// Background
 			active: {
-				tint: vars.color.paper,
+				tint: `${vars.color.paper}`,
 				blend: "80%",
 				opacity: "100%",
 			},
@@ -325,40 +446,43 @@ export default group(
 		// ====================================================================
 		selectable: {
 			font: {
-				family: vars.font.controls.family,
-				line: vars.font.controls.line,
-				weight: vars.font.controls.weight,
-				size: vars.font.controls.size,
+				family: `${vars.font.controls.family}`,
+				line: `${vars.font.controls.line}`,
+				weight: `${vars.font.controls.weight}`,
+				size: `${vars.font.controls.size}`,
+			},
+			box: {
+				radius: `${vars.border.radius[1]}`,
 			},
 			color: {
-				base: vars.color.neutral,
-				primary: vars.color.primary,
-				secondary: vars.color.secondary,
-				tertiary: vars.color.tertiary,
-				success: vars.color.success,
-				warning: vars.color.warning,
-				danger: vars.color.danger,
-				tint: vars.color.paper,
+				base: `${vars.color.neutral}`,
+				primary: `${vars.color.primary}`,
+				secondary: `${vars.color.secondary}`,
+				tertiary: `${vars.color.tertiary}`,
+				success: `${vars.color.success}`,
+				warning: `${vars.color.warning}`,
+				danger: `${vars.color.danger}`,
+				tint: `${vars.color.paper}`,
 				blend: "0%",
 				opacity: "100%",
 			},
 			focus: {
-				tint: vars.color.paper,
+				tint: `${vars.color.paper}`,
 				blend: "100%",
 				opacity: "25%",
 			},
 			selected: {
-				tint: vars.color.ink,
+				tint: `${vars.color.ink}`,
 				blend: "70%",
 				opacity: "25%",
 			},
 			hover: {
-				tint: vars.color.ink,
+				tint: `${vars.color.ink}`,
 				blend: "50%",
 				opacity: "25%",
 			},
 			active: {
-				tint: vars.color.paper,
+				tint: `${vars.color.paper}`,
 				blend: "80%",
 				opacity: "25%",
 			},
@@ -368,45 +492,52 @@ export default group(
 		// ====================================================================
 		input: {
 			font: {
-				family: vars.font.controls.family,
-				line: vars.font.controls.line,
-				weight: vars.font.controls.weight,
-				size: vars.font.controls.size,
+				family: `${vars.font.controls.family}`,
+				line: `${vars.font.controls.line}`,
+				weight: `${vars.font.controls.weight}`,
+				size: `${vars.font.controls.size}`,
+			},
+			box: {
+				padding: {
+					x: "0.875em",
+					y: "0.625em",
+				},
+				radius: `${vars.border.radius[1]}`,
 			},
 			// Background and text
 			color: {
-				base: vars.color.neutral,
-				primary: vars.color.primary,
-				secondary: vars.color.secondary,
-				tertiary: vars.color.tertiary,
-				success: vars.color.success,
-				warning: vars.color.warning,
-				danger: vars.color.danger,
-				tint: vars.color.paper,
+				base: `${vars.color.neutral}`,
+				primary: `${vars.color.primary}`,
+				secondary: `${vars.color.secondary}`,
+				tertiary: `${vars.color.tertiary}`,
+				success: `${vars.color.success}`,
+				warning: `${vars.color.warning}`,
+				danger: `${vars.color.danger}`,
+				tint: `${vars.color.paper}`,
 				blend: "0%",
 				opacity: "100%",
 			},
 			// Outline
 			focus: {
-				tint: vars.color.paper,
+				tint: `${vars.color.paper}`,
 				blend: "100%",
 				opacity: "10%",
 			},
 			// Background
 			selected: {
-				tint: vars.color.ink,
+				tint: `${vars.color.ink}`,
 				blend: "70%",
 				opacity: "100%",
 			},
 			// Background
 			hover: {
-				tint: vars.color.ink,
+				tint: `${vars.color.ink}`,
 				blend: "50%",
 				opacity: "50%",
 			},
 			// Background
 			active: {
-				tint: vars.color.paper,
+				tint: `${vars.color.paper}`,
 				blend: "80%",
 				opacity: "100%",
 			},
@@ -416,45 +547,52 @@ export default group(
 		// ====================================================================
 		textarea: {
 			font: {
-				family: vars.font.controls.family,
-				line: vars.font.controls.line,
-				weight: vars.font.controls.weight,
-				size: vars.font.controls.size,
+				family: `${vars.font.controls.family}`,
+				line: `${vars.font.controls.line}`,
+				weight: `${vars.font.controls.weight}`,
+				size: `${vars.font.controls.size}`,
+			},
+			box: {
+				padding: {
+					x: "0.875em",
+					y: "0.625em",
+				},
+				radius: `${vars.border.radius[1]}`,
 			},
 			// Background and text
 			color: {
-				base: vars.color.neutral,
-				primary: vars.color.primary,
-				secondary: vars.color.secondary,
-				tertiary: vars.color.tertiary,
-				success: vars.color.success,
-				warning: vars.color.warning,
-				danger: vars.color.danger,
-				tint: vars.color.paper,
+				base: `${vars.color.neutral}`,
+				primary: `${vars.color.primary}`,
+				secondary: `${vars.color.secondary}`,
+				tertiary: `${vars.color.tertiary}`,
+				success: `${vars.color.success}`,
+				warning: `${vars.color.warning}`,
+				danger: `${vars.color.danger}`,
+				tint: `${vars.color.paper}`,
 				blend: "0%",
 				opacity: "100%",
 			},
 			// Outline
 			focus: {
-				tint: vars.color.paper,
+				tint: `${vars.color.paper}`,
 				blend: "100%",
 				opacity: "10%",
 			},
 			// Background
 			selected: {
-				tint: vars.color.ink,
+				tint: `${vars.color.ink}`,
 				blend: "70%",
 				opacity: "100%",
 			},
 			// Background
 			hover: {
-				tint: vars.color.ink,
+				tint: `${vars.color.ink}`,
 				blend: "50%",
 				opacity: "50%",
 			},
 			// Background
 			active: {
-				tint: vars.color.paper,
+				tint: `${vars.color.paper}`,
 				blend: "80%",
 				opacity: "100%",
 			},
@@ -464,21 +602,26 @@ export default group(
 		// ====================================================================
 		checkbox: {
 			font: {
-				family: vars.font.controls.family,
-				line: vars.font.controls.line,
-				weight: vars.font.controls.weight,
-				size: vars.font.controls.size,
+				family: `${vars.font.controls.family}`,
+				line: `${vars.font.controls.line}`,
+				weight: `${vars.font.controls.weight}`,
+				size: `${vars.font.controls.size}`,
+			},
+			box: {
+				size: "1.15em",
+				radius: "0.2em",
+				marker: "0.72em",
 			},
 			// Background and text
 			color: {
-				base: vars.color.neutral,
-				primary: vars.color.primary,
-				secondary: vars.color.secondary,
-				tertiary: vars.color.tertiary,
-				success: vars.color.success,
-				warning: vars.color.warning,
-				danger: vars.color.danger,
-				tint: vars.color.paper,
+				base: `${vars.color.neutral}`,
+				primary: `${vars.color.primary}`,
+				secondary: `${vars.color.secondary}`,
+				tertiary: `${vars.color.tertiary}`,
+				success: `${vars.color.success}`,
+				warning: `${vars.color.warning}`,
+				danger: `${vars.color.danger}`,
+				tint: `${vars.color.paper}`,
 				blend: "0%",
 				opacity: "100%",
 			},
@@ -489,25 +632,25 @@ export default group(
 			},
 			// Outline
 			focus: {
-				tint: vars.color.paper,
+				tint: `${vars.color.paper}`,
 				blend: "100%",
 				opacity: "10%",
 			},
 			// Background
 			selected: {
-				tint: vars.color.ink,
+				tint: `${vars.color.ink}`,
 				blend: "70%",
 				opacity: "100%",
 			},
 			// Background
 			hover: {
-				tint: vars.color.ink,
+				tint: `${vars.color.ink}`,
 				blend: "50%",
 				opacity: "50%",
 			},
 			// Background
 			active: {
-				tint: vars.color.paper,
+				tint: `${vars.color.paper}`,
 				blend: "80%",
 				opacity: "100%",
 			},
@@ -517,21 +660,26 @@ export default group(
 		// ====================================================================
 		radio: {
 			font: {
-				family: vars.font.controls.family,
-				line: vars.font.controls.line,
-				weight: vars.font.controls.weight,
-				size: vars.font.controls.size,
+				family: `${vars.font.controls.family}`,
+				line: `${vars.font.controls.line}`,
+				weight: `${vars.font.controls.weight}`,
+				size: `${vars.font.controls.size}`,
+			},
+			box: {
+				size: "1.15em",
+				radius: "50%",
+				marker: "0.72em",
 			},
 			// Background and text
 			color: {
-				base: vars.color.neutral,
-				primary: vars.color.primary,
-				secondary: vars.color.secondary,
-				tertiary: vars.color.tertiary,
-				success: vars.color.success,
-				warning: vars.color.warning,
-				danger: vars.color.danger,
-				tint: vars.color.paper,
+				base: `${vars.color.neutral}`,
+				primary: `${vars.color.primary}`,
+				secondary: `${vars.color.secondary}`,
+				tertiary: `${vars.color.tertiary}`,
+				success: `${vars.color.success}`,
+				warning: `${vars.color.warning}`,
+				danger: `${vars.color.danger}`,
+				tint: `${vars.color.paper}`,
 				blend: "0%",
 				opacity: "100%",
 			},
@@ -541,26 +689,131 @@ export default group(
 			},
 			// Outline
 			focus: {
-				tint: vars.color.paper,
+				tint: `${vars.color.paper}`,
 				blend: "100%",
 				opacity: "10%",
 			},
 			// Background
 			selected: {
-				tint: vars.color.ink,
+				tint: `${vars.color.ink}`,
 				blend: "70%",
 				opacity: "100%",
 			},
 			// Background
 			hover: {
-				tint: vars.color.ink,
+				tint: `${vars.color.ink}`,
 				blend: "50%",
 				opacity: "50%",
 			},
 			// Background
 			active: {
-				tint: vars.color.paper,
+				tint: `${vars.color.paper}`,
 				blend: "80%",
+				opacity: "100%",
+			},
+		},
+		// ====================================================================
+		// SELECT
+		// ====================================================================
+		select: {
+			font: {
+				family: `${vars.font.controls.family}`,
+				line: `${vars.font.controls.line}`,
+				weight: `${vars.font.controls.weight}`,
+				size: `${vars.font.controls.size}`,
+			},
+			box: {
+				padding: {
+					x: "0.875em",
+					y: "0.625em",
+				},
+				radius: `${vars.border.radius[1]}`,
+			},
+			arrow: {
+				size: "0.3em",
+				offset: "0.75em",
+				gap: "0.33em",
+			},
+			color: {
+				base: `${vars.color.neutral}`,
+				primary: `${vars.color.primary}`,
+				secondary: `${vars.color.secondary}`,
+				tertiary: `${vars.color.tertiary}`,
+				success: `${vars.color.success}`,
+				warning: `${vars.color.warning}`,
+				danger: `${vars.color.danger}`,
+				tint: `${vars.color.paper}`,
+				blend: "0%",
+				opacity: "100%",
+			},
+			focus: {
+				tint: `${vars.color.paper}`,
+				blend: "100%",
+				opacity: "10%",
+			},
+		},
+		// ====================================================================
+		// RANGE
+		// ====================================================================
+		range: {
+			font: {
+				family: `${vars.font.controls.family}`,
+				line: `${vars.font.controls.line}`,
+				weight: `${vars.font.controls.weight}`,
+				size: `${vars.font.controls.size}`,
+			},
+			box: {
+				max_width: "36em",
+			},
+			track: {
+				size: "0.28em",
+				radius: "999px",
+				color: "#d7dbe0",
+			},
+			thumb: {
+				size: "0.95em",
+				radius: "50%",
+			},
+			color: {
+				base: `${vars.color.primary}`,
+				primary: `${vars.color.primary}`,
+				secondary: `${vars.color.secondary}`,
+				tertiary: `${vars.color.tertiary}`,
+				success: `${vars.color.success}`,
+				warning: `${vars.color.warning}`,
+				danger: `${vars.color.danger}`,
+				tint: `${vars.color.paper}`,
+				blend: "0%",
+				opacity: "100%",
+			},
+			focus: {
+				tint: `${vars.color.paper}`,
+				blend: "100%",
+				opacity: "10%",
+			},
+		},
+		// ====================================================================
+		// PANEL
+		// ====================================================================
+		panel: {
+			box: {
+				padding: {
+					x: `${vars.pad[4]}`,
+					y: `${vars.pad[4]}`,
+				},
+				radius: `${vars.border.radius[2]}`,
+				accent: "4px",
+			},
+			color: {
+				base: `${vars.color.neutral}`,
+				primary: `${vars.color.primary}`,
+				secondary: `${vars.color.secondary}`,
+				tertiary: `${vars.color.tertiary}`,
+				success: `${vars.color.success}`,
+				warning: `${vars.color.warning}`,
+				danger: `${vars.color.danger}`,
+				tint: `${vars.color.paper}`,
+				blend: "0%",
 				opacity: "100%",
 			},
 		},

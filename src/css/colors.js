@@ -197,14 +197,14 @@ function colors(colors = COLORS) {
 		// .bd - applies the computed border color
 		rule(".bd", {
 			border_color: borderColor,
-			border_width: vars.border.width,
-			border_style: vars.border.style,
+			border_width: `${vars.border.width}`,
+			border_style: `${vars.border.style}`,
 		}),
 		Object.entries(sides).map(([short, side]) =>
 			rule(`.bd-${short}`, {
 				[`border_${side.name}_color`]: borderColor,
-				[`border_${side.name}_width`]: vars.border.width,
-				[`border_${side.name}_style`]: vars.border.style,
+				[`border_${side.name}_width`]: `${vars.border.width}`,
+				[`border_${side.name}_style`]: `${vars.border.style}`,
 			}),
 		),
 		// .ol - applies the computed outline color
@@ -214,8 +214,8 @@ function colors(colors = COLORS) {
 		Object.entries(sides).map(([short, side]) =>
 			rule(`.ol-${short}`, {
 				[`outline_${side.name}_color`]: outlineColor,
-				[`outline_${side.name}_width`]: vars.outline.width,
-				[`outline_${side.name}_style`]: vars.outline.style,
+				[`outline_${side.name}_width`]: `${vars.outline.width}`,
+				[`outline_${side.name}_style`]: `${vars.outline.style}`,
 			}),
 		),
 

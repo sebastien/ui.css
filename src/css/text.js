@@ -44,11 +44,11 @@ export default named({
 		),
 	),
 	lists: group(
-		rule(["p.t", ".t p"], {
-			margin_top: "0.75em",
-			margin_bottom: "0.75em",
-			min_height: "1.5em",
-		}),
+			rule(["p.t", ".t p"], {
+				margin_top: `${vars.ui.prose.stack}`,
+				margin_bottom: `${vars.ui.prose.stack}`,
+				min_height: `${vars.ui.prose.line_min_height}`,
+			}),
 		rule(["p.t:first-child", ".t p:first-child"], {
 			margin_top: "unset",
 		}),
@@ -75,52 +75,52 @@ export default named({
 		rule([".t a:hover", "a.t:hover"], {
 			opacity: 0.75,
 		}),
-		rule([".t sub", "sub.t"], {
-			vertical_align: "sub",
-			font_size: "0.75em",
-		}),
-		rule([".t sup", "sup.t"], {
-			vertical_align: "super",
-			font_size: "0.75em",
-		}),
+			rule([".t sub", "sub.t"], {
+				vertical_align: "sub",
+				font_size: `${vars.ui.prose.inline.subsup_size}`,
+			}),
+			rule([".t sup", "sup.t"], {
+				vertical_align: "super",
+				font_size: `${vars.ui.prose.inline.subsup_size}`,
+			}),
 		rule([".t u", "u.t"], {
 			text_decoration: "underline",
 		}),
 		// Block formats
-		rule([".t blockquote", "blockquote.t"], {
-			border_left: "4px solid",
-			border_color: "currentColor",
-			margin_left: "0",
-			margin_right: "0",
-			margin_top: "0.75em",
-			margin_bottom: "0.75em",
-			padding_left: "1em",
-			padding_top: "0.25em",
-			padding_bottom: "0.25em",
-			opacity: 0.85,
-		}),
-		rule([".t pre", "pre.t"], {
-			font_family: vars.font.code.family,
-			background: "rgba(128, 128, 128, 0.1)",
-			border_radius: "4px",
-			margin_top: "0.75em",
-			margin_bottom: "0.75em",
-			padding: "0.75em 1em",
-			overflow_x: "auto",
-			white_space: "pre",
-		}),
+			rule([".t blockquote", "blockquote.t"], {
+				border_left: `${vars.ui.prose.blockquote.border_width} solid`,
+				border_color: "currentColor",
+				margin_left: "0",
+				margin_right: "0",
+				margin_top: `${vars.ui.prose.stack}`,
+				margin_bottom: `${vars.ui.prose.stack}`,
+				padding_left: `${vars.ui.prose.blockquote.padding_x}`,
+				padding_top: `${vars.ui.prose.blockquote.padding_y}`,
+				padding_bottom: `${vars.ui.prose.blockquote.padding_y}`,
+				opacity: `${vars.ui.prose.blockquote.opacity}`,
+			}),
+			rule([".t pre", "pre.t"], {
+				font_family: vars.font.code.family,
+				background: `${vars.theme.surface.code.background}`,
+				border_radius: `${vars.theme.surface.code.radius}`,
+				margin_top: `${vars.ui.prose.stack}`,
+				margin_bottom: `${vars.ui.prose.stack}`,
+				padding: `${vars.ui.prose.code.padding_y} ${vars.ui.prose.code.padding_x}`,
+				overflow_x: "auto",
+				white_space: "pre",
+			}),
 		rule([".t pre code", "pre.t code"], {
 			background: "transparent",
 			padding: "0",
 		}),
-		rule(["ul.t", "ol.t", "dl.t", ".t ul", ".t ol", ".t dl"], {
-			margin_top: "0.75em",
-			margin_bottom: "1.5em",
-			padding_left: "1.5em",
-		}),
-		rule(["ol.t", ".t ol"], {
-			padding_left: "2em",
-		}),
+			rule(["ul.t", "ol.t", "dl.t", ".t ul", ".t ol", ".t dl"], {
+				margin_top: `${vars.ui.prose.stack}`,
+				margin_bottom: `${vars.ui.prose.dd.margin_bottom}`,
+				padding_left: `${vars.ui.prose.list_indent}`,
+			}),
+			rule(["ol.t", ".t ol"], {
+				padding_left: `${vars.ui.prose.list_indent_ordered}`,
+			}),
 		rule(["li.t > p", ".t li p"], {
 			maring_top: "unset",
 			maring_bottom: "unset",
@@ -131,22 +131,22 @@ export default named({
 		rule(["ol.t li", ".t ol li"], {
 			list_style_type: "decimal",
 		}),
-		rule([".t li", "li.t"], {
-			margin_bottom: "0.5em",
-		}),
+			rule([".t li", "li.t"], {
+				margin_bottom: `${vars.ui.prose.list_item_gap}`,
+			}),
 		rule([".t dl", "dl.t"], {
 			padding_left: "0em",
 		}),
-		rule([".t dt", "dt.t"], {
-			margin_top: "1.5em",
-			margin_bottom: "0.5em",
-			font_weight: "bold",
-			opacity: 0.75,
-		}),
-		rule([".t dd", "dd.t"], {
-			margin_top: "0.5em",
-			margin_bottom: "1.5em",
-		}),
+			rule([".t dt", "dt.t"], {
+				margin_top: `${vars.ui.prose.dt.margin_top}`,
+				margin_bottom: `${vars.ui.prose.dt.margin_bottom}`,
+				font_weight: "bold",
+				opacity: `${vars.ui.prose.dt.opacity}`,
+			}),
+			rule([".t dd", "dd.t"], {
+				margin_top: `${vars.ui.prose.dd.margin_top}`,
+				margin_bottom: `${vars.ui.prose.dd.margin_bottom}`,
+			}),
 	),
 	whitespace: group(
 		rule(".nobreak", { white_space: "nobreak" }),

@@ -1,9 +1,9 @@
 import { vars, named, group, rule } from "../js/uicss.js";
 
-export default named({
+	export default named({
 	undim: group(
 		rule(".hover-undim", {
-			transition: "opacity 0.2s ease-in-out",
+			transition: `opacity ${vars.theme.motion.duration.normal} ${vars.theme.motion.easing.emphasized}`,
 		}),
 		rule(
 			[
@@ -16,7 +16,7 @@ export default named({
 			].map((_) => `body.no-hover ${_}`),
 			{
 				opacity: "1.0",
-				transition: "opacity 0.2s ease-in-out",
+				transition: `opacity ${vars.theme.motion.duration.normal} ${vars.theme.motion.easing.emphasized}`,
 			},
 		),
 	),
@@ -37,7 +37,7 @@ export default named({
 			].map((_) => `body:not(.no-hover) ${_}`),
 			{
 				opacity: "1.0",
-				transition: "opacity 0.2s ease-in-out",
+				transition: `opacity ${vars.theme.motion.duration.normal} ${vars.theme.motion.easing.emphasized}`,
 			},
 		),
 		rule(".hover .hover-visible", { opacity: "hidden" }),
@@ -63,14 +63,16 @@ export default named({
 		}),
 	),
 	shift: group(
-		rule(".hover-dx", { transition: "transform 0.1s" }),
+		rule(".hover-dx", {
+			transition: `transform ${vars.theme.motion.duration.fast} ${vars.theme.motion.easing.standard}`,
+		}),
 		rule(
 			[
 				"body:not(.no-hover) .hover-dx:hover",
 				"body:not(.no-hover) .hovered:hover .hover-dx",
 			],
 			{
-				transform: "translateX(20%)",
+				transform: `translateX(${vars.theme.motion.shift.hover_dx})`,
 			},
 		),
 	),

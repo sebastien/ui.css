@@ -11,6 +11,16 @@ import {
 } from "../js/uicss.js";
 import { inputs } from "./lib/tags.js";
 
+function colorvars(name, mode = "color") {
+	return {
+		[`--${name}-current-color-base`]: vars[name][mode].base,
+		[`--${name}-current-color-tint`]: vars[name][mode].tint,
+		[`--${name}-current-color-blend`]: vars[name][mode].blend,
+		[`--${name}-current-color-opacity`]: vars[name][mode].opacity,
+		[`--${name}-current-color`]: vars[name].current.color.base,
+	}
+}
+
 export default named({
 	breadcrumbs: group(
 		rule(".breadcrumbs", {
@@ -225,5 +235,38 @@ export default named({
 		rule('.panels[data-panel="5"]', {
 			__panels_current: "5",
 		})
+	),
+
+	panel: group(
+		rule(".panel", {
+			...colorvars("panel", "color"),
+			border_width: `${vars.border.width}`,
+			border_style: `${vars.border.style}`,
+			border_color: `${vars.border.color}`,
+			border_left_width: `${vars.panel.box.accent}`,
+			border_left_color: "var(--panel-current-color)",
+			border_radius: `${vars.panel.box.radius}`,
+			padding: `${vars.panel.box.padding.y} ${vars.panel.box.padding.x}`,
+			background: `${vars.background.color}`,
+			box_shadow: "none",
+		}),
+		rule([".panel > *:first-child", ".panel > .t > *:first-child"], {
+			margin_top: "0px",
+		}),
+		rule([".panel > *:last-child", ".panel > .t > *:last-child"], {
+			margin_bottom: "0px",
+		}),
+		...[
+			"primary",
+			"secondary",
+			"tertiary",
+			"success",
+			"warning",
+			"danger",
+		].map((variant) =>
+			rule(`.panel.${variant}`, {
+				__panel_color_base: `${vars.panel.color[variant]}`,
+			}),
+		),
 	),
 });

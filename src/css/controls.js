@@ -86,14 +86,14 @@ function button(colors) {
 	const name = ["button", ".button"];
 	const selectable = [".selectable"];
 	const controls = [...name, ...selectable];
-	return group(
-		rule(name, {
-			cursor: "pointer",
-			padding: "0.5em 1em",
-			outline: "0px solid transparent",
-			border: "0px solid transparent",
-			transition:
-				"background 0.2s ease, color 0.2s ease, border 0.2s ease, outline-color 0.2s ease",
+		return group(
+			rule(name, {
+				cursor: "pointer",
+				padding: `${vars.button.box.padding.y} ${vars.button.box.padding.x}`,
+				outline: "0px solid transparent",
+				border: "0px solid transparent",
+				border_radius: vars.button.box.radius,
+				transition: `${vars.ui.control.transition}`,
 			font_family: vars.button.font.family,
 			line_height: vars.button.font.line,
 			font_weight: vars.button.font.weight,
@@ -104,12 +104,12 @@ function button(colors) {
 			...colorvars("button", "color"),
 			background: "var(--button-current-color)",
 		}),
-		rule(selectable, {
-			cursor: "pointer",
-			outline: "0px solid transparent",
-			border: "0px solid transparent",
-			transition:
-				"background 0.2s ease, color 0.2s ease, border 0.2s ease, outline-color 0.2s ease",
+			rule(selectable, {
+				cursor: "pointer",
+				outline: "0px solid transparent",
+				border: "0px solid transparent",
+				border_radius: vars.selectable.box.radius,
+				transition: `${vars.ui.control.transition}`,
 			font_family: vars.selectable.font.family,
 			line_height: vars.selectable.font.line,
 			font_weight: vars.selectable.font.weight,
@@ -142,7 +142,7 @@ function button(colors) {
 		// ====================================================================
 
 		rule(cross(name, [":focus-visible", ".focus"]), {
-			outline_width: "2px",
+			outline_width: `${vars.ui.control.focus.ring.width}`,
 			outline_color: colormix(
 				vars.button.current.color,
 				vars.button.focus.tint,
@@ -151,7 +151,7 @@ function button(colors) {
 			),
 		}),
 		rule(cross(selectable, [":focus-visible", ".focus"]), {
-			outline_width: "2px",
+			outline_width: `${vars.ui.control.focus.ring.width}`,
 			outline_color: colormix(
 				vars.selectable.current.color,
 				vars.selectable.focus.tint,
@@ -213,8 +213,8 @@ function button(colors) {
 			background: colormix(
 				vars.button.current.color,
 				vars.color.paper,
-				"50%",
-				"75%",
+				`${vars.ui.control.disabled.blend}`,
+				`${vars.ui.control.disabled.opacity}`,
 			),
 		}),
 		rule(mods(selectable, "disabled"), {
@@ -226,17 +226,17 @@ function button(colors) {
 		// STYLE
 		// ====================================================================
 		rule(mods(controls, "default"), {
-			border_width: "3px",
+			border_width: `${vars.ui.control.style.default.border.width}`,
 			border_color: vars.button.current.color,
 			font_weight: "bold",
 		}),
 		rule(mods(selectable, "default"), {
-			border_width: "3px",
+			border_width: `${vars.ui.control.style.default.border.width}`,
 			border_color: vars.selectable.current.color,
 			font_weight: "bold",
 		}),
 		rule(mods(controls, "outline"), {
-			border_width: "1px",
+			border_width: `${vars.ui.control.style.outline.border.width}`,
 			background: "transparent",
 			border_color: colormix(
 				vars.button.current.color,
@@ -247,7 +247,7 @@ function button(colors) {
 			color: colormix(vars.button.current.color, vars.color.ink, "50%", "100%"),
 		}),
 		rule(mods(selectable, "outline"), {
-			border_width: "1px",
+			border_width: `${vars.ui.control.style.outline.border.width}`,
 			background: "transparent",
 			border_color: colormix(
 				vars.selectable.current.color,
@@ -278,9 +278,9 @@ function button(colors) {
 		rule(cross(name, [".icon"]), {
 			__button_color_opacity: "50%",
 			background: "transparent",
-			padding: "0.25em",
-			width: "1em",
-			height: "1em",
+			padding: `${vars.ui.control.icon.padding}`,
+			width: `${vars.ui.control.icon.size}`,
+			height: `${vars.ui.control.icon.size}`,
 			aspect_ratio: "1",
 			box_sizing: "content-box",
 		}),
@@ -372,12 +372,12 @@ function button(colors) {
 function input(colors) {
 	const name = ["input", ".input"];
 	return group(
-		rule(name, {
-			padding: "0.75em",
+			rule(name, {
+			padding: `${vars.input.box.padding.y} ${vars.input.box.padding.x}`,
 			outline: "0px solid transparent",
 			border: "0px solid transparent",
-			transition:
-				"background 0.2s ease, color 0.2s ease, border 0.2s ease, outline-color 0.2s ease",
+				border_radius: vars.input.box.radius,
+			transition: `${vars.ui.control.transition}`,
 			font_family: vars.input.font.family,
 			line_height: vars.input.font.line,
 			font_weight: vars.input.font.weight,
@@ -386,17 +386,17 @@ function input(colors) {
 			display: "inline-flex",
 			justify_content: "stretch",
 			align_items: "center",
-			border_width: "1px",
+			border_width: `${vars.ui.control.border.width}`,
 			border_color: colormix(
 				vars.input.current.color,
 				vars.color.paper,
-				"25%",
-				"90%",
+				"45%",
+				"100%",
 			),
 			background: colormix(
 				vars.input.current.color,
 				vars.color.paper,
-				"5%",
+				"3%",
 				"100%",
 			),
 		}),
@@ -406,13 +406,6 @@ function input(colors) {
 		...colors.map((variant) =>
 			rule(mods(name, variant), {
 				__input_color_base: vars.input.color[variant],
-				background: colormix(
-					vars.input.current.color,
-					vars.color.paper,
-					"20%",
-					"100%",
-				),
-				color: contrast(vars.input.current.color),
 			}),
 		),
 		// ====================================================================
@@ -420,7 +413,7 @@ function input(colors) {
 		// ====================================================================
 		rule(mods(name, "hover"), {}),
 		rule(mods(name, "focus"), {
-			outline_width: "2px",
+			outline_width: `${vars.ui.control.focus.ring.width}`,
 			outline_color: colormix(
 				vars.input.current.color,
 				vars.input.focus.tint,
@@ -430,7 +423,7 @@ function input(colors) {
 			background_color: colormix(
 				vars.input.current.color,
 				vars.color.paper,
-				"0%",
+				"6%",
 				"100%",
 			),
 		}),
@@ -442,21 +435,31 @@ function input(colors) {
 				vars.input.active.opacity,
 			),
 		}),
-		rule(mods(name, "disabled"), {
-			cursor: "default",
-			background: colormix(vars.colo.neutral, vars.color.paper, "50%", "75%"),
-			color: colormix(vars.color.neutral, vars.color.ink, "50%", "75%"),
-		}),
+			rule(mods(name, "disabled"), {
+				cursor: "default",
+				background: colormix(
+					vars.color.neutral,
+					vars.color.paper,
+					`${vars.ui.control.disabled.blend}`,
+					`${vars.ui.control.disabled.opacity}`,
+				),
+				color: colormix(
+					vars.color.neutral,
+					vars.color.ink,
+					`${vars.ui.control.disabled.blend}`,
+					`${vars.ui.control.disabled.opacity}`,
+				),
+			}),
 		// ====================================================================
 		// STYLE
 		// ====================================================================
 		rule(mods(name, "default"), {
-			border_width: "3px",
+			border_width: `${vars.ui.control.style.default.border.width}`,
 			border_color: vars.input.current.color,
 			font_weight: "bold",
 		}),
 		rule(mods(name, "outline"), {
-			border_width: "1px",
+			border_width: `${vars.ui.control.style.outline.border.width}`,
 			background: "transparent",
 			border_color: colormix(
 				vars.input.current.color,
@@ -481,6 +484,11 @@ function input(colors) {
 			__input_color_opacity: "50%",
 			aspect_ratio: "1",
 		}),
+		...SIZES.map((size, i) =>
+			rule(mods(name, size), {
+				font_size: `calc(${vars.input.font.size} * ${vars.textsize.size[i]})`,
+			}),
+		),
 		bare(name, "input"),
 	);
 }
@@ -494,27 +502,27 @@ function textarea(colors) {
 	const name = ["textarea", ".textarea"];
 	return group(
 		rule(name, {
-			padding: "0.75em",
+			padding: `${vars.textarea.box.padding.y} ${vars.textarea.box.padding.x}`,
 			outline: "0px solid transparent",
 			border: "0px solid transparent",
-			transition:
-				"background 0.2s ease, color 0.2s ease, border 0.2s ease, outline-color 0.2s ease",
+			border_radius: vars.textarea.box.radius,
+			transition: `${vars.ui.control.transition}`,
 			font_family: vars.textarea.font.family,
 			line_height: vars.textarea.font.line,
 			font_weight: vars.textarea.font.weight,
 			font_size: vars.textarea.font.size,
 			...colorvars("textarea", "color"),
-			border_width: "1px",
+			border_width: `${vars.ui.control.border.width}`,
 			border_color: colormix(
 				vars.textarea.current.color,
 				vars.color.paper,
-				"25%",
-				"90%",
+				"45%",
+				"100%",
 			),
 			background: colormix(
 				vars.textarea.current.color,
 				vars.color.paper,
-				"5%",
+				"3%",
 				"100%",
 			),
 		}),
@@ -524,13 +532,6 @@ function textarea(colors) {
 		...colors.map((variant) =>
 			rule(mods(name, variant), {
 				__textarea_color_base: vars.textarea.color[variant],
-				background: colormix(
-					vars.textarea.current.color,
-					vars.color.paper,
-					"20%",
-					"100%",
-				),
-				color: contrast(vars.textarea.current.color),
 			}),
 		),
 		// ====================================================================
@@ -538,7 +539,7 @@ function textarea(colors) {
 		// ====================================================================
 		rule(mods(name, "hover"), {}),
 		rule(mods(name, "focus"), {
-			outline_width: "2px",
+			outline_width: `${vars.ui.control.focus.ring.width}`,
 			outline_color: colormix(
 				vars.textarea.current.color,
 				vars.textarea.focus.tint,
@@ -548,7 +549,7 @@ function textarea(colors) {
 			background_color: colormix(
 				vars.textarea.current.color,
 				vars.color.paper,
-				"0%",
+				"6%",
 				"100%",
 			),
 		}),
@@ -562,19 +563,29 @@ function textarea(colors) {
 		}),
 		rule(mods(name, "disabled"), {
 			cursor: "default",
-			background: colormix(vars.colo.neutral, vars.color.paper, "50%", "75%"),
-			color: colormix(vars.color.neutral, vars.color.ink, "50%", "75%"),
+			background: colormix(
+				vars.color.neutral,
+				vars.color.paper,
+				`${vars.ui.control.disabled.blend}`,
+				`${vars.ui.control.disabled.opacity}`,
+			),
+			color: colormix(
+				vars.color.neutral,
+				vars.color.ink,
+				`${vars.ui.control.disabled.blend}`,
+				`${vars.ui.control.disabled.opacity}`,
+			),
 		}),
 		// ====================================================================
 		// STYLE
 		// ====================================================================
 		rule(mods(name, "default"), {
-			border_width: "3px",
+			border_width: `${vars.ui.control.style.default.border.width}`,
 			border_color: vars.textarea.current.color,
 			font_weight: "bold",
 		}),
 		rule(mods(name, "outline"), {
-			border_width: "1px",
+			border_width: `${vars.ui.control.style.outline.border.width}`,
 			background: "transparent",
 			border_color: colormix(
 				vars.textarea.current.color,
@@ -609,8 +620,187 @@ function textarea(colors) {
 			__textarea_color_opacity: "50%",
 			aspect_ratio: "1",
 		}),
+		...SIZES.map((size, i) =>
+			rule(mods(name, size), {
+				font_size: `calc(${vars.textarea.font.size} * ${vars.textsize.size[i]})`,
+			}),
+		),
 		bare(name, "textarea"),
 	);
+}
+
+// ----------------------------------------------------------------------------
+//
+// SELECT
+//
+// ----------------------------------------------------------------------------
+function select(colors) {
+	const name = ["select", ".select"];
+	return group(
+		rule(name, {
+			padding: `${vars.select.box.padding.y} ${vars.select.box.padding.x}`,
+			padding_right: `calc(${vars.select.box.padding.x} + ${vars.select.arrow.offset} + ${vars.select.arrow.size})`,
+			outline: "0px solid transparent",
+			border: "0px solid transparent",
+			border_radius: vars.select.box.radius,
+			appearance: "none",
+			transition: `${vars.ui.control.transition}`,
+			font_family: vars.select.font.family,
+			line_height: vars.select.font.line,
+			font_weight: vars.select.font.weight,
+			font_size: vars.select.font.size,
+			...colorvars("select", "color"),
+			display: "inline-flex",
+			justify_content: "stretch",
+			align_items: "center",
+			border_width: `${vars.ui.control.border.width}`,
+			border_color: colormix(
+				vars.select.current.color,
+				vars.color.paper,
+				"25%",
+				"90%",
+			),
+			background_color: colormix(
+				vars.select.current.color,
+				vars.color.paper,
+				"5%",
+				"100%",
+			),
+			background_image:
+				"linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%)",
+			background_position: `right ${vars.select.arrow.offset} center, right calc(${vars.select.arrow.offset} - ${vars.select.arrow.gap}) center`,
+			background_size: `${vars.select.arrow.size} ${vars.select.arrow.size}, ${vars.select.arrow.size} ${vars.select.arrow.size}`,
+			background_repeat: "no-repeat",
+		}),
+		...colors.map((variant) =>
+			rule(mods(name, variant), {
+				__select_color_base: vars.select.color[variant],
+				background_color: colormix(
+					vars.select.current.color,
+					vars.color.paper,
+					"20%",
+					"100%",
+				),
+				color: contrast(vars.select.current.color),
+			}),
+		),
+		rule(mods(name, "focus"), {
+			outline_width: `${vars.ui.control.focus.ring.width}`,
+			outline_color: colormix(
+				vars.select.current.color,
+				vars.select.focus.tint,
+				vars.select.focus.blend,
+				vars.select.focus.opacity,
+			),
+		}),
+		rule(mods(name, "disabled"), {
+			cursor: "default",
+			background: colormix(
+				vars.color.neutral,
+				vars.color.paper,
+				`${vars.ui.control.disabled.blend}`,
+				`${vars.ui.control.disabled.opacity}`,
+			),
+			color: colormix(
+				vars.color.neutral,
+				vars.color.ink,
+				`${vars.ui.control.disabled.blend}`,
+				`${vars.ui.control.disabled.opacity}`,
+			),
+		}),
+		...SIZES.map((size, i) =>
+			rule(mods(name, size), {
+				font_size: `calc(${vars.select.font.size} * ${vars.textsize.size[i]})`,
+			}),
+		),
+		bare(name, "select"),
+	)
+}
+
+// ----------------------------------------------------------------------------
+//
+// RANGE
+//
+// ----------------------------------------------------------------------------
+function range(colors) {
+	const name = ['input[type="range"]', ".range"];
+	return group(
+		rule(name, {
+			appearance: "none",
+			font_family: vars.range.font.family,
+			line_height: vars.range.font.line,
+			font_weight: vars.range.font.weight,
+			font_size: vars.range.font.size,
+			...colorvars("range", "color"),
+			width: "100%",
+			max_width: vars.range.box.max_width,
+			cursor: "pointer",
+			min_height: vars.range.thumb.size,
+			padding: "0px",
+			margin: "0px",
+			background: "transparent",
+			border: "0px solid transparent",
+			border_radius: "0px",
+			box_shadow: "none",
+			transition: "none",
+		}),
+		...colors.map((variant) =>
+			rule(mods(name, variant), {
+				__range_color_base: vars.range.color[variant],
+			}),
+		),
+		rule(name.map((n) => `${n}::-webkit-slider-runnable-track`), {
+			height: vars.range.track.size,
+			border_radius: vars.range.track.radius,
+			background: vars.range.track.color,
+		}),
+		rule(name.map((n) => `${n}::-webkit-slider-thumb`), {
+			appearance: "none",
+			width: vars.range.thumb.size,
+			height: vars.range.thumb.size,
+			border_radius: vars.range.thumb.radius,
+			background: "var(--range-current-color)",
+			border: "0px solid transparent",
+			margin_top: `calc((${vars.range.track.size} - ${vars.range.thumb.size}) / 2)`,
+		}),
+		rule(name.map((n) => `${n}::-moz-range-track`), {
+			height: vars.range.track.size,
+			border_radius: vars.range.track.radius,
+			background: vars.range.track.color,
+			border: "0px solid transparent",
+		}),
+		rule(name.map((n) => `${n}::-moz-range-thumb`), {
+			width: vars.range.thumb.size,
+			height: vars.range.thumb.size,
+			border_radius: vars.range.thumb.radius,
+			background: "var(--range-current-color)",
+			border: "0px solid transparent",
+		}),
+		rule(mods(name, "focus"), {
+			outline_width: `${vars.ui.control.focus.ring.width}`,
+			outline_color: colormix(
+				vars.range.current.color,
+				vars.range.focus.tint,
+				vars.range.focus.blend,
+				vars.range.focus.opacity,
+			),
+		}),
+		rule(name.map((n) => `${n}:focus-visible`), {
+			outline_width: `${vars.ui.control.focus.ring.width}`,
+			outline_color: colormix(
+				vars.range.current.color,
+				vars.range.focus.tint,
+				vars.range.focus.blend,
+				vars.range.focus.opacity,
+			),
+		}),
+		...SIZES.map((size, i) =>
+			rule(mods(name, size), {
+				font_size: `calc(${vars.range.font.size} * ${vars.textsize.size[i]})`,
+			}),
+		),
+		bare(name, "range"),
+	)
 }
 
 // ----------------------------------------------------------------------------
@@ -623,29 +813,31 @@ function checkbox(colors) {
 	return group(
 		rule(name, {
 			cursor: "pointer",
-			padding: "0.65em",
+			appearance: "none",
+			font_size: vars.checkbox.font.size,
+			width: vars.checkbox.box.size,
+			height: vars.checkbox.box.size,
+			padding: "0px",
+			margin: "0px",
+			display: "inline-block",
+			position: "relative",
+			box_sizing: "border-box",
 			outline: "0px solid transparent",
 			border: "0px solid transparent",
-			transition:
-				"background 0.2s ease, color 0.2s ease, border 0.2s ease, outline-color 0.2s ease",
+			border_radius: vars.checkbox.box.radius,
+			transition: `${vars.ui.control.transition}`,
 			font_family: vars.checkbox.font.family,
 			line_height: vars.checkbox.font.line,
 			font_weight: vars.checkbox.font.weight,
-			font_size: vars.checkbox.font.size,
 			...colorvars("checkbox", "color"),
-			border_width: "1px",
+			border_width: `${vars.ui.control.border.width}`,
 			border_color: colormix(
 				vars.checkbox.current.color,
 				vars.color.paper,
 				"25%",
 				"90%",
 			),
-			background: colormix(
-				vars.checkbox.current.color,
-				vars.color.paper,
-				"5%",
-				"100%",
-			),
+			background: vars.color.paper,
 		}),
 		// ====================================================================
 		// COLORS
@@ -653,13 +845,6 @@ function checkbox(colors) {
 		...colors.map((variant) =>
 			rule(mods(name, variant), {
 				__checkbox_color_base: vars.checkbox.color[variant],
-				background: colormix(
-					vars.checkbox.current.color,
-					vars.color.paper,
-					"20%",
-					"100%",
-				),
-				color: contrast(vars.checkbox.current.color),
 			}),
 		),
 		// ====================================================================
@@ -667,19 +852,14 @@ function checkbox(colors) {
 		// ====================================================================
 		rule(mods(name, "hover"), {}),
 		rule(mods(name, "focus"), {
-			outline_width: "2px",
+			outline_width: `${vars.ui.control.focus.ring.width}`,
 			outline_color: colormix(
 				vars.checkbox.current.color,
 				vars.checkbox.focus.tint,
 				vars.checkbox.focus.blend,
 				vars.checkbox.focus.opacity,
 			),
-			background_color: colormix(
-				vars.checkbox.current.color,
-				vars.color.paper,
-				"0%",
-				"100%",
-			),
+			background_color: vars.color.paper,
 		}),
 		rule(mods(name, "active"), {
 			border_color: colormix(
@@ -691,8 +871,18 @@ function checkbox(colors) {
 		}),
 		rule(mods(name, "disabled"), {
 			cursor: "default",
-			background: colormix(vars.colo.neutral, vars.color.paper, "50%", "75%"),
-			color: colormix(vars.color.neutral, vars.color.ink, "50%", "75%"),
+			background: colormix(
+				vars.color.neutral,
+				vars.color.paper,
+				`${vars.ui.control.disabled.blend}`,
+				`${vars.ui.control.disabled.opacity}`,
+			),
+			color: colormix(
+				vars.color.neutral,
+				vars.color.ink,
+				`${vars.ui.control.disabled.blend}`,
+				`${vars.ui.control.disabled.opacity}`,
+			),
 		}),
 		// ====================================================================
 		// CHECKED & PARTIAL CONTENT
@@ -700,8 +890,9 @@ function checkbox(colors) {
 		rule(
 			name.map((n) => `${n}:checked`),
 			{
-				appearance: "none",
 				position: "relative",
+				border_color: "var(--checkbox-current-color)",
+				background: "var(--checkbox-current-color)",
 			},
 		),
 		rule(
@@ -712,15 +903,17 @@ function checkbox(colors) {
 				top: "50%",
 				left: "50%",
 				transform: "translate(-50%, -50%)",
-				font_size: "1.2em",
+				font_size: vars.checkbox.box.marker,
+				line_height: "1",
 				color: contrast(vars.checkbox.current.color),
 			},
 		),
 		rule(
 			name.map((n) => `${n}:indeterminate`),
 			{
-				appearance: "none",
 				position: "relative",
+				border_color: "var(--checkbox-current-color)",
+				background: "var(--checkbox-current-color)",
 			},
 		),
 		rule(
@@ -731,7 +924,8 @@ function checkbox(colors) {
 				top: "50%",
 				left: "50%",
 				transform: "translate(-50%, -50%)",
-				font_size: "1.2em",
+				font_size: vars.checkbox.box.marker,
+				line_height: "1",
 				color: contrast(vars.checkbox.current.color),
 			},
 		),
@@ -739,12 +933,12 @@ function checkbox(colors) {
 		// STYLE
 		// ====================================================================
 		rule(mods(name, "default"), {
-			border_width: "3px",
+			border_width: `${vars.ui.control.style.default.border.width}`,
 			border_color: vars.checkbox.current.color,
 			font_weight: "bold",
 		}),
 		rule(mods(name, "outline"), {
-			border_width: "1px",
+			border_width: `${vars.ui.control.style.outline.border.width}`,
 			background: "transparent",
 			border_color: colormix(
 				vars.checkbox.current.color,
@@ -769,6 +963,11 @@ function checkbox(colors) {
 			__checkbox_color_opacity: "50%",
 			aspect_ratio: "1",
 		}),
+		...SIZES.map((size, i) =>
+			rule(mods(name, size), {
+				font_size: `calc(${vars.checkbox.font.size} * ${vars.textsize.size[i]})`,
+			}),
+		),
 		bare(name, "checkbox"),
 	);
 }
@@ -783,18 +982,24 @@ function radio(colors) {
 	return group(
 		rule(name, {
 			cursor: "pointer",
-			padding: "0.65em",
+			appearance: "none",
+			font_size: vars.radio.font.size,
+			width: vars.radio.box.size,
+			height: vars.radio.box.size,
+			padding: "0px",
+			margin: "0px",
+			display: "inline-block",
+			position: "relative",
+			box_sizing: "border-box",
 			outline: "0px solid transparent",
 			border: "0px solid transparent",
 			border_radius: "50%",
-			transition:
-				"background 0.2s ease, color 0.2s ease, border 0.2s ease, outline-color 0.2s ease",
+			transition: `${vars.ui.control.transition}`,
 			font_family: vars.radio.font.family,
 			line_height: vars.radio.font.line,
 			font_weight: vars.radio.font.weight,
-			font_size: vars.radio.font.size,
 			...colorvars("radio", "color"),
-			border_width: "1px",
+			border_width: `${vars.ui.control.border.width}`,
 			border_color: colormix(
 				vars.color.neutral,
 				vars.color.paper,
@@ -821,7 +1026,7 @@ function radio(colors) {
 		// ====================================================================
 		rule(mods(name, "hover"), {}),
 		rule(mods(name, "focus"), {
-			outline_width: "2px",
+			outline_width: `${vars.ui.control.focus.ring.width}`,
 			outline_color: colormix(
 				vars.color.neutral,
 				vars.radio.focus.tint,
@@ -839,12 +1044,17 @@ function radio(colors) {
 		}),
 		rule(mods(name, "disabled"), {
 			cursor: "default",
-			background: colormix(vars.colo.neutral, vars.color.paper, "50%", "75%"),
+			background: colormix(
+				vars.color.neutral,
+				vars.color.paper,
+				`${vars.ui.control.disabled.blend}`,
+				`${vars.ui.control.disabled.opacity}`,
+			),
 			border_color: colormix(
 				vars.color.neutral,
 				vars.color.paper,
-				"50%",
-				"75%",
+				`${vars.ui.control.disabled.blend}`,
+				`${vars.ui.control.disabled.opacity}`,
 			),
 		}),
 		// ====================================================================
@@ -853,7 +1063,6 @@ function radio(colors) {
 		rule(
 			name.map((n) => `${n}:checked`),
 			{
-				appearance: "none",
 				position: "relative",
 			},
 		),
@@ -865,7 +1074,8 @@ function radio(colors) {
 				top: "50%",
 				left: "50%",
 				transform: "translate(-50%, -50%)",
-				font_size: "1.2em",
+				font_size: vars.radio.box.marker,
+				line_height: "1",
 				color: vars.color.neutral,
 			},
 		),
@@ -873,12 +1083,12 @@ function radio(colors) {
 		// STYLE
 		// ====================================================================
 		rule(mods(name, "default"), {
-			border_width: "3px",
+			border_width: `${vars.ui.control.style.default.border.width}`,
 			border_color: vars.color.neutral,
 			font_weight: "bold",
 		}),
 		rule(mods(name, "outline"), {
-			border_width: "1px",
+			border_width: `${vars.ui.control.style.outline.border.width}`,
 			background: "transparent",
 			border_color: colormix(
 				vars.color.neutral,
@@ -897,6 +1107,11 @@ function radio(colors) {
 			__radio_color_opacity: "50%",
 			aspect_ratio: "1",
 		}),
+		...SIZES.map((size, i) =>
+			rule(mods(name, size), {
+				font_size: `calc(${vars.radio.font.size} * ${vars.textsize.size[i]})`,
+			}),
+		),
 		bare(name, "radio"),
 	);
 }
@@ -918,7 +1133,9 @@ const colors = [
 export default named({
 	button: button(colors),
 	input: input(colors),
+	select: select(colors),
 	textarea: textarea(colors),
+	range: range(colors),
 	checkbox: checkbox(colors),
 	radio: radio(colors),
 });
