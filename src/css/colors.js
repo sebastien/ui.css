@@ -101,6 +101,26 @@ const luminosityScale = [
 	50, // 10 - lightest
 ];
 
+const level = (index, dark = false) => luminosityScale[dark ? 10 - index : index];
+
+const indexedColor = (color, index, dark = false) => `var(--color-${color}-${level(index, dark)})`;
+
+const indexedSemantic = (palette, index, dark = false) => SPECIAL_COLORS[palette] ?? indexedColor(palette, index, dark);
+
+const indexedColorVars = (colors, dark = false) =>
+	Object.fromEntries(
+		colors.flatMap((color) =>
+			luminosityScale.map((_, index) => [`--color-${color}-i-${index}`, indexedColor(color, index, dark)]),
+		),
+	);
+
+const indexedSemanticVars = (semantic, dark = false) =>
+	Object.fromEntries(
+		Object.entries(semantic).flatMap(([name, palette]) =>
+			luminosityScale.map((_, index) => [`--color-${name}-i-${index}`, indexedSemantic(palette, index, dark)]),
+		),
+	);
+
 function colormix(base, tint, blend, opacity) {
 	const color = `color-mix(in srgb,${tint},${base} ${blend})`;
 	return `color-mix(in srgb, transparent, ${color} ${opacity})`;
@@ -113,6 +133,11 @@ function colormix(base, tint, blend, opacity) {
 // ----------------------------------------------------------------------------
 
 function colors(colors = COLORS) {
+	const backgroundColor = `color-mix(in oklch, color-mix(in oklch, var(--background-base), var(--background-tint) calc((1 - var(--background-blend)) * 100%)), transparent calc((1 - var(--background-opacity)) * 100%))`;
+	const textColor = `color-mix(in oklch, color-mix(in oklch, var(--text-base), var(--text-tint) calc((1 - var(--text-blend)) * 100%)), transparent calc((1 - var(--text-opacity)) * 100%))`;
+	const borderColor = `color-mix(in oklch, color-mix(in oklch, var(--border-base), var(--border-tint) calc((1 - var(--border-blend)) * 100%)), transparent calc((1 - var(--border-opacity)) * 100%))`;
+	const outlineColor = `color-mix(in oklch, color-mix(in oklch, var(--outline-base), var(--outline-tint) calc((1 - var(--outline-blend)) * 100%)), transparent calc((1 - var(--outline-opacity)) * 100%))`;
+
 	return group(
 		// ------------------------------------------------------------------------
 		// DARK / LIGHT MODE
@@ -120,6 +145,8 @@ function colors(colors = COLORS) {
 		rule(".light, :root", {
 			__color_page: "var(--color-paper)",
 			__color_text: "var(--color-ink)",
+			...indexedColorVars(colors, false),
+			...indexedSemanticVars(SEMANTIC, false),
 			// Apply actual properties
 			background_color: "var(--color-paper)",
 			color: "var(--color-ink)",
@@ -127,6 +154,8 @@ function colors(colors = COLORS) {
 		rule(".dark", {
 			__color_page: "var(--color-ink)",
 			__color_text: "var(--color-paper)",
+			...indexedColorVars(colors, true),
+			...indexedSemanticVars(SEMANTIC, true),
 			// Apply actual properties with swapped colors
 			background_color: "var(--color-ink)",
 			color: "var(--color-paper)",
@@ -149,36 +178,42 @@ function colors(colors = COLORS) {
 		// ------------------------------------------------------------------------
 		// .bg - applies the computed background color
 		rule(".bg", {
-			background_color: `color-mix(in oklch, color-mix(in oklch, var(--background-base), var(--background-tint) calc((1 - var(--background-blend)) * 100%)), transparent calc((1 - var(--background-opacity)) * 100%))`,
+			"--uicss-bg-color": backgroundColor,
+			background_color: `var(--uicss-bg-color)`,
 		}),
 		// .tx - applies the computed text color
 		rule(".tx", {
-			color: `color-mix(in oklch, color-mix(in oklch, var(--text-base), var(--text-tint) calc((1 - var(--text-blend)) * 100%)), transparent calc((1 - var(--text-opacity)) * 100%))`,
+			"--uicss-text-color": textColor,
+			color: `var(--uicss-text-color)`,
+		}),
+		// Progressive enhancement: when supported, prefer dynamic contrast for paired bg+tx.
+		rule(".bg.tx", {
+			color: contrast("var(--uicss-bg-color)"),
 		}),
 		// .tx-contrast - automatically selects paper or ink for maximum contrast
 		rule(".tx-contrast", {
-			color: contrast("var(--text-base)"),
+			color: contrast("var(--background-color)"),
 		}),
 		// .bd - applies the computed border color
 		rule(".bd", {
-			border_color: `color-mix(in oklch, color-mix(in oklch, var(--border-base), var(--border-tint) calc((1 - var(--border-blend)) * 100%)), transparent calc((1 - var(--border-opacity)) * 100%))`,
+			border_color: borderColor,
 			border_width: vars.border.width,
 			border_style: vars.border.style,
 		}),
 		Object.entries(sides).map(([short, side]) =>
 			rule(`.bd-${short}`, {
-				[`border_${side.name}_color`]: `color-mix(in oklch, color-mix(in oklch, var(--border-base), var(--border-tint) calc((1 - var(--border-blend)) * 100%)), transparent calc((1 - var(--border-opacity)) * 100%))`,
+				[`border_${side.name}_color`]: borderColor,
 				[`border_${side.name}_width`]: vars.border.width,
 				[`border_${side.name}_style`]: vars.border.style,
 			}),
 		),
 		// .ol - applies the computed outline color
 		rule(".ol", {
-			outline_color: `color-mix(in oklch, color-mix(in oklch, var(--outline-base), var(--outline-tint) calc((1 - var(--outline-blend)) * 100%)), transparent calc((1 - var(--outline-opacity)) * 100%))`,
+			outline_color: outlineColor,
 		}),
 		Object.entries(sides).map(([short, side]) =>
 			rule(`.ol-${short}`, {
-				[`outline_${side.name}_color`]: `color-mix(in oklch, color-mix(in oklch, var(--outline-base), var(--outline-tint) calc((1 - var(--outline-blend)) * 100%)), transparent calc((1 - var(--outline-opacity)) * 100%))`,
+				[`outline_${side.name}_color`]: outlineColor,
 				[`outline_${side.name}_width`]: vars.outline.width,
 				[`outline_${side.name}_style`]: vars.outline.style,
 			}),
@@ -211,12 +246,12 @@ function colors(colors = COLORS) {
 		// Creates .{bg,tx,bd,ol}-{color}-{0-10} classes
 		// Index 0 = darkest (950), Index 10 = lightest (50)
 		// In light mode: 0->950, 10->50
-		// In dark mode: 0->50, 10->950 (inverted via CSS logic)
+		// In dark mode: 0->50, 10->950 (inverted via per-mode index vars)
 		Object.keys(shorthands).flatMap((short) =>
 			colors.flatMap((color) =>
-				luminosityScale.map((luma, index) =>
+				luminosityScale.map((_, index) =>
 					rule(`.${short}-${color}-${index}`, {
-						[`--${shorthands[short].name}-base`]: `var(--color-${color}-${luma})`,
+						[`--${shorthands[short].name}-base`]: `var(--color-${color}-i-${index})`,
 					}),
 				),
 			),
@@ -225,9 +260,9 @@ function colors(colors = COLORS) {
 		// Semantic index variants (handle paper/ink specially - they don't have scales)
 		Object.keys(shorthands).flatMap((short) =>
 			Object.keys(SEMANTIC).flatMap((semantic) =>
-				luminosityScale.map((luma, index) =>
+				luminosityScale.map((_, index) =>
 					rule(`.${short}-${semantic}-${index}`, {
-						[`--${shorthands[short].name}-base`]: `var(--color-${semantic}-${luma})`,
+						[`--${shorthands[short].name}-base`]: `var(--color-${semantic}-i-${index})`,
 					}),
 				),
 			),
@@ -265,12 +300,33 @@ function colors(colors = COLORS) {
 		// Creates .{bg,tx,bd,ol}-to-{color}-{index} classes for setting tint
 		Object.keys(shorthands).flatMap((short) =>
 			colors.flatMap((color) =>
-				luminosityScale.map((luma, index) =>
+				luminosityScale.map((_, index) =>
 					rule(`.${short}-to-${color}-${index}`, {
-						[`--${shorthands[short].name}-tint`]: `var(--color-${color}-${luma})`,
+						[`--${shorthands[short].name}-tint`]: `var(--color-${color}-i-${index})`,
 					}),
 				),
 			),
+		),
+
+		Object.keys(shorthands).flatMap((short) =>
+			Object.keys(SEMANTIC).flatMap((semantic) =>
+				luminosityScale.map((_, index) =>
+					rule(`.${short}-to-${semantic}-${index}`, {
+						[`--${shorthands[short].name}-tint`]: `var(--color-${semantic}-i-${index})`,
+					}),
+				),
+			),
+		),
+
+		Object.keys(shorthands).flatMap((short) =>
+			luminosityScale.flatMap((_, index) => [
+				rule(`.${short}-to-white-${index}`, {
+					[`--${shorthands[short].name}-tint`]: SPECIAL_COLORS.white,
+				}),
+				rule(`.${short}-to-black-${index}`, {
+					[`--${shorthands[short].name}-tint`]: SPECIAL_COLORS.black,
+				}),
+			]),
 		),
 
 		// Special tint classes (no index required)

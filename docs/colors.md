@@ -6,9 +6,10 @@ The `colors.js` module implements a sophisticated color system that automaticall
 
 ### Apply Classes:
 
-- `.bg`: Applies the computed background color and sets text contrast constraints.
-- `.tx`: Applies the computed text color with automatic WCAG contrast clamping.
-- `.tx-contrast`: Automatically selects maximum contrast (paper/ink) for the current background.
+- `.bg`: Applies the computed background color.
+- `.tx`: Applies the computed text color.
+- `.bg.tx`: Progressive contrast enhancement that prefers `contrast-color()` when supported.
+- `.tx-contrast`: Explicit maximum-contrast text color for the current background.
 - `.bd`: Applies the computed border color and default border width/style.
 - `.bd-t`, `.bd-r`, `.bd-b`, `.bd-l`: Applies border color and width to a specific side.
 - `.ol`: Applies the computed outline color.
@@ -17,8 +18,11 @@ The `colors.js` module implements a sophisticated color system that automaticall
 
 - `.{prop}-{color}`: Sets the base color at level 5 (e.g., `.bg-primary`).
 - `.{prop}-{color}-{0-10}`: Sets the base color at a specific level (e.g., `.bg-blue-8`).
+- `.{prop}-{semantic}-{0-10}`: Sets semantic colors at indexed levels (e.g., `.bg-primary-8`).
 - `.{prop}-{0-10}o`: Sets the opacity (alpha) from 0 to 1.0 (e.g., `.bg-5o`).
-- `.{prop}-to-{color}-{index}`: Sets a tint color for blending (e.g., `.bg-to-white-10`).
+- `.{prop}-to-{color}-{index}`: Sets a tint color for blending (e.g., `.bg-to-blue-10`).
+- `.{prop}-to-{semantic}-{index}`: Sets a semantic tint color (e.g., `.bg-to-primary-8`).
+- `.{prop}-to-white-{index}`, `.{prop}-to-black-{index}`: Indexed endpoint tint helpers.
 - `.{prop}-{0-10}b`: Blends between base color and tint. `0` is 100% tint, `10` is 100% base.
 
 ### Semantic Colors:
@@ -32,7 +36,7 @@ The `colors.js` module implements a sophisticated color system that automaticall
 
 - Automatic inversion in `.dark` mode (index `0` becomes light, index `10` becomes dark).
 - Logic-driven `color-mix` for sophisticated blending and opacity.
-- Integrated contrast safety net when using `.bg` and `.tx` together.
+- Progressive contrast safety net when using `.bg` and `.tx` together.
 
 ### Using
 

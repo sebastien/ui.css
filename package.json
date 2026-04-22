@@ -1,4 +1,19 @@
 {
+  "name": "ui.css",
+  "type": "module",
+  "exports": {
+    "./js/uicss.js": "./js/uicss.js",
+    "./css/all.js": "./css/all.js",
+    "./css/colors.js": "./css/colors.js",
+    "./css/layout.js": "./css/layout.js",
+    "./css/text.js": "./css/text.js",
+    "./css/style.js": "./css/style.js",
+    "./css/controls.js": "./css/controls.js",
+    "./css/reset.js": "./css/reset.js",
+    "./css/tokens.js": "./css/tokens.js",
+    "./css/components.js": "./css/components.js",
+    "./css/behavior.js": "./css/behavior.js"
+  },
   "dependencies": {
     "wrangler": "^3.78.10"
   }

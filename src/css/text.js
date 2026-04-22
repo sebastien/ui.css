@@ -7,6 +7,17 @@ import {
 	vars,
 	times,
 } from "../js/uicss.js";
+
+const sizeAliases = {
+	smallest: "xxs",
+	smaller: "xs",
+	small: "s",
+	medium: "m",
+	large: "l",
+	larger: "xl",
+	largest: "xxl",
+};
+
 export default named({
 	headings: group(
 		...sizes.map((k, i) =>
@@ -236,8 +247,12 @@ export default named({
 		rule(".ol", { text_decoration: "overline" }),
 		...Object.keys(sizenames).map((k, i) =>
 			group(
-				rule(`.t-${k}`, { font_size: `calc(1rem * ${vars.textsize.size[i]})` }),
-				rule(`.${k}`, { font_size: `calc(1em * ${vars.textsize.size[i]})` }),
+				rule([`.t-${k}`, `.t-${sizeAliases[k]}`], {
+					font_size: `calc(1rem * ${vars.textsize.size[i]})`,
+				}),
+				rule([`.${k}`, `.${sizeAliases[k]}`], {
+					font_size: `calc(1em * ${vars.textsize.size[i]})`,
+				}),
 			),
 		),
 	),

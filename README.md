@@ -38,7 +38,7 @@ import text from "ui.css/css/text.js";
 // Generate a tailored stylesheet
 const stylesheet = css(
     layout,
-    colors,
+    colors(),
     text
 );
 
@@ -59,14 +59,14 @@ for (const line of stylesheet) {
 
 - **Functional DSL**: Composable rules using `rule()`, `group()`, and `named()`.
 - **Direction-Aware**: Colors and levels that automatically adapt to light/dark modes.
-- **Smart Contrast**: Automatic text contrast clamping based on background luminosity.
+- **Smart Contrast**: Progressive automatic contrast for `.bg.tx` and explicit max-contrast via `.tx-contrast`.
 - **Scale-Driven**: Consistent 0-10 scales for spacing, sizing, and luminosity.
 - **No-Build ESM**: Works directly in modern runtimes (Bun/Node) and browsers via ESM.
 
 ### Features
 
 - *OKLCH Color System*: Perceptually uniform colors with semantic aliases.
-- *Flexible Layout*: Powerfull flexbox and grid utilities with minimal footprint.
+- *Flexible Layout*: Powerful flexbox and grid utilities with minimal footprint.
 - *Themeable*: First-class support for dark mode and color variants.
 - *Embeddable*: Perfect for shadow DOM or isolated component styling.
 - *Logic-Powered*: Generates only what you need, with the full power of JavaScript.
