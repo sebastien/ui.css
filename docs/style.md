@@ -1,8 +1,18 @@
 # Style Module (`style.js`)
 
-## Interaction, borders, shadows, and visibility
+## Interaction, spacing, borders, shadows, and visibility
 
-The `style.js` module provides miscellaneous styling utilities for element appearance, interactive states, depth effects, and visibility.
+The `style.js` module provides miscellaneous styling utilities for spacing, element appearance, interactive states, depth effects, and visibility.
+
+### Spacing (0-10):
+
+- `.p-{0-10}`, `.pt-`, `.pb-`, `.pl-`, `.pr-`: Padding (all sides or specific).
+- `.ph-`, `.pv-`: Horizontal/vertical padding.
+- `.m-{0-10}`, `.mt-`, `.mb-`, `.ml-`, `.mr-`: Margin (all sides or specific).
+- `.mh-`, `.mv-`: Horizontal/vertical margin.
+- `.ma`: Sets `margin: auto`.
+- `.no-p`, `.no-ph`, `.no-pv`: Suppresses padding on all, horizontal, or vertical axes.
+- `.no-m`, `.no-mh`, `.no-mv`: Suppresses margin on all, horizontal, or vertical axes.
 
 ### Interaction:
 
@@ -70,5 +80,6 @@ The `style.js` module provides miscellaneous styling utilities for element appea
 ### The `style` module:
 
 - `style()`: Generates the miscellaneous style utility classes.
+- `vars.pad`, `vars.margin`: Standardized spacing scales used by spacing utilities.
 - `vars.radius`, `vars.border`, `vars.shadow`: Configuration variables for rounding and depth.
 - `vars.opacity`: Level definitions for `.dim` classes.

@@ -20,10 +20,10 @@ It is designed to be small, fast, and easy to embed, making it ideal for everyth
 You can learn more about each module:
 
 - **Tokens**: Core design variables ― [manual](docs/tokens.md)
-- **Layout**: Flexbox, grid, and positioning ― [manual](docs/layout.md)
+- **Layout**: Flexbox, grid, positioning, and sizing ― [manual](docs/layout.md)
 - **Colors**: OKLCH color system and themes ― [manual](docs/colors.md)
 - **Text**: Typography and font utilities ― [manual](docs/text.md)
-- **Style**: Borders, shadows, and interaction ― [manual](docs/style.md)
+- **Style**: Spacing, borders, shadows, and interaction ― [manual](docs/style.md)
 - **Controls**: Buttons, inputs, and form elements ― [manual](docs/controls.md)
 - **Reset**: Baseline browser normalization ― [manual](docs/reset.md)
 

@@ -4,65 +4,76 @@
 
 The `tokens.js` module defines the foundational design system variables, including typography scales, spacing, sizing, and the luminosity scale for the OKLCH color system.
 
-### Variables:
+### CSS Custom Properties (Configuration Tokens):
 
-- `vars.font`: Typography configuration.
-  - `vars.font.text`: Body text (`family`, `size`, `line`).
-  - `vars.font.heading`: Heading text (`family`, `line`).
-  - `vars.font.controls`: Form controls (`family`, `size`, `line`).
-  - `vars.font.code`: Monospace code (`family`).
-- `vars.pad`: Padding scale (0-10 indices).
-- `vars.margin`: Margin scale (0-10 indices).
-- `vars.gap`: Gap scale (0-10 indices).
-- `vars.size`: Dimensional sizing scale (0-10 indices).
-- `vars.radius`: Border radius defaults.
-- `vars.border`: Border width and style defaults.
-- `vars.shadow`: Shadow displacement and spread defaults.
+These properties can be overridden to theme the application.
 
-### CSS Custom Properties (Output):
+#### Typography
+- `--font-mono`: Monospace font family.
+- `--font-sans`: Sans-serif font family.
+- `--font-serif`: Serif font family.
+- `--font-cursive`: Cursive font family.
+- `--font-base`: Base font size in pixels (default: 14).
+- `--font-size`: Calculated base font size.
+- `--font-line`: Base line height.
+- `--font-text-family`, `--font-text-size`, `--font-text-line`: Body text configuration.
+- `--font-heading-family`, `--font-heading-size`, `--font-heading-line`: Heading text configuration.
+- `--font-display-family`, `--font-display-size`, `--font-display-line`: Display text configuration.
+- `--font-script-family`, `--font-script-size`, `--font-script-line`: Script text configuration.
+- `--font-code-family`, `--font-code-size`, `--font-code-line`: Monospace code configuration.
+- `--font-controls-family`, `--font-controls-size`, `--font-controls-line`, `--font-controls-weight`: Form controls configuration.
 
-- `--font-text-family`, `--font-text-size`, `--font-text-line`
-- `--font-heading-family`, `--font-heading-line`
-- `--font-controls-family`, `--font-controls-size`, `--font-controls-line`
-- `--font-code-family`
-- `--pad-0` through `--pad-10`
-- `--margin-0` through `--margin-10`
-- `--gap-0` through `--gap-10`
-- `--size-0` through `--size-10`
-- `--border-radius`, `--border-width`, `--border-style`
-- `--shadow-x`, `--shadow-y`, `--shadow-spread`, `--shadow-color`
+#### Colors
+- `--color-white`, `--color-black`: Basic color constants.
+- `--color-ink`: Primary text color baseline.
+- `--color-paper`: Primary background color baseline.
+- `--color-action`: Default action color.
+- `--color-border`: Default border color.
+- `--color-l-direction`: Luminosity direction (1 for light mode, -1 for dark mode).
+- `--color-neutral`, `--color-primary`, `--color-secondary`, `--color-tertiary`: Semantic color baselines.
+- `--color-success`, `--color-valid`, `--color-info`, `--color-warning`, `--color-issue`, `--color-danger`, `--color-error`: Status color baselines.
+- `--color-page`, `--color-text`: Context-dependent aliases for paper/ink.
+
+#### Property Specific Colors (Base, Tint, Blend, Opacity)
+Each of these properties supports `base`, `tint`, `blend`, and `opacity` tokens (e.g., `--background-base`, `--background-blend`).
+- `background`: General background color.
+- `text`: General text color.
+- `border`: Border color and style (`--border-width`, `--border-style`).
+- `outline`: Outline color and style (`--outline-width`, `--outline-style`).
+
+#### Spacing & Sizing
+- `--pad-0` through `--pad-10`: Padding scale.
+- `--margin-0` through `--margin-10`: Margin scale.
+- `--gap-0` through `--gap-10`: Gap scale.
+- `--size-0` through `--size-10`: Dimensional sizing scale.
+- `--scaling-pad`: Scaling factor for padding.
+- `--block-width`: Default block element width.
+
+#### Radius & Elevation
+- `--border-radius-0` through `--border-radius-6`: Border radius scale.
+- `--shadow-x`, `--shadow-y`, `--shadow-spread`, `--shadow-base`, `--shadow-opacity`, `--shadow-color`: Box shadow configuration.
+
+#### Layout & Limits
+- `--limit-text`: Maximum width for text blocks (default: 80ch).
+- `--limit-content`, `--limit-page`: Maximum width for content containers.
+- `--limit-block-0` through `--limit-block-2`: Responsive block width limits.
+
+#### Page & Headings
+- `--page-base`: Base page font size for rem calculations.
+- `--page-unit`: Calculated unit equivalent to 1px in rems.
+- `--heading-min`, `--heading-max`: Font size bounds for responsive headings.
+- `--heading-size-0` through `--heading-size-6`: Heading size scale (percentage-based).
+
+#### Component Specific (Button, Input, etc.)
+Components like `button`, `selectable`, `input`, `textarea`, `checkbox`, and `radio` have their own token namespaces for:
+- `font`: `family`, `line`, `weight`, `size`.
+- `color`: `base`, `primary`, `secondary`, etc., plus `tint`, `blend`, `opacity`.
+- States: `focus`, `selected`, `hover`, `active` (supporting `tint`, `blend`, `opacity`).
+- `checkbox` & `radio`: `content-checked`, `content-partial`.
 
 ### Scale indices (0-10):
 
-Most scales (padding, margin, gap, size) use an 11-step exponential scale:
+Most scales (padding, margin, gap, size) use an 11-step scale. For example, `pad`:
 
-- `0`: 0px
-- `1`: 0.125rem (2px)
-- `2`: 0.25rem (4px)
-- `3`: 0.5rem (8px)
-- `4`: 0.75rem (12px)
-- `5`: 1rem (16px)
-- `6`: 1.5rem (24px)
-- `7`: 2rem (32px)
-- `8`: 3rem (48px)
-- `9`: 4rem (64px)
-- `10`: 8rem (128px)
-
-### Using
-
-```javascript
-import tokens from "ui.css/css/tokens.js";
-import { css } from "ui.css/js/uicss.js";
-
-// Generate the :root variable declarations
-for (const line of css(tokens)) {
-    console.log(line);
-}
-```
-
-### API
-
-### The `tokens` module:
-
-- `tokens(config?)`: Generates the global CSS variables. Can be customized by passing a configuration object to override defaults.
-- `vars`: The internal object containing the numeric values and variable mappings used by other modules (layout, colors, etc.).
+- `0`: 0em
+- `1` to `10`: Increasingly larger values calculated via `pem()` (Pixel-to-EM) based on the `scaling-pad` and `font-base`.

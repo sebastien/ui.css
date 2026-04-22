@@ -3,6 +3,7 @@ import {
 	mods,
 	named,
 	rule,
+	sizes,
 	sides,
 	times,
 	vars,
@@ -23,6 +24,89 @@ export default named({
 		rule(".nolh", { line_height: "0em" }),
 		rule(".noblur", { __shadow_spread: "0" }),
 		rule(".nogap", { gap: "0em" }),
+		rule(".ma", { margin: "auto" }),
+		sizes.map((k, i) =>
+			rule([`.m-${k}`, `.m-${i}`], {
+				margin: `${vars.margin[i]}`,
+				__margin: `${vars.margin[i]}`,
+			}),
+		),
+		sizes.map((k, i) =>
+			rule([`.mt-${k}`, `.mt-${i}`], {
+				margin_top: `${vars.margin[i]}`,
+			}),
+		),
+		sizes.map((k, i) =>
+			rule([`.mb-${k}`, `.mb-${i}`], {
+				margin_bottom: `${vars.margin[i]}`,
+			}),
+		),
+		sizes.map((k, i) =>
+			rule([`.ml-${k}`, `.ml-${i}`], {
+				margin_left: `${vars.margin[i]}`,
+			}),
+		),
+		sizes.map((k, i) =>
+			rule([`.mr-${k}`, `.mr-${i}`], {
+				margin_right: `${vars.margin[i]}`,
+			}),
+		),
+		sizes.map((k, i) =>
+			rule([`.mh-${k}`, `.mh-${i}`], {
+				margin_left: `${vars.margin[i]}`,
+				margin_right: `${vars.margin[i]}`,
+			}),
+		),
+		sizes.map((k, i) =>
+			rule([`.mv-${k}`, `.mv-${i}`], {
+				margin_top: `${vars.margin[i]}`,
+				margin_bottom: `${vars.margin[i]}`,
+			}),
+		),
+		sizes.map((k, i) =>
+			rule([`.p-${k}`, `.p-${i}`], {
+				padding: `${vars.pad[i]}`,
+				__pad: `${vars.pad[i]}`,
+			}),
+		),
+		sizes.map((k, i) =>
+			rule([`.pt-${k}`, `.pt-${i}`], {
+				padding_top: `${vars.pad[i]}`,
+			}),
+		),
+		sizes.map((k, i) =>
+			rule([`.pb-${k}`, `.pb-${i}`], {
+				padding_bottom: `${vars.pad[i]}`,
+			}),
+		),
+		sizes.map((k, i) =>
+			rule([`.pl-${k}`, `.pl-${i}`], {
+				padding_left: `${vars.pad[i]}`,
+			}),
+		),
+		sizes.map((k, i) =>
+			rule([`.pr-${k}`, `.pr-${i}`], {
+				padding_right: `${vars.pad[i]}`,
+			}),
+		),
+		sizes.map((k, i) =>
+			rule([`.ph-${k}`, `.ph-${i}`], {
+				padding_left: `${vars.pad[i]}`,
+				padding_right: `${vars.pad[i]}`,
+			}),
+		),
+		sizes.map((k, i) =>
+			rule([`.pv-${k}`, `.pv-${i}`], {
+				padding_top: `${vars.pad[i]}`,
+				padding_bottom: `${vars.pad[i]}`,
+			}),
+		),
+		rule([".nop", ".no-p"], { padding: "0px" }),
+		rule([".nom", ".no-m"], { margin: "0px" }),
+		rule([".noph", ".no-ph"], { padding_left: "0px", padding_right: "0px" }),
+		rule([".nopv", ".no-pv"], { padding_top: "0px", padding_bottom: "0px" }),
+		rule([".nomh", ".no-mh"], { margin_left: "0px", margin_right: "0px" }),
+		rule([".nomv", ".no-mv"], { margin_top: "0px", margin_bottom: "0px" }),
 		rule([".nostyle", ":hover .hover-nostyle", ".hover-nostyle:hover"], {
 			appearance: "none",
 			padding: "unset",

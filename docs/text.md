@@ -75,4 +75,4 @@ The `.t` class creates a prose-optimized container where child elements receive 
 
 - `text()`: Generates the typography and text utility classes.
 - `vars.font`: Internal configuration used for font families and baseline sizes.
-- `vars.pad`, `vars.margin`: Scales used for container spacing.
+- `vars.font`: Scale and family configuration for text utilities.

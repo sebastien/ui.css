@@ -2,7 +2,7 @@
 
 ## Flexbox, grid, and dimensional utilities
 
-The `layout.js` module provides a comprehensive suite of utilities for controlling element display, positioning, alignment, and spacing using the project's standard 0-10 scales.
+The `layout.js` module provides a comprehensive suite of utilities for controlling element display, positioning, alignment, and sizing.
 
 ### Alignment and Display:
 
@@ -20,11 +20,9 @@ The `layout.js` module provides a comprehensive suite of utilities for controlli
 - `.to-t`, `.to-b`, `.to-l`, `.to-r`: Pin to sides.
 - `.to-hc`, `.to-vc`, `.to-c`: Horizontal, vertical, or full centering using `50%` and `translate`.
 
-### Spacing and Sizing (0-10):
+### Sizing and Gaps (0-10):
 
-- `.p-{0-10}`, `.pt-`, `.pb-`, `.pl-`, `.pr-`: Padding (all sides or specific).
-- `.m-{0-10}`, `.mt-`, `.mb-`, `.ml-`, `.mr-`: Margin (all sides or specific).
-- `.g-{0-10}`, `.gx-`, `.gy-`: Grid/Flex gap (all, horizontal, or vertical).
+- `.g-{0-10}`: Grid/Flex gap.
 - `.w-{0-10}`, `.h-{0-10}`: Width and height scale.
 - `.miw-{0-10}`, `.mih-`, `.maw-`, `.mah-`: Min/max width and height.
 
@@ -56,4 +54,4 @@ The `layout.js` module provides a comprehensive suite of utilities for controlli
 
 - `layout()`: Generates the layout utility classes.
 - `rule(selector, properties)`: Internal helper used to define the utility rules.
-- `vars.pad`, `vars.margin`, `vars.gap`, `vars.size`: Standardized scales (0-10) used for class generation.
+- `vars.gap`, `vars.size`: Standardized scales used for class generation.

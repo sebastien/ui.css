@@ -58,63 +58,6 @@ export default named({
 		rule(".to-w", { left: "100%" }),
 		rule(".to-hc", { left: "50%" }),
 	),
-	margin: group(
-		rule(".ma", { margin: "auto" }),
-		sizes.map((k, i) =>
-			rule([`.m-${k}`, `.m-${i}`], {
-				margin: `${vars.margin[i]}`,
-				__margin: `${vars.margin[i]}`,
-			}),
-		),
-		sizes.map((k, i) =>
-			rule([`.mt-${k}`, `.mt-${i}`], {
-				margin_top: `${vars.margin[i]}`,
-			}),
-		),
-		sizes.map((k, i) =>
-			rule([`.mb-${k}`, `.mb-${i}`], {
-				margin_bottom: `${vars.margin[i]}`,
-			}),
-		),
-		sizes.map((k, i) =>
-			rule([`.ml-${k}`, `.ml-${i}`], {
-				margin_left: `${vars.margin[i]}`,
-			}),
-		),
-		sizes.map((k, i) =>
-			rule([`.mr-${k}`, `.mr-${i}`], {
-				margin_right: `${vars.margin[i]}`,
-			}),
-		),
-	),
-	padding: group(
-		sizes.map((k, i) =>
-			rule([`.p-${k}`, `.p-${i}`], {
-				padding: `${vars.pad[i]}`,
-				__pad: `${vars.pad[i]}`,
-			}),
-		),
-		sizes.map((k, i) =>
-			rule([`.pt-${k}`, `.pt-${i}`], {
-				padding_top: `${vars.pad[i]}`,
-			}),
-		),
-		sizes.map((k, i) =>
-			rule([`.pb-${k}`, `.pb-${i}`], {
-				padding_bottom: `${vars.pad[i]}`,
-			}),
-		),
-		sizes.map((k, i) =>
-			rule([`.pl-${k}`, `.pl-${i}`], {
-				padding_left: `${vars.pad[i]}`,
-			}),
-		),
-		sizes.map((k, i) =>
-			rule([`.pr-${k}`, `.pr-${i}`], {
-				padding_right: `${vars.pad[i]}`,
-			}),
-		),
-	),
 	gap: group(
 		sizes.map((k, i) =>
 			rule([`.g-${k}`, `.g-${i}`], {

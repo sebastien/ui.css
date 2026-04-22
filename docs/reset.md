@@ -29,20 +29,6 @@ The `reset.js` module establishes a consistent cross-browser baseline. It remove
 - **Aggressive but Safe**: Resets almost everything to `unset` or `0`, forcing the developer to use utility classes or components for intentional styling.
 - **Logic-Aware**: Can be wrapped in a `@layer` or a specific selector (like `.reset`) to isolate the effect.
 
-### Using
-
-```javascript
-import reset from "ui.css/css/reset.js";
-import { css } from "ui.css/js/uicss.js";
-
-// Generate the reset stylesheet
-const stylesheet = css(reset);
-
-for (const line of stylesheet) {
-    console.log(line);
-}
-```
-
 ### API
 
 ### The `reset` module:

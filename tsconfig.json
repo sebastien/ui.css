@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "target": "ESNext",
+    "allowJs": true,
+    "checkJs": false,
+    "paths": {
+      "@uicss.js": ["./src/js/uicss.js"],
+      "@uicss/*": ["./src/css/*"]
+    }
+  },
+  "include": [
+    "src/**/*"
+  ]
+}

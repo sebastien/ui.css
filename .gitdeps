@@ -1,1 +1,3 @@
-deps/sdk	git@github.com:littletoolkit/littlesdk.git	main
+# REPO URL BRANCH COMMIT?
+deps/sdk git@github.com:littletoolkit/littlesdk.git main 75e1a7c7b2b38981413206ff244f3dd788898627
+# EOF
