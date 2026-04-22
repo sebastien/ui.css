@@ -137,6 +137,12 @@ function button(colors) {
 					__selectable_color_base: vars.selectable.color[variant],
 				}),
 		),
+		...SIZES.map((size, i) =>
+			rule(mods(name, size), {
+				font_size: `calc(${vars.button.font.size} * ${vars.textsize.size[i]})`,
+				padding: `calc(${vars.button.box.padding.y} * ${vars.textsize.size[i]}) calc(${vars.button.box.padding.x} * ${vars.textsize.size[i]})`,
+			}),
+		),
 		// ====================================================================
 		// STATES
 		// ====================================================================
@@ -366,6 +372,215 @@ function button(colors) {
 
 // ----------------------------------------------------------------------------
 //
+// SELECTOR
+//
+// ----------------------------------------------------------------------------
+function selector(colors) {
+	const name = [".selector"];
+	const option = [
+		...cross(name, ["> .option", "> label", "> button", "> a"]),
+	];
+	const selected = [
+		...cross(name, ["> .selected", '> [aria-pressed="true"]', '> [aria-checked="true"]']),
+		...cross(name, [" input:checked + label"]),
+	];
+	return group(
+		rule(name, {
+			display: "inline-flex",
+			width: "fit-content",
+			align_self: "flex-start",
+			flex_wrap: "nowrap",
+			align_items: "center",
+			overflow: "hidden",
+			gap: vars.selector.box.gap,
+			padding: `${vars.selector.box.padding.y} ${vars.selector.box.padding.x}`,
+			outline: "0px solid transparent",
+			border: "0px solid transparent",
+			border_radius: vars.selector.box.radius,
+			border_width: `${vars.ui.control.border.width}`,
+			border_color: colormix(
+				vars.selector.current.color,
+				vars.color.paper,
+				"70%",
+				"55%",
+			),
+			background: colormix(
+				vars.selector.current.color,
+				vars.color.paper,
+				"85%",
+				"100%",
+			),
+			box_shadow: `inset 0 1px 0 ${colormix(
+				vars.selector.current.color,
+				vars.color.paper,
+				"90%",
+				"40%",
+			)}, inset 0 -1px 0 ${colormix(
+				vars.selector.current.color,
+				vars.color.ink,
+				"60%",
+				"25%",
+			)}`,
+			transition: `${vars.ui.control.transition}`,
+			font_family: vars.selector.font.family,
+			line_height: vars.selector.font.line,
+			font_weight: vars.selector.font.weight,
+			font_size: vars.selector.font.size,
+			...colorvars("selector", "color"),
+		}),
+		rule(option, {
+			cursor: "pointer",
+			display: "inline-flex",
+			flex: "0 0 auto",
+			align_items: "center",
+			justify_content: "center",
+			position: "relative",
+			padding: `${vars.selector.item.padding.y} ${vars.selector.item.padding.x}`,
+			border: "0px solid transparent",
+			border_radius: vars.selector.item.radius,
+			background: "transparent",
+			color: "inherit",
+			white_space: "nowrap",
+			font: "inherit",
+			text_decoration: "none",
+			line_height: "1",
+			user_select: "none",
+			transition: `${vars.ui.control.transition}`,
+			margin: "0px",
+		}),
+		rule(cross(option, [":not(:first-child)"]), {
+			border_left_width: "0px",
+		}),
+		rule(cross(name, ["> .option + .option", "> label + label", "> button + button", "> a + a", "> input + label"]), {
+			border_left_width: "1px",
+			border_left_style: "solid",
+			border_left_color: colormix(
+				vars.selector.current.color,
+				vars.color.paper,
+				"72%",
+				"45%",
+			),
+		}),
+		rule(cross(name, ["> .option:first-child", "> label:first-child", "> button:first-child", "> a:first-child", "> input:first-child + label"]), {
+			border_top_left_radius: vars.selector.box.radius,
+			border_bottom_left_radius: vars.selector.box.radius,
+		}),
+		rule(cross(name, ["> .option:last-child", "> label:last-child", "> button:last-child", "> a:last-child"]), {
+			border_top_right_radius: vars.selector.box.radius,
+			border_bottom_right_radius: vars.selector.box.radius,
+		}),
+		rule(cross(name, [" input[type=checkbox]", " input[type=radio]"]), {
+			display: "none",
+		}),
+		...colors.map((variant) =>
+			rule(mods(name, variant), {
+				__selector_color_base: vars.selector.color[variant],
+			}),
+		),
+		rule(cross(name, [":focus-within", ".focus"]), {
+			outline_width: `${vars.ui.control.focus.ring.width}`,
+			outline_color: colormix(
+				vars.selector.current.color,
+				vars.selector.focus.tint,
+				vars.selector.focus.blend,
+				vars.selector.focus.opacity,
+			),
+		}),
+		rule(cross(option, [":hover", ".hover"]), {
+			background: colormix(
+				vars.selector.current.color,
+				vars.selector.hover.tint,
+				vars.selector.hover.blend,
+				vars.selector.hover.opacity,
+			),
+		}),
+		rule(cross(option, [":active", ".active"]), {
+			background: colormix(
+				vars.selector.current.color,
+				vars.selector.active.tint,
+				vars.selector.active.blend,
+				vars.selector.active.opacity,
+			),
+			box_shadow: `inset 0 1px 2px ${colormix(
+				vars.selector.current.color,
+				vars.color.ink,
+				"55%",
+				"30%",
+			)}`,
+		}),
+		rule(selected, {
+			background: colormix(
+				vars.selector.current.color,
+				vars.selector.selected.tint,
+				vars.selector.selected.blend,
+				vars.selector.selected.opacity,
+			),
+			color: colormix(vars.selector.current.color, vars.color.ink, "50%", "100%"),
+			box_shadow: `inset 0 1px 0 ${colormix(
+				vars.selector.current.color,
+				vars.color.paper,
+				"100%",
+				"75%",
+			)}, inset 0 -1px 0 ${colormix(
+				vars.selector.current.color,
+				vars.color.ink,
+				"75%",
+				"30%",
+			)}`,
+		}),
+		rule(cross(option, [":focus-visible", ".focus"]), {
+			outline_width: `${vars.ui.control.focus.ring.width}`,
+			outline_color: colormix(
+				vars.selector.current.color,
+				vars.selector.focus.tint,
+				vars.selector.focus.blend,
+				vars.selector.focus.opacity,
+			),
+		}),
+		rule(cross(name, [".disabled", '[aria-disabled="true"]']), {
+			cursor: "default",
+			background: colormix(
+				vars.selector.current.color,
+				vars.color.paper,
+				`${vars.ui.control.disabled.blend}`,
+				`${vars.ui.control.disabled.opacity}`,
+			),
+		}),
+		rule(cross(option, [":disabled", ".disabled", '[aria-disabled="true"]']), {
+			cursor: "default",
+			opacity: "0.65",
+			box_shadow: "none",
+		}),
+		rule(mods(name, "default"), {
+			border_width: `${vars.ui.control.border.width}`,
+			border_color: vars.selector.current.color,
+		}),
+		rule(mods(name, "outline"), {
+			border_width: `${vars.ui.control.border.width}`,
+			background: "transparent",
+			border_color: colormix(
+				vars.selector.current.color,
+				vars.color.paper,
+				"80%",
+				"50%",
+			),
+		}),
+		rule(cross(name, [".blank"]), {
+			background: "transparent",
+			border_color: "transparent",
+			__selector_color_opacity: "50%",
+		}),
+		...SIZES.map((size, i) =>
+			rule(mods(name, size), {
+				font_size: `calc(${vars.selector.font.size} * ${vars.textsize.size[i]})`,
+			}),
+		),
+		bare(name, "selector"),
+	);
+}
+
+// ----------------------------------------------------------------------------
+//
 // INPUT
 //
 // ----------------------------------------------------------------------------
@@ -411,7 +626,20 @@ function input(colors) {
 		// ====================================================================
 		// STATES
 		// ====================================================================
-		rule(mods(name, "hover"), {}),
+		rule(mods(name, "hover"), {
+			border_color: colormix(
+				vars.input.current.color,
+				vars.input.hover.tint,
+				vars.input.hover.blend,
+				vars.input.hover.opacity,
+			),
+			background_color: colormix(
+				vars.input.current.color,
+				vars.color.paper,
+				"4%",
+				"100%",
+			),
+		}),
 		rule(mods(name, "focus"), {
 			outline_width: `${vars.ui.control.focus.ring.width}`,
 			outline_color: colormix(
@@ -438,14 +666,20 @@ function input(colors) {
 			rule(mods(name, "disabled"), {
 				cursor: "default",
 				background: colormix(
-					vars.color.neutral,
+					vars.input.current.color,
 					vars.color.paper,
 					`${vars.ui.control.disabled.blend}`,
 					`${vars.ui.control.disabled.opacity}`,
 				),
 				color: colormix(
-					vars.color.neutral,
+					vars.input.current.color,
 					vars.color.ink,
+					`${vars.ui.control.disabled.blend}`,
+					`${vars.ui.control.disabled.opacity}`,
+				),
+				border_color: colormix(
+					vars.input.current.color,
+					vars.color.paper,
 					`${vars.ui.control.disabled.blend}`,
 					`${vars.ui.control.disabled.opacity}`,
 				),
@@ -537,7 +771,20 @@ function textarea(colors) {
 		// ====================================================================
 		// STATES
 		// ====================================================================
-		rule(mods(name, "hover"), {}),
+		rule(mods(name, "hover"), {
+			border_color: colormix(
+				vars.textarea.current.color,
+				vars.textarea.hover.tint,
+				vars.textarea.hover.blend,
+				vars.textarea.hover.opacity,
+			),
+			background_color: colormix(
+				vars.textarea.current.color,
+				vars.color.paper,
+				"4%",
+				"100%",
+			),
+		}),
 		rule(mods(name, "focus"), {
 			outline_width: `${vars.ui.control.focus.ring.width}`,
 			outline_color: colormix(
@@ -564,14 +811,20 @@ function textarea(colors) {
 		rule(mods(name, "disabled"), {
 			cursor: "default",
 			background: colormix(
-				vars.color.neutral,
+				vars.textarea.current.color,
 				vars.color.paper,
 				`${vars.ui.control.disabled.blend}`,
 				`${vars.ui.control.disabled.opacity}`,
 			),
 			color: colormix(
-				vars.color.neutral,
+				vars.textarea.current.color,
 				vars.color.ink,
+				`${vars.ui.control.disabled.blend}`,
+				`${vars.ui.control.disabled.opacity}`,
+			),
+			border_color: colormix(
+				vars.textarea.current.color,
+				vars.color.paper,
 				`${vars.ui.control.disabled.blend}`,
 				`${vars.ui.control.disabled.opacity}`,
 			),
@@ -1001,7 +1254,7 @@ function radio(colors) {
 			...colorvars("radio", "color"),
 			border_width: `${vars.ui.control.border.width}`,
 			border_color: colormix(
-				vars.color.neutral,
+				vars.radio.current.color,
 				vars.color.paper,
 				"25%",
 				"90%",
@@ -1009,26 +1262,28 @@ function radio(colors) {
 			background: vars.color.paper,
 		}),
 		// ====================================================================
-		// COLORS - affect the dot when checked
+		// COLORS
 		// ====================================================================
 		...colors.map((variant) =>
-			rule(cross(name, [`.${variant}`], [":checked"]), {
+			rule(mods(name, variant), {
 				__radio_color_base: vars.radio.color[variant],
-			}),
-		),
-		...colors.map((variant) =>
-			rule(cross(name, [`.${variant}`], [":checked::after"]), {
-				color: vars.radio.color[variant],
 			}),
 		),
 		// ====================================================================
 		// STATES
 		// ====================================================================
-		rule(mods(name, "hover"), {}),
+		rule(mods(name, "hover"), {
+			border_color: colormix(
+				vars.radio.current.color,
+				vars.radio.hover.tint,
+				vars.radio.hover.blend,
+				vars.radio.hover.opacity,
+			),
+		}),
 		rule(mods(name, "focus"), {
 			outline_width: `${vars.ui.control.focus.ring.width}`,
 			outline_color: colormix(
-				vars.color.neutral,
+				vars.radio.current.color,
 				vars.radio.focus.tint,
 				vars.radio.focus.blend,
 				vars.radio.focus.opacity,
@@ -1036,7 +1291,7 @@ function radio(colors) {
 		}),
 		rule(mods(name, "active"), {
 			border_color: colormix(
-				vars.color.neutral,
+				vars.radio.current.color,
 				vars.radio.active.tint,
 				vars.radio.active.blend,
 				vars.radio.active.opacity,
@@ -1045,13 +1300,13 @@ function radio(colors) {
 		rule(mods(name, "disabled"), {
 			cursor: "default",
 			background: colormix(
-				vars.color.neutral,
+				vars.radio.current.color,
 				vars.color.paper,
 				`${vars.ui.control.disabled.blend}`,
 				`${vars.ui.control.disabled.opacity}`,
 			),
 			border_color: colormix(
-				vars.color.neutral,
+				vars.radio.current.color,
 				vars.color.paper,
 				`${vars.ui.control.disabled.blend}`,
 				`${vars.ui.control.disabled.opacity}`,
@@ -1064,6 +1319,8 @@ function radio(colors) {
 			name.map((n) => `${n}:checked`),
 			{
 				position: "relative",
+				border_color: "var(--radio-current-color)",
+				background: "var(--radio-current-color)",
 			},
 		),
 		rule(
@@ -1076,7 +1333,7 @@ function radio(colors) {
 				transform: "translate(-50%, -50%)",
 				font_size: vars.radio.box.marker,
 				line_height: "1",
-				color: vars.color.neutral,
+				color: contrast(vars.radio.current.color),
 			},
 		),
 		// ====================================================================
@@ -1132,6 +1389,7 @@ const colors = [
 ];
 export default named({
 	button: button(colors),
+	selector: selector(colors),
 	input: input(colors),
 	select: select(colors),
 	textarea: textarea(colors),

@@ -488,6 +488,64 @@ export default group(
 			},
 		},
 		// ====================================================================
+		// SELECTOR
+		// ====================================================================
+		selector: {
+			font: {
+				family: `${vars.font.controls.family}`,
+				line: `${vars.font.controls.line}`,
+				weight: `${vars.font.controls.weight}`,
+				size: `${vars.font.controls.size}`,
+			},
+			box: {
+				radius: `${vars.border.radius[1]}`,
+				gap: "0px",
+				padding: {
+					x: "0px",
+					y: "0px",
+				},
+			},
+			item: {
+				radius: "0px",
+				padding: {
+					x: "0.875em",
+					y: "0.5em",
+				},
+			},
+			color: {
+				base: `${vars.color.neutral}`,
+				primary: `${vars.color.primary}`,
+				secondary: `${vars.color.secondary}`,
+				tertiary: `${vars.color.tertiary}`,
+				success: `${vars.color.success}`,
+				warning: `${vars.color.warning}`,
+				danger: `${vars.color.danger}`,
+				tint: `${vars.color.paper}`,
+				blend: "0%",
+				opacity: "100%",
+			},
+			focus: {
+				tint: `${vars.color.paper}`,
+				blend: "100%",
+				opacity: "25%",
+			},
+			selected: {
+				tint: `${vars.color.paper}`,
+				blend: "20%",
+				opacity: "100%",
+			},
+			hover: {
+				tint: `${vars.color.paper}`,
+				blend: "35%",
+				opacity: "28%",
+			},
+			active: {
+				tint: `${vars.color.paper}`,
+				blend: "55%",
+				opacity: "40%",
+			},
+		},
+		// ====================================================================
 		// INPUTS
 		// ====================================================================
 		input: {

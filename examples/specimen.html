@@ -8,82 +8,13 @@
     <link rel="stylesheet" href="../dist/ui.css" />
     <link rel="stylesheet" href="../src/css/theme.default.css" />
     <link rel="stylesheet" href="../src/css/theme.crm.css" />
-    <style>
-      #buttons-demo button,
-      #buttons-demo .button,
-      #checks-radios-demo .checkbox,
-      #checks-radios-demo .radio,
-      #checks-radios-demo .selector {
-        font-size: var(--specimen-control-font-size, var(--font-controls-size));
-      }
-
-      #buttons-demo button,
-      #buttons-demo .button {
-        padding: var(--specimen-control-padding-y, var(--button-box-padding-y)) var(--specimen-control-padding-x, var(--button-box-padding-x));
-      }
-
-      body[data-theme="default"] .panel {
-        border-color: color-mix(in srgb, var(--color-slate-200), white 35%);
-        border-left-color: color-mix(in srgb, var(--panel-current-color), white 40%);
-      }
-
-      body[data-theme="default"] #buttons-demo :is(button, .button).neutral {
-        background: var(--color-neutral);
-        color: var(--color-neutral-contrast);
-      }
-
-      body[data-theme="default"] #buttons-demo :is(button, .button).neutral:is(:hover, .hover) {
-        background: var(--color-neutral-dk);
-      }
-
-      body[data-theme="default"] #buttons-demo :is(button, .button).neutral:is(:active, .active) {
-        background: var(--color-neutral-dkr);
-      }
-
-      body[data-theme="default"] #buttons-demo :is(button, .button).neutral:is(:disabled, .disabled) {
-        background: var(--color-slate-200);
-        color: var(--color-slate-500);
-        outline: 1px solid var(--color-slate-300);
-      }
-
-      body[data-theme="default"] #checks-radios-demo input:is(.checkbox, .radio).neutral {
-        border-color: var(--color-slate-400);
-        background: var(--color-white);
-      }
-
-      body[data-theme="default"] #checks-radios-demo input.checkbox.neutral:checked {
-        border-color: var(--color-neutral-dkr);
-        background: var(--color-neutral-dkr);
-      }
-
-      body[data-theme="default"] #checks-radios-demo input.radio.neutral:checked {
-        border-color: var(--color-neutral-dkr);
-        background: var(--color-neutral-dkr);
-      }
-
-      body[data-theme="default"] #checks-radios-demo .selector.neutral {
-        border-color: color-mix(in srgb, var(--color-slate-500), white 45%);
-        background: color-mix(in srgb, var(--color-slate-100), white 35%);
-      }
-
-      body[data-theme="default"] #checks-radios-demo .selector.neutral input:checked + label {
-        background: color-mix(in srgb, var(--color-slate-500), white 72%);
-        color: var(--color-slate-800);
-      }
-
-      body[data-theme="default"] :is(button, .button, .checkbox, .radio, .selector).disabled,
-      body[data-theme="default"] :is(button, .button, .checkbox, .radio, .selector)[disabled],
-      body[data-theme="default"] .selector[aria-disabled="true"] {
-        opacity: 0.72;
-      }
-    </style>
   </head>
   <body data-theme="default" class="m-0 p-5 bg-page bg tx">
     <main class="stack g-8 ma w-content">
       <header class="stack g-3">
         <p class="small b m-0">UI.css</p>
         <h1 class="h1 m-0">Specimen</h1>
-        <p class="limit-text m-0">A broad specimen page aligned with the pure CSS benchmark layout and coverage.</p>
+        <p class="t limit-text m-0">A broad specimen page aligned with the pure CSS benchmark layout and coverage.</p>
       </header>
 
       <section class="panel stack g-4">
@@ -124,20 +55,16 @@ const result = "fast, consistent styling"</code></pre>
         <h2 class="h3 m-0">Color Tokens</h2>
         <div class="stack g-4">
           <h3 class="h4 m-0">Semantic Palette</h3>
-          <div class="col-3 g-3">
-            <div class="stack g-2 p-3 bg-gray-5 bg tx"><span class="b">--color-neutral</span><code>.bg-gray-5</code></div>
-            <div class="stack g-2 p-3 bg-blue-2 bg tx"><span class="b">--color-primary-dkr</span><code>.bg-blue-2</code></div>
-            <div class="stack g-2 p-3 bg-blue-4 bg tx"><span class="b">--color-primary</span><code>.bg-blue-4</code></div>
-            <div class="stack g-2 p-3 bg-blue-7 bg tx"><span class="b">--color-primary-ltr</span><code>.bg-blue-7</code></div>
-            <div class="stack g-2 p-3 bg-violet-2 bg tx"><span class="b">--color-secondary-dkr</span><code>.bg-violet-2</code></div>
-            <div class="stack g-2 p-3 bg-violet-4 bg tx"><span class="b">--color-secondary</span><code>.bg-violet-4</code></div>
-            <div class="stack g-2 p-3 bg-violet-7 bg tx"><span class="b">--color-secondary-ltr</span><code>.bg-violet-7</code></div>
-            <div class="stack g-2 p-3 bg-teal-4 bg tx"><span class="b">--color-tertiary</span><code>.bg-teal-4</code></div>
-            <div class="stack g-2 p-3 bg-green-4 bg tx"><span class="b">--color-success</span><code>.bg-green-4</code></div>
-            <div class="stack g-2 p-3 bg-amber-4 bg tx"><span class="b">--color-warning</span><code>.bg-amber-4</code></div>
-            <div class="stack g-2 p-3 bg-red-4 bg tx"><span class="b">--color-danger</span><code>.bg-red-4</code></div>
+            <div class="col-3 g-3">
+              <div class="panel stack g-2"><span class="b">Base semantic</span><code>no class</code></div>
+              <div class="panel primary stack g-2"><span class="b">Primary</span><code>.primary</code></div>
+              <div class="panel secondary stack g-2"><span class="b">Secondary</span><code>.secondary</code></div>
+              <div class="panel tertiary stack g-2"><span class="b">Tertiary</span><code>.tertiary</code></div>
+              <div class="panel success stack g-2"><span class="b">Success</span><code>.success</code></div>
+              <div class="panel warning stack g-2"><span class="b">Warning</span><code>.warning</code></div>
+              <div class="panel danger stack g-2"><span class="b">Danger</span><code>.danger</code></div>
+            </div>
           </div>
-        </div>
       </section>
 
       <section id="buttons-demo" class="panel warning stack g-4">
@@ -146,22 +73,22 @@ const result = "fast, consistent styling"</code></pre>
           <div class="stack g-3">
             <p class="b m-0">Variants</p>
             <div class="row wrap g-3">
-              <button class="neutral" data-control-semantic>Primary</button>
-              <button class="secondary" data-control-semantic>Secondary</button>
-              <button class="ghost neutral" data-control-semantic>Tertiary</button>
-              <button class="outline neutral" data-control-semantic>Icon</button>
+              <button data-control-semantic data-control-scale>Primary</button>
+              <button class="secondary" data-control-semantic data-control-scale>Secondary</button>
+              <button class="ghost" data-control-semantic data-control-scale>Tertiary</button>
+              <button class="outline" data-control-semantic data-control-scale>Icon</button>
             </div>
           </div>
           <div class="stack g-3">
             <p class="b m-0">Sizes and States</p>
             <div class="row wrap g-3">
-              <button class="neutral" data-control-semantic>Large</button>
-              <button class="secondary" data-control-semantic>Medium</button>
-              <button class="outline neutral" data-control-semantic>Small</button>
-              <button class="ghost neutral" data-control-semantic>Smaller</button>
-              <button class="neutral" data-control-semantic>Hover</button>
-              <button class="neutral" data-control-semantic>Active</button>
-              <button class="neutral" data-control-semantic disabled>Disabled</button>
+              <button data-control-semantic data-control-scale>Large</button>
+              <button class="secondary" data-control-semantic data-control-scale>Medium</button>
+              <button class="outline" data-control-semantic data-control-scale>Small</button>
+              <button class="ghost" data-control-semantic data-control-scale>Smaller</button>
+              <button class="hover" data-control-semantic data-control-scale>Hover</button>
+              <button class="active" data-control-semantic data-control-scale>Active</button>
+              <button data-control-semantic data-control-scale disabled>Disabled</button>
             </div>
           </div>
         </div>
@@ -173,34 +100,34 @@ const result = "fast, consistent styling"</code></pre>
           <div class="col-3 g-4">
             <label class="stack g-2">
               <span class="b">Currency</span>
-              <input class="input neutral regular" data-input-semantic data-input-scale type="text" placeholder="$ 1,000" />
+              <input class="input regular" data-input-semantic data-input-scale type="text" placeholder="$ 1,000" />
             </label>
             <label class="stack g-2">
               <span class="b">Percent</span>
-              <input class="input neutral regular" data-input-semantic data-input-scale type="text" placeholder="25%" />
+              <input class="input regular" data-input-semantic data-input-scale type="text" placeholder="25%" />
             </label>
             <label class="stack g-2">
               <span class="b">Unit</span>
-              <input class="input neutral regular" data-input-semantic data-input-scale type="text" placeholder="100 kg" />
+              <input class="input regular" data-input-semantic data-input-scale type="text" placeholder="100 kg" />
             </label>
           </div>
           <div class="col-2 g-4">
             <label class="stack g-2">
               <span class="b">Default</span>
-              <input class="input neutral regular" data-input-semantic data-input-scale type="text" value="Jane Doe" />
+              <input class="input regular" data-input-semantic data-input-scale type="text" value="Jane Doe" />
             </label>
             <label class="stack g-2">
               <span class="b">Disabled</span>
-              <input class="input neutral regular" data-input-semantic data-input-scale type="text" value="Unavailable" disabled />
+              <input class="input regular" data-input-semantic data-input-scale type="text" value="Unavailable" disabled />
             </label>
           </div>
           <label class="stack g-2">
             <span class="b">Textarea</span>
-            <textarea class="textarea neutral fit-w" data-input-semantic rows="4" placeholder="Write a longer note here..."></textarea>
+            <textarea class="textarea fit-w" data-input-semantic rows="4" placeholder="Write a longer note here..."></textarea>
           </label>
           <label class="stack g-2">
             <span class="b">Range</span>
-            <input class="range neutral fit-w" data-input-semantic type="range" min="0" max="100" value="60" />
+            <input class="range fit-w" data-input-semantic type="range" min="0" max="100" value="60" />
           </label>
         </div>
       </section>
@@ -211,24 +138,24 @@ const result = "fast, consistent styling"</code></pre>
           <div class="col-2 g-8">
           <div class="stack g-3">
             <p class="b m-0">Checkboxes</p>
-            <label class="row g-3 start"><input type="checkbox" class="checkbox neutral" data-control-semantic /> Unchecked large</label>
-            <label class="row g-3 start"><input type="checkbox" class="checkbox neutral" data-control-semantic checked /> Checked large</label>
-            <label class="row g-3 start"><input type="checkbox" class="checkbox neutral" data-control-semantic /> Unchecked small</label>
-            <label class="row g-3 start"><input type="checkbox" class="checkbox neutral" data-control-semantic checked /> Checked small</label>
-            <label class="row g-3 start"><input type="checkbox" class="checkbox neutral" data-control-semantic checked disabled /> Disabled checked</label>
+            <label class="row g-3 start"><input type="checkbox" class="checkbox large" data-control-semantic data-control-scale /> Unchecked large</label>
+            <label class="row g-3 start"><input type="checkbox" class="checkbox large" data-control-semantic data-control-scale checked /> Checked large</label>
+            <label class="row g-3 start"><input type="checkbox" class="checkbox small" data-control-semantic data-control-scale /> Unchecked small</label>
+            <label class="row g-3 start"><input type="checkbox" class="checkbox small" data-control-semantic data-control-scale checked /> Checked small</label>
+            <label class="row g-3 start"><input type="checkbox" class="checkbox regular" data-control-semantic data-control-scale checked disabled /> Disabled checked</label>
           </div>
           <div class="stack g-3">
             <p class="b m-0">Radios</p>
-            <label class="row g-3 start"><input type="radio" name="radio-states" class="radio neutral" data-control-semantic /> Unchecked</label>
-            <label class="row g-3 start"><input type="radio" name="radio-states" class="radio neutral" data-control-semantic checked /> Checked</label>
-            <label class="row g-3 start"><input type="radio" name="radio-states-disabled" class="radio neutral" data-control-semantic checked disabled /> Disabled checked</label>
+            <label class="row g-3 start"><input type="radio" name="radio-states" class="radio regular" data-control-semantic data-control-scale /> Unchecked</label>
+            <label class="row g-3 start"><input type="radio" name="radio-states" class="radio regular" data-control-semantic data-control-scale checked /> Checked</label>
+            <label class="row g-3 start"><input type="radio" name="radio-states-disabled" class="radio regular" data-control-semantic data-control-scale checked disabled /> Disabled checked</label>
           </div>
           </div>
           <div class="stack g-4">
             <p class="b m-0">Selector (compact option bar)</p>
             <div class="stack g-2">
               <p class="small m-0">Single-select (radio-like)</p>
-              <div class="selector neutral regular default" data-control-semantic role="radiogroup" aria-label="View mode">
+              <div class="selector regular default" data-control-semantic data-control-scale role="radiogroup" aria-label="View mode">
                 <input type="radio" id="selector-view-list" name="selector-view" checked />
                 <label for="selector-view-list">List</label>
                 <input type="radio" id="selector-view-board" name="selector-view" />
@@ -239,7 +166,7 @@ const result = "fast, consistent styling"</code></pre>
             </div>
             <div class="stack g-2">
               <p class="small m-0">Multi-select (checkbox-like)</p>
-              <div class="selector neutral regular outline" data-control-semantic role="group" aria-label="Filters">
+              <div class="selector regular outline" data-control-semantic data-control-scale role="group" aria-label="Filters">
                 <input type="checkbox" id="selector-filter-open" checked />
                 <label for="selector-filter-open">Open</label>
                 <input type="checkbox" id="selector-filter-assigned" checked />
@@ -255,7 +182,7 @@ const result = "fast, consistent styling"</code></pre>
       </section>
 
       <section class="panel success stack g-4">
-        <h2 class="h3 m-0">Cards, Badges, and Pills</h2>
+        <h2 class="h3 m-0">Cards, Badges, Pills, and Status</h2>
         <div class="stack g-5">
           <div class="col-2 g-4">
             <article class="panel stack g-2">
@@ -273,23 +200,49 @@ const result = "fast, consistent styling"</code></pre>
           <div class="stack g-3">
             <p class="b m-0">Badges</p>
             <div class="row wrap g-2">
-              <span class="badge primary">1</span>
-              <span class="badge secondary">2</span>
-              <span class="badge success">3</span>
-              <span class="badge warning">4</span>
-              <span class="badge danger">5</span>
-              <span class="badge">Text badge</span>
+              <span class="badge" data-variant="number">1</span>
+              <span class="badge" data-variant="number" data-type="secondary">2</span>
+              <span class="badge" data-variant="number" data-type="tertiary">3</span>
+              <span class="badge" data-variant="number" data-type="default">4</span>
+              <span class="badge" data-variant="number" data-type="active">5</span>
+              <span class="badge" data-variant="text">Text badge</span>
             </div>
           </div>
           <div class="stack g-3">
-            <p class="b m-0">Pills</p>
+            <p class="b m-0">Pills - Colors</p>
             <div class="row wrap g-2">
-              <span class="pill primary">Primary</span>
-              <span class="pill secondary">Secondary</span>
-              <span class="pill">Neutral</span>
-              <span class="pill success">Success</span>
-              <span class="pill warning">Warning</span>
-              <span class="pill danger">Error</span>
+              <span class="pill" data-color="primary"><span class="pill-dot"></span><span>Primary</span></span>
+              <span class="pill" data-color="secondary"><span class="pill-dot"></span><span>Secondary</span></span>
+              <span class="pill" data-color="neutral"><span class="pill-dot"></span><span>Neutral</span></span>
+              <span class="pill" data-color="success"><span class="pill-dot"></span><span>Success</span></span>
+              <span class="pill" data-color="warning"><span class="pill-dot"></span><span>Warning</span></span>
+              <span class="pill" data-color="error"><span class="pill-dot"></span><span>Error</span></span>
+            </div>
+          </div>
+          <div class="stack g-3">
+            <p class="b m-0">Pills - Inverse</p>
+            <div class="row wrap g-2">
+              <span class="pill" data-color="primary" data-inverse="true"><span>Primary inverse</span></span>
+              <span class="pill" data-color="secondary" data-inverse="true"><span>Secondary inverse</span></span>
+              <span class="pill" data-color="success" data-inverse="true"><span>Success inverse</span></span>
+              <span class="pill" data-color="error" data-inverse="true"><span>Error inverse</span></span>
+            </div>
+          </div>
+          <div class="stack g-3">
+            <p class="b m-0">Pills - Sizes and Widths</p>
+            <div class="col-3 g-2">
+              <span class="pill" data-color="primary" data-size="small"><span class="pill-dot"></span><span>Small</span></span>
+              <span class="pill" data-color="primary" data-size="medium"><span class="pill-dot"></span><span>Medium</span></span>
+              <span class="pill" data-color="primary" data-width="full"><span class="pill-dot"></span><span>Full width</span></span>
+            </div>
+          </div>
+          <div class="stack g-3">
+            <p class="b m-0">Status Loader</p>
+            <div class="row wrap g-2">
+              <div class="status-loader"><div class="start"></div><div class="middle"></div><div class="end"></div></div>
+              <div class="status-loader" data-success><div class="start"></div><div class="middle"></div><div class="end"></div></div>
+              <div class="status-loader" data-warning><div class="start"></div><div class="middle"></div><div class="end"></div></div>
+              <div class="status-loader" data-error><div class="start"></div><div class="middle"></div><div class="end"></div></div>
             </div>
           </div>
         </div>
@@ -376,16 +329,6 @@ const result = "fast, consistent styling"</code></pre>
       const THEMES = ["default", "crm"]
       const SEMANTICS = ["neutral", "primary", "secondary", "tertiary", "success", "warning", "danger"]
       const INPUT_SCALES = ["smallest", "smaller", "small", "regular", "large", "larger", "largest"]
-      const CONTROL_SCALES = {
-        smallest: { fontSize: "0.75rem", paddingX: "0.8em", paddingY: "0.45em" },
-        smaller: { fontSize: "0.85rem", paddingX: "0.9em", paddingY: "0.5em" },
-        small: { fontSize: "0.95rem", paddingX: "1em", paddingY: "0.55em" },
-        regular: { fontSize: "1rem", paddingX: "1.1em", paddingY: "0.6em" },
-        large: { fontSize: "1.1rem", paddingX: "1.2em", paddingY: "0.7em" },
-        larger: { fontSize: "1.2rem", paddingX: "1.3em", paddingY: "0.75em" },
-        largest: { fontSize: "1.3rem", paddingX: "1.4em", paddingY: "0.8em" },
-      }
-
       const removeClasses = (node, values) => {
         for (const value of values) {
           node.classList.remove(value)
@@ -395,7 +338,9 @@ const result = "fast, consistent styling"</code></pre>
       const applySemantic = (selector, semantic) => {
         for (const node of document.querySelectorAll(selector)) {
           removeClasses(node, SEMANTICS)
-          node.classList.add(semantic)
+          if (semantic !== "neutral") {
+            node.classList.add(semantic)
+          }
         }
       }
 
@@ -407,11 +352,10 @@ const result = "fast, consistent styling"</code></pre>
       }
 
       const applyControlScale = (scale) => {
-        const values = CONTROL_SCALES[scale] || CONTROL_SCALES.regular
-        const section = document.getElementById("buttons-demo")
-        section.style.setProperty("--specimen-control-font-size", values.fontSize)
-        section.style.setProperty("--specimen-control-padding-x", values.paddingX)
-        section.style.setProperty("--specimen-control-padding-y", values.paddingY)
+        for (const node of document.querySelectorAll("[data-control-scale]")) {
+          removeClasses(node, INPUT_SCALES)
+          node.classList.add(scale)
+        }
       }
 
       const applyTheme = (theme) => {
