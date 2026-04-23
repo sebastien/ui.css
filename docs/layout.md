@@ -39,8 +39,8 @@ The `layout.js` module provides a comprehensive suite of utilities for controlli
 
 ```html
 <div class="row g-m items-center">
-    <div class="p-s bg-neutral-8 rd">Fixed</div>
-    <div class="fill p-s bg-neutral-9 rd">Expands to fill</div>
+    <div class="p-s bg-neutral bg-to-ink bg-2b bg rd">Fixed</div>
+    <div class="fill p-s bg-neutral bg-to-ink bg-1b bg rd">Expands to fill</div>
 </div>
 
 <div class="abs to-c">

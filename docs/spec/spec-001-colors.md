@@ -5,7 +5,7 @@ property-specific color variables.
 
 ## Palette Colors
 
-The core palette is defined in `src/css/colors.js` as `COLORS`:
+The core palette is based on a set of colors defined in `src/css/colors.js` as `COLORS`:
 
 ```text
 red
@@ -36,21 +36,21 @@ mist
 olive
 ```
 
-Each palette color has 11 luminosity steps defined in `src/css/palette.css`:
+These colors can be overriden/defined. Note that `color.js` does not define
+values for the colors, these need to be provided as corresponding CSS
+variables, like `--color-{color}-{luminosity}: …`. Each palette color has 11 luminosity steps defined in `src/css/palette.css`:
 
-1. `50`
+1. `50` (light)
 2. `100`
 3. `200`
 4. `300`
 5. `400`
-6. `500`
+6. `500` (mid-point, default).
 7. `600`
 8. `700`
 9. `800`
 10. `900`
-11. `950`
-
-These are exposed as CSS variables such as `--color-zinc-950`.
+11. `950` (dark)
 
 ## Semantic Colors
 
@@ -59,6 +59,7 @@ The semantic color aliases are defined in `src/css/colors.js` as `SEMANTIC`:
 - `paper` -> `white`
 - `ink` -> `black`
 - `neutral` -> `slate`
+- `accent` -> `blue`
 - `primary` -> `blue`
 - `secondary` -> `violet`
 - `tertiary` -> `teal`
@@ -70,32 +71,14 @@ The semantic color aliases are defined in `src/css/colors.js` as `SEMANTIC`:
 
 These aliases are emitted as root CSS variables such as `--color-primary`.
 
-## Indexed Color Classes
+## Base Color Classes
 
-The color module exposes indexed classes of the form
-`.{bg,tx,bd,ol}-{color}-{index}`.
-
-The current implementation maps indexes directly to the following luminosity
-steps:
-
-- `0` -> `950`
-- `1` -> `900`
-- `2` -> `800`
-- `3` -> `700`
-- `4` -> `600`
-- `5` -> `500`
-- `6` -> `400`
-- `7` -> `300`
-- `8` -> `200`
-- `9` -> `100`
-- `10` -> `50`
-
-This mapping is fixed. The `.dark` class currently swaps page and text defaults,
-but does not invert indexed color classes.
+The color module exposes base classes of the form
+`.{bg,tx,bd,ol}-{color}` and `.{bg,tx,bd,ol}-{semantic}`.
 
 ## Color Variables
 
-ui.css computes applied colors from these variables:
+Actual color values are computed colors from these variables:
 
 - `--{background,text,border,outline}-base`
 - `--{background,text,border,outline}-tint`
@@ -103,23 +86,24 @@ ui.css computes applied colors from these variables:
 - `--{background,text,border,outline}-opacity`
 
 The computed color is a color-mix of base and tint, then mixed with transparent
-through the corresponding opacity value.
+through the corresponding opacity value. The resulting color is stored
+as `--{background,text,border,outline}-color`.
 
 ## Using Colors
 
 Color classes set the base variable for a property:
 
 - `.bg-blue`
-- `.tx-zinc-3`
+- `.tx-zinc`
 - `.bd-warning`
-- `.ol-rose-7`
+- `.ol-rose`
 
 Apply classes emit the corresponding CSS property:
 
-- `.bg` -> `background-color`
-- `.tx` -> `color`
-- `.bd` -> `border-color`, plus default border width and style
-- `.ol` -> `outline-color`
+- `.bg` → computes `--background-color` and sets `background-color: var(--background-color)`
+- `.tx` → same for `color`
+- `.bd` → same for `border-color`, plus default border width and style
+- `.ol` → same for `outline-color`, plus default border width and style
 
 Side-specific helpers are also available for borders and outlines:
 
@@ -142,12 +126,17 @@ Blend helpers:
 
 Tint helpers:
 
-- `.{bg,tx,bd,ol}-to-{color}-{0..10}`
+- `.{bg,tx,bd,ol}-to-{color}`
 - `.{bg,tx,bd,ol}-to-paper`
 - `.{bg,tx,bd,ol}-to-ink`
+- `.{bg,tx,bd,ol}-to-white`
+- `.{bg,tx,bd,ol}-to-black`
 - `.{bg,tx,bd,ol}-to-transparent`
 
 `to-transparent` sets opacity to `0`; it does not assign a tint color.
+
+After altering colors you should use the corresponding class `bg`, `bd`, etc to
+apply the changes.
 
 ## Contrast Text
 

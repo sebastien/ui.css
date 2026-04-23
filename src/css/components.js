@@ -10,7 +10,7 @@ import {
 	vars,
 } from "../js/uicss.js";
 import { inputs } from "./lib/tags.js";
-import { colormix, colorvars } from "./colors.js";
+import { colormix, colormixin, colorvars } from "./colors.js";
 
 export default named({
 	// ------------------------------------------------------------------------
@@ -34,8 +34,8 @@ export default named({
 			font_weight: "700",
 			letter_spacing: "0.01em",
 			white_space: "nowrap",
-			background: "var(--badge-tone)",
-			color: "var(--badge-contrast)",
+			background: vars.badge.tone,
+			color: vars.badge.contrast,
 		}),
 		rule(".badge[data-variant='number']", {
 			padding: "0px",
@@ -120,8 +120,8 @@ export default named({
 			}),
 		),
 		rule(".pill[data-inverse='true']", {
-			background: "var(--pill-tone)",
-			color: "var(--pill-contrast)",
+			background: vars.pill.tone,
+			color: vars.pill.contrast,
 			border_color: "transparent",
 		}),
 		rule(".pill[data-inverse='true'] .pill-dot", {
@@ -274,41 +274,42 @@ export default named({
 	//
 	// ------------------------------------------------------------------------
 	panel: group(
-		rule(".panel", {
-			...colorvars("panel", "color"),
-			border_width: `${vars.border.width}`,
-			border_style: `${vars.border.style}`,
-			border_color: colormix(
-				vars.panel.current.color,
-				vars.panel.color.tint,
-				"14%",
-				"100%",
-			),
-			border_left_width: `${vars.panel.box.accent}`,
-			border_left_color: "var(--panel-current-color)",
-			border_radius: `${vars.panel.box.radius}`,
-			padding: `${vars.panel.box.padding.y} ${vars.panel.box.padding.x}`,
-			background: colormix(
-				vars.panel.current.color,
-				vars.panel.color.tint,
-				"4%",
-				"100%",
-			),
-			box_shadow: "none",
-		}),
-		rule([".panel > *:first-child", ".panel > .t > *:first-child"], {
-			margin_top: "0px",
-		}),
-		rule([".panel > *:last-child", ".panel > .t > *:last-child"], {
-			margin_bottom: "0px",
-		}),
+			rule(".panel", {
+				border_width: vars.panel.normal.border.width,
+				border_style: vars.panel.normal.border.style,
+				border_color: colormixin(vars.panel.normal.border),
+				border_radius: vars.panel.box.radius,
+				padding: vars.panel.padding,
+				margin: vars.panel.margin,
+				background: colormixin(vars.panel.normal.background),
+				color: colormixin(vars.panel.normal.text),
+				box_shadow: "none",
+			}),
 		...["primary", "secondary", "tertiary", "success", "warning", "danger"].map(
 			(variant) =>
 				rule(`.panel.${variant}`, {
-					__panel_color_base: `${vars.panel.color[variant]}`,
+					background: colormixin({
+						base: vars.panel.color[variant],
+						tint: vars.panel.normal.background.tint,
+						blend: vars.panel.normal.background.blend,
+						opacity: vars.panel.normal.background.opacity,
+					}),
+					border_color: colormixin({
+						base: vars.panel.color[variant],
+						tint: vars.panel.normal.border.tint,
+						blend: vars.panel.normal.border.blend,
+						opacity: vars.panel.normal.border.opacity,
+					}),
 				}),
 		),
 	),
+
+	// ------------------------------------------------------------------------
+	//
+	// CONTROLS
+	//
+	// ------------------------------------------------------------------------
+	controls: group(),
 
 	// ------------------------------------------------------------------------
 	//
@@ -327,11 +328,11 @@ export default named({
 		rule(".panels > .horizontal", {
 			position: "relative",
 			display: "grid",
-			left: "calc(-100% * var(--panels-current))",
-			width: "calc(100% * var(--panels-count))",
+			left: `calc(-100% * ${vars.panels.current})`,
+			width: `calc(100% * ${vars.panels.count})`,
 			min_width: "100%",
 			height: "100%",
-			grid_template_columns: "repeat(var(--panels-count), 1fr)",
+			grid_template_columns: `repeat(${vars.panels.count}, 1fr)`,
 			transition: "left 0.3s ease-in-out",
 		}),
 
@@ -347,11 +348,11 @@ export default named({
 		rule(".panels > .vertical", {
 			position: "relative",
 			display: "grid",
-			top: "calc(-100% * var(--panels-current))",
-			height: "calc(100% * var(--panels-count))",
+			top: `calc(-100% * ${vars.panels.current})`,
+			height: `calc(100% * ${vars.panels.count})`,
 			min_height: "100%",
 			width: "100%",
-			grid_template_rows: "repeat(var(--panels-count), 1fr)",
+			grid_template_rows: `repeat(${vars.panels.count}, 1fr)`,
 			transition: "top 0.3s ease-in-out",
 		}),
 

@@ -116,7 +116,7 @@ body[data-theme="crm"] {
 	--color-ink: #1c2429;
 	--color-brand-font: #1c2429;
 	--panel-color-base: var(--color-utility-ltr);
-	--border-base: var(--color-utility-ltr);
+	--border-color-base: var(--color-utility-ltr);
 	--button-color-secondary: var(--color-secondary);
 	--select-color-secondary: var(--color-secondary);
 	--input-color-secondary: var(--color-secondary);

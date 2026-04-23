@@ -2,6 +2,10 @@
 run:
 	@
 
+build/css/%.css: src/css/%.js
+	@mkdir -p "$(dir $@)"
+	./bin/uicss "$<" > "$@"
+
 dist/ui.css:
 	@mkdir -p dist
 	./bin/uicss > "$@"

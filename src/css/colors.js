@@ -1,4 +1,5 @@
 import { contrast, group, rule, sides, times, vars } from "../js/uicss.js";
+import palette from "./palette.js";
 
 // ----------------------------------------------------------------------------
 //
@@ -60,6 +61,7 @@ const SEMANTIC = {
 	info: "cyan",
 	warning: "amber",
 	danger: "red",
+	error: "red",
 	accent: "blue", // aliased to primary
 };
 
@@ -77,70 +79,43 @@ const shorthands = {
 	ol: { name: "outline-color", css: "outline-color" },
 };
 
+const ckey = (...path) => `__${path.join("_")}`;
+
 function colorvar(name) {
 	return {
-		[`--${name}-color`]: `color-mix(in oklch, color-mix(in oklch, ${vars[name].base}, ${vars[name].tint} calc((1 - ${vars[name].blend}) * 100%)), transparent calc((1 - ${vars[name].opacity})) * 100%))`,
+		[ckey(name, "color")]:
+			`color-mix(in oklch, color-mix(in oklch, ${vars[name].base}, ${vars[name].tint} calc((1 - ${vars[name].blend}) * 100%)), transparent calc((1 - ${vars[name].opacity})) * 100%))`,
 	};
 }
 
 function colorvars(name, mode = "color") {
 	return {
-		[`--${name}-base`]: vars[name][mode].base,
-		[`--${name}-tint`]: vars[name][mode].tint,
-		[`--${name}-blend`]: vars[name][mode].blend,
-		[`--${name}-opacity`]: vars[name][mode].opacity,
+		[ckey(name, "base")]: vars[name][mode].base,
+		[ckey(name, "tint")]: vars[name][mode].tint,
+		[ckey(name, "blend")]: vars[name][mode].blend,
+		[ckey(name, "opacity")]: vars[name][mode].opacity,
 		...colorvar(name),
 	};
 }
-
-// Luminosity scale mapping: index 0-10 -> CSS variable suffix
-const luminosityScale = [
-	950, // 0 - darkest
-	900, // 1
-	800, // 2
-	700, // 3
-	600, // 4
-	500, // 5 - base
-	400, // 6
-	300, // 7
-	200, // 8
-	100, // 9
-	50, // 10 - lightest
-];
-
-const level = (index, dark = false) =>
-	luminosityScale[dark ? 10 - index : index];
-
-const indexedColor = (color, index, dark = false) =>
-	`var(--color-${color}-${level(index, dark)})`;
-
-const indexedSemantic = (palette, index, dark = false) =>
-	SPECIAL_COLORS[palette] ?? indexedColor(palette, index, dark);
-
-const indexedColorVars = (colors, dark = false) =>
-	Object.fromEntries(
-		colors.flatMap((color) =>
-			luminosityScale.map((_, index) => [
-				`--color-${color}-i-${index}`,
-				indexedColor(color, index, dark),
-			]),
-		),
-	);
-
-const indexedSemanticVars = (semantic, dark = false) =>
-	Object.fromEntries(
-		Object.entries(semantic).flatMap(([name, palette]) =>
-			luminosityScale.map((_, index) => [
-				`--color-${name}-i-${index}`,
-				indexedSemantic(palette, index, dark),
-			]),
-		),
-	);
 
 function colormix(base, tint, blend, opacity) {
 	const color = `color-mix(in srgb,${tint},${base} ${blend})`;
 	return `color-mix(in srgb, transparent, ${color} ${opacity})`;
 }
+
+// Function: colormixin
+// Generates a color-mix() CSS expression using variable references.
+// With opacity: wraps in a second color-mix for transparency.
+function colormixin(color) {
+	const inner = `color-mix(in oklch, ${color.base}, ${color.tint} calc(100% - ${color.blend}))`;
+	if (color.opacity) {
+		return `color-mix(in oklch, ${inner}, transparent calc(100% - ${color.opacity}))`;
+	}
+	return inner;
+}
+
+// NOTE: component token helper mutators were removed.
+// Components now consume token variables directly with CSS fallback chains.
 
 // ----------------------------------------------------------------------------
 //
@@ -161,8 +136,6 @@ function colors(colors = COLORS) {
 		rule(".light, :root", {
 			__color_page: `${vars.color.paper}`,
 			__color_text: `${vars.color.ink}`,
-			...indexedColorVars(colors, false),
-			...indexedSemanticVars(SEMANTIC, false),
 			// Apply actual properties
 			background_color: `${vars.color.paper}`,
 			color: `${vars.color.ink}`,
@@ -170,8 +143,6 @@ function colors(colors = COLORS) {
 		rule(".dark", {
 			__color_page: `${vars.color.ink}`,
 			__color_text: `${vars.color.paper}`,
-			...indexedColorVars(colors, true),
-			...indexedSemanticVars(SEMANTIC, true),
 			// Apply actual properties with swapped colors
 			background_color: `${vars.color.ink}`,
 			color: `${vars.color.paper}`,
@@ -181,12 +152,12 @@ function colors(colors = COLORS) {
 		// ------------------------------------------------------------------------
 		// .bg - sets the computed background color
 		rule(".bg", {
-			"--background-color": backgroundColor,
+			__background_color: backgroundColor,
 			background_color: `${vars.background.color}`,
 		}),
 		// .tx - applies the computed text color
 		rule(".tx", {
-			"--text-color": textColor,
+			__text_color: textColor,
 			color: `${vars.text.color}`,
 		}),
 		// Progressive enhancement: when supported, prefer dynamic contrast for paired bg+tx.
@@ -199,7 +170,7 @@ function colors(colors = COLORS) {
 		}),
 		// .bd - applies the computed border color
 		rule(".bd", {
-			"--border-color": borderColor,
+			__border_color: borderColor,
 			border_color: `${vars.border.color}`,
 			border_width: `${vars.border.width}`,
 			border_style: `${vars.border.style}`,
@@ -213,7 +184,7 @@ function colors(colors = COLORS) {
 		),
 		// .ol - applies the computed outline color
 		rule(".ol", {
-			"--outline-color": outlineColor,
+			__outline_color: outlineColor,
 			outline_color: `${vars.outline.color}`,
 		}),
 		Object.entries(sides).map(([short, side]) =>
@@ -231,7 +202,8 @@ function colors(colors = COLORS) {
 		Object.keys(shorthands).flatMap((short) =>
 			colors.map((color) =>
 				rule(`.${short}-${color}`, {
-					[`--${shorthands[short].name}-base`]: vars.color[color][500],
+					[`__${shorthands[short].name.replaceAll("-", "_")}_base`]:
+						vars.color[color][500],
 				}),
 			),
 		),
@@ -240,36 +212,9 @@ function colors(colors = COLORS) {
 		Object.keys(shorthands).flatMap((short) =>
 			Object.keys(SEMANTIC).map((semantic) =>
 				rule(`.${short}-${semantic}`, {
-					[`--${shorthands[short].name}-base`]: vars.color[semantic],
+					[`__${shorthands[short].name.replaceAll("-", "_")}_base`]:
+						vars.color[semantic],
 				}),
-			),
-		),
-
-		// ------------------------------------------------------------------------
-		// COLOR CLASSES - Index variants (0-10)
-		// ------------------------------------------------------------------------
-		// Creates .{bg,tx,bd,ol}-{color}-{0-10} classes
-		// Index 0 = darkest (950), Index 10 = lightest (50)
-		// In light mode: 0->950, 10->50
-		// In dark mode: 0->50, 10->950 (inverted via per-mode index vars)
-		Object.keys(shorthands).flatMap((short) =>
-			colors.flatMap((color) =>
-				luminosityScale.map((_, index) =>
-					rule(`.${short}-${color}-${index}`, {
-						[`--${shorthands[short].name}-base`]: `var(--color-${color}-i-${index})`,
-					}),
-				),
-			),
-		),
-
-		// Semantic index variants (handle paper/ink specially - they don't have scales)
-		Object.keys(shorthands).flatMap((short) =>
-			Object.keys(SEMANTIC).flatMap((semantic) =>
-				luminosityScale.map((_, index) =>
-					rule(`.${short}-${semantic}-${index}`, {
-						[`--${shorthands[short].name}-base`]: `var(--color-${semantic}-i-${index})`,
-					}),
-				),
 			),
 		),
 
@@ -281,7 +226,8 @@ function colors(colors = COLORS) {
 		Object.keys(shorthands).flatMap((short) =>
 			times(11, (index) =>
 				rule(`.${short}-${index}o`, {
-					[`--${shorthands[short].name}-opacity`]: index / 10,
+					[`__${shorthands[short].name.replaceAll("-", "_")}_opacity`]:
+						index / 10,
 				}),
 			),
 		),
@@ -294,7 +240,8 @@ function colors(colors = COLORS) {
 		Object.keys(shorthands).flatMap((short) =>
 			times(11, (index) =>
 				rule(`.${short}-${index}b`, {
-					[`--${shorthands[short].name}-blend`]: index / 10,
+					[`__${shorthands[short].name.replaceAll("-", "_")}_blend`]:
+						index / 10,
 				}),
 			),
 		),
@@ -302,48 +249,43 @@ function colors(colors = COLORS) {
 		// ------------------------------------------------------------------------
 		// TINT COLOR CLASSES
 		// ------------------------------------------------------------------------
-		// Creates .{bg,tx,bd,ol}-to-{color}-{index} classes for setting tint
+		// Creates .{bg,tx,bd,ol}-to-{color} classes for setting tint
 		Object.keys(shorthands).flatMap((short) =>
-			colors.flatMap((color) =>
-				luminosityScale.map((_, index) =>
-					rule(`.${short}-to-${color}-${index}`, {
-						[`--${shorthands[short].name}-tint`]: `var(--color-${color}-i-${index})`,
-					}),
-				),
+			colors.map((color) =>
+				rule(`.${short}-to-${color}`, {
+					[`__${shorthands[short].name.replaceAll("-", "_")}_tint`]:
+						vars.color[color],
+				}),
 			),
 		),
 
 		Object.keys(shorthands).flatMap((short) =>
-			Object.keys(SEMANTIC).flatMap((semantic) =>
-				luminosityScale.map((_, index) =>
-					rule(`.${short}-to-${semantic}-${index}`, {
-						[`--${shorthands[short].name}-tint`]: `var(--color-${semantic}-i-${index})`,
-					}),
-				),
+			Object.keys(SEMANTIC).map((semantic) =>
+				rule(`.${short}-to-${semantic}`, {
+					[`__${shorthands[short].name.replaceAll("-", "_")}_tint`]:
+						vars.color[semantic],
+				}),
 			),
-		),
-
-		Object.keys(shorthands).flatMap((short) =>
-			luminosityScale.flatMap((_, index) => [
-				rule(`.${short}-to-white-${index}`, {
-					[`--${shorthands[short].name}-tint`]: SPECIAL_COLORS.white,
-				}),
-				rule(`.${short}-to-black-${index}`, {
-					[`--${shorthands[short].name}-tint`]: SPECIAL_COLORS.black,
-				}),
-			]),
 		),
 
 		// Special tint classes (no index required)
 		Object.keys(shorthands).flatMap((short) => [
+			rule(`.${short}-to-white`, {
+				[`__${shorthands[short].name.replaceAll("-", "_")}_tint`]:
+					SPECIAL_COLORS.white,
+			}),
+			rule(`.${short}-to-black`, {
+				[`__${shorthands[short].name.replaceAll("-", "_")}_tint`]:
+					SPECIAL_COLORS.black,
+			}),
 			rule(`.${short}-to-paper`, {
-				[`--${shorthands[short].name}-tint`]: `${vars.color.paper}`,
+				[`__${shorthands[short].name.replaceAll("-", "_")}_tint`]: `${vars.color.paper}`,
 			}),
 			rule(`.${short}-to-ink`, {
-				[`--${shorthands[short].name}-tint`]: `${vars.color.ink}`,
+				[`__${shorthands[short].name.replaceAll("-", "_")}_tint`]: `${vars.color.ink}`,
 			}),
 			rule(`.${short}-to-transparent`, {
-				[`--${shorthands[short].name}-opacity`]: 0,
+				[`__${shorthands[short].name.replaceAll("-", "_")}_opacity`]: 0,
 			}),
 		]),
 
@@ -355,13 +297,17 @@ function colors(colors = COLORS) {
 		rule(".nobd", { border_color: "transparent" }),
 		rule(".nool", { outline_color: "transparent" }),
 		// Opacity-based resets
-		rule(".bg-0o", { "--background-color-opacity": 0 }),
-		rule(".tx-0o", { "--text-color-opacity": 0 }),
-		rule(".bd-0o", { "--border-color-opacity": 0 }),
-		rule(".ol-0o", { "--outline-color-opacity": 0 }),
+		rule(".bg-0o", { __background_color_opacity: 0 }),
+		rule(".tx-0o", { __text_color_opacity: 0 }),
+		rule(".bd-0o", { __border_color_opacity: 0 }),
+		rule(".ol-0o", { __outline_color_opacity: 0 }),
 	);
 }
 
-export { COLORS, SEMANTIC, colormix, colorvars };
-export default Object.assign(colors, { mix: colormix, vars: colorvars });
+export { COLORS, SEMANTIC, colormix, colormixin, colorvars };
+export default Object.assign(colors, {
+	mix: colormix,
+	colormixin,
+	vars: colorvars,
+});
 // EOF

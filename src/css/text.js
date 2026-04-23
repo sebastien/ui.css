@@ -43,19 +43,21 @@ export default named({
 			}),
 		),
 	),
-	lists: group(
-			rule(["p.t", ".t p"], {
-				margin_top: `${vars.ui.prose.stack}`,
-				margin_bottom: `${vars.ui.prose.stack}`,
-				min_height: `${vars.ui.prose.line_min_height}`,
-			}),
+	paragraphs: group(
+		rule(["p.t", ".t p"], {
+			margin_top: `${vars.text.stack}`,
+			margin_bottom: `${vars.text.stack}`,
+			min_height: `${vars.text.line.min_height}`,
+		}),
 		rule(["p.t:first-child", ".t p:first-child"], {
 			margin_top: "unset",
 		}),
 		rule(["p.t:last-child", ".t p:last-child"], {
 			margin_bottom: "unset",
 		}),
-		rule([".t code", "code.t"], {
+	),
+	inline: group(
+		rule(["code"], {
 			font_family: vars.font.code.family,
 		}),
 		rule([".t em", "em.t"], {
@@ -67,7 +69,6 @@ export default named({
 		rule([".t strong", "strong.t"], {
 			font_weight: "bold",
 		}),
-		// Inline formats
 		rule([".t a", "a.t"], {
 			color: "inherit",
 			text_decoration: "underline",
@@ -75,55 +76,60 @@ export default named({
 		rule([".t a:hover", "a.t:hover"], {
 			opacity: 0.75,
 		}),
-			rule([".t sub", "sub.t"], {
-				vertical_align: "sub",
-				font_size: `${vars.ui.prose.inline.subsup_size}`,
-			}),
-			rule([".t sup", "sup.t"], {
-				vertical_align: "super",
-				font_size: `${vars.ui.prose.inline.subsup_size}`,
-			}),
+		rule([".t sub", "sub.t"], {
+			vertical_align: "sub",
+			font_size: `${vars.text.inline.subsup_size}`,
+		}),
+		rule([".t sup", "sup.t"], {
+			vertical_align: "super",
+			font_size: `${vars.text.inline.subsup_size}`,
+		}),
 		rule([".t u", "u.t"], {
 			text_decoration: "underline",
 		}),
-		// Block formats
-			rule([".t blockquote", "blockquote.t"], {
-				border_left: `${vars.ui.prose.blockquote.border_width} solid`,
-				border_color: "currentColor",
-				margin_left: "0",
-				margin_right: "0",
-				margin_top: `${vars.ui.prose.stack}`,
-				margin_bottom: `${vars.ui.prose.stack}`,
-				padding_left: `${vars.ui.prose.blockquote.padding_x}`,
-				padding_top: `${vars.ui.prose.blockquote.padding_y}`,
-				padding_bottom: `${vars.ui.prose.blockquote.padding_y}`,
-				opacity: `${vars.ui.prose.blockquote.opacity}`,
-			}),
-			rule([".t pre", "pre.t"], {
-				font_family: vars.font.code.family,
-				background: `${vars.theme.surface.code.background}`,
-				border_radius: `${vars.theme.surface.code.radius}`,
-				margin_top: `${vars.ui.prose.stack}`,
-				margin_bottom: `${vars.ui.prose.stack}`,
-				padding: `${vars.ui.prose.code.padding_y} ${vars.ui.prose.code.padding_x}`,
-				overflow_x: "auto",
-				white_space: "pre",
-			}),
+	),
+	blockquote: group(
+		rule([".t blockquote", "blockquote.t"], {
+			border_left: `${vars.text.blockquote.border.width} solid`,
+			border_color: "currentColor",
+			margin_left: "0",
+			margin_right: "0",
+			margin_top: `${vars.text.stack}`,
+			margin_bottom: `${vars.text.stack}`,
+			padding_left: `${vars.text.blockquote.pad.horizontal}`,
+			padding_top: `${vars.text.blockquote.pad.vertical}`,
+			padding_bottom: `${vars.text.blockquote.pad.vertical}`,
+			opacity: `${vars.text.blockquote.opacity}`,
+		}),
+	),
+	code: group(
+		rule([".t pre", "pre.t"], {
+			font_family: vars.font.code.family,
+			background: `${vars.text.code.background}`,
+			border_radius: `${vars.text.code.radius}`,
+			margin_top: `${vars.text.stack}`,
+			margin_bottom: `${vars.text.stack}`,
+			padding: `${vars.text.code.pad.vertical} ${vars.text.code.pad.horizontal}`,
+			overflow_x: "auto",
+			white_space: "pre",
+		}),
 		rule([".t pre code", "pre.t code"], {
 			background: "transparent",
 			padding: "0",
 		}),
-			rule(["ul.t", "ol.t", "dl.t", ".t ul", ".t ol", ".t dl"], {
-				margin_top: `${vars.ui.prose.stack}`,
-				margin_bottom: `${vars.ui.prose.dd.margin_bottom}`,
-				padding_left: `${vars.ui.prose.list_indent}`,
-			}),
-			rule(["ol.t", ".t ol"], {
-				padding_left: `${vars.ui.prose.list_indent_ordered}`,
-			}),
+	),
+	lists: group(
+		rule(["ul.t", "ol.t", "dl.t", ".t ul", ".t ol", ".t dl"], {
+			margin_top: `${vars.text.stack}`,
+			margin_bottom: `${vars.text.dd.margin.bottom}`,
+			padding_left: `${vars.text.list.unordered.indent}`,
+		}),
+		rule(["ol.t", ".t ol"], {
+			padding_left: `${vars.text.list.ordered.indent}`,
+		}),
 		rule(["li.t > p", ".t li p"], {
-			maring_top: "unset",
-			maring_bottom: "unset",
+			margin_top: "unset",
+			margin_bottom: "unset",
 		}),
 		rule(["ul.t li", ".t ul li"], {
 			list_style_type: "disc",
@@ -131,22 +137,24 @@ export default named({
 		rule(["ol.t li", ".t ol li"], {
 			list_style_type: "decimal",
 		}),
-			rule([".t li", "li.t"], {
-				margin_bottom: `${vars.ui.prose.list_item_gap}`,
-			}),
+		rule([".t li", "li.t"], {
+			margin_bottom: `${vars.text.list.item.gap}`,
+		}),
+	),
+	definition: group(
 		rule([".t dl", "dl.t"], {
 			padding_left: "0em",
 		}),
-			rule([".t dt", "dt.t"], {
-				margin_top: `${vars.ui.prose.dt.margin_top}`,
-				margin_bottom: `${vars.ui.prose.dt.margin_bottom}`,
-				font_weight: "bold",
-				opacity: `${vars.ui.prose.dt.opacity}`,
-			}),
-			rule([".t dd", "dd.t"], {
-				margin_top: `${vars.ui.prose.dd.margin_top}`,
-				margin_bottom: `${vars.ui.prose.dd.margin_bottom}`,
-			}),
+		rule([".t dt", "dt.t"], {
+			margin_top: `${vars.text.dt.margin.top}`,
+			margin_bottom: `${vars.text.dt.margin.bottom}`,
+			font_weight: "bold",
+			opacity: `${vars.text.dt.opacity}`,
+		}),
+		rule([".t dd", "dd.t"], {
+			margin_top: `${vars.text.dd.margin.top}`,
+			margin_bottom: `${vars.text.dd.margin.bottom}`,
+		}),
 	),
 	whitespace: group(
 		rule(".nobreak", { white_space: "nobreak" }),

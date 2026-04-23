@@ -49,7 +49,7 @@ for (const line of stylesheet) {
 
 ```html
 <!-- Resulting usage in HTML -->
-<div class="bg-primary-8 bg tx p-m rd-4 sh-2">
+<div class="bg-primary bg-to-paper bg-2b bg tx p-m rd-4 sh-2">
     <h1 class="heading bold t-xl">Hello World</h1>
     <p class="dim">Functional CSS generation in JavaScript.</p>
 </div>

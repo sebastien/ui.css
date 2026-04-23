@@ -1,10 +1,15 @@
 import { group, sizes, tokens, vars } from "../js/uicss.js";
 
 const REM_PIXELS = 16;
-function pem(px, scale = undefined) {
+function pem(px, scale = undefined, base = REM_PIXELS) {
 	return scale
-		? `calc( 1em * ${scale} * ${px} / ${REM_PIXELS} )`
-		: `calc( 1em * ${px} / ${REM_PIXELS} )`;
+		? `calc( 1em * ${scale} * ${px} / ${base} )`
+		: `calc( 1em * ${px} / ${base} )`;
+}
+function rpem(px, scale = undefined, base = REM_PIXELS) {
+	return scale
+		? `calc( 1rem * ${scale} * ${px} / ${base} )`
+		: `calc( 1rem * ${px} / ${base} )`;
 }
 
 // Module: tokens
@@ -67,7 +72,10 @@ export default group(
 			width: `${vars.block.width}`,
 		},
 		scaling: {
-			pad: 1.5,
+			size: 1.0,
+			pad: 1.25,
+			gap: 1.25,
+			margin: 1.0,
 		},
 	}),
 	// ------------------------------------------------------------------------
@@ -82,24 +90,23 @@ export default group(
 			// Scale endpoint colors
 			white: "#FFFFFF",
 			black: "#000000",
-			ink: `${vars.color.slate[950]}`,
-			action: `${vars.color.slate[400]}`,
-			border: `${vars.color.slate[400]}`,
+			ink: "var(--color-slate-950, #020617)",
+			action: "var(--color-slate-400, #94a3b8)",
+			border: "var(--color-slate-400, #94a3b8)",
 			paper: "#FFFFFF",
-			// Luminosity direction: 1 = normal (light mode), -1 = inverted (dark mode)
-			l: { direction: 1 },
-			// Semantic colors (reference palette.css variables)
-			neutral: `${vars.color.gray[200]}`,
-			primary: `${vars.color.blue[500]}`,
-			secondary: `${vars.color.violet[500]}`,
-			tertiary: `${vars.color.teal[500]}`,
-			success: `${vars.color.green[500]}`,
-			valid: `${vars.color.green[500]}`,
-			info: `${vars.color.cyan[500]}`,
-			warning: `${vars.color.amber[500]}`,
-			issue: `${vars.color.amber[500]}`,
-			danger: `${vars.color.red[500]}`,
-			error: `${vars.color.red[500]}`,
+			// Semantic colors (reference palette variables with fallback defaults)
+			neutral: "var(--color-gray-200, #e5e7eb)",
+			primary: "#1400ff",
+			secondary: "#469485",
+			tertiary: "var(--color-teal-500, #14b8a6)",
+			success: "var(--color-green-500, #22c55e)",
+			valid: "var(--color-green-500, #22c55e)",
+			info: "var(--color-cyan-500, #06b6d4)",
+			warning: "var(--color-amber-500, #f59e0b)",
+			issue: "var(--color-amber-500, #f59e0b)",
+			error: "var(--color-red-500, #ef4444)",
+			danger: vars.color.error,
+			accent: vars.color.primary,
 			// Mode-dependent colors (defaults to light mode, swapped by .dark)
 			page: `${vars.color.paper}`,
 			text: `${vars.color.ink}`,
@@ -131,6 +138,36 @@ export default group(
 				blend: 1.0,
 				opacity: 1.0,
 			},
+			stack: "0.75em",
+			line: {
+				min_height: "1.5em",
+			},
+			list: {
+				unordered: { indent: "1.5em" },
+				ordered: { indent: "2em" },
+				item: { gap: "0.5em" },
+			},
+			blockquote: {
+				border: { width: "4px" },
+				pad: { horizontal: "1em", vertical: "0.25em" },
+				opacity: 0.85,
+			},
+			code: {
+				pad: { horizontal: "1em", vertical: "0.75em" },
+				background: "rgba(128, 128, 128, 0.1)",
+				radius: "4px",
+			},
+			dt: {
+				margin: { top: "1.5em", bottom: "0.5em" },
+				opacity: 0.75,
+			},
+			dd: {
+				margin: { top: "0.5em", bottom: "1.5em" },
+			},
+			inline: {
+				subsup_size: "0.75em",
+			},
+			width: `${vars.limit.text}`,
 		},
 		border: {
 			color: {
@@ -169,13 +206,13 @@ export default group(
 		// Text sizing properties (separate from text color)
 		textsize: {
 			size: [
-				"0.40", // 0: xxs
-				"0.60", // 1: xs
-				"0.80", // 2: s
+				"0.58", // 0: xxs
+				"0.69", // 1: xs
+				"0.83", // 2: s
 				"1.00", // 3: m
-				"1.20", // 5: l
-				"1.60", // 6: xl
-				"1.80", // 7: xxl
+				"1.20", // 4: l
+				"1.44", // 5: xl
+				"1.73", // 6: xxl
 			],
 		},
 	}),
@@ -184,156 +221,119 @@ export default group(
 	// SPACING & SIZING
 	//
 	// ------------------------------------------------------------------------
-	tokens({
-		theme: {
-			text: {
-				body: {
-					line: `${vars.font.line}`,
-					color: `${vars.color.text}`,
-				},
-				heading: {
-					line: `${vars.font.heading.line}`,
-					weight: 600,
-					color: `${vars.color.ink}`,
-				},
-			},
-			surface: {
-				page: `${vars.color.page}`,
-				text: `${vars.color.text}`,
-				code: {
-					background: "rgba(128, 128, 128, 0.1)",
-					radius: "4px",
-				},
-			},
+		tokens({
 			motion: {
-				duration: {
-					fast: "0.1s",
-					normal: "0.2s",
-					slow: "0.3s",
-				},
-				easing: {
-					standard: "ease",
-					emphasized: "ease-in-out",
-				},
-				shift: {
-					hover_dx: "20%",
-				},
+			duration: {
+				fast: "0.1s",
+				normal: "0.2s",
+				slow: "0.3s",
+			},
+			easing: {
+				standard: "ease",
+				emphasized: "ease-in-out",
+			},
+			shift: {
+				hover_dx: "20%",
 			},
 		},
-		ui: {
 			control: {
-				transition: `background ${vars.theme.motion.duration.normal} ${vars.theme.motion.easing.standard}, color ${vars.theme.motion.duration.normal} ${vars.theme.motion.easing.standard}, border ${vars.theme.motion.duration.normal} ${vars.theme.motion.easing.standard}, outline-color ${vars.theme.motion.duration.normal} ${vars.theme.motion.easing.standard}`,
+				color: {
+					border: {
+						base: `${vars.color.neutral}`,
+						tint: `${vars.color.ink}`,
+						blend: "88%",
+						opacity: "82%",
+					},
+					background: {
+						base: `${vars.color.neutral}`,
+						tint: `${vars.color.paper}`,
+						blend: "86%",
+						opacity: "100%",
+					},
+				},
+				transition: `background ${vars.motion.duration.normal} ${vars.motion.easing.standard}, color ${vars.motion.duration.normal} ${vars.motion.easing.standard}, border ${vars.motion.duration.normal} ${vars.motion.easing.standard}, outline-color ${vars.motion.duration.normal} ${vars.motion.easing.standard}`,
 				border: {
 					width: "1px",
+			},
+			focus: {
+				ring: {
+					width: "2px",
 				},
-				focus: {
-					ring: {
-						width: "2px",
+			},
+			style: {
+				default: {
+					border: {
+						width: "3px",
 					},
 				},
-				style: {
-					default: {
-						border: {
-							width: "3px",
-						},
-					},
-					outline: {
-						border: {
-							width: "1px",
-						},
+				outline: {
+					border: {
+						width: "1px",
 					},
 				},
-				icon: {
-					padding: "0.25em",
-					size: "1em",
-				},
+			},
+			icon: {
+				padding: "0.25em",
+				size: "1em",
+			},
 				disabled: {
 					blend: "50%",
-					opacity: "75%",
+					opacity: "65%",
 				},
-			},
-			prose: {
-				stack: "0.75em",
-				line_min_height: "1.5em",
-				list_indent: "1.5em",
-				list_indent_ordered: "2em",
-				list_item_gap: "0.5em",
-				blockquote: {
-					border_width: "4px",
-					padding_x: "1em",
-					padding_y: "0.25em",
-					opacity: 0.85,
-				},
-				code: {
-					padding_y: "0.75em",
-					padding_x: "1em",
-				},
-				dt: {
-					margin_top: "1.5em",
-					margin_bottom: "0.5em",
-					opacity: 0.75,
-				},
-				dd: {
-					margin_top: "0.5em",
-					margin_bottom: "1.5em",
-				},
-				inline: {
-					subsup_size: "0.75em",
-				},
-			},
 		},
 		size: [
 			"0em",
-			pem(5), // 1:xxs
-			pem(10), // 2:xs
-			pem(15), // 3:s
-			pem(30), // 4:m
-			pem(40), // 5:l
-			pem(50), // 6:xl
-			pem(60), // 7:xxl
-			pem(70), // 8:xxxl
-			pem(80), // 9:xxxxl
-			pem(100), // 10:xxxxl
+			pem(4, vars.scaling.size), // 1: xxs
+			pem(8, vars.scaling.size), // 2: xs
+			pem(12, vars.scaling.size), // 3: s
+			pem(16, vars.scaling.size), // 4: m
+			pem(24, vars.scaling.size), // 5: l
+			pem(32, vars.scaling.size), // 6: xl
+			pem(48, vars.scaling.size), // 7: xxl
+			pem(64, vars.scaling.size), // 8: xxxl
+			pem(96, vars.scaling.size), // 9: xxxxl
+			pem(128, vars.scaling.size), // 10: xxxxxl
 		],
 		margin: [
 			"0em",
-			pem(5), // 1: xxs
-			pem(10), // 2: xs
-			pem(15), // 3: s
-			pem(30), // 4: m
-			pem(40), // 5: l
-			pem(50), // 6: xl
-			pem(70), // 7: xxl
-			pem(80), // 8: xxl
-			pem(120), // 9: xxl
-			pem(140), // 10: xxl
+			rpem(4, vars.scaling.margin), // 1: xxs
+			rpem(8, vars.scaling.margin), // 2: xs
+			rpem(12, vars.scaling.margin), // 3: s
+			rpem(16, vars.scaling.margin), // 4: m
+			rpem(24, vars.scaling.margin), // 5: l
+			rpem(32, vars.scaling.margin), // 6: xl
+			rpem(48, vars.scaling.margin), // 7: xxl
+			rpem(64, vars.scaling.margin), // 8: xxxl
+			rpem(96, vars.scaling.margin), // 9: xxxxl
+			rpem(128, vars.scaling.margin), // 10: xxxxxl
 		],
 		pad: [
 			"0em",
-			pem(2, vars.scaling.pad), // 1: xxs
-			pem(4, vars.scaling.pad), // 2: xs
-			pem(6, vars.scaling.pad), // 3: s
-			pem(8, vars.scaling.pad), // 4: m
-			pem(12, vars.scaling.pad), // 5: l
-			pem(16, vars.scaling.pad), // 6: xl
-			pem(24, vars.scaling.pad), // 7: xxl
-			pem(32, vars.scaling.pad), // 8: xxxl
-			pem(48, vars.scaling.pad), // 9: xxxxl
-			pem(64, vars.scaling.pad), // 10: xxxxxl
+			rpem(2, vars.scaling.pad), // 1: xxs
+			rpem(4, vars.scaling.pad), // 2: xs
+			rpem(6, vars.scaling.pad), // 3: s
+			rpem(8, vars.scaling.pad), // 4: m
+			rpem(12, vars.scaling.pad), // 5: l
+			rpem(16, vars.scaling.pad), // 6: xl
+			rpem(24, vars.scaling.pad), // 7: xxl
+			rpem(32, vars.scaling.pad), // 8: xxxl
+			rpem(48, vars.scaling.pad), // 9: xxxxl
+			rpem(64, vars.scaling.pad), // 10: xxxxxl
 		],
 		gap: [
 			"0em",
-			pem(2), // 1: xxs
-			pem(4), // 2: xs
-			pem(6), // 3: s
-			pem(8), // 4: m
-			pem(12), // 5: l
-			pem(16), // 6: xl
-			pem(24), // 7: xxl
-			pem(32), // 8: xxxl
-			pem(64), // 9: xxxxl
-			pem(96), // 10: xxxxxl
+			pem(4, vars.scaling.gap), // 1: xxs
+			pem(8, vars.scaling.gap), // 2: xs
+			pem(12, vars.scaling.gap), // 3: s
+			pem(16, vars.scaling.gap), // 4: m
+			pem(24, vars.scaling.gap), // 5: l
+			pem(32, vars.scaling.gap), // 6: xl
+			pem(48, vars.scaling.gap), // 7: xxl
+			pem(64, vars.scaling.gap), // 8: xxxl
+			pem(96, vars.scaling.gap), // 9: xxxxl
+			pem(128, vars.scaling.gap), // 10: xxxxxl
 		],
+
 		opacity: {
 			dim: 0.65,
 			dimmer: 0.45,
@@ -376,14 +376,17 @@ export default group(
 				"240%", // 6: xxl
 			],
 		},
-		text: {
-			width: `${vars.limit.text}`,
-		},
 	}),
 	// ------------------------------------------------------------------------
 	//
-	// CONTROLS
+	// CONTROLS - Component Token Model (spec-002)
 	//
+	// ------------------------------------------------------------------------
+	// Every component defines:
+	//   font.{family,line,weight,size}, padding, margin, box.{radius,...}
+	//   normal.{border,text,background,outline}.{base,tint,blend,opacity,width,style}
+	//   hover, focus, active, selected, disabled (state overrides)
+	//   color.{primary,secondary,tertiary,success,warning,danger} (variant bases)
 	// ------------------------------------------------------------------------
 	tokens({
 		// ====================================================================
@@ -396,53 +399,143 @@ export default group(
 				weight: `${vars.font.controls.weight}`,
 				size: `${vars.font.controls.size}`,
 			},
+			padding: "0.65em 1em",
+			margin: "0px",
 			box: {
-				padding: {
-					x: "1em",
-					y: "0.65em",
-				},
 				radius: `${vars.border.radius[1]}`,
 			},
-			// Background and text
+				normal: {
+					border: {
+						base: `${vars.control.color.border.base}`,
+						tint: `${vars.control.color.border.tint}`,
+						blend: `${vars.control.color.border.blend}`,
+						opacity: `${vars.control.color.border.opacity}`,
+						width: `${vars.control.border.width}`,
+						style: "solid",
+					},
+				text: {
+					base: `${vars.color.ink}`,
+					tint: `${vars.color.ink}`,
+					blend: "0%",
+					opacity: "100%",
+				},
+					background: {
+						base: `${vars.color.paper}`,
+						tint: `${vars.color.paper}`,
+						blend: "100%",
+						opacity: "100%",
+					},
+					outline: {
+						base: `${vars.color.neutral}`,
+						tint: `${vars.color.paper}`,
+						blend: "100%",
+						opacity: "50%",
+						width: "0px",
+						style: "solid",
+					},
+				},
+			hover: {
+				background: {
+					tint: `${vars.color.ink}`,
+					blend: "50%",
+					opacity: "50%",
+				},
+			},
+				focus: {
+					outline: {
+						tint: `${vars.color.paper}`,
+						blend: "62%",
+						opacity: "72%",
+						width: `${vars.control.focus.ring.width}`,
+						style: "solid",
+					},
+				},
+			active: {
+				background: {
+					tint: `${vars.color.paper}`,
+					blend: "80%",
+					opacity: "100%",
+				},
+			},
+			selected: {
+				background: {
+					tint: `${vars.color.ink}`,
+					blend: "70%",
+					opacity: "100%",
+				},
+			},
+			disabled: {
+				background: {
+					tint: `${vars.color.paper}`,
+					blend: `${vars.control.disabled.blend}`,
+					opacity: `${vars.control.disabled.opacity}`,
+				},
+				text: {
+					tint: `${vars.color.paper}`,
+					blend: `${vars.control.disabled.blend}`,
+					opacity: `${vars.control.disabled.opacity}`,
+				},
+			},
 			color: {
-				base: `${vars.color.neutral}`,
 				primary: `${vars.color.primary}`,
 				secondary: `${vars.color.secondary}`,
 				tertiary: `${vars.color.tertiary}`,
 				success: `${vars.color.success}`,
 				warning: `${vars.color.warning}`,
 				danger: `${vars.color.danger}`,
-				tint: `${vars.color.paper}`,
-				blend: "0%",
-				opacity: "100%",
+				accent: `${vars.color.accent}`,
 			},
-			// Outline
-			focus: {
-				tint: `${vars.color.paper}`,
-				blend: "100%",
-				opacity: "50%",
+			outline: {
+				background: {
+					base: `${vars.color.neutral}`,
+					tint: `${vars.color.paper}`,
+					blend: "0%",
+					opacity: "100%",
+				},
+				border: {
+					base: `${vars.color.ink}`,
+					tint: `${vars.color.ink}`,
+					blend: "80%",
+					opacity: "80%",
+				},
+				text: {
+					base: `${vars.color.ink}`,
+					tint: `${vars.color.paper}`,
+					blend: "80%",
+					opacity: "100%",
+				},
+				outline: {
+					base: `${vars.color.ink}`,
+					tint: `${vars.color.ink}`,
+					blend: "80%",
+					opacity: "80%",
+				},
 			},
-			// Background
-			selected: {
-				tint: `${vars.color.ink}`,
-				blend: "70%",
-				opacity: "100%",
+			ghost: {
+				background: {
+					base: "transparent",
+					tint: "transparent",
+					blend: "0%",
+				},
+				border: {
+					base: "transparent",
+					tint: "transparent",
+					blend: "0%",
+				},
 			},
-			// Background
-			hover: {
-				tint: `${vars.color.ink}`,
-				blend: "50%",
-				opacity: "50%",
+			blank: {
+				background: {
+					opacity: "50%",
+				},
 			},
-			// Background
-			active: {
-				tint: `${vars.color.paper}`,
-				blend: "80%",
-				opacity: "100%",
+			icon: {
+				background: {
+					opacity: "50%",
+				},
 			},
 		},
 		// ====================================================================
-		// BUTTON
+		// SELECTABLE
 		// ====================================================================
 		selectable: {
 			font: {
@@ -451,40 +544,106 @@ export default group(
 				weight: `${vars.font.controls.weight}`,
 				size: `${vars.font.controls.size}`,
 			},
+			padding: "0.65em 1em",
+			margin: "0px",
 			box: {
 				radius: `${vars.border.radius[1]}`,
 			},
+				normal: {
+				border: {
+					base: `${vars.color.neutral}`,
+					tint: `${vars.color.paper}`,
+					blend: "0%",
+					opacity: "0%",
+					width: "0px",
+					style: "solid",
+				},
+				text: {
+					base: `${vars.color.ink}`,
+					tint: `${vars.color.ink}`,
+					blend: "0%",
+					opacity: "100%",
+				},
+				background: {
+					base: "transparent",
+					tint: "transparent",
+					blend: "0%",
+					opacity: "0%",
+				},
+					outline: {
+						base: `${vars.color.neutral}`,
+						tint: `${vars.color.paper}`,
+						blend: "100%",
+						opacity: "25%",
+						width: "0px",
+						style: "solid",
+					},
+				},
+			hover: {
+				background: {
+					tint: `${vars.color.ink}`,
+					blend: "50%",
+					opacity: "25%",
+				},
+			},
+				focus: {
+					outline: {
+						tint: `${vars.color.paper}`,
+						blend: "62%",
+						opacity: "72%",
+						width: `${vars.control.focus.ring.width}`,
+						style: "solid",
+					},
+				},
+			active: {
+				background: {
+					tint: `${vars.color.paper}`,
+					blend: "80%",
+					opacity: "25%",
+				},
+			},
+			selected: {
+				background: {
+					tint: `${vars.color.ink}`,
+					blend: "70%",
+					opacity: "25%",
+				},
+			},
+			disabled: {
+				background: {
+					blend: `${vars.control.disabled.blend}`,
+					opacity: `${vars.control.disabled.opacity}`,
+				},
+				text: {
+					blend: `${vars.control.disabled.blend}`,
+					opacity: `${vars.control.disabled.opacity}`,
+				},
+			},
 			color: {
-				base: `${vars.color.neutral}`,
 				primary: `${vars.color.primary}`,
 				secondary: `${vars.color.secondary}`,
 				tertiary: `${vars.color.tertiary}`,
 				success: `${vars.color.success}`,
 				warning: `${vars.color.warning}`,
 				danger: `${vars.color.danger}`,
-				tint: `${vars.color.paper}`,
-				blend: "0%",
-				opacity: "100%",
+				accent: `${vars.color.accent}`,
 			},
-			focus: {
-				tint: `${vars.color.paper}`,
-				blend: "100%",
-				opacity: "25%",
+			outline: {
+				background: {
+					base: "transparent",
+					tint: "transparent",
+					blend: "0%",
+				},
 			},
-			selected: {
-				tint: `${vars.color.ink}`,
-				blend: "70%",
-				opacity: "25%",
+			blank: {
+				background: {
+					opacity: "50%",
+				},
 			},
-			hover: {
-				tint: `${vars.color.ink}`,
-				blend: "50%",
-				opacity: "25%",
-			},
-			active: {
-				tint: `${vars.color.paper}`,
-				blend: "80%",
-				opacity: "25%",
+			icon: {
+				background: {
+					opacity: "50%",
+				},
 			},
 		},
 		// ====================================================================
@@ -497,56 +656,103 @@ export default group(
 				weight: `${vars.font.controls.weight}`,
 				size: `${vars.font.controls.size}`,
 			},
+			padding: "0px",
+			margin: "0px",
 			box: {
 				radius: `${vars.border.radius[1]}`,
 				gap: "0px",
-				padding: {
-					x: "0px",
-					y: "0px",
-				},
 			},
 			item: {
-				radius: "0px",
-				padding: {
-					x: "0.875em",
-					y: "0.5em",
+				padding: "0.5em 0.875em",
+			},
+				normal: {
+					border: {
+						base: `${vars.control.color.border.base}`,
+						tint: `${vars.control.color.border.tint}`,
+						blend: `${vars.control.color.border.blend}`,
+						opacity: `${vars.control.color.border.opacity}`,
+						width: `${vars.control.border.width}`,
+						style: "solid",
+					},
+				text: {
+					base: `${vars.color.ink}`,
+					tint: `${vars.color.ink}`,
+					blend: "0%",
+					opacity: "100%",
+				},
+					background: {
+						base: `${vars.color.paper}`,
+						tint: `${vars.color.paper}`,
+						blend: "100%",
+						opacity: "100%",
+					},
+				outline: {
+					base: `${vars.color.neutral}`,
+					tint: `${vars.color.paper}`,
+					blend: "100%",
+					opacity: "25%",
+					width: `${vars.control.focus.ring.width}`,
+					style: "solid",
+				},
+			},
+			hover: {
+				background: {
+					tint: `${vars.color.paper}`,
+					blend: "35%",
+					opacity: "28%",
+				},
+			},
+			focus: {
+				outline: {
+					tint: `${vars.color.paper}`,
+					blend: "100%",
+					opacity: "25%",
+				},
+			},
+			active: {
+				background: {
+					tint: `${vars.color.paper}`,
+					blend: "55%",
+					opacity: "40%",
+				},
+			},
+			selected: {
+				background: {
+					tint: `${vars.color.paper}`,
+					blend: "20%",
+					opacity: "100%",
+				},
+			},
+			disabled: {
+				background: {
+					blend: `${vars.control.disabled.blend}`,
+					opacity: `${vars.control.disabled.opacity}`,
 				},
 			},
 			color: {
-				base: `${vars.color.neutral}`,
 				primary: `${vars.color.primary}`,
 				secondary: `${vars.color.secondary}`,
 				tertiary: `${vars.color.tertiary}`,
 				success: `${vars.color.success}`,
 				warning: `${vars.color.warning}`,
 				danger: `${vars.color.danger}`,
-				tint: `${vars.color.paper}`,
-				blend: "0%",
-				opacity: "100%",
+				accent: `${vars.color.accent}`,
 			},
-			focus: {
-				tint: `${vars.color.paper}`,
-				blend: "100%",
-				opacity: "25%",
+			outline: {
+				background: {
+					base: "transparent",
+					tint: "transparent",
+					blend: "0%",
+				},
 			},
-			selected: {
-				tint: `${vars.color.paper}`,
-				blend: "20%",
-				opacity: "100%",
-			},
-			hover: {
-				tint: `${vars.color.paper}`,
-				blend: "35%",
-				opacity: "28%",
-			},
-			active: {
-				tint: `${vars.color.paper}`,
-				blend: "55%",
-				opacity: "40%",
+			blank: {
+				background: {
+					opacity: "50%",
+				},
 			},
 		},
 		// ====================================================================
-		// INPUTS
+		// INPUT
 		// ====================================================================
 		input: {
 			font: {
@@ -555,49 +761,130 @@ export default group(
 				weight: `${vars.font.controls.weight}`,
 				size: `${vars.font.controls.size}`,
 			},
+			padding: "0.625em 0.875em",
+			margin: "0px",
 			box: {
-				padding: {
-					x: "0.875em",
-					y: "0.625em",
-				},
 				radius: `${vars.border.radius[1]}`,
 			},
-			// Background and text
+				normal: {
+					border: {
+						base: `${vars.control.color.border.base}`,
+						tint: `${vars.control.color.border.tint}`,
+						blend: `${vars.control.color.border.blend}`,
+						opacity: `${vars.control.color.border.opacity}`,
+						width: `${vars.control.border.width}`,
+						style: "solid",
+					},
+				text: {
+					base: `${vars.color.ink}`,
+					tint: `${vars.color.ink}`,
+					blend: "0%",
+					opacity: "100%",
+				},
+					background: {
+						base: `${vars.color.paper}`,
+						tint: `${vars.color.paper}`,
+						blend: "100%",
+						opacity: "100%",
+					},
+					outline: {
+						base: `${vars.color.neutral}`,
+						tint: `${vars.color.paper}`,
+						blend: "100%",
+						opacity: "10%",
+						width: "0px",
+						style: "solid",
+					},
+				},
+				hover: {
+					border: {
+						tint: `${vars.color.ink}`,
+						blend: "82%",
+						opacity: "90%",
+					},
+					background: {
+						blend: "4%",
+					},
+				},
+				focus: {
+					outline: {
+						base: `${vars.color.neutral}`,
+						tint: `${vars.color.paper}`,
+						blend: "62%",
+						opacity: "72%",
+						width: `${vars.control.focus.ring.width}`,
+						style: "solid",
+					},
+				},
+				active: {
+					border: {
+						tint: `${vars.color.ink}`,
+						blend: "74%",
+						opacity: "94%",
+					},
+				},
+			selected: {
+				background: {
+					tint: `${vars.color.ink}`,
+					blend: "70%",
+					opacity: "100%",
+				},
+			},
+				disabled: {
+					background: {
+						base: `${vars.color.neutral}`,
+						tint: `${vars.color.paper}`,
+						blend: "10%",
+						opacity: "100%",
+					},
+					text: {
+						tint: `${vars.color.ink}`,
+					blend: `${vars.control.disabled.blend}`,
+					opacity: `${vars.control.disabled.opacity}`,
+				},
+				border: {
+					tint: `${vars.color.paper}`,
+					blend: `${vars.control.disabled.blend}`,
+					opacity: `${vars.control.disabled.opacity}`,
+				},
+			},
 			color: {
-				base: `${vars.color.neutral}`,
 				primary: `${vars.color.primary}`,
 				secondary: `${vars.color.secondary}`,
 				tertiary: `${vars.color.tertiary}`,
 				success: `${vars.color.success}`,
 				warning: `${vars.color.warning}`,
 				danger: `${vars.color.danger}`,
-				tint: `${vars.color.paper}`,
-				blend: "0%",
-				opacity: "100%",
+				accent: `${vars.color.accent}`,
 			},
-			// Outline
-			focus: {
-				tint: `${vars.color.paper}`,
-				blend: "100%",
-				opacity: "10%",
+			outline: {
+				background: {
+					base: "transparent",
+					tint: "transparent",
+					blend: "0%",
+				},
 			},
-			// Background
-			selected: {
-				tint: `${vars.color.ink}`,
-				blend: "70%",
-				opacity: "100%",
+			ghost: {
+				background: {
+					base: "transparent",
+					tint: "transparent",
+					blend: "0%",
+				},
+				border: {
+					base: "transparent",
+					tint: "transparent",
+					blend: "0%",
+				},
 			},
-			// Background
-			hover: {
-				tint: `${vars.color.ink}`,
-				blend: "50%",
-				opacity: "50%",
+			blank: {
+				background: {
+					opacity: "50%",
+				},
 			},
-			// Background
-			active: {
-				tint: `${vars.color.paper}`,
-				blend: "80%",
-				opacity: "100%",
+			icon: {
+				background: {
+					opacity: "50%",
+				},
 			},
 		},
 		// ====================================================================
@@ -610,164 +897,130 @@ export default group(
 				weight: `${vars.font.controls.weight}`,
 				size: `${vars.font.controls.size}`,
 			},
+			padding: "0.625em 0.875em",
+			margin: "0px",
 			box: {
-				padding: {
-					x: "0.875em",
-					y: "0.625em",
-				},
 				radius: `${vars.border.radius[1]}`,
 			},
-			// Background and text
+				normal: {
+					border: {
+						base: `${vars.control.color.border.base}`,
+						tint: `${vars.control.color.border.tint}`,
+						blend: `${vars.control.color.border.blend}`,
+						opacity: `${vars.control.color.border.opacity}`,
+						width: `${vars.control.border.width}`,
+						style: "solid",
+					},
+				text: {
+					base: `${vars.color.ink}`,
+					tint: `${vars.color.ink}`,
+					blend: "0%",
+					opacity: "100%",
+				},
+					background: {
+						base: `${vars.color.paper}`,
+						tint: `${vars.color.paper}`,
+						blend: "100%",
+						opacity: "100%",
+					},
+					outline: {
+						base: `${vars.color.neutral}`,
+						tint: `${vars.color.paper}`,
+						blend: "100%",
+						opacity: "10%",
+						width: "0px",
+						style: "solid",
+					},
+				},
+				hover: {
+					border: {
+						tint: `${vars.color.ink}`,
+						blend: "82%",
+						opacity: "90%",
+					},
+					background: {
+						blend: "4%",
+					},
+				},
+				focus: {
+					outline: {
+						base: `${vars.color.neutral}`,
+						tint: `${vars.color.paper}`,
+						blend: "62%",
+						opacity: "72%",
+						width: `${vars.control.focus.ring.width}`,
+						style: "solid",
+					},
+				},
+				active: {
+					border: {
+						tint: `${vars.color.ink}`,
+						blend: "74%",
+						opacity: "94%",
+					},
+				},
+			selected: {
+				background: {
+					tint: `${vars.color.ink}`,
+					blend: "70%",
+					opacity: "100%",
+				},
+			},
+				disabled: {
+					background: {
+						base: `${vars.color.neutral}`,
+						tint: `${vars.color.paper}`,
+						blend: "10%",
+						opacity: "100%",
+					},
+					text: {
+						tint: `${vars.color.ink}`,
+					blend: `${vars.control.disabled.blend}`,
+					opacity: `${vars.control.disabled.opacity}`,
+				},
+				border: {
+					tint: `${vars.color.paper}`,
+					blend: `${vars.control.disabled.blend}`,
+					opacity: `${vars.control.disabled.opacity}`,
+				},
+			},
 			color: {
-				base: `${vars.color.neutral}`,
 				primary: `${vars.color.primary}`,
 				secondary: `${vars.color.secondary}`,
 				tertiary: `${vars.color.tertiary}`,
 				success: `${vars.color.success}`,
 				warning: `${vars.color.warning}`,
 				danger: `${vars.color.danger}`,
-				tint: `${vars.color.paper}`,
-				blend: "0%",
-				opacity: "100%",
+				accent: `${vars.color.accent}`,
 			},
-			// Outline
-			focus: {
-				tint: `${vars.color.paper}`,
-				blend: "100%",
-				opacity: "10%",
+			outline: {
+				background: {
+					base: "transparent",
+					tint: "transparent",
+					blend: "0%",
+				},
 			},
-			// Background
-			selected: {
-				tint: `${vars.color.ink}`,
-				blend: "70%",
-				opacity: "100%",
+			ghost: {
+				background: {
+					base: "transparent",
+					tint: "transparent",
+					blend: "0%",
+				},
+				border: {
+					base: "transparent",
+					tint: "transparent",
+					blend: "0%",
+				},
 			},
-			// Background
-			hover: {
-				tint: `${vars.color.ink}`,
-				blend: "50%",
-				opacity: "50%",
+			blank: {
+				background: {
+					opacity: "50%",
+				},
 			},
-			// Background
-			active: {
-				tint: `${vars.color.paper}`,
-				blend: "80%",
-				opacity: "100%",
-			},
-		},
-		// ====================================================================
-		// CHECKBOX
-		// ====================================================================
-		checkbox: {
-			font: {
-				family: `${vars.font.controls.family}`,
-				line: `${vars.font.controls.line}`,
-				weight: `${vars.font.controls.weight}`,
-				size: `${vars.font.controls.size}`,
-			},
-			box: {
-				size: "1.15em",
-				radius: "0.2em",
-				marker: "0.72em",
-			},
-			// Background and text
-			color: {
-				base: `${vars.color.neutral}`,
-				primary: `${vars.color.primary}`,
-				secondary: `${vars.color.secondary}`,
-				tertiary: `${vars.color.tertiary}`,
-				success: `${vars.color.success}`,
-				warning: `${vars.color.warning}`,
-				danger: `${vars.color.danger}`,
-				tint: `${vars.color.paper}`,
-				blend: "0%",
-				opacity: "100%",
-			},
-			// Content to display for checked and partial states
-			content: {
-				checked: '"✓"',
-				partial: '"─"',
-			},
-			// Outline
-			focus: {
-				tint: `${vars.color.paper}`,
-				blend: "100%",
-				opacity: "10%",
-			},
-			// Background
-			selected: {
-				tint: `${vars.color.ink}`,
-				blend: "70%",
-				opacity: "100%",
-			},
-			// Background
-			hover: {
-				tint: `${vars.color.ink}`,
-				blend: "50%",
-				opacity: "50%",
-			},
-			// Background
-			active: {
-				tint: `${vars.color.paper}`,
-				blend: "80%",
-				opacity: "100%",
-			},
-		},
-		// ====================================================================
-		// RADIO
-		// ====================================================================
-		radio: {
-			font: {
-				family: `${vars.font.controls.family}`,
-				line: `${vars.font.controls.line}`,
-				weight: `${vars.font.controls.weight}`,
-				size: `${vars.font.controls.size}`,
-			},
-			box: {
-				size: "1.15em",
-				radius: "50%",
-				marker: "0.72em",
-			},
-			// Background and text
-			color: {
-				base: `${vars.color.neutral}`,
-				primary: `${vars.color.primary}`,
-				secondary: `${vars.color.secondary}`,
-				tertiary: `${vars.color.tertiary}`,
-				success: `${vars.color.success}`,
-				warning: `${vars.color.warning}`,
-				danger: `${vars.color.danger}`,
-				tint: `${vars.color.paper}`,
-				blend: "0%",
-				opacity: "100%",
-			},
-			// Content to display for checked state (dot character)
-			content: {
-				checked: '"●"',
-			},
-			// Outline
-			focus: {
-				tint: `${vars.color.paper}`,
-				blend: "100%",
-				opacity: "10%",
-			},
-			// Background
-			selected: {
-				tint: `${vars.color.ink}`,
-				blend: "70%",
-				opacity: "100%",
-			},
-			// Background
-			hover: {
-				tint: `${vars.color.ink}`,
-				blend: "50%",
-				opacity: "50%",
-			},
-			// Background
-			active: {
-				tint: `${vars.color.paper}`,
-				blend: "80%",
-				opacity: "100%",
+			icon: {
+				background: {
+					opacity: "50%",
+				},
 			},
 		},
 		// ====================================================================
@@ -780,11 +1033,9 @@ export default group(
 				weight: `${vars.font.controls.weight}`,
 				size: `${vars.font.controls.size}`,
 			},
+			padding: "0.625em 0.875em",
+			margin: "0px",
 			box: {
-				padding: {
-					x: "0.875em",
-					y: "0.625em",
-				},
 				radius: `${vars.border.radius[1]}`,
 			},
 			arrow: {
@@ -792,22 +1043,95 @@ export default group(
 				offset: "0.75em",
 				gap: "0.33em",
 			},
+				normal: {
+					border: {
+						base: `${vars.control.color.border.base}`,
+						tint: `${vars.control.color.border.tint}`,
+						blend: `${vars.control.color.border.blend}`,
+						opacity: `${vars.control.color.border.opacity}`,
+						width: `${vars.control.border.width}`,
+						style: "solid",
+					},
+				text: {
+					base: `${vars.color.ink}`,
+					tint: `${vars.color.ink}`,
+					blend: "0%",
+					opacity: "100%",
+				},
+					background: {
+						base: `${vars.control.color.background.base}`,
+						tint: `${vars.control.color.background.tint}`,
+						blend: `${vars.control.color.background.blend}`,
+						opacity: `${vars.control.color.background.opacity}`,
+					},
+					outline: {
+						base: `${vars.color.neutral}`,
+						tint: `${vars.color.paper}`,
+						blend: "100%",
+						opacity: "10%",
+						width: "0px",
+						style: "solid",
+					},
+				},
+				hover: {
+					border: {
+						tint: `${vars.color.ink}`,
+						blend: "82%",
+						opacity: "90%",
+					},
+					background: {
+						blend: "4%",
+					},
+				},
+				focus: {
+					background: {
+						blend: "6%",
+					},
+					outline: {
+						base: `${vars.color.neutral}`,
+						tint: `${vars.color.paper}`,
+						blend: "62%",
+						opacity: "72%",
+						width: `${vars.control.focus.ring.width}`,
+						style: "solid",
+					},
+				},
+				active: {
+					border: {
+						tint: `${vars.color.ink}`,
+						blend: "74%",
+						opacity: "94%",
+					},
+				},
+			disabled: {
+				background: {
+					base: `${vars.color.neutral}`,
+					tint: `${vars.color.paper}`,
+					blend: `${vars.control.disabled.blend}`,
+					opacity: `${vars.control.disabled.opacity}`,
+				},
+				text: {
+					base: `${vars.color.neutral}`,
+					tint: `${vars.color.ink}`,
+					blend: `${vars.control.disabled.blend}`,
+					opacity: `${vars.control.disabled.opacity}`,
+				},
+			},
 			color: {
-				base: `${vars.color.neutral}`,
 				primary: `${vars.color.primary}`,
 				secondary: `${vars.color.secondary}`,
 				tertiary: `${vars.color.tertiary}`,
 				success: `${vars.color.success}`,
 				warning: `${vars.color.warning}`,
 				danger: `${vars.color.danger}`,
-				tint: `${vars.color.paper}`,
-				blend: "0%",
-				opacity: "100%",
+				accent: `${vars.color.accent}`,
 			},
-			focus: {
-				tint: `${vars.color.paper}`,
-				blend: "100%",
-				opacity: "10%",
+			outline: {
+				background: {
+					base: "transparent",
+					tint: "transparent",
+					blend: "0%",
+				},
 			},
 		},
 		// ====================================================================
@@ -820,6 +1144,8 @@ export default group(
 				weight: `${vars.font.controls.weight}`,
 				size: `${vars.font.controls.size}`,
 			},
+			padding: "0px",
+			margin: "0px",
 			box: {
 				max_width: "36em",
 			},
@@ -832,47 +1158,385 @@ export default group(
 				size: "0.95em",
 				radius: "50%",
 			},
+			normal: {
+				border: {
+					base: "transparent",
+					tint: "transparent",
+					blend: "0%",
+					opacity: "0%",
+					width: "0px",
+					style: "solid",
+				},
+				text: {
+					base: `${vars.color.ink}`,
+					tint: `${vars.color.ink}`,
+					blend: "0%",
+					opacity: "100%",
+				},
+				background: {
+					base: "transparent",
+					tint: "transparent",
+					blend: "0%",
+					opacity: "0%",
+				},
+				outline: {
+					base: `${vars.color.primary}`,
+					tint: `${vars.color.paper}`,
+					blend: "100%",
+					opacity: "10%",
+					width: `${vars.control.focus.ring.width}`,
+					style: "solid",
+				},
+			},
+			focus: {
+				outline: {
+					tint: `${vars.color.paper}`,
+					blend: "100%",
+					opacity: "10%",
+				},
+			},
+			disabled: {
+				background: {
+					blend: `${vars.control.disabled.blend}`,
+					opacity: `${vars.control.disabled.opacity}`,
+				},
+			},
 			color: {
-				base: `${vars.color.primary}`,
 				primary: `${vars.color.primary}`,
 				secondary: `${vars.color.secondary}`,
 				tertiary: `${vars.color.tertiary}`,
 				success: `${vars.color.success}`,
 				warning: `${vars.color.warning}`,
 				danger: `${vars.color.danger}`,
-				tint: `${vars.color.paper}`,
-				blend: "0%",
-				opacity: "100%",
+				accent: `${vars.color.accent}`,
+			},
+			outline: {
+				background: {
+					base: "transparent",
+					tint: "transparent",
+					blend: "0%",
+				},
+			},
+			blank: {
+				background: {
+					opacity: "50%",
+				},
+			},
+			icon: {
+				background: {
+					opacity: "50%",
+				},
+			},
+		},
+		// ====================================================================
+		// CHECKBOX
+		// ====================================================================
+		checkbox: {
+			font: {
+				family: `${vars.font.controls.family}`,
+				line: `${vars.font.controls.line}`,
+				weight: `${vars.font.controls.weight}`,
+				size: `${vars.font.controls.size}`,
+			},
+			padding: "0px",
+			margin: "0px",
+			box: {
+				size: "1.15em",
+				radius: "0.2em",
+				marker: "0.72em",
+			},
+			content: {
+				checked: '"✓"',
+				partial: '"─"',
+			},
+			normal: {
+				border: {
+					base: `${vars.color.neutral}`,
+					tint: `${vars.color.paper}`,
+					blend: "25%",
+					opacity: "90%",
+					width: `${vars.control.border.width}`,
+					style: "solid",
+				},
+				text: {
+					base: `${vars.color.ink}`,
+					tint: `${vars.color.paper}`,
+					blend: "0%",
+					opacity: "100%",
+				},
+				background: {
+					base: `${vars.color.paper}`,
+					tint: `${vars.color.paper}`,
+					blend: "0%",
+					opacity: "100%",
+				},
+				outline: {
+					base: `${vars.color.neutral}`,
+					tint: `${vars.color.paper}`,
+					blend: "100%",
+					opacity: "10%",
+					width: `${vars.control.focus.ring.width}`,
+					style: "solid",
+				},
+			},
+			hover: {
+				border: {
+					blend: "50%",
+					opacity: "50%",
+				},
 			},
 			focus: {
-				tint: `${vars.color.paper}`,
-				blend: "100%",
-				opacity: "10%",
+				background: {
+					base: `${vars.color.paper}`,
+				},
+				outline: {
+					tint: `${vars.color.paper}`,
+					blend: "100%",
+					opacity: "10%",
+				},
+			},
+			active: {
+				border: {
+					tint: `${vars.color.paper}`,
+					blend: "80%",
+					opacity: "100%",
+				},
+			},
+			selected: {
+				background: {
+					tint: `${vars.color.ink}`,
+					blend: "70%",
+					opacity: "100%",
+				},
+			},
+			disabled: {
+				background: {
+					base: `${vars.color.neutral}`,
+					tint: `${vars.color.paper}`,
+					blend: `${vars.control.disabled.blend}`,
+					opacity: `${vars.control.disabled.opacity}`,
+				},
+				text: {
+					base: `${vars.color.neutral}`,
+					tint: `${vars.color.ink}`,
+					blend: `${vars.control.disabled.blend}`,
+					opacity: `${vars.control.disabled.opacity}`,
+				},
+			},
+			color: {
+				primary: `${vars.color.primary}`,
+				secondary: `${vars.color.secondary}`,
+				tertiary: `${vars.color.tertiary}`,
+				success: `${vars.color.success}`,
+				warning: `${vars.color.warning}`,
+				danger: `${vars.color.danger}`,
+				accent: `${vars.color.accent}`,
+			},
+			outline: {
+				background: {
+					base: "transparent",
+					tint: "transparent",
+					blend: "0%",
+				},
+			},
+			blank: {
+				background: {
+					opacity: "50%",
+				},
+			},
+			icon: {
+				background: {
+					opacity: "50%",
+				},
+			},
+		},
+		// ====================================================================
+		// RADIO
+		// ====================================================================
+		radio: {
+			font: {
+				family: `${vars.font.controls.family}`,
+				line: `${vars.font.controls.line}`,
+				weight: `${vars.font.controls.weight}`,
+				size: `${vars.font.controls.size}`,
+			},
+			padding: "0px",
+			margin: "0px",
+			box: {
+				size: "1.15em",
+				radius: "50%",
+				marker: "0.72em",
+			},
+			content: {
+				checked: '"●"',
+			},
+			normal: {
+				border: {
+					base: `${vars.color.neutral}`,
+					tint: `${vars.color.paper}`,
+					blend: "25%",
+					opacity: "90%",
+					width: `${vars.control.border.width}`,
+					style: "solid",
+				},
+				text: {
+					base: `${vars.color.ink}`,
+					tint: `${vars.color.paper}`,
+					blend: "0%",
+					opacity: "100%",
+				},
+				background: {
+					base: `${vars.color.paper}`,
+					tint: `${vars.color.paper}`,
+					blend: "0%",
+					opacity: "100%",
+				},
+				outline: {
+					base: `${vars.color.neutral}`,
+					tint: `${vars.color.paper}`,
+					blend: "100%",
+					opacity: "10%",
+					width: `${vars.control.focus.ring.width}`,
+					style: "solid",
+				},
+			},
+			hover: {
+				border: {
+					tint: `${vars.color.paper}`,
+					blend: "50%",
+					opacity: "50%",
+				},
+			},
+			focus: {
+				outline: {
+					tint: `${vars.color.paper}`,
+					blend: "100%",
+					opacity: "10%",
+				},
+			},
+			active: {
+				border: {
+					tint: `${vars.color.paper}`,
+					blend: "80%",
+					opacity: "100%",
+				},
+			},
+			selected: {
+				background: {
+					tint: `${vars.color.ink}`,
+					blend: "70%",
+					opacity: "100%",
+				},
+			},
+			disabled: {
+				background: {
+					tint: `${vars.color.paper}`,
+					blend: `${vars.control.disabled.blend}`,
+					opacity: `${vars.control.disabled.opacity}`,
+				},
+				border: {
+					tint: `${vars.color.paper}`,
+					blend: `${vars.control.disabled.blend}`,
+					opacity: `${vars.control.disabled.opacity}`,
+				},
+			},
+			color: {
+				primary: `${vars.color.primary}`,
+				secondary: `${vars.color.secondary}`,
+				tertiary: `${vars.color.tertiary}`,
+				success: `${vars.color.success}`,
+				warning: `${vars.color.warning}`,
+				danger: `${vars.color.danger}`,
+				accent: `${vars.color.accent}`,
+			},
+			outline: {
+				background: {
+					base: "transparent",
+					tint: "transparent",
+					blend: "0%",
+				},
+			},
+			blank: {
+				background: {
+					opacity: "50%",
+				},
+			},
+			icon: {
+				background: {
+					opacity: "50%",
+				},
 			},
 		},
 		// ====================================================================
 		// PANEL
 		// ====================================================================
 		panel: {
+			font: {
+				family: `${vars.font.text.family}`,
+				line: `${vars.font.text.line}`,
+				weight: "400",
+				size: `${vars.font.text.size}`,
+			},
+			padding: `${vars.pad[4]} ${vars.pad[4]}`,
+			margin: "0px",
 			box: {
-				padding: {
-					x: `${vars.pad[4]}`,
-					y: `${vars.pad[4]}`,
-				},
 				radius: `${vars.border.radius[2]}`,
 				accent: "4px",
 			},
+			normal: {
+				border: {
+					base: `${vars.color.neutral}`,
+					tint: `${vars.color.paper}`,
+					blend: "14%",
+					opacity: "100%",
+					width: `${vars.border.width}`,
+					style: "solid",
+				},
+				text: {
+					base: `${vars.color.ink}`,
+					tint: `${vars.color.ink}`,
+					blend: "0%",
+					opacity: "100%",
+				},
+				background: {
+					base: `${vars.color.neutral}`,
+					tint: `${vars.color.paper}`,
+					blend: "4%",
+					opacity: "100%",
+				},
+				outline: {
+					base: `${vars.color.neutral}`,
+					tint: `${vars.color.paper}`,
+					blend: "100%",
+					opacity: "10%",
+					width: `${vars.control.focus.ring.width}`,
+					style: "solid",
+				},
+			},
 			color: {
-				base: `${vars.color.neutral}`,
 				primary: `${vars.color.primary}`,
 				secondary: `${vars.color.secondary}`,
 				tertiary: `${vars.color.tertiary}`,
 				success: `${vars.color.success}`,
 				warning: `${vars.color.warning}`,
 				danger: `${vars.color.danger}`,
-				tint: `${vars.color.paper}`,
-				blend: "0%",
-				opacity: "100%",
+			},
+			outline: {
+				background: {
+					base: "transparent",
+					tint: "transparent",
+					blend: "0%",
+				},
+			},
+			blank: {
+				background: {
+					opacity: "50%",
+				},
+			},
+			icon: {
+				background: {
+					opacity: "50%",
+				},
 			},
 		},
 	}),

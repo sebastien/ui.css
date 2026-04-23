@@ -4,158 +4,401 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>UI.css Specimen</title>
-    <link rel="stylesheet" href="../src/css/palette.css" />
-    <link rel="stylesheet" href="../dist/ui.css" />
-    <link rel="stylesheet" href="../src/css/theme.default.css" />
+    <link rel="stylesheet" href="../src/css/theme.select.css" />
     <link rel="stylesheet" href="../src/css/theme.crm.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "@css/": "../src/css/",
+          "@css": "../src/js/uicss.js"
+        }
+      }
+    </script>
   </head>
-  <body data-theme="default" class="m-0 p-5 bg-page bg tx">
-    <main class="stack g-8 ma w-content">
+  <body data-theme="default" class="m-0 bg-neutral bg tx centered g-6">
+    <main class="stack g-8 w-content bd bd-3o rounder bg-paper w-content p-8 m-8 bg">
       <header class="stack g-3">
-        <p class="small b m-0">UI.css</p>
-        <h1 class="h1 m-0">Specimen</h1>
+        <h1 class="h1 m-0">UI.css Specimen</h1>
         <p class="t limit-text m-0">A broad specimen page aligned with the pure CSS benchmark layout and coverage.</p>
       </header>
-
-      <section class="panel stack g-4">
-        <h2 class="h3 m-0">Interactive Theme + Control Selectors</h2>
-        <p class="m-0">Powered by select.ui from jsdelivr.</p>
-        <div id="specimen-selector-app"></div>
-      </section>
-
-      <section class="panel primary stack g-4">
+      <section class="panel stack g-4 p-6 bd bd-4o ">
         <h2 class="h3 m-0">Typography</h2>
-        <div class="stack g-5">
-          <article class="t">
-            <h1>Heading One</h1>
-            <h2>Heading Two</h2>
-            <h3>Heading Three</h3>
-            <h4>Heading Four</h4>
-            <h5>Heading Five</h5>
-            <p>This paragraph shows <strong>strong text</strong>, <em>emphasis</em>, <u>underline</u>, and <code>inline code</code>.</p>
-            <blockquote>Good interfaces are built from consistent tokens, thoughtful defaults, and clear interactions.</blockquote>
-            <ul>
-              <li>List item one</li>
-              <li>List item two</li>
-              <li>List item three</li>
-            </ul>
-            <pre><code>const intent = "utility-first, token-driven"
+        <div class="stack g-6">
+          <div class="stack g-3">
+            <h3 class="h4 m-0">Headings</h3>
+            <article class="t">
+              <h1>Heading One</h1>
+              <h2>Heading Two</h2>
+              <h3>Heading Three</h3>
+              <h4>Heading Four</h4>
+              <h5>Heading Five</h5>
+              <h6>Heading Six</h6>
+            </article>
+          </div>
+          <div class="stack g-3">
+            <h3 class="h4 m-0">Inline Formats</h3>
+            <article class="t">
+              <p>This paragraph shows <strong>strong text</strong>, <em>emphasis</em>, <u>underline</u>, <s>strikethrough</s>, and <code>inline code</code>.</p>
+              <p>Links like <a href="#">this anchor</a> inherit color and underline on hover.</p>
+              <p>Scientific notation: H<sub>2</sub>O and E=mc<sup>2</sup></p>
+            </article>
+          </div>
+          <div class="stack g-3">
+            <h3 class="h4 m-0">Blockquote</h3>
+            <article class="t">
+              <blockquote>Good interfaces are built from consistent tokens, thoughtful defaults, and clear interactions.</blockquote>
+            </article>
+          </div>
+          <div class="stack g-3">
+            <h3 class="h4 m-0">Code Blocks</h3>
+            <article class="t">
+              <pre><code>const intent = "utility-first, token-driven"
 const result = "fast, consistent styling"</code></pre>
-          </article>
-          <div class="row wrap g-3">
-            <span class="h4">Heading font</span>
-            <span>Regular</span>
-            <span class="b">Semibold</span>
-            <strong>Bold</strong>
+            </article>
+          </div>
+          <div class="col-2 g-4">
+            <div class="stack g-3">
+              <h3 class="h4 m-0">Unordered List</h3>
+              <article class="t">
+                <ul>
+                  <li>List item one</li>
+                  <li>List item two</li>
+                  <li>List item three</li>
+                </ul>
+              </article>
+            </div>
+            <div class="stack g-3">
+              <h3 class="h4 m-0">Ordered List</h3>
+              <article class="t">
+                <ol>
+                  <li>First step</li>
+                  <li>Second step</li>
+                  <li>Third step</li>
+                </ol>
+              </article>
+            </div>
+          </div>
+          <div class="stack g-3">
+            <h3 class="h4 m-0">Definition List</h3>
+            <article class="t">
+              <dl>
+                <dt>Token</dt>
+                <dd>A design variable that drives consistent styling across components.</dd>
+                <dt>Utility</dt>
+                <dd>A single-purpose CSS class for rapid composition.</dd>
+                <dt>Component</dt>
+                <dd>A reusable UI element with its own token namespace.</dd>
+              </dl>
+            </article>
+          </div>
+          <div class="stack g-3">
+            <h3 class="h4 m-0">Font Weights</h3>
+            <div class="row wrap g-3">
+              <span class="ltr">Lighter (100)</span>
+              <span class="lt">Light (200)</span>
+              <span class="r">Regular (400)</span>
+              <span class="sb">Medium (500)</span>
+              <span class="b">Bold (600)</span>
+              <span class="br">Bolder (700)</span>
+              <span class="bst">Boldest (800)</span>
+            </div>
+          </div>
+          <div class="stack g-3">
+            <h3 class="h4 m-0">Font Families</h3>
+            <div class="stack g-2">
+              <span class="mono">Monospace font family</span>
+              <span class="sans">Sans-serif font family</span>
+              <span class="serif">Serif font family</span>
+              <span class="code">Code font family</span>
+              <span class="heading">Heading font family</span>
+              <span class="display">Display font family</span>
+            </div>
+          </div>
+          <div class="stack g-3">
+            <h3 class="h4 m-0">Text Sizes</h3>
+            <div class="stack g-2">
+              <span class="t-smallest">Smallest text</span>
+              <span class="t-smaller">Smaller text</span>
+              <span class="t-small">Small text</span>
+              <span>Medium text (default)</span>
+              <span class="t-large">Large text</span>
+              <span class="t-larger">Larger text</span>
+              <span class="t-largest">Largest text</span>
+            </div>
+          </div>
+          <div class="stack g-3">
+            <h3 class="h4 m-0">Text Transforms</h3>
+            <div class="row wrap g-3">
+              <span class="upper">uppercase text</span>
+              <span class="lower">LOWERCASE TEXT</span>
+              <span class="cap">capitalize each word</span>
+            </div>
+          </div>
+          <div class="stack g-3">
+            <h3 class="h4 m-0">Text Alignment</h3>
+            <div class="stack g-2">
+              <p class="t-left m-0">Left aligned text</p>
+              <p class="t-center m-0">Center aligned text</p>
+              <p class="t-right m-0">Right aligned text</p>
+              <p class="t-justify m-0">Justified text that spans multiple lines to demonstrate the justify alignment behavior across a wider container width.</p>
+            </div>
+          </div>
+          <div class="stack g-3">
+            <h3 class="h4 m-0">Letter Spacing</h3>
+            <div class="row wrap g-3">
+              <span class="tight">Tight spacing (-0.05ch)</span>
+              <span class="tighter">Tighter spacing (-0.10ch)</span>
+              <span class="tightest">Tightest spacing (-0.15ch)</span>
+            </div>
+          </div>
+          <div class="stack g-3">
+            <h3 class="h4 m-0">Text Decorations</h3>
+            <div class="row wrap g-3">
+              <span class="ul">Underlined text</span>
+              <span class="ol">Overlined text</span>
+              <span class="striked">Striked text</span>
+            </div>
+          </div>
+          <div class="stack g-3">
+            <h3 class="h4 m-0">Whitespace Utilities</h3>
+            <div class="stack g-2">
+              <code class="small">.nowrap</code>
+              <p class="nowrap m-0" style="width: 200px; background: rgba(128,128,128,0.1); padding: 0.5em;">This is a long text that should not wrap to the next line even when it exceeds the container width.</p>
+              <code class="small">.ellipsis</code>
+              <p class="ellipsis m-0" style="width: 200px; background: rgba(128,128,128,0.1); padding: 0.5em;">This is a long text that should be truncated with an ellipsis when it exceeds the container width.</p>
+            </div>
+          </div>
+          <div class="stack g-3">
+            <h3 class="h4 m-0">Delimiters</h3>
+            <div class="stack g-3">
+              <div>
+                <code class="small">.sep-path</code>
+                <div class="sep-path row g-2 small m-0">
+                  <span>home</span>
+                  <span>user</span>
+                  <span>documents</span>
+                </div>
+              </div>
+              <div>
+                <code class="small">.sep-comma</code>
+                <div class="sep-comma row g-2 small m-0">
+                  <span>apple</span>
+                  <span>banana</span>
+                  <span>cherry</span>
+                </div>
+              </div>
+              <div>
+                <code class="small">.sep-dash</code>
+                <div class="sep-dash row g-2 small m-0">
+                  <span>design</span>
+                  <span>develop</span>
+                  <span>deploy</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="stack g-3">
+            <h3 class="h4 m-0">Decorations</h3>
+            <div class="row wrap g-3">
+              <span class="parens">parens content</span>
+              <span class="brackets">brackets content</span>
+              <span class="sqbrackets">sqbrackets content</span>
+            </div>
           </div>
         </div>
       </section>
-
-      <section class="panel success stack g-4">
+      <section class="panel stack g-4 p-6 bd bd-4o ">
         <h2 class="h3 m-0">Color Tokens</h2>
         <div class="stack g-4">
           <h3 class="h4 m-0">Semantic Palette</h3>
-            <div class="col-3 g-3">
-              <div class="panel stack g-2"><span class="b">Base semantic</span><code>no class</code></div>
-              <div class="panel primary stack g-2"><span class="b">Primary</span><code>.primary</code></div>
-              <div class="panel secondary stack g-2"><span class="b">Secondary</span><code>.secondary</code></div>
-              <div class="panel tertiary stack g-2"><span class="b">Tertiary</span><code>.tertiary</code></div>
-              <div class="panel success stack g-2"><span class="b">Success</span><code>.success</code></div>
-              <div class="panel warning stack g-2"><span class="b">Warning</span><code>.warning</code></div>
-              <div class="panel danger stack g-2"><span class="b">Danger</span><code>.danger</code></div>
-            </div>
+          <div class="col-3 g-3">
+            <div class="panel bg-paper bg stack g-2 p-4 rounded small"><span class="b">Base semantic</span><code>no class</code></div>
+            <div class="panel bg-neutral bg stack g-2 p-4 rounded small"><span class="b">Neutral</span><code>.neutral</code></div>
+            <div class="panel bg-accent bg stack g-2 p-4 rounded small"><span class="b">Accent</span><code>.accent</code></div>
+            <div class="panel bg-primary bg stack g-2 p-4 rounded small"><span class="b">Primary</span><code>.primary</code></div>
+            <div class="panel bg-secondary bg stack g-2 p-4 rounded small"><span class="b">Secondary</span><code>.secondary</code></div>
+            <div class="panel bg-tertiary bg stack g-2 p-4 rounded small"><span class="b">Tertiary</span><code>.tertiary</code></div>
+            <div class="panel bg-success bg stack g-2 p-4 rounded small"><span class="b">Success</span><code>.success</code></div>
+            <div class="panel bg-info bg stack g-2 p-4 rounded small"><span class="b">Info</span><code>.info</code></div>
+            <div class="panel bg-warning bg stack g-2 p-4 rounded small"><span class="b">Warning</span><code>.warning</code></div>
+            <div class="panel bg-danger bg stack g-2 p-4 rounded small"><span class="b">Danger</span><code>.danger</code></div>
+            <div class="panel bg-error bg stack g-2 p-4 rounded small"><span class="b">Error</span><code>.error</code></div>
           </div>
+        </div>
       </section>
-
-      <section id="buttons-demo" class="panel warning stack g-4">
+      <section id="buttons-demo" class="panel stack g-4 p-6 bd bd-4o ">
         <h2 class="h3 m-0">Buttons</h2>
         <div class="stack g-5">
           <div class="stack g-3">
-            <p class="b m-0">Variants</p>
+            <p class="b m-0">Style variants</p>
             <div class="row wrap g-3">
-              <button data-control-semantic data-control-scale>Primary</button>
-              <button class="secondary" data-control-semantic data-control-scale>Secondary</button>
-              <button class="ghost" data-control-semantic data-control-scale>Tertiary</button>
-              <button class="outline" data-control-semantic data-control-scale>Icon</button>
+              <button>Regular</button>
+              <button class="outline">Outline</button>
+              <button class="ghost">Ghost</button>
+              <button class="blank">Blank</button>
+              <button class="icon" aria-label="Icon button">+</button>
             </div>
           </div>
           <div class="stack g-3">
-            <p class="b m-0">Sizes and States</p>
+            <p class="b m-0">Color variants</p>
             <div class="row wrap g-3">
-              <button data-control-semantic data-control-scale>Large</button>
-              <button class="secondary" data-control-semantic data-control-scale>Medium</button>
-              <button class="outline" data-control-semantic data-control-scale>Small</button>
-              <button class="ghost" data-control-semantic data-control-scale>Smaller</button>
-              <button class="hover" data-control-semantic data-control-scale>Hover</button>
-              <button class="active" data-control-semantic data-control-scale>Active</button>
-              <button data-control-semantic data-control-scale disabled>Disabled</button>
+              <button>Neutral</button>
+              <button class="accent">Accent</button>
+              <button class="primary">Primary</button>
+              <button class="secondary">Secondary</button>
+              <button class="tertiary">Tertiary</button>
+              <button class="success">Success</button>
+              <button class="warning">Warning</button>
+              <button class="danger">Danger</button>
+            </div>
+          </div>
+          <div class="stack g-3">
+            <p class="b m-0">Outline color variants</p>
+            <div class="row wrap g-3">
+              <button class="outline">Neutral outline</button>
+              <button class="outline accent">Accent outline</button>
+              <button class="outline primary">Primary outline</button>
+              <button class="outline secondary">Secondary outline</button>
+              <button class="outline tertiary">Tertiary outline</button>
+              <button class="outline success">Success outline</button>
+              <button class="outline warning">Warning outline</button>
+              <button class="outline danger">Danger outline</button>
+            </div>
+          </div>
+          <div class="stack g-3">
+            <p class="b m-0">Sizes</p>
+            <div class="row wrap g-3">
+              <button class="large">Large</button>
+              <button class="regular">Regular</button>
+              <button class="small">Small</button>
+              <button class="smaller">Smaller</button>
+            </div>
+          </div>
+          <div class="stack g-3">
+            <p class="b m-0">States</p>
+            <div class="row wrap g-3">
+              <button>Normal</button>
+              <button class="focus">Focus</button>
+              <button class="hover">Hover</button>
+              <button class="active">Active</button>
+              <button disabled>Disabled</button>
             </div>
           </div>
         </div>
       </section>
-
-      <section id="inputs-demo" class="panel danger stack g-4">
+      <section id="inputs-demo" class="panel stack g-4 p-6 bd bd-4o ">
         <h2 class="h3 m-0">Inputs</h2>
         <div class="stack g-5">
           <div class="col-3 g-4">
             <label class="stack g-2">
               <span class="b">Currency</span>
-              <input class="input regular" data-input-semantic data-input-scale type="text" placeholder="$ 1,000" />
+              <input class="input regular" type="text" placeholder="$ 1,000" />
             </label>
             <label class="stack g-2">
               <span class="b">Percent</span>
-              <input class="input regular" data-input-semantic data-input-scale type="text" placeholder="25%" />
+              <input class="input regular" type="text" placeholder="25%" />
             </label>
             <label class="stack g-2">
               <span class="b">Unit</span>
-              <input class="input regular" data-input-semantic data-input-scale type="text" placeholder="100 kg" />
+              <input class="input regular" type="text" placeholder="100 kg" />
             </label>
           </div>
           <div class="col-2 g-4">
             <label class="stack g-2">
               <span class="b">Default</span>
-              <input class="input regular" data-input-semantic data-input-scale type="text" value="Jane Doe" />
+              <input class="input regular" type="text" value="Jane Doe" />
             </label>
             <label class="stack g-2">
               <span class="b">Disabled</span>
-              <input class="input regular" data-input-semantic data-input-scale type="text" value="Unavailable" disabled />
+              <input class="input regular" type="text" value="Unavailable" disabled />
             </label>
+          </div>
+          <div class="stack g-2">
+            <span class="b">Field</span>
+            <input class="input" type="text" placeholder="Enter your legal full name" />
+            <span class="small">This field is required</span>
+          </div>
+          <div class="stack g-3">
+            <p class="b m-0">Field - Style variants</p>
+            <div class="row wrap g-3">
+              <input class="input regular" type="text" value="Regular" />
+              <input class="input outline regular" type="text" value="Outline" />
+              <input class="input ghost regular" type="text" value="Ghost" />
+              <input class="input blank regular" type="text" value="Blank" />
+            </div>
+          </div>
+          <div class="stack g-3">
+            <p class="b m-0">Field - Color variants</p>
+            <div class="row wrap g-3">
+              <input class="input regular" type="text" value="Neutral" />
+              <input class="input primary regular" type="text" value="Primary" />
+              <input class="input secondary regular" type="text" value="Secondary" />
+              <input class="input tertiary regular" type="text" value="Tertiary" />
+              <input class="input success regular" type="text" value="Success" />
+              <input class="input warning regular" type="text" value="Warning" />
+              <input class="input danger regular" type="text" value="Danger" />
+            </div>
+          </div>
+          <div class="stack g-3">
+            <p class="b m-0">Field - Sizes</p>
+            <div class="row wrap g-3">
+              <input class="input large" type="text" value="Large" />
+              <input class="input regular" type="text" value="Regular" />
+              <input class="input small" type="text" value="Small" />
+              <input class="input smaller" type="text" value="Smaller" />
+            </div>
+          </div>
+          <div class="stack g-3">
+            <p class="b m-0">Field - States</p>
+            <div class="row wrap g-3">
+              <input class="input regular" type="text" value="Normal" />
+              <input class="input regular focus" type="text" value="Focus" />
+              <input class="input regular hover" type="text" value="Hover" />
+              <input class="input regular active" type="text" value="Active" />
+              <input class="input regular" type="text" value="Disabled" disabled />
+            </div>
           </div>
           <label class="stack g-2">
             <span class="b">Textarea</span>
-            <textarea class="textarea fit-w" data-input-semantic rows="4" placeholder="Write a longer note here..."></textarea>
+            <textarea class="textarea fit-w" rows="4" placeholder="Write a longer note here..."></textarea>
           </label>
           <label class="stack g-2">
             <span class="b">Range</span>
-            <input class="range fit-w" data-input-semantic type="range" min="0" max="100" value="60" />
+            <input class="range fit-w" type="range" min="0" max="100" value="60" />
           </label>
+          <fieldset class="stack g-3">
+            <legend class="b">FieldSet</legend>
+            <div class="col-2 g-3">
+              <label class="stack g-2"><span>First Name</span><input class="input" type="text" /></label>
+              <label class="stack g-2"><span>Last Name</span><input class="input" type="text" /></label>
+            </div>
+          </fieldset>
         </div>
       </section>
-
-      <section id="checks-radios-demo" class="panel primary stack g-4">
+      <section id="checks-radios-demo" class="panel stack g-4 p-6 bd bd-4o ">
         <h2 class="h3 m-0">Checkboxes and Radios</h2>
         <div class="stack g-6">
           <div class="col-2 g-8">
-          <div class="stack g-3">
-            <p class="b m-0">Checkboxes</p>
-            <label class="row g-3 start"><input type="checkbox" class="checkbox large" data-control-semantic data-control-scale /> Unchecked large</label>
-            <label class="row g-3 start"><input type="checkbox" class="checkbox large" data-control-semantic data-control-scale checked /> Checked large</label>
-            <label class="row g-3 start"><input type="checkbox" class="checkbox small" data-control-semantic data-control-scale /> Unchecked small</label>
-            <label class="row g-3 start"><input type="checkbox" class="checkbox small" data-control-semantic data-control-scale checked /> Checked small</label>
-            <label class="row g-3 start"><input type="checkbox" class="checkbox regular" data-control-semantic data-control-scale checked disabled /> Disabled checked</label>
-          </div>
-          <div class="stack g-3">
-            <p class="b m-0">Radios</p>
-            <label class="row g-3 start"><input type="radio" name="radio-states" class="radio regular" data-control-semantic data-control-scale /> Unchecked</label>
-            <label class="row g-3 start"><input type="radio" name="radio-states" class="radio regular" data-control-semantic data-control-scale checked /> Checked</label>
-            <label class="row g-3 start"><input type="radio" name="radio-states-disabled" class="radio regular" data-control-semantic data-control-scale checked disabled /> Disabled checked</label>
-          </div>
+            <div class="stack g-3">
+              <p class="b m-0">Checkboxes</p>
+              <label class="row g-3 start"><input type="checkbox" class="checkbox large" /> Unchecked large</label>
+              <label class="row g-3 start"><input type="checkbox" class="checkbox large" checked /> Checked large</label>
+              <label class="row g-3 start"><input type="checkbox" class="checkbox small" /> Unchecked small</label>
+              <label class="row g-3 start"><input type="checkbox" class="checkbox small" checked /> Checked small</label>
+              <label class="row g-3 start"><input type="checkbox" class="checkbox regular" checked disabled /> Disabled checked</label>
+            </div>
+            <div class="stack g-3">
+              <p class="b m-0">Radios</p>
+              <label class="row g-3 start"><input type="radio" name="radio-states" class="radio regular" /> Unchecked</label>
+              <label class="row g-3 start"><input type="radio" name="radio-states" class="radio regular" checked /> Checked</label>
+              <label class="row g-3 start"><input type="radio" name="radio-states-disabled" class="radio regular" checked disabled /> Disabled checked</label>
+            </div>
           </div>
           <div class="stack g-4">
             <p class="b m-0">Selector (compact option bar)</p>
             <div class="stack g-2">
               <p class="small m-0">Single-select (radio-like)</p>
-              <div class="selector regular default" data-control-semantic data-control-scale role="radiogroup" aria-label="View mode">
+              <div class="selector regular " role="radiogroup" aria-label="View mode">
                 <input type="radio" id="selector-view-list" name="selector-view" checked />
                 <label for="selector-view-list">List</label>
                 <input type="radio" id="selector-view-board" name="selector-view" />
@@ -166,7 +409,7 @@ const result = "fast, consistent styling"</code></pre>
             </div>
             <div class="stack g-2">
               <p class="small m-0">Multi-select (checkbox-like)</p>
-              <div class="selector regular outline" data-control-semantic data-control-scale role="group" aria-label="Filters">
+              <div class="selector regular outline" role="group" aria-label="Filters">
                 <input type="checkbox" id="selector-filter-open" checked />
                 <label for="selector-filter-open">Open</label>
                 <input type="checkbox" id="selector-filter-assigned" checked />
@@ -180,8 +423,7 @@ const result = "fast, consistent styling"</code></pre>
           </div>
         </div>
       </section>
-
-      <section class="panel success stack g-4">
+      <section class="panel stack g-4 p-6 bd bd-4o ">
         <h2 class="h3 m-0">Cards, Badges, Pills, and Status</h2>
         <div class="stack g-5">
           <div class="col-2 g-4">
@@ -198,108 +440,125 @@ const result = "fast, consistent styling"</code></pre>
             </article>
           </div>
           <div class="stack g-3">
-            <p class="b m-0">Badges</p>
+            <p class="b m-0">Badges - Colors</p>
             <div class="row wrap g-2">
-              <span class="badge" data-variant="number">1</span>
-              <span class="badge" data-variant="number" data-type="secondary">2</span>
-              <span class="badge" data-variant="number" data-type="tertiary">3</span>
-              <span class="badge" data-variant="number" data-type="default">4</span>
-              <span class="badge" data-variant="number" data-type="active">5</span>
-              <span class="badge" data-variant="text">Text badge</span>
+              <span class="badge">Default</span>
+              <span class="badge primary">Primary</span>
+              <span class="badge secondary">Secondary</span>
+              <span class="badge tertiary">Tertiary</span>
+              <span class="badge success">Success</span>
+              <span class="badge warning">Warning</span>
+              <span class="badge danger">Danger</span>
+              <span class="badge active">Active</span>
+            </div>
+          </div>
+          <div class="stack g-3">
+            <p class="b m-0">Badges - Number and Text variants</p>
+            <div class="row wrap g-2">
+              <span class="badge primary" data-variant="number">1</span>
+              <span class="badge secondary" data-variant="number">2</span>
+              <span class="badge success" data-variant="number">3</span>
+              <span class="badge warning" data-variant="number">4</span>
+              <span class="badge danger" data-variant="number">5</span>
+              <span class="badge tertiary" data-variant="text">Text badge</span>
             </div>
           </div>
           <div class="stack g-3">
             <p class="b m-0">Pills - Colors</p>
             <div class="row wrap g-2">
-              <span class="pill" data-color="primary"><span class="pill-dot"></span><span>Primary</span></span>
-              <span class="pill" data-color="secondary"><span class="pill-dot"></span><span>Secondary</span></span>
-              <span class="pill" data-color="neutral"><span class="pill-dot"></span><span>Neutral</span></span>
-              <span class="pill" data-color="success"><span class="pill-dot"></span><span>Success</span></span>
-              <span class="pill" data-color="warning"><span class="pill-dot"></span><span>Warning</span></span>
-              <span class="pill" data-color="error"><span class="pill-dot"></span><span>Error</span></span>
+              <span class="pill neutral"><span class="pill-dot"></span><span>Neutral</span></span>
+              <span class="pill primary"><span class="pill-dot"></span><span>Primary</span></span>
+              <span class="pill secondary"><span class="pill-dot"></span><span>Secondary</span></span>
+              <span class="pill tertiary"><span class="pill-dot"></span><span>Tertiary</span></span>
+              <span class="pill success"><span class="pill-dot"></span><span>Success</span></span>
+              <span class="pill warning"><span class="pill-dot"></span><span>Warning</span></span>
+              <span class="pill danger"><span class="pill-dot"></span><span>Danger</span></span>
+              <span class="pill error"><span class="pill-dot"></span><span>Error</span></span>
             </div>
           </div>
           <div class="stack g-3">
             <p class="b m-0">Pills - Inverse</p>
             <div class="row wrap g-2">
-              <span class="pill" data-color="primary" data-inverse="true"><span>Primary inverse</span></span>
-              <span class="pill" data-color="secondary" data-inverse="true"><span>Secondary inverse</span></span>
-              <span class="pill" data-color="success" data-inverse="true"><span>Success inverse</span></span>
-              <span class="pill" data-color="error" data-inverse="true"><span>Error inverse</span></span>
+              <span class="pill neutral" data-inverse="true"><span>Neutral inverse</span></span>
+              <span class="pill primary" data-inverse="true"><span>Primary inverse</span></span>
+              <span class="pill secondary" data-inverse="true"><span>Secondary inverse</span></span>
+              <span class="pill tertiary" data-inverse="true"><span>Tertiary inverse</span></span>
+              <span class="pill success" data-inverse="true"><span>Success inverse</span></span>
+              <span class="pill warning" data-inverse="true"><span>Warning inverse</span></span>
+              <span class="pill danger" data-inverse="true"><span>Danger inverse</span></span>
+              <span class="pill error" data-inverse="true"><span>Error inverse</span></span>
             </div>
           </div>
           <div class="stack g-3">
             <p class="b m-0">Pills - Sizes and Widths</p>
-            <div class="col-3 g-2">
-              <span class="pill" data-color="primary" data-size="small"><span class="pill-dot"></span><span>Small</span></span>
-              <span class="pill" data-color="primary" data-size="medium"><span class="pill-dot"></span><span>Medium</span></span>
-              <span class="pill" data-color="primary" data-width="full"><span class="pill-dot"></span><span>Full width</span></span>
+            <div class="row wrap g-2">
+              <span class="pill primary" data-size="small"><span class="pill-dot"></span><span>Small</span></span>
+              <span class="pill primary" data-size="medium"><span class="pill-dot"></span><span>Medium</span></span>
+              <span class="pill primary" data-width="full"><span class="pill-dot"></span><span>Full width</span></span>
             </div>
           </div>
           <div class="stack g-3">
             <p class="b m-0">Status Loader</p>
             <div class="row wrap g-2">
-              <div class="status-loader"><div class="start"></div><div class="middle"></div><div class="end"></div></div>
-              <div class="status-loader" data-success><div class="start"></div><div class="middle"></div><div class="end"></div></div>
-              <div class="status-loader" data-warning><div class="start"></div><div class="middle"></div><div class="end"></div></div>
-              <div class="status-loader" data-error><div class="start"></div><div class="middle"></div><div class="end"></div></div>
+              <div class="stack g-1">
+                <span class="small">Default</span>
+                <div class="status">
+                  <div class="start"></div>
+                  <div class="middle"></div>
+                  <div class="end"></div>
+                </div>
+              </div>
+              <div class="stack g-1">
+                <span class="small">Success</span>
+                <div class="status success">
+                  <div class="start"></div>
+                  <div class="middle"></div>
+                  <div class="end"></div>
+                </div>
+              </div>
+              <div class="stack g-1">
+                <span class="small">Warning</span>
+                <div class="status warning">
+                  <div class="start"></div>
+                  <div class="middle"></div>
+                  <div class="end"></div>
+                </div>
+              </div>
+              <div class="stack g-1">
+                <span class="small">Error</span>
+                <div class="status error">
+                  <div class="start"></div>
+                  <div class="middle"></div>
+                  <div class="end"></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
-
-      <section class="panel warning stack g-4">
-        <h2 class="h3 m-0">Fields and Stepper</h2>
-        <div class="stack g-5">
-          <div class="stack g-3">
-            <label class="stack g-2">
-              <span class="b">Field</span>
-              <input class="input" type="text" placeholder="Enter your legal full name" />
-              <span class="small">This field is required</span>
-            </label>
-          </div>
-          <fieldset class="stack g-3">
-            <legend class="b">FieldSet</legend>
-            <div class="col-2 g-3">
-              <label class="stack g-2"><span>First Name</span><input class="input" type="text" /></label>
-              <label class="stack g-2"><span>Last Name</span><input class="input" type="text" /></label>
-            </div>
-          </fieldset>
-          <div class="stack g-3">
-            <p class="b m-0">Stepper</p>
-            <ol class="row wrap g-3 m-0 p-0">
-              <li class="row g-2 start"><span class="badge success">1</span><span>Account</span></li>
-              <li class="row g-2 start"><span class="badge success">2</span><span>Verify</span></li>
-              <li class="row g-2 start"><span class="badge warning">3</span><span>Upload</span></li>
-              <li class="row g-2 start"><span class="badge">4</span><span>Review</span></li>
-            </ol>
-          </div>
-        </div>
-      </section>
-
-      <section class="panel danger stack g-4">
+      <section class="panel stack g-4 p-6 bd bd-4o ">
         <h2 class="h3 m-0">Containers, Layout, Utilities</h2>
         <div class="stack g-5">
           <div class="col-3 g-3">
-            <div class="panel stack g-2"><strong>Wrapper</strong><span>This is a wrapper container.</span></div>
-            <div class="panel stack g-2"><strong>Group</strong><span>This is a group container.</span></div>
-            <div class="panel stack g-2"><strong>Contrast</strong><span>This is a contrast container.</span></div>
+            <div class="panel bg-neutral bg-5o bg stack g-2"><strong>Wrapper</strong><span>This is a wrapper container.</span></div>
+            <div class="panel bg-neutral bg-5o bg stack g-2"><strong>Group</strong><span>This is a group container.</span></div>
+            <div class="panel bg-neutral bg-5o bg stack g-2"><strong>Contrast</strong><span>This is a contrast container.</span></div>
           </div>
           <div class="stack g-2">
             <p class="b m-0">Grid and Stack Helpers</p>
             <div class="col-4 g-2">
-              <div class="panel p-2">1</div>
-              <div class="panel p-2">2</div>
-              <div class="panel p-2">3</div>
-              <div class="panel p-2">4</div>
+              <div class="panel bg-neutral bg-5o bg p-2">1</div>
+              <div class="panel bg-neutral bg-5o bg p-2">2</div>
+              <div class="panel bg-neutral bg-5o bg p-2">3</div>
+              <div class="panel bg-neutral bg-5o bg p-2">4</div>
             </div>
             <div class="row g-2">
-              <div class="panel p-2">Row item 1</div>
-              <div class="panel p-2">Row item 2</div>
+              <div class="panel bg-neutral bg-5o bg p-2">Row item 1</div>
+              <div class="panel bg-neutral bg-5o bg p-2">Row item 2</div>
             </div>
             <div class="stack g-2">
-              <div class="panel p-2">Stack item 1</div>
-              <div class="panel p-2">Stack item 2</div>
+              <div class="panel bg-neutral bg-5o bg p-2">Stack item 1</div>
+              <div class="panel bg-neutral bg-5o bg p-2">Stack item 2</div>
             </div>
           </div>
           <div class="stack g-2">
@@ -317,164 +576,13 @@ const result = "fast, consistent styling"</code></pre>
               <code>.p-8</code>
             </div>
           </div>
-          <div class="stack g-2">
-            <p class="small m-0">AdviceLink UI Pure CSS Specimen - End of page</p>
-          </div>
         </div>
       </section>
     </main>
     <script type="module">
-      import ui from "https://cdn.jsdelivr.net/gh/sebastien/select.js/src/js/select.ui.js"
-
-      const THEMES = ["default", "crm"]
-      const SEMANTICS = ["neutral", "primary", "secondary", "tertiary", "success", "warning", "danger"]
-      const INPUT_SCALES = ["smallest", "smaller", "small", "regular", "large", "larger", "largest"]
-      const removeClasses = (node, values) => {
-        for (const value of values) {
-          node.classList.remove(value)
-        }
-      }
-
-      const applySemantic = (selector, semantic) => {
-        for (const node of document.querySelectorAll(selector)) {
-          removeClasses(node, SEMANTICS)
-          if (semantic !== "neutral") {
-            node.classList.add(semantic)
-          }
-        }
-      }
-
-      const applyInputScale = (scale) => {
-        for (const node of document.querySelectorAll("[data-input-scale]")) {
-          removeClasses(node, INPUT_SCALES)
-          node.classList.add(scale)
-        }
-      }
-
-      const applyControlScale = (scale) => {
-        for (const node of document.querySelectorAll("[data-control-scale]")) {
-          removeClasses(node, INPUT_SCALES)
-          node.classList.add(scale)
-        }
-      }
-
-      const applyTheme = (theme) => {
-        document.body.setAttribute("data-theme", theme)
-      }
-
-      const sync = (state) => {
-        applyTheme(state.theme)
-        applySemantic("[data-control-semantic]", state.controlSemantic)
-        applySemantic("[data-input-semantic]", state.inputSemantic)
-        applyInputScale(state.inputScale)
-        applyControlScale(state.controlScale)
-      }
-
-      const SelectorPanel = ui(`
-        <form class="col-2 g-3">
-          <label class="stack g-2">
-            <span class="b">Theme</span>
-            <select class="select small" ref="theme" on:change="themeChanged">
-              <option value="default">default</option>
-              <option value="crm">crm</option>
-            </select>
-          </label>
-          <label class="stack g-2">
-            <span class="b">Controls semantic</span>
-            <select class="select small" ref="controlSemantic" on:change="controlSemanticChanged">
-              <option value="neutral">neutral</option>
-              <option value="primary">primary</option>
-              <option value="secondary">secondary</option>
-              <option value="tertiary">tertiary</option>
-              <option value="success">success</option>
-              <option value="warning">warning</option>
-              <option value="danger">danger</option>
-            </select>
-          </label>
-          <label class="stack g-2">
-            <span class="b">Controls scale</span>
-            <select class="select small" ref="controlScale" on:change="controlScaleChanged">
-              <option value="smallest">smallest</option>
-              <option value="smaller">smaller</option>
-              <option value="small">small</option>
-              <option value="regular">regular</option>
-              <option value="large">large</option>
-              <option value="larger">larger</option>
-              <option value="largest">largest</option>
-            </select>
-          </label>
-          <label class="stack g-2">
-            <span class="b">Input semantic</span>
-            <select class="select small" ref="inputSemantic" on:change="inputSemanticChanged">
-              <option value="neutral">neutral</option>
-              <option value="primary">primary</option>
-              <option value="secondary">secondary</option>
-              <option value="tertiary">tertiary</option>
-              <option value="success">success</option>
-              <option value="warning">warning</option>
-              <option value="danger">danger</option>
-            </select>
-          </label>
-          <label class="stack g-2">
-            <span class="b">Input scale</span>
-            <select class="select small" ref="inputScale" on:change="inputScaleChanged">
-              <option value="smallest">smallest</option>
-              <option value="smaller">smaller</option>
-              <option value="small">small</option>
-              <option value="regular">regular</option>
-              <option value="large">large</option>
-              <option value="larger">larger</option>
-              <option value="largest">largest</option>
-            </select>
-          </label>
-        </form>
-      `).does({
-        themeChanged: (self, data, event) => {
-          const next = { ...data, theme: event.target.value }
-          self.data = next
-          sync(next)
-        },
-        controlSemanticChanged: (self, data, event) => {
-          const next = { ...data, controlSemantic: event.target.value }
-          self.data = next
-          sync(next)
-        },
-        controlScaleChanged: (self, data, event) => {
-          const next = { ...data, controlScale: event.target.value }
-          self.data = next
-          sync(next)
-        },
-        inputSemanticChanged: (self, data, event) => {
-          const next = { ...data, inputSemantic: event.target.value }
-          self.data = next
-          sync(next)
-        },
-        inputScaleChanged: (self, data, event) => {
-          const next = { ...data, inputScale: event.target.value }
-          self.data = next
-          sync(next)
-        },
-      })
-
-      const initial = {
-        theme: THEMES[0],
-        controlSemantic: SEMANTICS[0],
-        controlScale: "regular",
-        inputSemantic: SEMANTICS[0],
-        inputScale: "regular",
-      }
-
-      const selectors = SelectorPanel.new()
-      selectors.mount("#specimen-selector-app")
-
-      selectors.data = initial
-      selectors.ref.theme.value = initial.theme
-      selectors.ref.controlSemantic.value = initial.controlSemantic
-      selectors.ref.controlScale.value = initial.controlScale
-      selectors.ref.inputSemantic.value = initial.inputSemantic
-      selectors.ref.inputScale.value = initial.inputScale
-
-      sync(initial)
+      import all from "@css/all"
+      import css from "@css"
+      css.mount(...all())
     </script>
   </body>
 </html>

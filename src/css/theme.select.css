@@ -1,5 +1,6 @@
-body[data-theme="default"] {
-	--font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+body[data-theme="select"] {
+	--font-sans:
+		system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 	--font-controls-family: var(--font-sans);
 	--font-controls-size: 1rem;
 	--font-controls-line: 1.25;
@@ -40,7 +41,7 @@ body[data-theme="default"] {
 	--panel-box-padding-y: 1.25rem;
 
 	--panel-color-base: var(--color-slate-200);
-	--border-base: var(--color-slate-300);
+	--border-color-base: var(--color-slate-300);
 
 	--color-primary: var(--color-sky-500);
 	--color-primary-contrast: var(--color-white);

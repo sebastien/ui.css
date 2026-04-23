@@ -121,12 +121,12 @@ export default named({
 		rule(".fit-max", {
 			width: "max-content",
 		}),
-			rule(".fit-page", {
-				max_width: `${vars.page.width}`,
-			}),
-			rule(".fit-text", {
-				max_width: `${vars.text.width}`,
-			}),
+		rule(".fit-page", {
+			max_width: `${vars.page.width}`,
+		}),
+		rule(".fit-text", {
+			max_width: `${vars.text.width}`,
+		}),
 		rule(".fit-content", {
 			max_width: "fit-content",
 		}),
@@ -234,11 +234,11 @@ export default named({
 		rule(".circle", { aspect_ratio: "1/1", border_radius: "50%" }),
 	),
 	row: group(
-			rule(".row", {
-				display: "flex",
-				align_items: "center",
-				gap: `${vars.gap[3]}`,
-			}),
+		rule(".row", {
+			display: "flex",
+			align_items: "center",
+			gap: `${vars.gap[3]}`,
+		}),
 		rule(".row.stretch", {
 			align_items: "stretch",
 		}),
@@ -254,12 +254,14 @@ export default named({
 		}),
 	),
 	stack: group(
-			rule(".stack", {
-				display: "flex",
-				flex_direction: "column",
-				gap: `${vars.gap[3]}`,
-			}),
-		rule(".stack > .right", {
+		rule(".stack", {
+			display: "flex",
+			flex_direction: "column",
+		}),
+		rule([".stack > .left", ".stack > .start"], {
+			align_self: "flex-start",
+		}),
+		rule([".stack > .right", ".stack > .end"], {
 			align_self: "flex-end",
 		}),
 		rule(".stack.lined > *", {
@@ -291,13 +293,13 @@ export default named({
 		}),
 	),
 	grid: group(
-			...times(7, (_) =>
-				rule(`.col-${_ + 1}`, {
-					display: "grid",
-					grid_template_columns: `repeat(${_ + 1}, 1fr)`,
-					grid_column_gap: `${vars.gap[3]}`,
-				}),
-			),
+		...times(7, (_) =>
+			rule(`.col-${_ + 1}`, {
+				display: "grid",
+				grid_template_columns: `repeat(${_ + 1}, 1fr)`,
+				grid_column_gap: `${vars.gap[3]}`,
+			}),
+		),
 	),
 	table: group(
 		rule(

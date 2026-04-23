@@ -1,6 +1,4 @@
-import { tokens } from "../js/uicss.js";
-
-const PALETTE = {
+export default {
 	red: {
 		50: "#fef2f2",
 		100: "#fee2e2",
@@ -261,19 +259,6 @@ const PALETTE = {
 		900: "#18181b",
 		950: "#09090b",
 	},
-	neutral: {
-		50: "#fafafa",
-		100: "#f5f5f5",
-		200: "#e5e5e5",
-		300: "#d4d4d4",
-		400: "#a3a3a3",
-		500: "#737373",
-		600: "#525252",
-		700: "#404040",
-		800: "#262626",
-		900: "#171717",
-		950: "#0a0a0a",
-	},
 	stone: {
 		50: "#fafaf9",
 		100: "#f5f5f4",
@@ -340,11 +325,3 @@ const PALETTE = {
 		950: "#1f2219",
 	},
 };
-
-const palette = tokens({
-	color: PALETTE,
-});
-
-export { PALETTE };
-export default palette;
-// EOF
