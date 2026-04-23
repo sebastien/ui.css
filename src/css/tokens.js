@@ -7,10 +7,6 @@ function pem(px, scale = undefined) {
 		: `calc( 1em * ${px} / ${REM_PIXELS} )`;
 }
 
-function color(name) {
-	return `color-mix(in oklch, color-mix(in oklch, var(--${name}-base), var(--${name}-tint) calc((1 - var(--${name}-blend)) * 100%)), transparent calc((1 - var(--${name}-opacity)) * 100%))`;
-}
-
 // Module: tokens
 // This defines the main parameters for the style. They can be overriden
 // at will to theme everything.
@@ -22,7 +18,7 @@ export default group(
 			serif: "serif",
 			cursive: "cursive",
 			base: 14,
-			size: `calc(1rem * var(--font-base) / ${REM_PIXELS})`,
+			size: `calc(1rem * ${vars.font.base} / ${REM_PIXELS})`,
 			line: "1.25em",
 			text: {
 				family: `${vars.font.sans}`,
@@ -86,24 +82,24 @@ export default group(
 			// Scale endpoint colors
 			white: "#FFFFFF",
 			black: "#000000",
-			ink: "var(--color-slate-950)",
-			action: "var(--color-slate-400)",
-			border: "var(--color-slate-400)",
+			ink: `${vars.color.slate[950]}`,
+			action: `${vars.color.slate[400]}`,
+			border: `${vars.color.slate[400]}`,
 			paper: "#FFFFFF",
 			// Luminosity direction: 1 = normal (light mode), -1 = inverted (dark mode)
 			l: { direction: 1 },
 			// Semantic colors (reference palette.css variables)
-			neutral: "var(--color-gray-500)",
-			primary: "var(--color-blue-500)",
-			secondary: "var(--color-violet-500)",
-			tertiary: "var(--color-teal-500)",
-			success: "var(--color-green-500)",
-			valid: "var(--color-green-500)",
-			info: "var(--color-cyan-500)",
-			warning: "var(--color-amber-500)",
-			issue: "var(--color-amber-500)",
-			danger: "var(--color-red-500)",
-			error: "var(--color-red-500)",
+			neutral: `${vars.color.gray[200]}`,
+			primary: `${vars.color.blue[500]}`,
+			secondary: `${vars.color.violet[500]}`,
+			tertiary: `${vars.color.teal[500]}`,
+			success: `${vars.color.green[500]}`,
+			valid: `${vars.color.green[500]}`,
+			info: `${vars.color.cyan[500]}`,
+			warning: `${vars.color.amber[500]}`,
+			issue: `${vars.color.amber[500]}`,
+			danger: `${vars.color.red[500]}`,
+			error: `${vars.color.red[500]}`,
 			// Mode-dependent colors (defaults to light mode, swapped by .dark)
 			page: `${vars.color.paper}`,
 			text: `${vars.color.ink}`,
@@ -115,33 +111,36 @@ export default group(
 	// COLOR PROPERTIES
 	//
 	// ------------------------------------------------------------------------
-	// Each color property has: level, alpha, blend, blending
+	// Each color property has: color (base, tint, blend, opacity), level, alpha
 	// See spec-colors.md for full documentation
 	tokens({
 		background: {
-			base: `${vars.color.paper}`,
-			tint: `${vars.color.paper}`,
-			blend: 1.0,
-			opacity: 1.0,
+			color: {
+				base: `${vars.color.paper}`,
+				tint: `${vars.color.paper}`,
+				blend: 1.0,
+				opacity: 1.0,
+			},
 			l: 5,
 			o: 9,
-			color: color("background"),
 		},
 		text: {
-			base: `${vars.color.ink}`,
-			tint: `${vars.color.paper}`,
-			blend: 1.0,
-			opacity: 1.0,
-			color: color("text"),
+			color: {
+				base: `${vars.color.ink}`,
+				tint: `${vars.color.paper}`,
+				blend: 1.0,
+				opacity: 1.0,
+			},
 		},
 		border: {
-			base: `${vars.color.ink}`,
-			tint: `${vars.color.paper}`,
-			blend: 0.5,
-			opacity: 0.9,
+			color: {
+				base: `${vars.color.ink}`,
+				tint: `${vars.color.paper}`,
+				blend: 0.5,
+				opacity: 0.9,
+			},
 			l: 5,
 			o: 9,
-			color: color("border"),
 			width: "1px",
 			style: "solid",
 			// FIXME: Should move this out
@@ -158,11 +157,12 @@ export default group(
 			],
 		},
 		outline: {
-			base: `${vars.color.ink}`,
-			tint: `${vars.color.paper}`,
-			blend: 0.3,
-			opacity: 0.8,
-			color: color("outline"),
+			color: {
+				base: `${vars.color.ink}`,
+				tint: `${vars.color.paper}`,
+				blend: 0.3,
+				opacity: 0.8,
+			},
 			width: "2px",
 			style: "solid",
 		},
@@ -345,7 +345,7 @@ export default group(
 			spread: "1px",
 			base: `${vars.color.ink}`,
 			opacity: 0.25,
-			color: `color-mix(in oklch, var(--shadow-base), transparent calc(100% - 100% * var(--shadow-opacity)))`,
+			color: `color-mix(in oklch, ${vars.shadow.base}, transparent calc(100% - 100% * ${vars.shadow.opacity}))`,
 		},
 		limit: {
 			text: "80ch",
@@ -358,14 +358,14 @@ export default group(
 		// - Page unit (page.unit) defines the equivalent of 1px in rems.
 		page: {
 			base: 16,
-			unit: "calc( (1rem/16) * var(--page-base) / 16)",
+			unit: `calc( (1rem/16) * ${vars.page.base} / 16)`,
 		},
 		heading: {
-			min: "var(--page-base)",
+			min: `${vars.page.base}`,
 			max: 42,
-			unit: "var(--page-unit)",
-			base: "var(--heading-min)",
-			amplitude: "calc(var(--heading-max) - var(--heading-min))",
+			unit: `${vars.page.unit}`,
+			base: `${vars.heading.min}`,
+			amplitude: `calc(${vars.heading.max} - ${vars.heading.min})`,
 			size: [
 				"80%", // 0: xxs
 				"100%", // 1: xs

@@ -10,19 +10,195 @@ import {
 	vars,
 } from "../js/uicss.js";
 import { inputs } from "./lib/tags.js";
-import { colormix } from "./colors.js";
-
-function colorvars(name, mode = "color") {
-	return {
-		[`--${name}-current-color-base`]: vars[name][mode].base,
-		[`--${name}-current-color-tint`]: vars[name][mode].tint,
-		[`--${name}-current-color-blend`]: vars[name][mode].blend,
-		[`--${name}-current-color-opacity`]: vars[name][mode].opacity,
-		[`--${name}-current-color`]: vars[name].current.color.base,
-	}
-}
+import { colormix, colorvars } from "./colors.js";
 
 export default named({
+	// ------------------------------------------------------------------------
+	//
+	// BADGE
+	//
+	// ------------------------------------------------------------------------
+	badge: group(
+		rule(".badge", {
+			__badge_tone: vars.color.neutral,
+			__badge_contrast: vars.color.paper,
+			display: "inline-flex",
+			align_items: "center",
+			justify_content: "center",
+			min_width: "1.65em",
+			height: "1.65em",
+			padding: "0.2em 0.5em",
+			border_radius: "999px",
+			font_size: "0.75em",
+			line_height: "1",
+			font_weight: "700",
+			letter_spacing: "0.01em",
+			white_space: "nowrap",
+			background: "var(--badge-tone)",
+			color: "var(--badge-contrast)",
+		}),
+		rule(".badge[data-variant='number']", {
+			padding: "0px",
+			width: "1.65em",
+		}),
+		rule(".badge[data-variant='text']", {
+			padding: "0.25em 0.7em",
+		}),
+		...[
+			["primary", vars.color.primary, vars.color.paper],
+			["secondary", vars.color.secondary, vars.color.paper],
+			["tertiary", vars.color.tertiary, vars.color.paper],
+			["success", vars.color.success, vars.color.paper],
+			["warning", vars.color.warning, vars.color.ink],
+			["danger", vars.color.danger, vars.color.paper],
+			["active", vars.color.primary, vars.color.paper],
+		].map(([name, color, ink]) =>
+			rule([`.badge.${name}`, `.badge[data-type='${name}']`], {
+				__badge_tone: `${color}`,
+				__badge_contrast: `${ink}`,
+			}),
+		),
+		rule(".badge[data-type='default']", {
+			__badge_tone: vars.color.neutral,
+			__badge_contrast: vars.color.paper,
+		}),
+	),
+
+	// ------------------------------------------------------------------------
+	//
+	// PILL
+	//
+	// ------------------------------------------------------------------------
+	pill: group(
+		rule(".pill", {
+			__pill_tone: vars.color.neutral,
+			__pill_contrast: vars.color.paper,
+			display: "inline-flex",
+			align_items: "center",
+			justify_content: "center",
+			gap: "0.45em",
+			padding: "0.3em 0.8em",
+			border_radius: "999px",
+			border: "1px solid transparent",
+			font_size: "0.82em",
+			line_height: "1.2",
+			font_weight: "600",
+			white_space: "nowrap",
+			background: colormix(vars.color.neutral, vars.color.paper, "80%", "100%"),
+			color: colormix(vars.color.neutral, vars.color.ink, "58%", "100%"),
+			border_color: colormix(
+				vars.color.neutral,
+				vars.color.paper,
+				"65%",
+				"55%",
+			),
+		}),
+		rule(".pill-dot", {
+			width: "0.5em",
+			height: "0.5em",
+			border_radius: "50%",
+			background: "currentColor",
+			opacity: "0.9",
+			flex: "0 0 auto",
+		}),
+		...[
+			["primary", vars.color.primary, vars.color.paper],
+			["secondary", vars.color.secondary, vars.color.paper],
+			["tertiary", vars.color.tertiary, vars.color.paper],
+			["success", vars.color.success, vars.color.paper],
+			["warning", vars.color.warning, vars.color.ink],
+			["danger", vars.color.danger, vars.color.paper],
+			["error", vars.color.danger, vars.color.paper],
+			["neutral", vars.color.neutral, vars.color.paper],
+		].map(([name, color, contrast]) =>
+			rule([`.pill.${name}`, `.pill[data-color='${name}']`], {
+				__pill_tone: `${color}`,
+				__pill_contrast: `${contrast}`,
+				background: colormix(`${color}`, vars.color.paper, "85%", "100%"),
+				color: colormix(`${color}`, vars.color.ink, "58%", "100%"),
+				border_color: colormix(`${color}`, vars.color.paper, "68%", "52%"),
+			}),
+		),
+		rule(".pill[data-inverse='true']", {
+			background: "var(--pill-tone)",
+			color: "var(--pill-contrast)",
+			border_color: "transparent",
+		}),
+		rule(".pill[data-inverse='true'] .pill-dot", {
+			background: vars.color.paper,
+			opacity: "0.95",
+		}),
+		rule(".pill[data-size='small']", {
+			font_size: "0.72em",
+			padding: "0.22em 0.62em",
+		}),
+		rule(".pill[data-size='medium']", {
+			font_size: "0.82em",
+			padding: "0.3em 0.8em",
+		}),
+		rule(".pill[data-width='full']", {
+			display: "flex",
+			width: "100%",
+			justify_content: "center",
+		}),
+	),
+	// ------------------------------------------------------------------------
+	//
+	// PANELS
+	//
+	// ------------------------------------------------------------------------
+	status: group(
+		rule(".status", {
+			display: "inline-grid",
+			grid_auto_flow: "column",
+			align_items: "center",
+			gap: "0.32em",
+			padding: "0.18em",
+			border_radius: "999px",
+			background: colormix(vars.color.neutral, vars.color.paper, "88%", "100%"),
+			border: `1px solid ${colormix(vars.color.neutral, vars.color.paper, "72%", "48%")}`,
+		}),
+		rule([".status > .start", ".status > .middle", ".status > .end"], {
+			width: "1.65em",
+			height: "0.45em",
+			border_radius: "999px",
+			background: colormix(vars.color.neutral, vars.color.paper, "56%", "100%"),
+		}),
+		rule(
+			[
+				".status > .start",
+				".status.success > .start",
+				".status.warning > .start",
+				".status.error > .start",
+			],
+			{
+				background: vars.color.primary,
+			},
+		),
+		rule(".status.success > .middle", {
+			background: vars.color.success,
+		}),
+		rule(".status.success > .end", {
+			background: colormix(vars.color.success, vars.color.paper, "20%", "100%"),
+		}),
+		rule(".status.warning > .middle", {
+			background: vars.color.warning,
+		}),
+		rule(".status.warning > .end", {
+			background: colormix(vars.color.warning, vars.color.paper, "20%", "100%"),
+		}),
+		rule(".status.error > .middle", {
+			background: vars.color.danger,
+		}),
+		rule(".status.error > .end", {
+			background: colormix(vars.color.danger, vars.color.paper, "20%", "100%"),
+		}),
+	),
+	// ------------------------------------------------------------------------
+	//
+	// BREADCRUMBS
+	//
+	// ------------------------------------------------------------------------
 	breadcrumbs: group(
 		rule(".breadcrumbs", {
 			display: "inline-flex",
@@ -43,64 +219,13 @@ export default named({
 			margin_right: ".75rem",
 			display: "block",
 			rotate: "45deg",
-		})
+		}),
 	),
-
-	tree: group(
-		rule("details.tree", {
-			__tree_indent: "1em",
-			border_top: `1px solid oklch(from ${vars.border.base} calc(l + (${vars.border.l} - 5) * 0.1) c h / calc(${vars.border.o} / 9))`,
-			border_collapse: "collapse",
-		}),
-		rule("details.tree[open]", {}),
-		rule("details.tree summary", {
-			cursor: "pointer",
-			user_select: "none",
-			padding: `${vars.pad[1]}`,
-			padding_left: `calc(${vars.tree.depth} * ${vars.tree.indent})`,
-		}),
-
-		rule("details.tree>summary:before", {
-			display: "inline-flex",
-			align_items: "center",
-			justify_content: "center",
-			aspect_ratio: 1,
-			width: "1em",
-			content: "'·'",
-		}),
-
-		rule("details.tree[data-icon]>summary:before", {
-			content: "attr(data-icon)",
-		}),
-
-		rule("details.tree:has(details)>summary:before", {
-			content: "'▸'",
-		}),
-
-		rule("details.tree[open]:has(details)>summary:before", {
-			transform: "rotate(90deg)",
-		}),
-
-		rule("details.tree details", {
-			__tree_depth: 1,
-		}),
-		rule("details.tree details details", {
-			__tree_depth: 2,
-		}),
-
-		rule("details.tree details details details", {
-			__tree_depth: 3,
-		}),
-
-		rule("details.tree details details details details", {
-			__tree_depth: 4,
-		}),
-
-		rule("details.tree details details details details details", {
-			__tree_depth: 5,
-		})
-	),
-
+	// ------------------------------------------------------------------------
+	//
+	// SECTION
+	//
+	// ------------------------------------------------------------------------
 	section: group(
 		rule("details.section", {
 			border: `1px solid oklch(from ${vars.border.base} calc(l + (${vars.border.l} - 5) * 0.1) c h / calc(${vars.border.o} / 9))`,
@@ -141,9 +266,55 @@ export default named({
 
 		rule("details.section > *:not(summary)", {
 			padding: `${vars.pad[2]}`,
-		})
+		}),
+	),
+	// ------------------------------------------------------------------------
+	//
+	// PANELS
+	//
+	// ------------------------------------------------------------------------
+	panel: group(
+		rule(".panel", {
+			...colorvars("panel", "color"),
+			border_width: `${vars.border.width}`,
+			border_style: `${vars.border.style}`,
+			border_color: colormix(
+				vars.panel.current.color,
+				vars.panel.color.tint,
+				"14%",
+				"100%",
+			),
+			border_left_width: `${vars.panel.box.accent}`,
+			border_left_color: "var(--panel-current-color)",
+			border_radius: `${vars.panel.box.radius}`,
+			padding: `${vars.panel.box.padding.y} ${vars.panel.box.padding.x}`,
+			background: colormix(
+				vars.panel.current.color,
+				vars.panel.color.tint,
+				"4%",
+				"100%",
+			),
+			box_shadow: "none",
+		}),
+		rule([".panel > *:first-child", ".panel > .t > *:first-child"], {
+			margin_top: "0px",
+		}),
+		rule([".panel > *:last-child", ".panel > .t > *:last-child"], {
+			margin_bottom: "0px",
+		}),
+		...["primary", "secondary", "tertiary", "success", "warning", "danger"].map(
+			(variant) =>
+				rule(`.panel.${variant}`, {
+					__panel_color_base: `${vars.panel.color[variant]}`,
+				}),
+		),
 	),
 
+	// ------------------------------------------------------------------------
+	//
+	// PANELS
+	//
+	// ------------------------------------------------------------------------
 	panels: group(
 		rule(".panels", {
 			width: "100%",
@@ -235,219 +406,65 @@ export default named({
 
 		rule('.panels[data-panel="5"]', {
 			__panels_current: "5",
-		})
+		}),
 	),
+	// ------------------------------------------------------------------------
+	//
+	// TREE
+	//
+	// ------------------------------------------------------------------------
+	tree: group(
+		rule("details.tree", {
+			__tree_indent: "1em",
+			border_top: `1px solid oklch(from ${vars.border.base} calc(l + (${vars.border.l} - 5) * 0.1) c h / calc(${vars.border.o} / 9))`,
+			border_collapse: "collapse",
+		}),
+		rule("details.tree[open]", {}),
+		rule("details.tree summary", {
+			cursor: "pointer",
+			user_select: "none",
+			padding: `${vars.pad[1]}`,
+			padding_left: `calc(${vars.tree.depth} * ${vars.tree.indent})`,
+		}),
 
-	panel: group(
-		rule(".panel", {
-			...colorvars("panel", "color"),
-			border_width: `${vars.border.width}`,
-			border_style: `${vars.border.style}`,
-			border_color: colormix(
-				vars.panel.current.color,
-				vars.panel.color.tint,
-				"14%",
-				"100%",
-			),
-			border_left_width: `${vars.panel.box.accent}`,
-			border_left_color: "var(--panel-current-color)",
-			border_radius: `${vars.panel.box.radius}`,
-			padding: `${vars.panel.box.padding.y} ${vars.panel.box.padding.x}`,
-			background: colormix(
-				vars.panel.current.color,
-				vars.panel.color.tint,
-				"4%",
-				"100%",
-			),
-			box_shadow: "none",
-		}),
-		rule([".panel > *:first-child", ".panel > .t > *:first-child"], {
-			margin_top: "0px",
-		}),
-		rule([".panel > *:last-child", ".panel > .t > *:last-child"], {
-			margin_bottom: "0px",
-		}),
-		...[
-			"primary",
-			"secondary",
-			"tertiary",
-			"success",
-			"warning",
-			"danger",
-		].map((variant) =>
-			rule(`.panel.${variant}`, {
-				__panel_color_base: `${vars.panel.color[variant]}`,
-			}),
-		),
-	),
-
-	badge: group(
-		rule(".badge", {
-			__badge_tone: vars.color.neutral,
-			__badge_contrast: vars.color.paper,
+		rule("details.tree>summary:before", {
 			display: "inline-flex",
 			align_items: "center",
 			justify_content: "center",
-			min_width: "1.65em",
-			height: "1.65em",
-			padding: "0.2em 0.5em",
-			border_radius: "999px",
-			font_size: "0.75em",
-			line_height: "1",
-			font_weight: "700",
-			letter_spacing: "0.01em",
-			white_space: "nowrap",
-			background: "var(--badge-tone)",
-			color: "var(--badge-contrast)",
+			aspect_ratio: 1,
+			width: "1em",
+			content: "'·'",
 		}),
-		rule(".badge[data-variant='number']", {
-			padding: "0px",
-			width: "1.65em",
-		}),
-		rule(".badge[data-variant='text']", {
-			padding: "0.25em 0.7em",
-		}),
-		...[
-			["primary", vars.color.primary, vars.color.paper],
-			["secondary", vars.color.secondary, vars.color.paper],
-			["tertiary", vars.color.tertiary, vars.color.paper],
-			["success", vars.color.success, vars.color.paper],
-			["warning", vars.color.warning, vars.color.ink],
-			["danger", vars.color.danger, vars.color.paper],
-			["active", vars.color.primary, vars.color.paper],
-		].map(([name, color, ink]) =>
-			rule([
-				`.badge.${name}`,
-				`.badge[data-type='${name}']`,
-			], {
-				__badge_tone: `${color}`,
-				__badge_contrast: `${ink}`,
-			}),
-		),
-		rule(".badge[data-type='default']", {
-			__badge_tone: vars.color.neutral,
-			__badge_contrast: vars.color.paper,
-		}),
-	),
 
-	pill: group(
-		rule(".pill", {
-			__pill_tone: vars.color.neutral,
-			__pill_contrast: vars.color.paper,
-			display: "inline-flex",
-			align_items: "center",
-			justify_content: "center",
-			gap: "0.45em",
-			padding: "0.3em 0.8em",
-			border_radius: "999px",
-			border: "1px solid transparent",
-			font_size: "0.82em",
-			line_height: "1.2",
-			font_weight: "600",
-			white_space: "nowrap",
-			background: colormix(vars.color.neutral, vars.color.paper, "80%", "100%"),
-			color: colormix(vars.color.neutral, vars.color.ink, "58%", "100%"),
-			border_color: colormix(vars.color.neutral, vars.color.paper, "65%", "55%"),
+		rule("details.tree[data-icon]>summary:before", {
+			content: "attr(data-icon)",
 		}),
-		rule(".pill-dot", {
-			width: "0.5em",
-			height: "0.5em",
-			border_radius: "50%",
-			background: "currentColor",
-			opacity: "0.9",
-			flex: "0 0 auto",
-		}),
-		...[
-			["primary", vars.color.primary, vars.color.paper],
-			["secondary", vars.color.secondary, vars.color.paper],
-			["tertiary", vars.color.tertiary, vars.color.paper],
-			["success", vars.color.success, vars.color.paper],
-			["warning", vars.color.warning, vars.color.ink],
-			["danger", vars.color.danger, vars.color.paper],
-			["error", vars.color.danger, vars.color.paper],
-			["neutral", vars.color.neutral, vars.color.paper],
-		].map(([name, color, contrast]) =>
-			rule([
-				`.pill.${name}`,
-				`.pill[data-color='${name}']`,
-			], {
-				__pill_tone: `${color}`,
-				__pill_contrast: `${contrast}`,
-				background: colormix(`${color}`, vars.color.paper, "85%", "100%"),
-				color: colormix(`${color}`, vars.color.ink, "58%", "100%"),
-				border_color: colormix(`${color}`, vars.color.paper, "68%", "52%"),
-			}),
-		),
-		rule(".pill[data-inverse='true']", {
-			background: "var(--pill-tone)",
-			color: "var(--pill-contrast)",
-			border_color: "transparent",
-		}),
-		rule(".pill[data-inverse='true'] .pill-dot", {
-			background: vars.color.paper,
-			opacity: "0.95",
-		}),
-		rule(".pill[data-size='small']", {
-			font_size: "0.72em",
-			padding: "0.22em 0.62em",
-		}),
-		rule(".pill[data-size='medium']", {
-			font_size: "0.82em",
-			padding: "0.3em 0.8em",
-		}),
-		rule(".pill[data-width='full']", {
-			display: "flex",
-			width: "100%",
-			justify_content: "center",
-		}),
-	),
 
-	status_loader: group(
-		rule(".status-loader", {
-			display: "inline-grid",
-			grid_auto_flow: "column",
-			align_items: "center",
-			gap: "0.32em",
-			padding: "0.18em",
-			border_radius: "999px",
-			background: colormix(vars.color.neutral, vars.color.paper, "88%", "100%"),
-			border: `1px solid ${colormix(vars.color.neutral, vars.color.paper, "72%", "48%")}`,
+		rule("details.tree:has(details)>summary:before", {
+			content: "'▸'",
 		}),
-		rule([
-			".status-loader > .start",
-			".status-loader > .middle",
-			".status-loader > .end",
-		], {
-			width: "1.65em",
-			height: "0.45em",
-			border_radius: "999px",
-			background: colormix(vars.color.neutral, vars.color.paper, "56%", "100%"),
+
+		rule("details.tree[open]:has(details)>summary:before", {
+			transform: "rotate(90deg)",
 		}),
-		rule([
-			".status-loader > .start",
-			".status-loader[data-success] > .start",
-			".status-loader[data-warning] > .start",
-			".status-loader[data-error] > .start",
-		], {
-			background: vars.color.primary,
+
+		rule("details.tree details", {
+			__tree_depth: 1,
 		}),
-		rule(".status-loader[data-success] > .middle", {
-			background: vars.color.success,
+		rule("details.tree details details", {
+			__tree_depth: 2,
 		}),
-		rule(".status-loader[data-success] > .end", {
-			background: colormix(vars.color.success, vars.color.paper, "20%", "100%"),
+
+		rule("details.tree details details details", {
+			__tree_depth: 3,
 		}),
-		rule(".status-loader[data-warning] > .middle", {
-			background: vars.color.warning,
+
+		rule("details.tree details details details details", {
+			__tree_depth: 4,
 		}),
-		rule(".status-loader[data-warning] > .end", {
-			background: colormix(vars.color.warning, vars.color.paper, "20%", "100%"),
-		}),
-		rule(".status-loader[data-error] > .middle", {
-			background: vars.color.danger,
-		}),
-		rule(".status-loader[data-error] > .end", {
-			background: colormix(vars.color.danger, vars.color.paper, "20%", "100%"),
+
+		rule("details.tree details details details details details", {
+			__tree_depth: 5,
 		}),
 	),
 });

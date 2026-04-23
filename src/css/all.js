@@ -1,5 +1,4 @@
 import { layers, group, rule } from "../js/uicss.js";
-import palette from "./palette.js";
 import tokens from "./tokens.js";
 import reset from "./reset.js";
 import layout from "./layout.js";
@@ -11,7 +10,6 @@ import behavior from "./behavior.js";
 import components from "./components.js";
 export default (cols = COLORS) =>
 	layers({
-		palette,
 		tokens,
 		reset,
 		controls,

@@ -401,26 +401,16 @@ function selector(colors) {
 			border_color: colormix(
 				vars.selector.current.color,
 				vars.color.paper,
-				"70%",
-				"55%",
+				"45%",
+				"100%",
 			),
 			background: colormix(
 				vars.selector.current.color,
 				vars.color.paper,
-				"85%",
+				"3%",
 				"100%",
 			),
-			box_shadow: `inset 0 1px 0 ${colormix(
-				vars.selector.current.color,
-				vars.color.paper,
-				"90%",
-				"40%",
-			)}, inset 0 -1px 0 ${colormix(
-				vars.selector.current.color,
-				vars.color.ink,
-				"60%",
-				"25%",
-			)}`,
+			box_shadow: "none",
 			transition: `${vars.ui.control.transition}`,
 			font_family: vars.selector.font.family,
 			line_height: vars.selector.font.line,
@@ -437,7 +427,7 @@ function selector(colors) {
 			position: "relative",
 			padding: `${vars.selector.item.padding.y} ${vars.selector.item.padding.x}`,
 			border: "0px solid transparent",
-			border_radius: vars.selector.item.radius,
+			border_radius: vars.selector.box.radius,
 			background: "transparent",
 			color: "inherit",
 			white_space: "nowrap",
@@ -447,27 +437,6 @@ function selector(colors) {
 			user_select: "none",
 			transition: `${vars.ui.control.transition}`,
 			margin: "0px",
-		}),
-		rule(cross(option, [":not(:first-child)"]), {
-			border_left_width: "0px",
-		}),
-		rule(cross(name, ["> .option + .option", "> label + label", "> button + button", "> a + a", "> input + label"]), {
-			border_left_width: "1px",
-			border_left_style: "solid",
-			border_left_color: colormix(
-				vars.selector.current.color,
-				vars.color.paper,
-				"72%",
-				"45%",
-			),
-		}),
-		rule(cross(name, ["> .option:first-child", "> label:first-child", "> button:first-child", "> a:first-child", "> input:first-child + label"]), {
-			border_top_left_radius: vars.selector.box.radius,
-			border_bottom_left_radius: vars.selector.box.radius,
-		}),
-		rule(cross(name, ["> .option:last-child", "> label:last-child", "> button:last-child", "> a:last-child"]), {
-			border_top_right_radius: vars.selector.box.radius,
-			border_bottom_right_radius: vars.selector.box.radius,
 		}),
 		rule(cross(name, [" input[type=checkbox]", " input[type=radio]"]), {
 			display: "none",
@@ -501,32 +470,12 @@ function selector(colors) {
 				vars.selector.active.blend,
 				vars.selector.active.opacity,
 			),
-			box_shadow: `inset 0 1px 2px ${colormix(
-				vars.selector.current.color,
-				vars.color.ink,
-				"55%",
-				"30%",
-			)}`,
+			box_shadow: "none",
 		}),
 		rule(selected, {
-			background: colormix(
-				vars.selector.current.color,
-				vars.selector.selected.tint,
-				vars.selector.selected.blend,
-				vars.selector.selected.opacity,
-			),
-			color: colormix(vars.selector.current.color, vars.color.ink, "50%", "100%"),
-			box_shadow: `inset 0 1px 0 ${colormix(
-				vars.selector.current.color,
-				vars.color.paper,
-				"100%",
-				"75%",
-			)}, inset 0 -1px 0 ${colormix(
-				vars.selector.current.color,
-				vars.color.ink,
-				"75%",
-				"30%",
-			)}`,
+			background: "var(--selector-current-color)",
+			color: contrast("var(--selector-current-color)"),
+			box_shadow: "none",
 		}),
 		rule(cross(option, [":focus-visible", ".focus"]), {
 			outline_width: `${vars.ui.control.focus.ring.width}`,
@@ -539,12 +488,7 @@ function selector(colors) {
 		}),
 		rule(cross(name, [".disabled", '[aria-disabled="true"]']), {
 			cursor: "default",
-			background: colormix(
-				vars.selector.current.color,
-				vars.color.paper,
-				`${vars.ui.control.disabled.blend}`,
-				`${vars.ui.control.disabled.opacity}`,
-			),
+			background: "transparent",
 		}),
 		rule(cross(option, [":disabled", ".disabled", '[aria-disabled="true"]']), {
 			cursor: "default",
@@ -552,11 +496,11 @@ function selector(colors) {
 			box_shadow: "none",
 		}),
 		rule(mods(name, "default"), {
-			border_width: `${vars.ui.control.border.width}`,
+			border_width: `${vars.ui.control.style.default.border.width}`,
 			border_color: vars.selector.current.color,
 		}),
 		rule(mods(name, "outline"), {
-			border_width: `${vars.ui.control.border.width}`,
+			border_width: `${vars.ui.control.style.outline.border.width}`,
 			background: "transparent",
 			border_color: colormix(
 				vars.selector.current.color,
@@ -564,6 +508,7 @@ function selector(colors) {
 				"80%",
 				"50%",
 			),
+			color: colormix(vars.selector.current.color, vars.color.ink, "50%", "100%"),
 		}),
 		rule(cross(name, [".blank"]), {
 			background: "transparent",
@@ -892,7 +837,6 @@ function select(colors) {
 	return group(
 		rule(name, {
 			padding: `${vars.select.box.padding.y} ${vars.select.box.padding.x}`,
-			padding_right: `calc(${vars.select.box.padding.x} + ${vars.select.arrow.offset} + ${vars.select.arrow.size})`,
 			outline: "0px solid transparent",
 			border: "0px solid transparent",
 			border_radius: vars.select.box.radius,
@@ -910,15 +854,18 @@ function select(colors) {
 			border_color: colormix(
 				vars.select.current.color,
 				vars.color.paper,
-				"25%",
-				"90%",
+				"45%",
+				"100%",
 			),
 			background_color: colormix(
 				vars.select.current.color,
 				vars.color.paper,
-				"5%",
+				"3%",
 				"100%",
 			),
+		}),
+		rule(cross(name, [":not([multiple]):not([size])"]), {
+			padding_right: `calc(${vars.select.box.padding.x} + ${vars.select.arrow.offset} + ${vars.select.arrow.size})`,
 			background_image:
 				"linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%)",
 			background_position: `right ${vars.select.arrow.offset} center, right calc(${vars.select.arrow.offset} - ${vars.select.arrow.gap}) center`,
