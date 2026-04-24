@@ -4,14 +4,35 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>UI.css Specimen</title>
+    <!--
     <link rel="stylesheet" href="../src/css/theme.select.css" />
     <link rel="stylesheet" href="../src/css/theme.crm.css" />
+    -->
     <script type="importmap">
       {
         "imports": {
           "@css/": "../src/css/",
           "@css": "../src/js/uicss.js"
         }
+      }
+    </script>
+    <script type="module">
+      import all from "@css/all"
+      import css from "@css"
+      switch (window.location.hash) {
+      case "#dynamic":
+      console.log("Dynamic")
+        css.mount(...all())
+        break
+      case "#blank":
+      console.log("Blank")
+        break
+      default:
+      console.log("Default")
+        const link = document.createElement("link");
+        link.setAttribute("rel", "stylesheet");
+        link.setAttribute("href", "../dist/ui.css");
+        document.head.append(link)
       }
     </script>
   </head>
@@ -749,10 +770,5 @@ const result = "fast, consistent styling"</code></pre>
         </div>
       </section>
     </main>
-    <script type="module">
-      import all from "@css/all"
-      import css from "@css"
-      css.mount(...all())
-    </script>
   </body>
 </html>
