@@ -84,14 +84,9 @@ export default named({
 			line_height: "1.2",
 			font_weight: "600",
 			white_space: "nowrap",
-			background: colormix(vars.color.neutral, vars.color.paper, "80%", "100%"),
-			color: colormix(vars.color.neutral, vars.color.ink, "58%", "100%"),
-			border_color: colormix(
-				vars.color.neutral,
-				vars.color.paper,
-				"65%",
-				"55%",
-			),
+			background: colormix(vars.pill.tone, vars.color.paper, "82%", "100%"),
+			color: colormix(vars.pill.tone, vars.color.ink, "58%", "100%"),
+			border_color: colormix(vars.pill.tone, vars.color.paper, "66%", "53%"),
 		}),
 		rule(".pill-dot", {
 			width: "0.5em",
@@ -114,9 +109,6 @@ export default named({
 			rule([`.pill.${name}`, `.pill[data-color='${name}']`], {
 				__pill_tone: `${color}`,
 				__pill_contrast: `${contrast}`,
-				background: colormix(`${color}`, vars.color.paper, "85%", "100%"),
-				color: colormix(`${color}`, vars.color.ink, "58%", "100%"),
-				border_color: colormix(`${color}`, vars.color.paper, "68%", "52%"),
 			}),
 		),
 		rule(".pill[data-inverse='true']", {
@@ -274,32 +266,32 @@ export default named({
 	//
 	// ------------------------------------------------------------------------
 	panel: group(
-			rule(".panel", {
-				border_width: vars.panel.normal.border.width,
-				border_style: vars.panel.normal.border.style,
-				border_color: colormixin(vars.panel.normal.border),
-				border_radius: vars.panel.normal.border.radius,
-				padding: vars.panel.padding,
-				margin: vars.panel.margin,
-				background: colormixin(vars.panel.normal.background),
-				color: colormixin(vars.panel.normal.text),
-				box_shadow: "none",
+		rule(".panel", {
+			__panel_color: vars.panel.normal.border.base,
+			border_width: vars.panel.normal.border.width,
+			border_style: vars.panel.normal.border.style,
+			border_color: colormixin({
+				base: "var(--panel-color)",
+				tint: vars.panel.normal.border.tint,
+				blend: vars.panel.normal.border.blend,
+				opacity: vars.panel.normal.border.opacity,
 			}),
+			border_radius: vars.panel.normal.border.radius,
+			padding: vars.panel.padding,
+			margin: vars.panel.margin,
+			background: colormixin({
+				base: "var(--panel-color)",
+				tint: vars.panel.normal.background.tint,
+				blend: vars.panel.normal.background.blend,
+				opacity: vars.panel.normal.background.opacity,
+			}),
+			color: colormixin(vars.panel.normal.text),
+			box_shadow: "none",
+		}),
 		...["primary", "secondary", "tertiary", "success", "warning", "danger"].map(
 			(variant) =>
 				rule(`.panel.${variant}`, {
-					background: colormixin({
-						base: vars.panel.color[variant],
-						tint: vars.panel.normal.background.tint,
-						blend: vars.panel.normal.background.blend,
-						opacity: vars.panel.normal.background.opacity,
-					}),
-					border_color: colormixin({
-						base: vars.panel.color[variant],
-						tint: vars.panel.normal.border.tint,
-						blend: vars.panel.normal.border.blend,
-						opacity: vars.panel.normal.border.opacity,
-					}),
+					__panel_color: vars.panel.color[variant],
 				}),
 		),
 	),

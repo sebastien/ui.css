@@ -27,28 +27,18 @@ export default group(
 			line: "1.25em",
 			text: {
 				family: `${vars.font.sans}`,
-				size: `${vars.font.size}`,
-				line: `${vars.font.line}`,
 			},
 			heading: {
 				family: `${vars.font.sans}`,
-				size: `${vars.font.size}`,
-				line: `${vars.font.line}`,
 			},
 			display: {
 				family: `${vars.font.sans}`,
-				size: `${vars.font.size}`,
-				line: `${vars.font.line}`,
 			},
 			script: {
 				family: `${vars.font.cursive}`,
-				size: `${vars.font.size}`,
-				line: `${vars.font.line}`,
 			},
 			code: {
 				family: `${vars.font.mono}`,
-				size: `${vars.font.size}`,
-				line: `${vars.font.line}`,
 			},
 			controls: {
 				family: `${vars.font.sans}`,
@@ -88,11 +78,7 @@ export default group(
 	tokens({
 		color: {
 			// Scale endpoint colors
-			white: "#FFFFFF",
-			black: "#000000",
 			ink: "var(--color-slate-950, #020617)",
-			action: "var(--color-slate-400, #94a3b8)",
-			border: "var(--color-slate-400, #94a3b8)",
 			paper: "#FFFFFF",
 			// Semantic colors (reference palette variables with fallback defaults)
 			neutral: "var(--color-gray-200, #e5e7eb)",
@@ -100,15 +86,12 @@ export default group(
 			secondary: "#469485",
 			tertiary: "var(--color-teal-500, #14b8a6)",
 			success: "var(--color-green-500, #22c55e)",
-			valid: "var(--color-green-500, #22c55e)",
 			info: "var(--color-cyan-500, #06b6d4)",
 			warning: "var(--color-amber-500, #f59e0b)",
-			issue: "var(--color-amber-500, #f59e0b)",
 			error: "var(--color-red-500, #ef4444)",
 			danger: vars.color.error,
 			accent: vars.color.primary,
 			// Mode-dependent colors (defaults to light mode, swapped by .dark)
-			page: `${vars.color.paper}`,
 			text: `${vars.color.ink}`,
 		},
 	}),
@@ -128,7 +111,6 @@ export default group(
 				blend: 1.0,
 				opacity: 1.0,
 			},
-			l: 5,
 			o: 9,
 		},
 		text: {
@@ -180,9 +162,6 @@ export default group(
 			o: 9,
 			width: "1px",
 			style: "solid",
-			// FIXME: Should move this out
-			// Non-color properties
-			sizes: sizes.map((_, i) => `${i}px`),
 			radius: [
 				"1px", // 0:xxs
 				"2px", // 1:xs
@@ -200,8 +179,6 @@ export default group(
 				blend: 0.3,
 				opacity: 0.8,
 			},
-			width: "2px",
-			style: "solid",
 		},
 		// Text sizing properties (separate from text color)
 		textsize: {
@@ -226,7 +203,6 @@ export default group(
 			duration: {
 				fast: "0.1s",
 				normal: "0.2s",
-				slow: "0.3s",
 			},
 			easing: {
 				standard: "ease",
@@ -237,49 +213,7 @@ export default group(
 			},
 		},
 		control: {
-			color: {
-				border: {
-					base: `${vars.color.neutral}`,
-					tint: `${vars.color.ink}`,
-					blend: "88%",
-					opacity: "82%",
-				},
-				background: {
-					base: `${vars.color.neutral}`,
-					tint: `${vars.color.paper}`,
-					blend: "86%",
-					opacity: "100%",
-				},
-			},
 			transition: `background ${vars.motion.duration.normal} ${vars.motion.easing.standard}, color ${vars.motion.duration.normal} ${vars.motion.easing.standard}, border ${vars.motion.duration.normal} ${vars.motion.easing.standard}, outline-color ${vars.motion.duration.normal} ${vars.motion.easing.standard}`,
-			border: {
-				width: "1px",
-			},
-			focus: {
-				ring: {
-					width: "2px",
-				},
-			},
-			style: {
-				default: {
-					border: {
-						width: "3px",
-					},
-				},
-				outline: {
-					border: {
-						width: "1px",
-					},
-				},
-			},
-			icon: {
-				padding: "0.25em",
-				size: "1em",
-			},
-			disabled: {
-				blend: "50%",
-				opacity: "65%",
-			},
 		},
 		size: [
 			"0em",
@@ -303,9 +237,6 @@ export default group(
 			rpem(24, vars.scaling.margin), // 5: l
 			rpem(32, vars.scaling.margin), // 6: xl
 			rpem(48, vars.scaling.margin), // 7: xxl
-			rpem(64, vars.scaling.margin), // 8: xxxl
-			rpem(96, vars.scaling.margin), // 9: xxxxl
-			rpem(128, vars.scaling.margin), // 10: xxxxxl
 		],
 		pad: [
 			"0em",
@@ -316,9 +247,6 @@ export default group(
 			rpem(12, vars.scaling.pad), // 5: l
 			rpem(16, vars.scaling.pad), // 6: xl
 			rpem(24, vars.scaling.pad), // 7: xxl
-			rpem(32, vars.scaling.pad), // 8: xxxl
-			rpem(48, vars.scaling.pad), // 9: xxxxl
-			rpem(64, vars.scaling.pad), // 10: xxxxxl
 		],
 		gap: [
 			"0em",
@@ -358,14 +286,10 @@ export default group(
 		// - Page unit (page.unit) defines the equivalent of 1px in rems.
 		page: {
 			base: 16,
-			unit: `calc( (1rem/16) * ${vars.page.base} / 16)`,
 		},
 		heading: {
 			min: `${vars.page.base}`,
 			max: 42,
-			unit: `${vars.page.unit}`,
-			base: `${vars.heading.min}`,
-			amplitude: `calc(${vars.heading.max} - ${vars.heading.min})`,
 			size: [
 				"80%", // 0: xxs
 				"100%", // 1: xs

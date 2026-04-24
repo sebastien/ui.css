@@ -8,21 +8,11 @@ import {
 	times,
 } from "../js/uicss.js";
 
-const sizeAliases = {
-	smallest: "xxs",
-	smaller: "xs",
-	small: "s",
-	medium: "m",
-	large: "l",
-	larger: "xl",
-	largest: "xxl",
-};
-
 export default named({
 	headings: group(
-		...sizes.map((k, i) =>
-			rule([times(7, (i) => `h${i + 1}.${k}`)], {
-				font_size: `${vars.heading.size[i]}`,
+		...sizes.map((k, si) =>
+			rule([times(7, (hi) => `h${hi + 1}.sz-${si}`)], {
+				font_size: `${vars.heading.size[si]}`,
 			}),
 		),
 		// .hX rules do not have padding
@@ -255,10 +245,10 @@ export default named({
 		rule(".ol", { text_decoration: "overline" }),
 		...Object.keys(sizenames).map((k, i) =>
 			group(
-				rule([`.t-${k}`, `.t-${sizeAliases[k]}`], {
+				rule(`.t-${k}`, {
 					font_size: `calc(1rem * ${vars.textsize.size[i]})`,
 				}),
-				rule([`.${k}`, `.${sizeAliases[k]}`], {
+				rule(`.${k}`, {
 					font_size: `calc(1em * ${vars.textsize.size[i]})`,
 				}),
 			),

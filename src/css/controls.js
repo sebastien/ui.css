@@ -1,4 +1,4 @@
-import { Parser, contrast as contrastColor, group, rule, vars } from "../js/uicss.js?v=2"
+import { Parser, contrast as contrastColor, group, nesting, rule, vars } from "../js/uicss.js?v=2"
 import { colormixin } from "./colors.js"
 import DEFAULTS_SPEC from "./controls.defaults.js"
 
@@ -17,9 +17,18 @@ const DEFAULTS = PARSER.style(DEFAULTS_SPEC)
 
 // ----------------------------------------------------------------------------
 //
-// COLOR RESOLUTION — direct CSS values
+// COLOR RESOLUTION — CSS variable indirection
 //
 // ----------------------------------------------------------------------------
+
+// Default facet values when nothing is specified.
+const BASE_COLOR = "__CONTROL_COLOR__"
+const FACET_DEFAULTS = {
+	text: { base: "var(--color-ink)", tint: "var(--color-ink)", blend: "0%", opacity: "100%" },
+	background: { base: BASE_COLOR, tint: "var(--color-paper)", blend: "100%", opacity: "100%" },
+	border: { base: BASE_COLOR, tint: "var(--color-paper)", blend: "80%", opacity: "100%", width: "1px", radius: "4px" },
+	outline: { base: BASE_COLOR, tint: "var(--color-paper)", blend: "80%", opacity: "0%", width: "2px", radius: "4px" },
+}
 
 // Resolve a color name to a CSS value.
 function resolveColorName(name) {
@@ -27,9 +36,7 @@ function resolveColorName(name) {
 	if (name === "contrast") return "contrast"
 	if (name === "inherit") return "inherit"
 	if (name === "transparent") return "transparent"
-	// BASE_COLOR placeholder → the control's runtime color variable
 	if (name === BASE_COLOR || name === "self") return "var(--ctrl-color)"
-	// Already a CSS expression (from FACET_DEFAULTS)
 	if (name.startsWith("var(") || name.startsWith("#") || name.startsWith("color-mix(")) return name
 	return `var(--color-${name})`
 }
@@ -58,58 +65,33 @@ function normalizeOpacity(v) {
 //
 // ----------------------------------------------------------------------------
 
-// Default facet values when nothing is specified.
-// The base for bg/bd/ol uses the control's --color variable (set per semantic class).
-// This is a placeholder that gets replaced with the control-specific variable in buildColorValue.
-const BASE_COLOR = "__CONTROL_COLOR__"
-const FACET_DEFAULTS = {
-	text: { base: "var(--color-ink)", tint: "var(--color-ink)", blend: "0%", opacity: "100%" },
-	background: { base: BASE_COLOR, tint: "var(--color-paper)", blend: "100%", opacity: "100%" },
-	border: { base: BASE_COLOR, tint: "var(--color-paper)", blend: "80%", opacity: "100%", width: "1px", radius: "4px" },
-	outline: { base: BASE_COLOR, tint: "var(--color-paper)", blend: "80%", opacity: "0%", width: "2px", radius: "4px" },
-}
-
-// Function: resolveAllFacets
-// For a given variant+state, resolves all facets for a property by walking
-// the inheritance chain: state → variant default → definition default → FACET_DEFAULTS.
 function resolveAllFacets(definition, variant, state, shortKey) {
 	const propName = PROPS[shortKey]
 	const isEdge = shortKey === "bd" || shortKey === "ol"
 	const facetNames = isEdge ? [...COLOR_FACETS, ...GEOM_FACETS] : COLOR_FACETS
 	const defaults = FACET_DEFAULTS[propName] || {}
 
-	// Collect all parsed values at each level of the chain
 	const getValue = (v, s) => {
 		const raw = definition[v]?.[s]?.[shortKey]
 		return raw ? PARSER.parseProperty(shortKey, raw) : null
 	}
 
 	const layers = []
-	// 1. Current variant+state
 	const current = getValue(variant, state)
 	if (current) layers.push(current)
-	// 2. Current variant default state (for state inheritance within same variant)
 	if (state !== "default") {
 		const vDefault = getValue(variant, "default")
 		if (vDefault) layers.push(vDefault)
 	}
-
-	// If the current variant defines this property at all (in any state above),
-	// don't fall through to the default variant — fill from FACET_DEFAULTS instead.
-	// Only fall through to default variant if the current variant never defines this property.
 	if (layers.length === 0 && variant !== "default") {
-		// Current variant doesn't define this property — try default variant
 		const dState = getValue("default", state)
 		if (dState) layers.push(dState)
 		const dDefault = getValue("default", "default")
 		if (dDefault) layers.push(dDefault)
 	}
 
-	if (layers.length === 0) {
-		return { ...defaults }
-	}
+	if (layers.length === 0) return { ...defaults }
 
-	// Per-facet merge across layers (within same variant or default fallback)
 	const result = {}
 	for (const facet of facetNames) {
 		for (const layer of layers) {
@@ -123,8 +105,6 @@ function resolveAllFacets(definition, variant, state, shortKey) {
 	return result
 }
 
-// Function: resolveSubFacets
-// Same as resolveAllFacets but for sub-element properties like "marker.bg".
 function resolveSubFacets(definition, variant, state, subElement, shortKey) {
 	const propName = PROPS[shortKey]
 	const isEdge = shortKey === "bd" || shortKey === "ol"
@@ -166,7 +146,7 @@ function resolveSubFacets(definition, variant, state, subElement, shortKey) {
 }
 
 // Function: buildColorValue
-// Builds a CSS color value from resolved facets.
+// Builds a CSS color value from resolved facets (used for special cases only).
 function buildColorValue(facets) {
 	const base = resolveColorName(facets.base)
 	const tint = resolveColorName(facets.tint)
@@ -175,7 +155,6 @@ function buildColorValue(facets) {
 
 	if (!base) return null
 
-	// Special: contrast uses contrast-color()
 	if (base === "contrast") {
 		if (opacity && opacity !== "100%") {
 			return `color-mix(in oklch, contrast-color(var(--ctrl-bg, var(--color-paper))), transparent calc(100% - ${opacity}))`
@@ -183,7 +162,6 @@ function buildColorValue(facets) {
 		return `contrast-color(var(--ctrl-bg, var(--color-paper)))`
 	}
 
-	// Special: inherit
 	if (base === "inherit") {
 		if (opacity && opacity !== "100%") {
 			return `color-mix(in oklch, inherit, transparent calc(100% - ${opacity}))`
@@ -191,12 +169,8 @@ function buildColorValue(facets) {
 		return "inherit"
 	}
 
-	// Special: transparent shorthand (opacity=0)
 	if (opacity === "0%") return "transparent"
 
-	// Normal color-mix
-	// Spec blend: 0% = pure base, 100% = pure tint.
-	// We emit color-mix directly: tint percentage = blend.
 	const b = blend || "0%"
 	const o = opacity || "100%"
 	const inner = `color-mix(in oklch, ${base}, ${tint || base} ${b})`
@@ -206,94 +180,161 @@ function buildColorValue(facets) {
 	return inner
 }
 
-// Function: buildCSSProps
-// Builds the CSS property object for a given variant+state.
-function buildCSSProps(definition, variant, state) {
-	const props = {}
+// ----------------------------------------------------------------------------
+//
+// VARIABLE INDIRECTION — the core size optimization
+//
+// ----------------------------------------------------------------------------
+// Instead of emitting computed color-mix() per rule, we emit CSS variable
+// overrides. A shared base rule computes the actual colors from variables.
+//
+// Variables per channel (tx, bg, bd, ol):
+//   --ctrl-{ch}-base    color base (e.g. var(--ctrl-color))
+//   --ctrl-{ch}-tint    color tint (e.g. var(--color-paper))
+//   --ctrl-{ch}-blend   blend percentage (e.g. 20%)
+//   --ctrl-{ch}-opacity opacity percentage (e.g. 100%)
+// Plus geometry for bd/ol:
+//   --ctrl-{ch}-width   border/outline width
+//   --ctrl-{ch}-radius  border/outline radius
 
-	// Text color
-	const txFacets = resolveAllFacets(definition, variant, state, "tx")
-	const txColor = buildColorValue(txFacets)
-	if (txColor) props.color = txColor
+// Channels that use the variable indirection system.
+const CHANNELS = ["tx", "bg", "bd", "ol"]
 
-	// Background
-	const bgFacets = resolveAllFacets(definition, variant, state, "bg")
-	const bgColor = buildColorValue(bgFacets)
-	if (bgColor) {
-		props.background = bgColor
-		// Store for contrast-color reference
-		if (bgColor !== "transparent" && bgColor !== "inherit") {
-			props["--ctrl-bg"] = bgColor
+// Check if facets use a special mode (contrast/inherit/transparent)
+// that cannot be expressed through variable indirection.
+function facetMode(facets) {
+	const base = facets.base
+	if (!base) return "normal"
+	if (base === "contrast") return "contrast"
+	if (base === "inherit") return "inherit"
+	const opacity = normalizeOpacity(facets.opacity)
+	if (opacity === "0%") return "transparent"
+	return "normal"
+}
+
+// Build variable overrides for a single channel.
+// Returns an object of CSS variable assignments, or null if all defaults.
+// `baseFacets` are the resolved facets for the base state to diff against.
+function channelVarOverrides(ch, facets, baseFacets) {
+	const overrides = {}
+	let hasOverride = false
+
+	const base = resolveColorName(facets.base)
+	const tint = resolveColorName(facets.tint)
+	const blend = normalizeBlend(facets.blend)
+	const opacity = normalizeOpacity(facets.opacity)
+
+	const baseBase = baseFacets ? resolveColorName(baseFacets.base) : null
+	const baseTint = baseFacets ? resolveColorName(baseFacets.tint) : null
+	const baseBlend = baseFacets ? normalizeBlend(baseFacets.blend) : null
+	const baseOpacity = baseFacets ? normalizeOpacity(baseFacets.opacity) : null
+
+	if (base && base !== baseBase) { overrides[`--ctrl-${ch}-base`] = base; hasOverride = true }
+	if (tint && tint !== baseTint) { overrides[`--ctrl-${ch}-tint`] = tint; hasOverride = true }
+	if (blend && blend !== baseBlend) { overrides[`--ctrl-${ch}-blend`] = blend; hasOverride = true }
+	if (opacity && opacity !== baseOpacity) { overrides[`--ctrl-${ch}-opacity`] = opacity; hasOverride = true }
+
+	// Geometry for border/outline
+	if (ch === "bd" || ch === "ol") {
+		const baseWidth = baseFacets?.width || null
+		const baseRadius = baseFacets?.radius || null
+		if (facets.width && facets.width !== baseWidth) { overrides[`--ctrl-${ch}-width`] = facets.width; hasOverride = true }
+		if (facets.radius && facets.radius !== baseRadius) { overrides[`--ctrl-${ch}-radius`] = facets.radius; hasOverride = true }
+	}
+
+	return hasOverride ? overrides : null
+}
+
+// Build the full set of variable overrides for all channels at a given variant+state.
+// `baseDefinition` is the resolved facets at the base state to diff against (null for absolute).
+function buildVarOverrides(definition, variant, state, baseFacetsMap) {
+	const overrides = {}
+	let hasOverride = false
+	const directProps = {} // For contrast/inherit special cases
+	let hasDirect = false
+
+	for (const ch of CHANNELS) {
+		const facets = resolveAllFacets(definition, variant, state, ch)
+		const mode = facetMode(facets)
+
+		if (mode === "contrast") {
+			// Direct property override for contrast
+			const value = buildColorValue(facets)
+			if (ch === "tx") directProps.color = value
+			else if (ch === "bg") { directProps.background = value; directProps["--ctrl-bg"] = value }
+			hasDirect = true
+			continue
+		}
+		if (mode === "inherit") {
+			const value = buildColorValue(facets)
+			if (ch === "tx") directProps.color = value
+			else if (ch === "bg") directProps.background = value
+			hasDirect = true
+			continue
+		}
+
+		const baseFacets = baseFacetsMap?.[ch] || null
+		const chOverrides = channelVarOverrides(ch, facets, baseFacets)
+		if (chOverrides) {
+			Object.assign(overrides, chOverrides)
+			hasOverride = true
 		}
 	}
 
-	// Border
-	const bdFacets = resolveAllFacets(definition, variant, state, "bd")
-	const bdColor = buildColorValue(bdFacets)
-	if (bdColor) props.border_color = bdColor
-	if (bdFacets.width) props.border_width = bdFacets.width
-	if (bdFacets.radius) props.border_radius = bdFacets.radius
-	props.border_style = "solid"
-
-	// Outline
-	const olFacets = resolveAllFacets(definition, variant, state, "ol")
-	const olColor = buildColorValue(olFacets)
-	if (olColor) props.outline_color = olColor
-	if (olFacets.width) props.outline_width = olFacets.width
-	props.outline_style = "solid"
-	props.outline_offset = "0px"
-
-	return props
+	return { vars: hasOverride ? overrides : null, direct: hasDirect ? directProps : null }
 }
 
-// Function: hasChanges
-// Returns true if the variant+state has any explicit property declarations.
-function hasChanges(definition, variant, state) {
+// Build variable overrides for state changes only (only channels explicitly set).
+function buildStateVarOverrides(definition, variant, state, baseFacetsMap) {
 	const stateProps = definition[variant]?.[state]
-	return stateProps && Object.keys(stateProps).length > 0
-}
+	if (!stateProps) return { vars: null, direct: null }
 
-// Function: changedProps
-// Returns only the CSS properties that actually change relative to the base.
-// For the default variant+default state, returns everything.
-// For other states, returns only what the shorthand explicitly sets.
-function changedProps(definition, variant, state) {
-	const stateProps = definition[variant]?.[state]
-	if (!stateProps) return {}
-	const props = {}
+	const overrides = {}
+	let hasOverride = false
+	const directProps = {}
+	let hasDirect = false
 
 	for (const rawKey in stateProps) {
-		const dotIdx = rawKey.indexOf(".")
-		if (dotIdx >= 0) continue // Skip sub-elements here
+		if (rawKey.indexOf(".") >= 0) continue
+		if (!PROPS[rawKey]) continue
+		const ch = rawKey
 
-		const shortKey = rawKey
-		const propName = PROPS[shortKey]
-		if (!propName) continue
+		const facets = resolveAllFacets(definition, variant, state, ch)
+		const mode = facetMode(facets)
 
-		const facets = resolveAllFacets(definition, variant, state, shortKey)
+		if (mode === "contrast") {
+			const value = buildColorValue(facets)
+			if (ch === "tx") directProps.color = value
+			else if (ch === "bg") { directProps.background = value; directProps["--ctrl-bg"] = value }
+			hasDirect = true
+			continue
+		}
+		if (mode === "inherit") {
+			const value = buildColorValue(facets)
+			if (ch === "tx") directProps.color = value
+			else if (ch === "bg") directProps.background = value
+			hasDirect = true
+			continue
+		}
 
-		if (propName === "text") {
-			const v = buildColorValue(facets)
-			if (v) props.color = v
-		} else if (propName === "background") {
-			const v = buildColorValue(facets)
-			if (v) {
-				props.background = v
-				if (v !== "transparent" && v !== "inherit") props["--ctrl-bg"] = v
-			}
-		} else if (propName === "border") {
-			const v = buildColorValue(facets)
-			if (v) props.border_color = v
-			if (facets.width) props.border_width = facets.width
-			if (facets.radius) props.border_radius = facets.radius
-		} else if (propName === "outline") {
-			const v = buildColorValue(facets)
-			if (v) props.outline_color = v
-			if (facets.width) props.outline_width = facets.width
+		const baseFacets = baseFacetsMap?.[ch] || null
+		const chOverrides = channelVarOverrides(ch, facets, baseFacets)
+		if (chOverrides) {
+			Object.assign(overrides, chOverrides)
+			hasOverride = true
 		}
 	}
 
-	return props
+	return { vars: hasOverride ? overrides : null, direct: hasDirect ? directProps : null }
+}
+
+// Build the base facets map for a given variant+state (used as diff base).
+function buildBaseFacetsMap(definition, variant, state) {
+	const map = {}
+	for (const ch of CHANNELS) {
+		map[ch] = resolveAllFacets(definition, variant, state, ch)
+	}
+	return map
 }
 
 // ----------------------------------------------------------------------------
@@ -314,6 +355,25 @@ const STATE_SELECTORS = {
 	indeterminate: [":indeterminate"],
 	invalid: [":invalid", ".invalid"],
 	readonly: ["[readonly]", ".readonly"],
+}
+
+// Combine state suffixes into a single :is() or direct suffix.
+// Returns a single suffix string to append to a base selector.
+function stateSuffix(state) {
+	const sels = STATE_SELECTORS[state]
+	if (sels) {
+		if (sels.length === 0) return ""
+		if (sels.length === 1) return sels[0]
+		return `:is(${sels.join(", ")})`
+	}
+	const parts = state.split("+")
+	if (parts.length > 1) {
+		return parts.map((p) => {
+			const s = STATE_SELECTORS[p] || [`.${p}`]
+			return s.length === 1 ? s[0] : `:is(${s.join(", ")})`
+		}).join("")
+	}
+	return `.${state}`
 }
 
 function stateSelectors(state) {
@@ -353,23 +413,137 @@ const SELECTORS = {
 	panel: [".panel"],
 }
 
+// All control selectors combined — used for the shared computation base rule.
+// Uses :where() to keep specificity at 0 so per-control rules can override easily.
+const ALL_CONTROL_SELECTORS = [
+	":where(button, .button, input:not([type=checkbox]):not([type=radio]):not([type=range]), .input, textarea, .textarea, select, .select, .selectable, .selector, input[type=checkbox], .checkbox, input[type=radio], .radio, input[type=range], .range, .slider, .panel)",
+]
+
+// ----------------------------------------------------------------------------
+//
+// SHARED COMPUTATION BASE RULE
+//
+// ----------------------------------------------------------------------------
+
+// The shared base defaults match the most common control pattern (input-like).
+// Button and other outliers override just the few variables that differ.
+const SHARED_BASE_FACETS = {
+	tx: { base: "var(--ctrl-color)", tint: "var(--color-ink)", blend: "75%", opacity: "100%" },
+	bg: { base: "var(--ctrl-color)", tint: "var(--color-paper)", blend: "95%", opacity: "100%" },
+	bd: { base: "var(--ctrl-color)", tint: "var(--color-ink)", blend: "85%", opacity: "25%", width: "1px", radius: "4px" },
+	ol: { base: "var(--ctrl-color)", tint: "var(--color-paper)", blend: "75%", opacity: "0%", width: "2px" },
+}
+
+// Function: controlBase
+// Emits the shared base rule that computes actual CSS properties from
+// --ctrl-{channel}-{facet} variables. Emitted once for all controls.
+function controlBase() {
+	// Semantic color classes — nested inside the shared base
+	const SEMANTIC_COLORS = ["neutral", "primary", "secondary", "tertiary", "accent", "success", "warning", "danger", "info", "error"]
+	const semanticRules = SEMANTIC_COLORS.map((color) =>
+		rule(`&.${color}`, { "--ctrl-color": `var(--color-${color})` })
+	)
+
+	return nesting(ALL_CONTROL_SELECTORS, {
+		"--ctrl-color": "var(--color-neutral)",
+		// Text color variables + computation
+		"--ctrl-tx-base": SHARED_BASE_FACETS.tx.base,
+		"--ctrl-tx-tint": SHARED_BASE_FACETS.tx.tint,
+		"--ctrl-tx-blend": SHARED_BASE_FACETS.tx.blend,
+		"--ctrl-tx-opacity": SHARED_BASE_FACETS.tx.opacity,
+		color: "color-mix(in oklch, color-mix(in oklch, var(--ctrl-tx-base), var(--ctrl-tx-tint) var(--ctrl-tx-blend)), transparent calc(100% - var(--ctrl-tx-opacity)))",
+		// Background variables + computation
+		"--ctrl-bg-base": SHARED_BASE_FACETS.bg.base,
+		"--ctrl-bg-tint": SHARED_BASE_FACETS.bg.tint,
+		"--ctrl-bg-blend": SHARED_BASE_FACETS.bg.blend,
+		"--ctrl-bg-opacity": SHARED_BASE_FACETS.bg.opacity,
+		background: "color-mix(in oklch, color-mix(in oklch, var(--ctrl-bg-base), var(--ctrl-bg-tint) var(--ctrl-bg-blend)), transparent calc(100% - var(--ctrl-bg-opacity)))",
+		"--ctrl-bg": "color-mix(in oklch, color-mix(in oklch, var(--ctrl-bg-base), var(--ctrl-bg-tint) var(--ctrl-bg-blend)), transparent calc(100% - var(--ctrl-bg-opacity)))",
+		// Border variables + computation
+		"--ctrl-bd-base": SHARED_BASE_FACETS.bd.base,
+		"--ctrl-bd-tint": SHARED_BASE_FACETS.bd.tint,
+		"--ctrl-bd-blend": SHARED_BASE_FACETS.bd.blend,
+		"--ctrl-bd-opacity": SHARED_BASE_FACETS.bd.opacity,
+		"--ctrl-bd-width": SHARED_BASE_FACETS.bd.width,
+		"--ctrl-bd-radius": SHARED_BASE_FACETS.bd.radius,
+		border_color: "color-mix(in oklch, color-mix(in oklch, var(--ctrl-bd-base), var(--ctrl-bd-tint) var(--ctrl-bd-blend)), transparent calc(100% - var(--ctrl-bd-opacity)))",
+		border_width: "var(--ctrl-bd-width)",
+		border_radius: "var(--ctrl-bd-radius)",
+		border_style: "solid",
+		// Outline variables + computation
+		"--ctrl-ol-base": SHARED_BASE_FACETS.ol.base,
+		"--ctrl-ol-tint": SHARED_BASE_FACETS.ol.tint,
+		"--ctrl-ol-blend": SHARED_BASE_FACETS.ol.blend,
+		"--ctrl-ol-opacity": SHARED_BASE_FACETS.ol.opacity,
+		"--ctrl-ol-width": SHARED_BASE_FACETS.ol.width,
+		outline_color: "color-mix(in oklch, color-mix(in oklch, var(--ctrl-ol-base), var(--ctrl-ol-tint) var(--ctrl-ol-blend)), transparent calc(100% - var(--ctrl-ol-opacity)))",
+		outline_width: "var(--ctrl-ol-width)",
+		outline_style: "solid",
+		outline_offset: "0px",
+		// Shared
+		transition: "var(--control-transition)",
+	}, semanticRules)
+}
+
 // ----------------------------------------------------------------------------
 //
 // CONTROL BUILDER
 //
 // ----------------------------------------------------------------------------
 
-// Function: controlRules
-// Generates CSS rules for a single control from its shorthand definition.
-// Emits direct CSS properties (no --current-* indirection).
-function controlRules(control, selectors, definition) {
-	const rules = []
+// Function: controlSharedRules
+// Emits state/variant variable-override rules with merged selectors.
+// Uses nesting to avoid repeating long selector lists.
+function controlSharedRules(selectors, definition) {
+	const defaultFacets = buildBaseFacetsMap(definition, "default", "default")
 
-	// Base rule: font, padding, transition + default variant default state colors
+	// Wrap selectors in :where() for compact output
+	const base = selectors.length > 2 ? [`:where(${selectors.join(", ")})`] : selectors
+
+	// Default variant overrides (diff against shared base)
+	const { vars: defaultVars, direct: defaultDirect } = buildVarOverrides(definition, "default", "default", SHARED_BASE_FACETS)
+	const defaultProps = { ...(defaultVars || {}), ...(defaultDirect || {}) }
+
+	// Collect nested child rules for variant+state
+	const children = []
+	for (const variant in definition) {
+		const variantBaseFacets = buildBaseFacetsMap(definition, variant, "default")
+		for (const state in definition[variant]) {
+			if (variant === "default" && state === "default") continue
+			let result
+			if (state === "default" && variant !== "default") {
+				result = buildVarOverrides(definition, variant, state, defaultFacets)
+			} else {
+				result = buildStateVarOverrides(definition, variant, state, variantBaseFacets)
+			}
+			const { vars: stateVars, direct: stateDirect } = result
+			const props = { ...(stateVars || {}), ...(stateDirect || {}) }
+			if (Object.keys(props).length === 0) continue
+
+			let suffix_
+			const suffix = stateSuffix(state)
+			if (state === "default" && variant !== "default") {
+				suffix_ = `&.${variant}`
+			} else if (variant === "default") {
+				suffix_ = `&${suffix}`
+			} else {
+				suffix_ = `&.${variant}${suffix}`
+			}
+			if (state === "disabled") { props.cursor = "default"; props.pointer_events = "none" }
+			children.push(rule(suffix_, props))
+		}
+	}
+
+	return nesting(base, defaultProps, children)
+}
+
+// Function: controlIdentityRules
+// Emits per-control identity (font, padding, cursor) and structural rules.
+function controlIdentityRules(control, selectors, definition) {
+	const rules = []
 	const CLICKABLE = new Set(["button", "selectable", "selector", "checkbox", "radio", "range", "slider"])
-	const baseProps = buildCSSProps(definition, "default", "default")
+
 	rules.push(rule(selectors, {
-		"--ctrl-color": `var(--color-neutral)`,
 		...(CLICKABLE.has(control) ? { cursor: "pointer" } : {}),
 		font_family: `var(--${control}-font-family, var(--font-control-family, sans-serif))`,
 		font_weight: `var(--${control}-font-weight, var(--font-control-weight, 500))`,
@@ -377,40 +551,69 @@ function controlRules(control, selectors, definition) {
 		line_height: `var(--${control}-font-line, var(--font-control-line, 1em))`,
 		padding: `var(--${control}-padding, 0.65em 1em)`,
 		margin: `var(--${control}-margin, 0px)`,
-		transition: `var(--control-transition)`,
-		...baseProps,
 	}))
 
-	// Semantic color classes: .primary, .accent, etc. override --ctrl-color
-	const SEMANTIC_COLORS = ["neutral", "primary", "secondary", "tertiary", "accent", "success", "warning", "danger", "info", "error"]
-	for (const color of SEMANTIC_COLORS) {
-		const sel = selectors.map((s) => `${s}.${color}`)
-		rules.push(rule(sel, { "--ctrl-color": `var(--color-${color})` }))
+	// Structural rules (checkbox, radio, etc.)
+	emitStructuralRules(control, selectors, definition, rules)
+
+	return group(...rules)
+}
+
+// Function: controlRules
+// Generates CSS rules for a single control from its shorthand definition.
+// Used for controls that don't share a definition with others.
+function controlRules(control, selectors, definition) {
+	const rules = []
+	const CLICKABLE = new Set(["button", "selectable", "selector", "checkbox", "radio", "range", "slider"])
+
+	// Use :where() for compact state selectors when multiple base selectors exist
+	const baseSel = selectors.length > 2 ? [`:where(${selectors.join(", ")})`] : selectors
+
+	// Per-control identity rule: font, padding, cursor + variable overrides
+	// that differ from the shared base.
+	const defaultFacets = buildBaseFacetsMap(definition, "default", "default")
+	const { vars: defaultVars, direct: defaultDirect } = buildVarOverrides(definition, "default", "default", SHARED_BASE_FACETS)
+
+	const identityProps = {
+		...(CLICKABLE.has(control) ? { cursor: "pointer" } : {}),
+		font_family: `var(--${control}-font-family, var(--font-control-family, sans-serif))`,
+		font_weight: `var(--${control}-font-weight, var(--font-control-weight, 500))`,
+		font_size: `var(--${control}-font-size, var(--font-control-size, var(--font-size)))`,
+		line_height: `var(--${control}-font-line, var(--font-control-line, 1em))`,
+		padding: `var(--${control}-padding, 0.65em 1em)`,
+		margin: `var(--${control}-margin, 0px)`,
+		...(defaultVars || {}),
+		...(defaultDirect || {}),
 	}
 
-	// Variant + state rules
+	// Collect nested child rules for variant+state
+	const children = []
 	for (const variant in definition) {
+		const variantBaseFacets = buildBaseFacetsMap(definition, variant, "default")
+
 		for (const state in definition[variant]) {
-			// Skip default+default (already in base rule)
 			if (variant === "default" && state === "default") continue
 
-			// For variant defaults, use full resolution; for states, only changes
-			const props = (state === "default" && variant !== "default")
-				? buildCSSProps(definition, variant, state)
-				: changedProps(definition, variant, state)
+			let result
+			if (state === "default" && variant !== "default") {
+				result = buildVarOverrides(definition, variant, state, defaultFacets)
+			} else {
+				result = buildStateVarOverrides(definition, variant, state, variantBaseFacets)
+			}
+
+			const { vars: stateVars, direct: stateDirect } = result
+			const props = { ...(stateVars || {}), ...(stateDirect || {}) }
+
 			if (Object.keys(props).length === 0) continue
 
-			// Build selectors
-			let sel
+			let suffix_
+			const suffix = stateSuffix(state)
 			if (state === "default" && variant !== "default") {
-				sel = selectors.map((s) => `${s}.${variant}`)
+				suffix_ = `&.${variant}`
 			} else if (variant === "default") {
-				const suffixes = stateSelectors(state)
-				sel = suffixes.flatMap((m) => selectors.map((s) => `${s}${m}`))
+				suffix_ = `&${suffix}`
 			} else {
-				const variantSel = selectors.map((s) => `${s}.${variant}`)
-				const suffixes = stateSelectors(state)
-				sel = suffixes.flatMap((m) => variantSel.map((s) => `${s}${m}`))
+				suffix_ = `&.${variant}${suffix}`
 			}
 
 			// Add disabled extras
@@ -419,16 +622,25 @@ function controlRules(control, selectors, definition) {
 				props.pointer_events = "none"
 			}
 
-			rules.push(rule(sel, props))
+			children.push(rule(suffix_, props))
 		}
 	}
+
+	// Emit as nesting rule: identity + state children nested inside
+	rules.push(nesting(selectors, identityProps, children))
 
 	// ----------------------------------------------------------------
 	// Control-specific structural rules (pseudo-elements, sizing, etc.)
 	// ----------------------------------------------------------------
+	emitStructuralRules(control, selectors, definition, rules)
 
+	return group(...rules)
+}
+
+// Function: emitStructuralRules
+// Emits control-specific structural rules (pseudo-elements, sizing, etc.)
+function emitStructuralRules(control, selectors, definition, rules) {
 	if (control === "checkbox") {
-		// Checkbox: square box with checkmark pseudo-element
 		rules.push(rule(selectors, {
 			appearance: "none",
 			width: "1.125em",
@@ -474,7 +686,6 @@ function controlRules(control, selectors, definition) {
 	}
 
 	if (control === "radio") {
-		// Radio: circular box with dot pseudo-element
 		rules.push(rule(selectors, {
 			appearance: "none",
 			width: "1.125em",
@@ -509,7 +720,6 @@ function controlRules(control, selectors, definition) {
 	}
 
 	if (control === "selector") {
-		// Selector container: flex row, pill-shaped, small padding
 		rules.push(rule(selectors, {
 			display: "inline-flex",
 			flex_wrap: "nowrap",
@@ -518,7 +728,6 @@ function controlRules(control, selectors, definition) {
 			padding: "2px",
 			border_style: "solid",
 		}))
-		// Hide radio/checkbox inputs inside selector
 		const inputSel = selectors.flatMap((s) => [
 			`${s} > input[type="radio"]`,
 			`${s} > input[type="checkbox"]`,
@@ -537,7 +746,6 @@ function controlRules(control, selectors, definition) {
 	}
 
 	if (control === "selector.option") {
-		// Option labels: ghost-button style, with padding and cursor
 		rules.push(rule(selectors, {
 			padding: "0.35em 0.75em",
 			cursor: "pointer",
@@ -547,13 +755,15 @@ function controlRules(control, selectors, definition) {
 			transition: "var(--control-transition)",
 		}))
 
-		// :checked + label mirrors the .selected state for input+label pattern
+		// :checked + label mirrors the .selected state
 		const checkedLabelSel = [
 			".selector > input:checked + label",
 			".selector > input:checked + .option",
 		]
-		const selectedProps = buildCSSProps(definition, "default", "selected")
-		if (selectedProps && Object.keys(selectedProps).length > 0) {
+		const selectedBaseFacets = buildBaseFacetsMap(definition, "default", "default")
+		const { vars: selVars, direct: selDirect } = buildVarOverrides(definition, "default", "selected", selectedBaseFacets)
+		const selectedProps = { ...(selVars || {}), ...(selDirect || {}) }
+		if (Object.keys(selectedProps).length > 0) {
 			rules.push(rule(checkedLabelSel, selectedProps))
 		}
 		// :checked + label hover
@@ -561,7 +771,9 @@ function controlRules(control, selectors, definition) {
 			".selector > input:checked + label:hover",
 			".selector > input:checked + .option:hover",
 		]
-		const selHoverProps = changedProps(definition, "default", "selected+hover")
+		const selHoverBaseFacets = buildBaseFacetsMap(definition, "default", "selected")
+		const { vars: selHoverVars, direct: selHoverDirect } = buildStateVarOverrides(definition, "default", "selected+hover", selHoverBaseFacets)
+		const selHoverProps = { ...(selHoverVars || {}), ...(selHoverDirect || {}) }
 		if (Object.keys(selHoverProps).length > 0) {
 			rules.push(rule(checkedHoverLabelSel, selHoverProps))
 		}
@@ -570,14 +782,14 @@ function controlRules(control, selectors, definition) {
 			".selector > input:checked + label:active",
 			".selector > input:checked + .option:active",
 		]
-		const selActiveProps = changedProps(definition, "default", "selected+active")
+		const { vars: selActiveVars, direct: selActiveDirect } = buildStateVarOverrides(definition, "default", "selected+active", selHoverBaseFacets)
+		const selActiveProps = { ...(selActiveVars || {}), ...(selActiveDirect || {}) }
 		if (Object.keys(selActiveProps).length > 0) {
 			rules.push(rule(checkedActiveLabelSel, selActiveProps))
 		}
 	}
 
 	if (control === "range" || control === "slider") {
-		// Range/slider: custom track and thumb
 		rules.push(rule(selectors, {
 			appearance: "none",
 			width: "100%",
@@ -587,21 +799,18 @@ function controlRules(control, selectors, definition) {
 			border: "none",
 			outline: "none",
 		}))
-		// Track — webkit
 		const trackWebkit = selectors.map((s) => `${s}::-webkit-slider-runnable-track`)
 		rules.push(rule(trackWebkit, {
 			height: "4px",
 			border_radius: "2px",
 			background: "color-mix(in oklch, var(--ctrl-color), var(--color-paper) 60%)",
 		}))
-		// Track — moz
 		const trackMoz = selectors.map((s) => `${s}::-moz-range-track`)
 		rules.push(rule(trackMoz, {
 			height: "4px",
 			border_radius: "2px",
 			background: "color-mix(in oklch, var(--ctrl-color), var(--color-paper) 60%)",
 		}))
-		// Thumb — webkit
 		const thumbWebkit = selectors.map((s) => `${s}::-webkit-slider-thumb`)
 		rules.push(rule(thumbWebkit, {
 			appearance: "none",
@@ -614,7 +823,6 @@ function controlRules(control, selectors, definition) {
 			cursor: "pointer",
 			transition: "var(--control-transition)",
 		}))
-		// Thumb — moz
 		const thumbMoz = selectors.map((s) => `${s}::-moz-range-thumb`)
 		rules.push(rule(thumbMoz, {
 			appearance: "none",
@@ -626,16 +834,10 @@ function controlRules(control, selectors, definition) {
 			cursor: "pointer",
 			transition: "var(--control-transition)",
 		}))
-		// Hover — enlarge thumb
 		const hoverThumbWebkit = selectors.map((s) => `${s}:hover::-webkit-slider-thumb`)
 		const hoverThumbMoz = selectors.map((s) => `${s}:hover::-moz-range-thumb`)
-		rules.push(rule(hoverThumbWebkit, {
-			transform: "scale(1.15)",
-		}))
-		rules.push(rule(hoverThumbMoz, {
-			transform: "scale(1.15)",
-		}))
-		// Focus — ring on thumb
+		rules.push(rule(hoverThumbWebkit, { transform: "scale(1.15)" }))
+		rules.push(rule(hoverThumbMoz, { transform: "scale(1.15)" }))
 		const focusThumbWebkit = selectors.map((s) => `${s}:focus-visible::-webkit-slider-thumb`)
 		const focusThumbMoz = selectors.map((s) => `${s}:focus-visible::-moz-range-thumb`)
 		rules.push(rule(focusThumbWebkit, {
@@ -646,7 +848,6 @@ function controlRules(control, selectors, definition) {
 			outline: "2px solid color-mix(in oklch, var(--ctrl-color), var(--color-paper) 50%)",
 			outline_offset: "2px",
 		}))
-		// Disabled
 		const disabledTrackWebkit = selectors.flatMap((s) => [`${s}[disabled]::-webkit-slider-runnable-track`, `${s}.disabled::-webkit-slider-runnable-track`])
 		const disabledTrackMoz = selectors.flatMap((s) => [`${s}[disabled]::-moz-range-track`, `${s}.disabled::-moz-range-track`])
 		const disabledThumbWebkit = selectors.flatMap((s) => [`${s}[disabled]::-webkit-slider-thumb`, `${s}.disabled::-webkit-slider-thumb`])
@@ -656,8 +857,6 @@ function controlRules(control, selectors, definition) {
 		rules.push(rule(disabledThumbWebkit, { opacity: "0.5", cursor: "default" }))
 		rules.push(rule(disabledThumbMoz, { opacity: "0.5", cursor: "default" }))
 	}
-
-	return group(...rules)
 }
 
 // ----------------------------------------------------------------------------
@@ -666,15 +865,52 @@ function controlRules(control, selectors, definition) {
 //
 // ----------------------------------------------------------------------------
 
+// Controls known to share nearly identical definitions — merged to save output bytes.
+// input/textarea/select share the same visual definition (input is the superset).
+const MERGE_GROUPS = {
+	"text-field": ["input", "textarea", "select"],
+}
+
 function controls(defs = DEFAULTS, selectors = {}) {
 	const rules = []
+	// Emit shared base rule once
+	rules.push(controlBase())
+
+	// Build entries
+	const entries = {}
 	for (const key in defs) {
 		const entry = defs[key]
 		if (!entry || !entry.control || !entry.definition) continue
 		const { control, definition } = entry
 		const sel = selectors[key] || SELECTORS[control] || SELECTORS[key] || [`.${control}`]
+		entries[key] = { key, control, definition, sel }
+	}
+
+	// Track which entries have been emitted via merge groups
+	const emitted = new Set()
+
+	// Emit merged groups first
+	for (const [, memberKeys] of Object.entries(MERGE_GROUPS)) {
+		const members = memberKeys.map((k) => entries[k]).filter(Boolean)
+		if (members.length < 2) continue
+		members.forEach((m) => emitted.add(m.key))
+
+		// Use the first member's definition as the superset (it should have all states)
+		const mergedSel = members.flatMap((e) => e.sel)
+		const { definition } = members[0]
+		rules.push(controlSharedRules(mergedSel, definition))
+		for (const { control, sel } of members) {
+			rules.push(controlIdentityRules(control, sel, definition))
+		}
+	}
+
+	// Emit remaining controls individually
+	for (const key in entries) {
+		if (emitted.has(key)) continue
+		const { control, sel, definition } = entries[key]
 		rules.push(controlRules(control, sel, definition))
 	}
+
 	return group(...rules)
 }
 

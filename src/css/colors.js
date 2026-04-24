@@ -187,28 +187,11 @@ function colors(colors = COLORS) {
 			__outline_color: outlineColor,
 			outline_color: `${vars.outline.color}`,
 		}),
-		Object.entries(sides).map(([short, side]) =>
-			rule(`.ol-${short}`, {
-				[`outline_${side}_color`]: outlineColor,
-				[`outline_${side}_width`]: `${vars.outline.width}`,
-				[`outline_${side}_style`]: `${vars.outline.style}`,
-			}),
-		),
 
 		// ------------------------------------------------------------------------
-		// COLOR CLASSES - Base colors (500 level by default)
+		// COLOR CLASSES - Semantic colors
 		// ------------------------------------------------------------------------
-		// Creates .{bg,tx,bd,ol}-{color} classes for each palette color
-		Object.keys(shorthands).flatMap((short) =>
-			colors.map((color) =>
-				rule(`.${short}-${color}`, {
-					[`__${shorthands[short].name.replaceAll("-", "_")}_base`]:
-						vars.color[color][500],
-				}),
-			),
-		),
-
-		// Semantic color classes (handle paper/ink specially)
+		// Creates .{bg,tx,bd,ol}-{semantic} classes for semantic colors
 		Object.keys(shorthands).flatMap((short) =>
 			Object.keys(SEMANTIC).map((semantic) =>
 				rule(`.${short}-${semantic}`, {
@@ -221,10 +204,10 @@ function colors(colors = COLORS) {
 		// ------------------------------------------------------------------------
 		// OPACITY CLASSES
 		// ------------------------------------------------------------------------
-		// Creates .{bg,tx,bd,ol}-{0-10}o classes for opacity control
+		// Creates .{bg,tx,bd,ol}-{0,2,4,6,8,10}o classes for opacity control
 		// 0 = transparent, 10 = opaque
 		Object.keys(shorthands).flatMap((short) =>
-			times(11, (index) =>
+			[0, 2, 4, 6, 8, 10].map((index) =>
 				rule(`.${short}-${index}o`, {
 					[`__${shorthands[short].name.replaceAll("-", "_")}_opacity`]:
 						index / 10,
@@ -235,10 +218,10 @@ function colors(colors = COLORS) {
 		// ------------------------------------------------------------------------
 		// BLEND CLASSES
 		// ------------------------------------------------------------------------
-		// Creates .{bg,tx,bd,ol}-{0-10}b classes for blending
+		// Creates .{bg,tx,bd,ol}-{0,2,4,6,8,10}b classes for blending
 		// 0 = 100% tint, 10 = 100% base
 		Object.keys(shorthands).flatMap((short) =>
-			times(11, (index) =>
+			[0, 2, 4, 6, 8, 10].map((index) =>
 				rule(`.${short}-${index}b`, {
 					[`__${shorthands[short].name.replaceAll("-", "_")}_blend`]:
 						index / 10,
@@ -249,16 +232,7 @@ function colors(colors = COLORS) {
 		// ------------------------------------------------------------------------
 		// TINT COLOR CLASSES
 		// ------------------------------------------------------------------------
-		// Creates .{bg,tx,bd,ol}-to-{color} classes for setting tint
-		Object.keys(shorthands).flatMap((short) =>
-			colors.map((color) =>
-				rule(`.${short}-to-${color}`, {
-					[`__${shorthands[short].name.replaceAll("-", "_")}_tint`]:
-						vars.color[color],
-				}),
-			),
-		),
-
+		// Creates .{bg,tx,bd,ol}-to-{semantic} classes for setting tint
 		Object.keys(shorthands).flatMap((short) =>
 			Object.keys(SEMANTIC).map((semantic) =>
 				rule(`.${short}-to-${semantic}`, {
@@ -296,11 +270,6 @@ function colors(colors = COLORS) {
 		rule(".notx", { color: "inherit" }),
 		rule(".nobd", { border_color: "transparent" }),
 		rule(".nool", { outline_color: "transparent" }),
-		// Opacity-based resets
-		rule(".bg-0o", { __background_color_opacity: 0 }),
-		rule(".tx-0o", { __text_color_opacity: 0 }),
-		rule(".bd-0o", { __border_color_opacity: 0 }),
-		rule(".ol-0o", { __outline_color_opacity: 0 }),
 	);
 }
 

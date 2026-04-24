@@ -60,7 +60,7 @@ export default named({
 	),
 	gap: group(
 		sizes.map((k, i) =>
-			rule([`.g-${k}`, `.g-${i}`], {
+			rule(`.g-${i}`, {
 				gap: `${vars.gap[i]}`,
 				__gap: `${vars.gap[i]}`,
 			}),
@@ -158,13 +158,13 @@ export default named({
 	sizing: group(
 		named({
 			// TODO: Support min/max width
-			width: group(
-				...sizes.map((k, i) =>
-					rule(`.w-${k}`, { width: `${vars.size[i + 1]}` }),
-				),
-				...sizes.map((k, i) =>
-					rule(`.h-${k}`, { height: `${vars.size[i + 1]}` }),
-				),
+		width: group(
+			...sizes.map((k, i) =>
+				rule(`.w-${i}`, { width: `${vars.size[i + 1]}` }),
+			),
+			...sizes.map((k, i) =>
+				rule(`.h-${i}`, { height: `${vars.size[i + 1]}` }),
+			),
 				rule(".w-screen", { width: "100vw" }),
 				rule(".h-screen", { width: "100vh" }),
 				rule(".w-text", { max_width: `${vars.limit.text}` }),
@@ -183,33 +183,33 @@ export default named({
 					max_width: "unset",
 				}),
 			),
-			chars: group(
-				...times(10, (_) =>
-					rule(`.w-${_ + 1}ch`, {
-						width: `${Math.round(1.25 * (_ + 1))}ch`,
-					}),
-				),
+		chars: group(
+			...times(5, (_) =>
+				rule(`.w-${_ + 1}ch`, {
+					width: `${Math.round(1.25 * (_ + 1))}ch`,
+				}),
 			),
-			columns: group(
-				...times(10, (_) =>
-					rule(`.w-${_ + 1}cl`, {
-						width: `calc(${vars.column.width}*${_ + 1})`,
-					}),
-				),
+		),
+		columns: group(
+			...times(5, (_) =>
+				rule(`.w-${_ + 1}cl`, {
+					width: `calc(${vars.column.width}*${_ + 1})`,
+				}),
 			),
+		),
 
-			blocks: group(
-				...times(10, (_) =>
-					rule(`.w-${_ + 1}bl`, {
-						width: `calc(${vars.block.width}*${_ + 1})`,
-					}),
-				),
-				...times(10, (_) =>
-					rule(`.h-${_ + 1}bl`, {
-						width: `calc(${vars.block.width}*${_ + 1})`,
-					}),
-				),
+		blocks: group(
+			...times(5, (_) =>
+				rule(`.w-${_ + 1}bl`, {
+					width: `calc(${vars.block.width}*${_ + 1})`,
+				}),
 			),
+			...times(5, (_) =>
+				rule(`.h-${_ + 1}bl`, {
+					width: `calc(${vars.block.width}*${_ + 1})`,
+				}),
+			),
+		),
 			percentage: group(
 				...percentages.map((p) =>
 					rule(`.w-${p}p`, {

@@ -9,6 +9,9 @@ import {
 	vars,
 } from "../js/uicss.js";
 
+// Trimmed size scale for margin/padding utilities: 7 index steps.
+const SPACING_SIZES = [0, 2, 3, 4, 5, 6, 7]
+
 export default named({
 	base: rule(".base", {
 		font_family: `${vars.font.family}`,
@@ -25,78 +28,62 @@ export default named({
 		rule(".noblur", { __shadow_spread: "0" }),
 		rule(".nogap", { gap: "0em" }),
 		rule(".ma", { margin: "auto" }),
-		sizes.map((k, i) =>
-			rule([`.m-${k}`, `.m-${i}`], {
+		SPACING_SIZES.map((i) =>
+			rule(`.m-${i}`, {
 				margin: `${vars.margin[i]}`,
 				__margin: `${vars.margin[i]}`,
 			}),
 		),
-		sizes.map((k, i) =>
-			rule([`.mt-${k}`, `.mt-${i}`], {
-				margin_top: `${vars.margin[i]}`,
-			}),
+		SPACING_SIZES.map((i) =>
+			rule(`.mt-${i}`, { margin_top: `${vars.margin[i]}` }),
 		),
-		sizes.map((k, i) =>
-			rule([`.mb-${k}`, `.mb-${i}`], {
-				margin_bottom: `${vars.margin[i]}`,
-			}),
+		SPACING_SIZES.map((i) =>
+			rule(`.mb-${i}`, { margin_bottom: `${vars.margin[i]}` }),
 		),
-		sizes.map((k, i) =>
-			rule([`.ml-${k}`, `.ml-${i}`], {
-				margin_left: `${vars.margin[i]}`,
-			}),
+		SPACING_SIZES.map((i) =>
+			rule(`.ml-${i}`, { margin_left: `${vars.margin[i]}` }),
 		),
-		sizes.map((k, i) =>
-			rule([`.mr-${k}`, `.mr-${i}`], {
-				margin_right: `${vars.margin[i]}`,
-			}),
+		SPACING_SIZES.map((i) =>
+			rule(`.mr-${i}`, { margin_right: `${vars.margin[i]}` }),
 		),
-		sizes.map((k, i) =>
-			rule([`.mh-${k}`, `.mh-${i}`], {
+		SPACING_SIZES.map((i) =>
+			rule(`.mh-${i}`, {
 				margin_left: `${vars.margin[i]}`,
 				margin_right: `${vars.margin[i]}`,
 			}),
 		),
-		sizes.map((k, i) =>
-			rule([`.mv-${k}`, `.mv-${i}`], {
+		SPACING_SIZES.map((i) =>
+			rule(`.mv-${i}`, {
 				margin_top: `${vars.margin[i]}`,
 				margin_bottom: `${vars.margin[i]}`,
 			}),
 		),
-		sizes.map((k, i) =>
-			rule([`.p-${k}`, `.p-${i}`], {
+		SPACING_SIZES.map((i) =>
+			rule(`.p-${i}`, {
 				padding: `${vars.pad[i]}`,
 				__pad: `${vars.pad[i]}`,
 			}),
 		),
-		sizes.map((k, i) =>
-			rule([`.pt-${k}`, `.pt-${i}`], {
-				padding_top: `${vars.pad[i]}`,
-			}),
+		SPACING_SIZES.map((i) =>
+			rule(`.pt-${i}`, { padding_top: `${vars.pad[i]}` }),
 		),
-		sizes.map((k, i) =>
-			rule([`.pb-${k}`, `.pb-${i}`], {
-				padding_bottom: `${vars.pad[i]}`,
-			}),
+		SPACING_SIZES.map((i) =>
+			rule(`.pb-${i}`, { padding_bottom: `${vars.pad[i]}` }),
 		),
-		sizes.map((k, i) =>
-			rule([`.pl-${k}`, `.pl-${i}`], {
-				padding_left: `${vars.pad[i]}`,
-			}),
+		SPACING_SIZES.map((i) =>
+			rule(`.pl-${i}`, { padding_left: `${vars.pad[i]}` }),
 		),
-		sizes.map((k, i) =>
-			rule([`.pr-${k}`, `.pr-${i}`], {
-				padding_right: `${vars.pad[i]}`,
-			}),
+		SPACING_SIZES.map((i) =>
+			rule(`.pr-${i}`, { padding_right: `${vars.pad[i]}` }),
 		),
-		sizes.map((k, i) =>
-			rule([`.ph-${k}`, `.ph-${i}`], {
+		SPACING_SIZES.map((i) =>
+			rule(`.ph-${i}`, {
 				padding_left: `${vars.pad[i]}`,
 				padding_right: `${vars.pad[i]}`,
 			}),
 		),
-		sizes.map((k, i) =>
-			rule([`.pv-${k}`, `.pv-${i}`], {
+		SPACING_SIZES.map((i) =>
+			rule(`.pv-${i}`, {
 				padding_top: `${vars.pad[i]}`,
 				padding_bottom: `${vars.pad[i]}`,
 			}),
@@ -182,41 +169,20 @@ export default named({
 	),
 	border: group(
 		rule(".rd", { border_radius: vars.border.radius }),
-		...times(10, (i) =>
-			rule(`.rd-tl-${i}`, { border_top_left_radius: `${i}px` }),
-		),
-		...times(10, (i) =>
-			rule(`.rd-tr-${i}`, { border_top_right_radius: `${i}px` }),
-		),
-		...times(10, (i) =>
-			rule(`.rd-bl-${i}`, { border_bottom_left_radius: `${i}px` }),
-		),
-		...times(10, (i) =>
-			rule(`.rd-br-${i}`, { border_bottom_right_radius: `${i}px` }),
-		),
-		...times(10, (i) => rule(`.rd-${i}`, { __border_radius: `${i}px` })),
-		...times(10, (i) => rule(`.bdw-${i}`, { __border_width: `${i}px` })),
-		...times(10, (i) => rule(`.bdw-t-${i}`, { __border_top_width: `${i}px` })),
-		...times(10, (i) =>
-			rule(`.bdw-b-${i}`, { __border_bottom_width: `${i}px` }),
-		),
-		...times(10, (i) => rule(`.bdw-l-${i}`, { __border_left_width: `${i}px` })),
-		...times(10, (i) =>
-			rule(`.bdw-r-${i}`, { __border_right_width: `${i}px` }),
-		),
-		...times(10, (i) => rule(`.bd-${i}`, { __border_width: `${i}px` })),
+		...times(5, (i) => rule(`.rd-${i}`, { __border_radius: `${i}px` })),
+		...times(5, (i) => rule(`.bdw-${i}`, { __border_width: `${i}px` })),
 		...Object.keys(sides).map((k) =>
 			rule(`.bd-${k.substring(0, 1)}`, {
 				[`border_${sides[k]}_width`]: vars.border.width,
 				[`border_${sides[k]}_style`]: "solid",
 			}),
 		),
-		...times(10, (i) => rule(`.olw-${i}`, { __outline_width: `${i}px` })),
+		...times(5, (i) => rule(`.olw-${i}`, { __outline_width: `${i}px` })),
 		rule(".dashed", { border_style: "dashed" }),
 		rule(".dotted", { border_style: "dotted" }),
 	),
 	shadow: group(
-		...times(10, (i) =>
+		...times(5, (i) =>
 			rule(`.sh-${i}`, {
 				box_shadow: `calc(${vars.shadow.x}*${i}) calc(${vars.shadow.y}*${i}) calc(${vars.shadow.spread}*${i}) ${vars.shadow.color}`,
 			}),
@@ -261,7 +227,7 @@ export default named({
 		}),
 	),
 	depth: group(
-		...times(11, (i) => rule(`.z-${i}`, { z_index: i * 10 })),
+		...times(6, (i) => rule(`.z-${i}`, { z_index: i * 10 })),
 		rule(mods([".inset"], undefined, "focus", "hover", "active"), {
 			__inset_shadow: `oklch(0 0 0 / 0.1)`,
 			__inset_light: `oklch(1 0 0 / 0.5)`,
