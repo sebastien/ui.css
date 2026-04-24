@@ -7,6 +7,7 @@
     <!--
     <link rel="stylesheet" href="../src/css/theme.select.css" />
     <link rel="stylesheet" href="../src/css/theme.crm.css" />
+    <link rel="stylesheet" href="../src/css/theme.material.css" />
     -->
     <script type="importmap">
       {
@@ -23,6 +24,42 @@
       case "#dynamic":
       console.log("Dynamic")
         css.mount(...all())
+        break
+      case "#material":
+      console.log("Material")
+        document.body.dataset.theme = "material"
+        const materialLink = document.createElement("link")
+        materialLink.setAttribute("rel", "stylesheet")
+        materialLink.setAttribute("href", "../src/css/theme.material.css")
+        document.head.append(materialLink)
+        const materialBase = document.createElement("link")
+        materialBase.setAttribute("rel", "stylesheet")
+        materialBase.setAttribute("href", "../dist/ui.css")
+        document.head.append(materialBase)
+        break
+      case "#crm":
+      console.log("CRM")
+        document.body.dataset.theme = "crm"
+        const crmLink = document.createElement("link")
+        crmLink.setAttribute("rel", "stylesheet")
+        crmLink.setAttribute("href", "../src/css/theme.crm.css")
+        document.head.append(crmLink)
+        const crmBase = document.createElement("link")
+        crmBase.setAttribute("rel", "stylesheet")
+        crmBase.setAttribute("href", "../dist/ui.css")
+        document.head.append(crmBase)
+        break
+      case "#select":
+      console.log("Select")
+        document.body.dataset.theme = "select"
+        const selectLink = document.createElement("link")
+        selectLink.setAttribute("rel", "stylesheet")
+        selectLink.setAttribute("href", "../src/css/theme.select.css")
+        document.head.append(selectLink)
+        const selectBase = document.createElement("link")
+        selectBase.setAttribute("rel", "stylesheet")
+        selectBase.setAttribute("href", "../dist/ui.css")
+        document.head.append(selectBase)
         break
       case "#blank":
       console.log("Blank")
@@ -618,11 +655,11 @@ const result = "fast, consistent styling"</code></pre>
         <h2 class="h3 m-0">Cards, Badges, Pills, and Status</h2>
         <div class="stack g-5">
           <div class="col-2 g-4">
-            <article class="panel stack g-2">
+            <article class="panel stack g-2 p-4">
               <h3 class="h4 m-0">Basic Card</h3>
               <p class="m-0">This is the card body content.</p>
             </article>
-            <article class="panel stack g-3">
+            <article class="panel stack g-3 p-4">
               <h3 class="h4 m-0">Card with Columns</h3>
               <div class="col-2 g-3">
                 <div class="stack g-1"><strong>Column 1</strong><span>Smaller column.</span></div>
@@ -731,9 +768,9 @@ const result = "fast, consistent styling"</code></pre>
         <h2 class="h3 m-0">Containers, Layout, Utilities</h2>
         <div class="stack g-5">
           <div class="col-3 g-3">
-            <div class="panel bg-neutral bg-5o bg stack g-2"><strong>Wrapper</strong><span>This is a wrapper container.</span></div>
-            <div class="panel bg-neutral bg-5o bg stack g-2"><strong>Group</strong><span>This is a group container.</span></div>
-            <div class="panel bg-neutral bg-5o bg stack g-2"><strong>Contrast</strong><span>This is a contrast container.</span></div>
+            <div class="panel bg-neutral bg-5o bg stack g-2 p-4"><strong>Wrapper</strong><span>This is a wrapper container.</span></div>
+            <div class="panel bg-neutral bg-5o bg stack g-2 p-4"><strong>Group</strong><span>This is a group container.</span></div>
+            <div class="panel bg-neutral bg-5o bg stack g-2 p-4"><strong>Contrast</strong><span>This is a contrast container.</span></div>
           </div>
           <div class="stack g-2">
             <p class="b m-0">Grid and Stack Helpers</p>

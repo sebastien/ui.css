@@ -54,6 +54,10 @@ function* properties(value, k) {
 // Prefixes each class name with a `.` selector marker.
 const classes = (...values) => values.map((_) => `.${_}`);
 
+// Function: where
+// Wraps an array of selectors in a `:where(...)` pseudo-class.
+const where = (...sel) => `:where(${sel.flat().join(", ")})`;
+
 // Function: cross
 // Builds the cartesian product of selector fragments.
 const cross = (...sets) =>
@@ -66,205 +70,6 @@ const cross = (...sets) =>
 				? v
 				: [v],
 	);
-
-// ----------------------------------------------------------------------------
-//
-// SHORTHAND PARSER
-//
-// ----------------------------------------------------------------------------
-
-class Parser {
-	measureIndent(line) {
-		const m = line.match(/^(\s*)/);
-		const leading = m ? m[1] : "";
-		return leading.includes("\t")
-			? leading.split("\t").length - 1
-			: leading.length;
-	}
-
-	detectIndent(lines) {
-		let baseIndent = 0;
-		let indentUnit = 0;
-		for (const raw of lines) {
-			const stripped = raw.replace(/#.*$/, "").trimEnd();
-			if (stripped.trim() === "") continue;
-			baseIndent = this.measureIndent(stripped);
-			break;
-		}
-		for (const raw of lines) {
-			const stripped = raw.replace(/#.*$/, "").trimEnd();
-			if (stripped.trim() === "") continue;
-			const len = this.measureIndent(stripped);
-			if (len > baseIndent) {
-				indentUnit = len - baseIndent;
-				break;
-			}
-		}
-		return { baseIndent, indentUnit: indentUnit || 1 };
-	}
-
-	parseColor(str) {
-		const s = str.trim();
-		if (s === "0") return { base: null, tint: null, blend: null, opacity: "0" };
-		if (s === ".") return { base: null, tint: null, blend: null, opacity: null };
-		if (s === "contrast")
-			return { base: "contrast", tint: null, blend: null, opacity: null };
-		if (s === "inherit")
-			return { base: "inherit", tint: null, blend: null, opacity: null };
-
-		const parts = s.split(/\s+/);
-		const [rawBase, rawTint] = (parts[0] || "./.").split("/");
-
-		if (rawBase === "contrast" || rawBase === "inherit") {
-			const inh = (v) => (v === undefined || v === "." ? null : v);
-			return { base: rawBase, tint: null, blend: null, opacity: inh(rawTint) };
-		}
-
-		const [rawBlend, rawOpacity] = (parts[1] || "./.").split("/");
-		const inh = (v) => (v === undefined || v === "." ? null : v);
-		return {
-			base: inh(rawBase),
-			tint: inh(rawTint),
-			blend: inh(rawBlend),
-			opacity: inh(rawOpacity),
-		};
-	}
-
-	parseBorder(str) {
-		const s = str.trim();
-		if (s === "0") {
-			return {
-				width: "0px",
-				radius: null,
-				base: null,
-				tint: null,
-				blend: null,
-				opacity: "0",
-			};
-		}
-		if (s === ".") {
-			return {
-				width: null,
-				radius: null,
-				base: null,
-				tint: null,
-				blend: null,
-				opacity: null,
-			};
-		}
-
-		const parts = s.split(/\s+/);
-
-		if (parts[0]?.includes("~")) {
-			const [w, r] = parts[0].split("~");
-			const inh = (v) => (v === "." || v === "_" ? null : v);
-			const color = this.parseColor(parts.slice(1).join(" ") || "./. ./.");
-			return { width: inh(w), radius: inh(r), ...color };
-		}
-
-		const isDim = (v) =>
-			/^[0-9.]/.test(v) ||
-			v === "." ||
-			/^(0|[0-9]+(%|px|em|rem|vw|vh))$/.test(v);
-		if (parts.length >= 2 && isDim(parts[0]) && isDim(parts[1])) {
-			const inh = (v) => (v === "." ? null : v);
-			const color = this.parseColor(parts.slice(2).join(" ") || "./. ./.");
-			return { width: inh(parts[0]), radius: inh(parts[1]), ...color };
-		}
-
-		const color = this.parseColor(s);
-		return { width: null, radius: null, ...color };
-	}
-
-	parseProperty(key, value) {
-		return key === "bd" || key === "ol"
-			? this.parseBorder(value)
-			: this.parseColor(value);
-	}
-
-	parseTree(text) {
-		const lines = text.split("\n");
-		const result = {};
-		let control = null;
-		let currentVariant = null;
-		let currentState = null;
-		let currentSubElement = null;
-		let definition = null;
-		const { baseIndent, indentUnit } = this.detectIndent(lines);
-
-		for (const raw of lines) {
-			const stripped = raw.replace(/#.*$/, "").trimEnd();
-			if (stripped.trim() === "") continue;
-			const depth = Math.round(
-				(this.measureIndent(stripped) - baseIndent) / indentUnit,
-			);
-			const content = stripped.trim();
-			if (!content) continue;
-			const colonIdx = content.indexOf(":");
-			if (colonIdx < 0) continue;
-			const key = content.substring(0, colonIdx).trim();
-			const value = content.substring(colonIdx + 1).trim();
-
-			if (depth === 0) {
-				control = key;
-				definition = {};
-				currentVariant = null;
-				currentState = null;
-				currentSubElement = null;
-				result[control] = { control, definition };
-			} else if (depth === 1 && definition) {
-				currentVariant = key;
-				if (!definition[currentVariant]) definition[currentVariant] = {};
-				currentState = null;
-				currentSubElement = null;
-			} else if (
-				depth === 2 &&
-				key.startsWith("!") &&
-				definition &&
-				currentVariant
-			) {
-				currentState = key.substring(1);
-				if (!definition[currentVariant][currentState]) {
-					definition[currentVariant][currentState] = {};
-				}
-				currentSubElement = null;
-			} else if (depth === 3 && definition && currentVariant && currentState) {
-				if (value === "" || value === undefined) {
-					currentSubElement = key;
-				} else if (currentSubElement) {
-					definition[currentVariant][currentState][`${currentSubElement}.${key}`] =
-						value;
-				} else {
-					definition[currentVariant][currentState][key] = value;
-				}
-			} else if (
-				depth === 4 &&
-				definition &&
-				currentVariant &&
-				currentState &&
-				currentSubElement &&
-				value
-			) {
-				definition[currentVariant][currentState][`${currentSubElement}.${key}`] =
-					value;
-			}
-		}
-
-		const keys = Object.keys(result);
-		if (keys.length === 1) {
-			result.control = result[keys[0]].control;
-			result.definition = result[keys[0]].definition;
-		}
-		return result;
-	}
-
-	style(strings, ...values) {
-		const text = Array.isArray(strings)
-			? strings.reduce((r, s, i) => r + s + (values[i] ?? ""), "")
-			: strings;
-		return this.parseTree(text);
-	}
-}
 
 // ----------------------------------------------------------------------------
 //
@@ -286,12 +91,6 @@ const blend = (color, other, percentage = 0.5, opacity = undefined) => {
 const contrast = (color) => {
 	// CSS contrast-color() selects white or black automatically based on background luminance
 	return `contrast-color(${color})`;
-};
-
-// Function: dim
-// Applies transparency to a color using color-mix.
-const dim = (color, percentage = 0.5) => {
-	return `color-mix(in oklab, ${color}, transparent ${percent(1 - percentage)})`;
 };
 
 // Function: blended
@@ -382,27 +181,6 @@ const doc = (value) => new Documentation(value);
 
 // ----------------------------------------------------------------------------
 //
-// URL
-//
-// ----------------------------------------------------------------------------
-
-// Class: ImportURL
-// Represents a CSS `@import url(...)` directive.
-class ImportURL {
-	constructor(url) {
-		this.url = url;
-	}
-	*lines() {
-		yield `@import url('${this.url}');`;
-	}
-}
-
-// Function: url
-// Creates an `ImportURL` value for stylesheet imports.
-const url = (value) => new ImportURL(value);
-
-// ----------------------------------------------------------------------------
-//
 // SCOPE
 //
 // ----------------------------------------------------------------------------
@@ -417,7 +195,8 @@ class Scope {
 		if (
 			typeof property === "string" &&
 			property !== "_name" &&
-			property !== "walk"
+			property !== "walk" &&
+			property !== "or"
 		) {
 			if (target[property] === undefined) {
 				target[property] = scope(property, target);
@@ -449,6 +228,9 @@ class Scope {
 	}
 	toString() {
 		return `var(--${this._name})`;
+	}
+	or(fallback) {
+		return `var(--${this._name}, ${fallback})`;
 	}
 }
 
@@ -1047,14 +829,10 @@ const nesting = (selector, props_, ...children) => {
 };
 
 export {
-	Parser,
-	Vars,
 	blended,
-	blend,
 	block,
-	contrast,
-	dim,
 	classes,
+	contrast,
 	cross,
 	css,
 	doc,
@@ -1066,7 +844,6 @@ export {
 	named,
 	nesting,
 	on,
-	percent,
 	percentages,
 	rule,
 	sides,
@@ -1074,8 +851,8 @@ export {
 	sizes,
 	times,
 	tokens,
-	url,
 	vars,
+	where,
 };
 export default Object.assign(css, {
 	css,

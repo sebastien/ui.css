@@ -1,5 +1,4 @@
 import { contrast, group, rule, sides, times, vars } from "../js/uicss.js";
-import palette from "./palette.js";
 
 // ----------------------------------------------------------------------------
 //

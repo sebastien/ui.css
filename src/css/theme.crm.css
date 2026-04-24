@@ -3,139 +3,37 @@
 body[data-theme="crm"] {
 	--font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
 	--font-heading: var(--font-sans);
-	--font-body: var(--font-sans);
-	--font-action: var(--font-sans);
-	--font-control: var(--font-sans);
-	--font-controls-family: var(--font-control);
+	--font-controls-family: var(--font-sans);
 	--font-controls-size: 1rem;
 	--font-controls-line: 1.25;
 	--font-controls-weight: 500;
 
-	--theme-text-body-line: 1.6;
-	--theme-text-body-color: var(--color-brand-font);
-	--theme-text-heading-line: 1.2;
-	--theme-text-heading-weight: 700;
-	--theme-text-heading-color: var(--color-secondary-dkr);
-
 	--page-base: 16;
-	--space-unit: 0.25rem;
 	--limit-content: 960px;
 	--limit-text: 66ch;
 
-	--button-box-padding-x: 25px;
-	--button-box-padding-y: 10px;
-	--input-box-padding-x: 12px;
-	--input-box-padding-y: 10px;
-	--textarea-box-padding-x: 10px;
-	--textarea-box-padding-y: 10px;
-	--select-box-padding-x: 0.85em;
-	--select-box-padding-y: 0.6em;
-	--checkbox-box-size: 24px;
-	--checkbox-box-marker: 0.72em;
-	--radio-box-size: 24px;
-	--radio-box-marker: 0.72em;
-
-	--panel-box-accent: 4px;
-	--panel-box-radius: 6px;
-	--panel-box-padding-x: 1.25rem;
-	--panel-box-padding-y: 1.25rem;
-
 	--color-primary: #b2cfc0;
-	--color-primary-contrast: #000000;
-	--color-primary-dk: #7d9889;
-	--color-primary-dkr: #495950;
-	--color-primary-dks: #2d3631;
-	--color-primary-lt: #d6e3db;
-	--color-primary-ltr: #ebf2ee;
-	--color-primary-lts: #f7f9f8;
-
 	--color-secondary: #445761;
-	--color-secondary-contrast: #ffffff;
-	--color-secondary-dk: #3a4b54;
-	--color-secondary-dkr: #1c2429;
-	--color-secondary-dks: #111619;
-	--color-secondary-lt: #bdc7ce;
-	--color-secondary-ltr: #dde2e5;
-	--color-secondary-lts: #f0f2f3;
-
 	--color-neutral: #4f6f84;
-	--color-neutral-contrast: #ffffff;
-	--color-neutral-dk: #3e5060;
-	--color-neutral-dkr: #323c47;
-	--color-neutral-dks: #1e252e;
-	--color-neutral-lt: #c5d4dc;
-	--color-neutral-ltr: #e0e9ed;
-	--color-neutral-lts: #f3f7f8;
-
-	--color-utility: #9dabb7;
-	--color-utility-contrast: #000000;
-	--color-utility-dk: #73808f;
-	--color-utility-dkr: #50585f;
-	--color-utility-dks: #2f3337;
-	--color-utility-lt: #c8d4d9;
-	--color-utility-ltr: #edf1f2;
-	--color-utility-lts: #f5f8f8;
-
 	--color-success: #14b8a6;
-	--color-success-contrast: #000000;
-	--color-success-dk: #0f766e;
-	--color-success-dkr: #134e4a;
-	--color-success-dks: #042f2e;
-	--color-success-lt: #99f6e4;
-	--color-success-ltr: #ccfbf1;
-	--color-success-lts: #f0fdfa;
-
 	--color-warning: #eab308;
-	--color-warning-contrast: #000000;
-	--color-warning-dk: #a16207;
-	--color-warning-dkr: #713f12;
-	--color-warning-dks: #422006;
-	--color-warning-lt: #fef08a;
-	--color-warning-ltr: #fef9c3;
-	--color-warning-lts: #fefce8;
-
 	--color-danger: #f97316;
-	--color-danger-contrast: #ffffff;
-	--color-danger-dk: #c2410c;
-	--color-danger-dkr: #7c2d12;
-	--color-danger-dks: #431407;
-	--color-danger-lt: #fed7aa;
-	--color-danger-ltr: #ffedd5;
-	--color-danger-lts: #fff7ed;
-
 	--color-error: #f97316;
-	--color-error-contrast: #ffffff;
-	--color-error-dk: #c2410c;
-	--color-error-dkr: #7c2d12;
-	--color-error-dks: #431407;
-	--color-error-lt: #fed7aa;
-	--color-error-ltr: #ffedd5;
-	--color-error-lts: #fff7ed;
-
 	--color-paper: #ffffff;
 	--color-ink: #1c2429;
-	--color-brand-font: #1c2429;
-	--panel-color-base: var(--color-utility-ltr);
-	--border-color-base: var(--color-utility-ltr);
-	--button-color-secondary: var(--color-secondary);
-	--select-color-secondary: var(--color-secondary);
-	--input-color-secondary: var(--color-secondary);
-	--checkbox-color-secondary: var(--color-secondary);
-	--radio-color-secondary: var(--color-secondary);
-	--textarea-color-secondary: var(--color-secondary);
 
-	--button-box-radius: 9999px;
-	--input-box-radius: 0.5rem;
-	--select-box-radius: 0.5rem;
-	--textarea-box-radius: 0.125rem;
-	--checkbox-box-radius: 0.125rem;
+	--border-color-base: #e0e9ed;
 
-	line-height: var(--theme-text-body-line);
-	color: var(--theme-text-body-color);
+	/* Control token overrides */
+	--control-button-bd-radius: 9999px;
+	--control-field-bd-radius: 0.5rem;
+
+	line-height: 1.6;
+	color: var(--color-ink);
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
-	background: var(--color-utility-lts);
-	font-family: var(--font-body);
+	background: #f5f8f8;
+	font-family: var(--font-sans);
 	font-size: 16px;
 	font-weight: 400;
 
@@ -144,8 +42,8 @@ body[data-theme="crm"] {
 	& h3,
 	& h4,
 	& h5 {
-		color: var(--theme-text-heading-color);
-		font-weight: var(--theme-text-heading-weight);
-		line-height: var(--theme-text-heading-line);
+		color: var(--color-secondary);
+		font-weight: 700;
+		line-height: 1.2;
 	}
 }

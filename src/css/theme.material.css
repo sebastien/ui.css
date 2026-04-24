@@ -1,0 +1,159 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap");
+
+body[data-theme="material"] {
+	--font-sans: "Roboto", sans-serif;
+	--font-heading: var(--font-sans);
+	--font-controls-family: var(--font-sans);
+	--font-controls-size: 0.875rem;
+	--font-controls-line: 36px;
+	--font-controls-weight: 500;
+
+	--page-base: 16;
+	--limit-content: 960px;
+	--limit-text: 66ch;
+
+	/* Material Design v1 palette */
+	--color-primary: #3f51b5;
+	--color-secondary: #ff4081;
+	--color-tertiary: #009688;
+	--color-neutral: #607d8b;
+	--color-accent: #ff4081;
+	--color-success: #4caf50;
+	--color-info: #2196f3;
+	--color-warning: #ffc107;
+	--color-danger: #f44336;
+	--color-error: #f44336;
+	--color-paper: #fafafa;
+	--color-ink: #212121;
+
+	--border-color-base: #bdbdbd;
+
+	/* MD v1 control tokens */
+	--control-button-bd-radius: 2px;
+	--control-button-bd-width: 0px;
+	--control-button-bd-opacity: 0%;
+	--control-button-bg-blend: 0%;
+	--control-button-hover-bg-blend: 12%;
+	--control-button-active-bg-blend: 25%;
+
+	--control-field-bd-radius: 0px;
+	--control-field-bd-width: 0 0 1.5px 0;
+	--control-field-bd-blend: 50%;
+	--control-field-bd-opacity: 50%;
+	--control-field-bg-blend: 100%;
+	--control-field-hover-bd-blend: 30%;
+	--control-field-hover-bd-opacity: 70%;
+	--control-field-focus-bd-blend: 0%;
+	--control-field-focus-bd-opacity: 100%;
+
+	--control-focus-ring-width: 0px;
+	--control-disabled-opacity: 0.26;
+
+	/* MD v1 button overrides */
+	--button-padding: 0 16px;
+	--button-margin: 0px;
+
+	/* MD v1 field overrides — underline style */
+	--input-padding: 0.5em 0;
+
+	/* MD v1 shadows */
+	--shadow-1: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+	--shadow-2: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+	--shadow-3: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+	--shadow-4: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+	--shadow-5: 0 19px 38px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
+
+	line-height: 1.5;
+	color: var(--color-ink);
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	background: #eeeeee;
+	font-family: var(--font-sans);
+	font-size: 14px;
+	font-weight: 400;
+	letter-spacing: 0.01em;
+
+	& h1,
+	& h2,
+	& h3,
+	& h4,
+	& h5 {
+		color: #212121;
+		font-weight: 400;
+		line-height: 1.35;
+	}
+
+	/* MD v1 raised buttons: 2dp elevation, uppercase, 36dp height, 88dp min-width */
+	& button,
+	& [type="submit"],
+	& [type="reset"],
+	& [type="button"] {
+		min-width: 88px;
+		height: 36px;
+		text-transform: uppercase;
+		letter-spacing: 0.03em;
+		font-size: 0.8125rem;
+		font-weight: 500;
+		box-shadow: var(--shadow-1);
+		border-radius: 2px;
+		transition: box-shadow 0.2s ease, background 0.2s ease;
+
+		&:hover {
+			box-shadow: var(--shadow-2);
+		}
+
+		&:active {
+			box-shadow: var(--shadow-3);
+		}
+
+		&:disabled {
+			box-shadow: none;
+		}
+	}
+
+	/* MD v1 flat buttons: no shadow */
+	& button.ghost,
+	& button.blank,
+	& button.outline {
+		box-shadow: none;
+
+		&:hover {
+			box-shadow: none;
+		}
+
+		&:active {
+			box-shadow: none;
+		}
+	}
+
+	/* MD v1 text fields: underline-only, no background fill */
+	& input.input {
+		border-radius: 0;
+		background: transparent;
+		border-style: solid;
+		border-width: 0 0 1.5px 0;
+	}
+
+	/* MD v1 cards: 2dp shadow, rounded 2px */
+	& .panel {
+		border-radius: 2px;
+		box-shadow: var(--shadow-1);
+		border: none;
+	}
+
+	/* MD v1 badges: rounded pill */
+	& .badge {
+		text-transform: uppercase;
+		font-size: 12px;
+		font-weight: 500;
+		letter-spacing: 0.02em;
+	}
+
+	/* MD v1 selectors: uppercase labels */
+	& .selector label {
+		text-transform: uppercase;
+		font-size: 14px;
+		font-weight: 500;
+		letter-spacing: 0.05em;
+	}
+}

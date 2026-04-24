@@ -1,14 +1,5 @@
-import {
-	blended,
-	classes,
-	group,
-	named,
-	rule,
-	sides,
-	sizes,
-	times,
-	vars,
-} from "../js/uicss.js";
+import { group, named, rule, vars } from "../js/uicss.js";
+import { panel } from "./controls.js"
 import { inputs } from "./lib/tags.js";
 import { colormix, colormixin, colorvars } from "./colors.js";
 
@@ -262,10 +253,10 @@ export default named({
 	),
 	// ------------------------------------------------------------------------
 	//
-	// PANELS — now handled by controls.js
+	// PANEL
 	//
 	// ------------------------------------------------------------------------
-	panel: group(),
+	panel: panel(),
 
 	// ------------------------------------------------------------------------
 	//
@@ -432,3 +423,4 @@ export default named({
 		}),
 	),
 });
+// EOF

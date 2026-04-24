@@ -6,124 +6,23 @@ body[data-theme="select"] {
 	--font-controls-line: 1.25;
 	--font-controls-weight: 500;
 
-	--theme-text-body-line: 1.6;
-	--theme-text-body-color: var(--color-slate-800);
-	--theme-text-heading-line: 1.2;
-	--theme-text-heading-weight: 700;
-	--theme-text-heading-color: var(--color-slate-900);
-
 	--page-base: 16;
 	--limit-content: 840px;
 	--limit-text: 66ch;
 
-	--button-box-padding-x: 1.1em;
-	--button-box-padding-y: 0.6em;
-	--input-box-padding-x: 0.85em;
-	--input-box-padding-y: 0.6em;
-	--textarea-box-padding-x: 0.85em;
-	--textarea-box-padding-y: 0.6em;
-	--select-box-padding-x: 0.85em;
-	--select-box-padding-y: 0.6em;
+	--color-primary: var(--color-sky-500);
+	--color-secondary: var(--color-indigo-500);
+	--color-tertiary: var(--color-cyan-500);
+	--color-neutral: var(--color-slate-400);
+	--color-success: var(--color-emerald-500);
+	--color-warning: var(--color-amber-400);
+	--color-danger: var(--color-rose-500);
+	--color-error: var(--color-danger);
 
-	--checkbox-box-size: 1.15em;
-	--checkbox-box-marker: 0.72em;
-	--radio-box-size: 1.15em;
-	--radio-box-marker: 0.72em;
-
-	--range-track-size: 0.28em;
-	--range-thumb-size: 0.95em;
-	--range-box-max-width: 36em;
-	--range-track-color: var(--color-slate-200);
-
-	--panel-box-accent: 4px;
-	--panel-box-radius: 8px;
-	--panel-box-padding-x: 1.25rem;
-	--panel-box-padding-y: 1.25rem;
-
-	--panel-color-base: var(--color-slate-200);
 	--border-color-base: var(--color-slate-300);
 
-	--color-primary: var(--color-sky-500);
-	--color-primary-contrast: var(--color-white);
-	--color-primary-dk: var(--color-sky-600);
-	--color-primary-dkr: var(--color-sky-700);
-	--color-primary-dks: var(--color-sky-800);
-	--color-primary-lt: var(--color-sky-300);
-	--color-primary-ltr: var(--color-sky-100);
-	--color-primary-lts: var(--color-sky-50);
-
-	--color-secondary: var(--color-indigo-500);
-	--color-secondary-contrast: var(--color-white);
-	--color-secondary-dk: var(--color-indigo-600);
-	--color-secondary-dkr: var(--color-indigo-700);
-	--color-secondary-dks: var(--color-indigo-800);
-	--color-secondary-lt: var(--color-indigo-300);
-	--color-secondary-ltr: var(--color-indigo-100);
-	--color-secondary-lts: var(--color-indigo-50);
-
-	--color-tertiary: var(--color-cyan-500);
-	--color-tertiary-contrast: var(--color-white);
-	--color-tertiary-dk: var(--color-cyan-600);
-	--color-tertiary-dkr: var(--color-cyan-700);
-	--color-tertiary-dks: var(--color-cyan-800);
-	--color-tertiary-lt: var(--color-cyan-300);
-	--color-tertiary-ltr: var(--color-cyan-100);
-	--color-tertiary-lts: var(--color-cyan-50);
-
-	--color-neutral: var(--color-slate-400);
-	--color-neutral-contrast: var(--color-black);
-	--color-neutral-dk: var(--color-slate-500);
-	--color-neutral-dkr: var(--color-slate-600);
-	--color-neutral-dks: var(--color-slate-700);
-	--color-neutral-lt: var(--color-slate-200);
-	--color-neutral-ltr: var(--color-slate-100);
-	--color-neutral-lts: var(--color-slate-50);
-
-	--color-success: var(--color-emerald-500);
-	--color-success-contrast: var(--color-white);
-	--color-success-dk: var(--color-emerald-600);
-	--color-success-dkr: var(--color-emerald-700);
-	--color-success-dks: var(--color-emerald-800);
-	--color-success-lt: var(--color-emerald-300);
-	--color-success-ltr: var(--color-emerald-100);
-	--color-success-lts: var(--color-emerald-50);
-
-	--color-warning: var(--color-amber-400);
-	--color-warning-contrast: var(--color-black);
-	--color-warning-dk: var(--color-amber-500);
-	--color-warning-dkr: var(--color-amber-600);
-	--color-warning-dks: var(--color-amber-700);
-	--color-warning-lt: var(--color-amber-200);
-	--color-warning-ltr: var(--color-amber-100);
-	--color-warning-lts: var(--color-amber-50);
-
-	--color-danger: var(--color-rose-500);
-	--color-danger-contrast: var(--color-white);
-	--color-danger-dk: var(--color-rose-600);
-	--color-danger-dkr: var(--color-rose-700);
-	--color-danger-dks: var(--color-rose-800);
-	--color-danger-lt: var(--color-rose-300);
-	--color-danger-ltr: var(--color-rose-100);
-	--color-danger-lts: var(--color-rose-50);
-
-	--color-error: var(--color-danger);
-	--color-error-contrast: var(--color-danger-contrast);
-	--color-error-dk: var(--color-danger-dk);
-	--color-error-dkr: var(--color-danger-dkr);
-	--color-error-dks: var(--color-danger-dks);
-	--color-error-lt: var(--color-danger-lt);
-	--color-error-ltr: var(--color-danger-ltr);
-	--color-error-lts: var(--color-danger-lts);
-
-	--button-color-secondary: var(--color-secondary);
-	--select-color-secondary: var(--color-secondary);
-	--input-color-secondary: var(--color-secondary);
-	--checkbox-color-secondary: var(--color-secondary);
-	--radio-color-secondary: var(--color-secondary);
-	--textarea-color-secondary: var(--color-secondary);
-
-	line-height: var(--theme-text-body-line);
-	color: var(--theme-text-body-color);
+	line-height: 1.6;
+	color: var(--color-slate-800);
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 	font-family: var(--font-sans);
@@ -133,8 +32,8 @@ body[data-theme="select"] {
 	& h3,
 	& h4,
 	& h5 {
-		color: var(--theme-text-heading-color);
-		font-weight: var(--theme-text-heading-weight);
-		line-height: var(--theme-text-heading-line);
+		color: var(--color-slate-900);
+		font-weight: 700;
+		line-height: 1.2;
 	}
 }

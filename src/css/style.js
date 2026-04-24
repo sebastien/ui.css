@@ -3,16 +3,31 @@ import {
 	mods,
 	named,
 	rule,
-	sizes,
 	sides,
 	times,
 	vars,
 } from "../js/uicss.js";
 
-// Trimmed size scale for margin/padding utilities: 7 index steps.
-const SPACING_SIZES = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+// Module: style
+// Visual styling utilities for spacing, typography, borders, shadows, depth,
+// and interaction cursors. Generates named CSS class rules that reference
+// design token variables from `tokens.js`.
+//
+// Spacing classes use a 0–8 index scale mapped to `--margin-{i}` and
+// `--pad-{i}` token variables. Directional shorthands follow the pattern:
+// `m`/`p` = margin/padding, `t/b/l/r` = side, `h/v` = horizontal/vertical.
+
+// ----------------------------------------------------------------------------
+//
+// SPACING
+//
+// ----------------------------------------------------------------------------
+
+// Spacing index scale for margin/padding utilities (0–8).
+const spacingSizes = [0, 1, 2, 3, 4, 5, 6, 7, 8]
 
 export default named({
+	// .base — root font setup from token variables
 	base: rule(".base", {
 		font_family: `${vars.font.family}`,
 		font_size: vars.font.size,
@@ -28,61 +43,61 @@ export default named({
 		rule(".noblur", { __shadow_spread: "0" }),
 		rule(".nogap", { gap: "0em" }),
 		rule(".ma", { margin: "auto" }),
-		SPACING_SIZES.map((i) =>
+		spacingSizes.map((i) =>
 			rule(`.m-${i}`, {
 				margin: `${vars.margin[i]}`,
 				__margin: `${vars.margin[i]}`,
 			}),
 		),
-		SPACING_SIZES.map((i) =>
+		spacingSizes.map((i) =>
 			rule(`.mt-${i}`, { margin_top: `${vars.margin[i]}` }),
 		),
-		SPACING_SIZES.map((i) =>
+		spacingSizes.map((i) =>
 			rule(`.mb-${i}`, { margin_bottom: `${vars.margin[i]}` }),
 		),
-		SPACING_SIZES.map((i) =>
+		spacingSizes.map((i) =>
 			rule(`.ml-${i}`, { margin_left: `${vars.margin[i]}` }),
 		),
-		SPACING_SIZES.map((i) =>
+		spacingSizes.map((i) =>
 			rule(`.mr-${i}`, { margin_right: `${vars.margin[i]}` }),
 		),
-		SPACING_SIZES.map((i) =>
+		spacingSizes.map((i) =>
 			rule(`.mh-${i}`, {
 				margin_left: `${vars.margin[i]}`,
 				margin_right: `${vars.margin[i]}`,
 			}),
 		),
-		SPACING_SIZES.map((i) =>
+		spacingSizes.map((i) =>
 			rule(`.mv-${i}`, {
 				margin_top: `${vars.margin[i]}`,
 				margin_bottom: `${vars.margin[i]}`,
 			}),
 		),
-		SPACING_SIZES.map((i) =>
+		spacingSizes.map((i) =>
 			rule(`.p-${i}`, {
 				padding: `${vars.pad[i]}`,
 				__pad: `${vars.pad[i]}`,
 			}),
 		),
-		SPACING_SIZES.map((i) =>
+		spacingSizes.map((i) =>
 			rule(`.pt-${i}`, { padding_top: `${vars.pad[i]}` }),
 		),
-		SPACING_SIZES.map((i) =>
+		spacingSizes.map((i) =>
 			rule(`.pb-${i}`, { padding_bottom: `${vars.pad[i]}` }),
 		),
-		SPACING_SIZES.map((i) =>
+		spacingSizes.map((i) =>
 			rule(`.pl-${i}`, { padding_left: `${vars.pad[i]}` }),
 		),
-		SPACING_SIZES.map((i) =>
+		spacingSizes.map((i) =>
 			rule(`.pr-${i}`, { padding_right: `${vars.pad[i]}` }),
 		),
-		SPACING_SIZES.map((i) =>
+		spacingSizes.map((i) =>
 			rule(`.ph-${i}`, {
 				padding_left: `${vars.pad[i]}`,
 				padding_right: `${vars.pad[i]}`,
 			}),
 		),
-		SPACING_SIZES.map((i) =>
+		spacingSizes.map((i) =>
 			rule(`.pv-${i}`, {
 				padding_top: `${vars.pad[i]}`,
 				padding_bottom: `${vars.pad[i]}`,
@@ -108,6 +123,12 @@ export default named({
 		}),
 	),
 
+	// ----------------------------------------------------------------------------
+	//
+	// INTERACTION
+	//
+	// ----------------------------------------------------------------------------
+
 	interaction: group(
 		rule(".noev", { pointer_events: "none" }),
 		rule(".ev", { pointer_events: "auto" }),
@@ -124,6 +145,13 @@ export default named({
 			user_select: "none",
 		}),
 	),
+
+	// ----------------------------------------------------------------------------
+	//
+	// TYPOGRAPHY
+	//
+	// ----------------------------------------------------------------------------
+
 	font: group(
 		rule(".lll", { font_weight: 100 }),
 		rule(".ll", { font_weight: 200 }),
@@ -132,6 +160,13 @@ export default named({
 		rule(".bb", { font_weight: 700 }),
 		rule(".bbb", { font_weight: 800 }),
 	),
+
+	// ----------------------------------------------------------------------------
+	//
+	// OPACITY & VISIBILITY
+	//
+	// ----------------------------------------------------------------------------
+
 	opacity: group(
 		rule(".dim", { opacity: vars.opacity.dim }),
 		rule(".dimmer", { opacity: vars.opacity.dimmer }),
@@ -153,6 +188,13 @@ export default named({
 		rule(".invisible", { opacity: "0 !important" }),
 		rule(".hidden", { visibility: "hidden !important" }),
 	),
+
+	// ----------------------------------------------------------------------------
+	//
+	// BORDERS & ROUNDING
+	//
+	// ----------------------------------------------------------------------------
+
 	rounding: group(
 		rule(".rounded", {
 			__border_radius: "0.25lh",
@@ -181,6 +223,13 @@ export default named({
 		rule(".dashed", { border_style: "dashed" }),
 		rule(".dotted", { border_style: "dotted" }),
 	),
+
+	// ----------------------------------------------------------------------------
+	//
+	// SHADOW & DEPTH
+	//
+	// ----------------------------------------------------------------------------
+
 	shadow: group(
 		...times(5, (i) =>
 			rule(`.sh-${i}`, {
@@ -188,6 +237,13 @@ export default named({
 			}),
 		),
 	),
+
+	// ----------------------------------------------------------------------------
+	//
+	// TABLE & LIST
+	//
+	// ----------------------------------------------------------------------------
+
 	table: group(
 		rule("table", {
 			border_collapse: "separate",

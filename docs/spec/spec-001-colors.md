@@ -28,7 +28,6 @@ rose
 slate
 gray
 zinc
-neutral
 stone
 taupe
 mauve
@@ -36,9 +35,9 @@ mist
 olive
 ```
 
-These colors can be overriden/defined. Note that `color.js` does not define
+These colors can be overridden/defined. Note that `colors.js` does not define
 values for the colors, these need to be provided as corresponding CSS
-variables, like `--color-{color}-{luminosity}: …`. Each palette color has 11 luminosity steps defined in `src/css/palette.css`:
+variables, like `--color-{color}-{luminosity}: …`. Each palette color has 11 luminosity steps:
 
 1. `50` (light)
 2. `100`
@@ -67,7 +66,7 @@ The semantic color aliases are defined in `src/css/colors.js` as `SEMANTIC`:
 - `info` -> `cyan`
 - `warning` -> `amber`
 - `danger` -> `red`
-- `accent` -> `blue`
+- `error` -> `red`
 
 These aliases are emitted as root CSS variables such as `--color-primary`.
 
@@ -103,12 +102,11 @@ Apply classes emit the corresponding CSS property:
 - `.bg` → computes `--background-color` and sets `background-color: var(--background-color)`
 - `.tx` → same for `color`
 - `.bd` → same for `border-color`, plus default border width and style
-- `.ol` → same for `outline-color`, plus default border width and style
+- `.ol` → same for `outline-color`
 
-Side-specific helpers are also available for borders and outlines:
+Side-specific helpers are available for borders:
 
 - `.bd-t`, `.bd-r`, `.bd-b`, `.bd-l`
-- `.ol-t`, `.ol-r`, `.ol-b`, `.ol-l`
 
 ## Altering Colors
 
@@ -140,13 +138,13 @@ apply the changes.
 
 ## Contrast Text
 
-The `.tx-contrast` helper sets:
+The `.tx-contrast` helper and `.bg.tx` combined class set:
 
 ```text
-color: contrast-color(var(--text-base))
+color: contrast-color(var(--background-color))
 ```
 
-It currently derives contrast from `--text-base`.
+This derives contrast from the computed background color variable.
 
 ## Reset Classes
 

@@ -1,9 +1,22 @@
 # Visual Rules
 
-Uses: spec-001, spec-002, spec-003-css_shorthand
+Uses: spec-001, spec-002
 
-This spec defines the complete visual rule sets for each control type using
-the shorthand notation from spec-003-css_shorthand.
+This spec documents the intended visual behavior for each control type. The
+shorthand notation below is a compact way to express color/border rules:
+
+- `tx: base/tint blend/opacity` — text color
+- `bg: base/tint blend/opacity` — background color
+- `bd: width radius base/tint blend/opacity` — border
+- `ol: width radius base/tint blend/opacity` — outline
+- `.` — inherit from parent scope
+- `0` — transparent (opacity 0)
+- `contrast` — auto-contrast against background
+- `self` — the control's own semantic color
+
+States are prefixed with `!` (e.g., `!hover`, `!disabled`). Sub-element
+blocks (e.g., `marker:`, `track:`, `thumb:`) nest within a state and use the
+same property notation.
 
 ## Controls
 
@@ -20,10 +33,10 @@ Styled controls:
 
 Following spec-002:
 
-- `default` - filled background, visible border
-- `outline` - no background, visible border
-- `ghost` - no background, no border, no outline (except focus)
-- `blank` - no visual chrome at all, no state effects
+- `default` — filled background (buttons) or light paper background (fields)
+- `outline` — transparent background, visible border
+- `ghost` — transparent background, no border; subtle ink wash on hover
+- `blank` — no visual chrome, inherits text color, no state effects
 
 Button-specific:
 

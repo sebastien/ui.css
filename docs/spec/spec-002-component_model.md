@@ -2,237 +2,193 @@
 
 Uses: spec-001
 
-This spec describes the canonical token structure for every UI component and
-control. It applies across buttons, inputs, selectors, panels, and any future
-component type.
+This spec describes the token-driven control architecture implemented in
+`src/css/controls.js` and `src/css/tokens.js`.
 
-## Supported Modifiers
+## Architecture
 
-Components support these modifier families.
+Controls are split into two visual categories:
 
-States:
+- **Field-like**: inputs, textareas, selects, unchecked toggles
+- **Button-like**: buttons, checked toggles, selected options
 
-- `hover`
-- `active`
-- `selected` (defaults to active)
-- `focus`
-- `focus-visible` (defaults to focus)
-- `focus-within` (defaults to focus)
-- `disabled`
+Both categories share a common base (semantic color assignment, transitions,
+outline setup) and derive their colors from the same token variables through
+`color-mix()` expressions.
 
-Color variants:
+## Styled Controls
 
-- `accent`
-- `primary`
-- `secondary`
-- `tertiary`
-- `success`
-- `warning`
-- `danger`
+- `button`, `.button`
+- `input`, `.input`, `textarea`, `.textarea`
+- `select`, `.select`
+- `input[type="checkbox"]`, `.checkbox`
+- `input[type="radio"]`, `.radio`
+- `input[type="range"]`, `.range`, `.slider`
+- `.selector` (container) + `.selector > .option` (items)
+- `.panel`
 
-Style variants:
+All controls can be sized using the sizing classes (`smaller`, `larger`, etc.)
+as they use `em` units.
 
-- `default`
-- `outline` (no background)
-- `bare` (no text, border, color, outline styling or variant styling)
+## States
 
-  For button-like:
-- `ghost` (no background, not border, no outline except for focus)
-- `icon` (for icons, tyipcally square aspect ratio)
+- `hover`: `:hover` or `.hover`
+- `active`: `:active` or `.active`
+- `focus`: `:focus-visible` or `.focus`
+- `disabled`: `[disabled]` or `.disabled`
+- `checked`/`selected`: `:checked` or `.selected` (toggles and options)
+- `invalid`: `:invalid` or `.invalid` (field-like only)
 
-All components can be sized using the sizing classes `smaller`, `larger`, etc,
-as they use `pem` or `em` units instead of pixels or rems.
+## Color Variants
 
-## Token Model
+Applied as classes on any control — sets `--ctrl-color`:
 
-Every component should define the following properties in its token tree:
+- `neutral` (default)
+- `primary`, `secondary`, `tertiary`, `accent`
+- `success`, `warning`, `danger`, `info`, `error`
 
-```
---{component}-
-  -font-{family,line,weight,size}
-  -padding
-  -margin
-  -{normal,hover,focus,active,disabled}
-    -{border,text,background,outline}-{base,tint,blend,opacity}
-    -{border,outline}-{width,style}
-```
+## Style Variants
 
-### Token Shape
+- `default` — filled background (buttons) or light paper background (fields)
+- `outline` — transparent background, visible border
+- `ghost` — transparent background, no border; subtle ink wash on hover
+- `blank` — no visual chrome, inherits text color, no state effects
 
-```js
-component: {
-  font: {
-    family: "…"
-    line: …,
-    weight: …,
-    size: …,
-  },
-  padding: "…",
-  margin: "…",
+Button-specific:
 
-  // Normal defines the defaults for the component
-  normal: {
-    color:  …,  // The CSS variable for the base color (neutral by default)
-    text: { base, tint, blend, opacity },
-    background: { base, tint, blend, opacity },
-    border: {
-      width: …,
-      radius: …,
-      style: …,
-      opacity: …,
-      base: …,
-      tint: …,
-      blend: …,
-    },
-    outline: { width, style, base, tint, blend, opacity },
-  },
+- `icon` — square aspect ratio, compact padding
 
-  // State overrides reference normal values by default.
-  // If a property is not overridden it resolves to normal.
-  hover: {
-    border: {
-      width: `${vars.component.border.normal.width}`,
-      style: `${vars.component.border.normal.style}`,
-      opacity: `${vars.component.border.normal.opacity}`,
-      …
-    },
-    …
-  },
-  focus: { … },
-  active: { … },
-  disabled: { … },
-}
-```
+## Token Structure
 
-### Current Token Structure (controls)
-
-Controls are driven by token trees from `src/css/tokens.js`. Each control
-defines:
+Control tokens are defined in `src/css/tokens.js` under the `control` key:
 
 ```
-component: {
-  font: { family, line, weight, size },
-  box: { padding: { x, y }, radius },
-  color: { base, tint, blend, opacity, primary, secondary, … },
-  focus: { tint, blend, opacity },
-  hover: { tint, blend, opacity },
-  active: { tint, blend, opacity },
-  selected: { tint, blend, opacity },
-}
+control:
+  transition          shared CSS transition string
+  color               default semantic color (neutral)
+  disabled:
+    opacity            dimmed opacity for disabled state
+  focus:
+    ring:
+      width            outline width
+      offset           outline offset
+      opacity          outline opacity
+  field:
+    tx: { blend }
+    bg: { blend }
+    bd: { blend, opacity, width, radius }
+    hover:
+      bd: { blend, opacity }
+    focus:
+      bd: { blend, opacity }
+  button:
+    bg: { blend }
+    bd: { opacity, width, radius }
+    hover:
+      bg: { blend }
+    active:
+      bg: { blend }
+  outline:
+    bd: { opacity }
 ```
 
-Checkbox and radio also define:
+Per-element overrides use `--ctrl-*` variables set inline or via classes:
 
-- `box.size`, `box.radius`, `box.marker`
-- `content.checked` (and `content.partial` for checkbox)
+- `--ctrl-color` — overrides the semantic color
+- `--ctrl-bg-blend`, `--ctrl-bd-blend`, etc. — per-element tuning
 
-Select also defines:
+Individual control types (`input`, `textarea`, `select`, `button`) define
+font tokens at `--{type}-font-{family,size,line,weight}`, `--{type}-padding`,
+and `--{type}-margin`.
 
-- `arrow.size`, `arrow.offset`, `arrow.gap`
+## Color Pipeline
 
-Range also defines:
+Colors are computed using `color-mix()` expressions built from token variables.
+The helper `cmix(base, tint, blend, opacity)` produces:
 
-- `box.max_width`
-- `track.size`, `track.radius`, `track.color`
-- `thumb.size`, `thumb.radius`
+```css
+color-mix(in oklch,
+  color-mix(in oklch, <base>, <tint> <blend>),
+  transparent calc(100% - <opacity>))
+```
 
-### Runtime Color Pipeline
+Pre-computed expressions used across all controls:
 
-At runtime, controls compute a "current color" pipeline via helper functions:
+| Expression | Base | Tint | Blend | Opacity |
+|-----------|------|------|-------|---------|
+| `fieldTx` | ctrl-color | ink | field.tx.blend | — |
+| `fieldBg` | ctrl-color | paper | field.bg.blend | field.bg.opacity |
+| `fieldBd` | ctrl-color | ink | field.bd.blend | field.bd.opacity |
+| `buttonBg` | ctrl-color | paper | button.bg.blend | — |
+| `buttonBd` | ctrl-color | ink | 85% | button.bd.opacity |
+| `focusRing` | ctrl-color | paper | 75% | focus.ring.opacity |
 
-- `--{control}-current-color-base`
-- `--{control}-current-color-tint`
-- `--{control}-current-color-blend`
-- `--{control}-current-color-opacity`
-- `--{control}-current-color`
+These expressions use `var()` with `.or()` fallbacks so that per-element
+`--ctrl-*` overrides take precedence over the global `--control-*` tokens.
 
-These are set by `colorvars()` and `state()` helpers in `controls.js` and
-drive the computed `background`, `color`, `border-color`, and `outline-color`
-values.
+## Control Behavior
 
-### Migration Notes
+### Fields (input, textarea, select)
 
-Key differences between the current token shape and the target model:
+- Default: paper-tinted background, subtle ink-tinted border
+- Hover: border strengthens (blend/opacity shift via `--ctrl-bd-*`)
+- Focus: border strengthens further + outline ring appears
+- Active: background blend shifts slightly (98%)
+- Invalid: border switches to danger color; focus shows danger outline
+- Outline variant: transparent background, stronger initial border
+- Ghost variant: transparent background, no border; ink wash on hover
+- Blank variant: no chrome, inherits text color
 
-| Aspect | Current | Target |
-|--------|---------|--------|
-| Padding | `box.padding.{x,y}` | `padding` (single or shorthand) |
-| Margin | not tokenized | `margin` |
-| State grouping | flat at component root | nested under `normal` + state overrides |
-| Property scoping | `component.hover.tint` | `component.hover.border.tint`, `component.hover.background.tint`, etc. |
-| Default resolution | implicit in code | explicit `${vars.component.border.normal.width}` references |
+### Buttons
 
-## Relationship With Generic Color Utilities
+- Default: base color fill, contrast text, subtle ink border
+- Hover: lighten toward paper (via button.hover.bg.blend)
+- Active: darken toward ink (via button.active.bg.blend)
+- Focus: outline ring appears
+- Outline variant: transparent background, colored text and visible border
+- Ghost variant: transparent, subtle ink wash on hover/active
+- Blank variant: no chrome
 
-Generic color utility classes from `spec-001` do not currently redefine the
-internal component color pipeline.
+### Toggles (checkbox, radio)
 
-Components compute their own `background`, `color`, `border-color`, and
-`outline-color` values from component-specific variables such as
-`--button-current-color` and `--input-current-color`.
+- Unchecked: field-like appearance (paper background, ink border)
+- Checked: flips to button-like appearance (base color fill)
+- Sub-element indicator (`::after`): color driven by `--ctrl-sub-color`
+  - Checkbox: rotated border forming a checkmark; dash for indeterminate
+  - Radio: filled circle dot
+- Outline variant: transparent background when unchecked; no fill on checked,
+  indicator uses ink-tinted base color instead
+- Blank variant: no chrome; indicator inherits color on checked
 
-Color variants such as `.primary` and `.danger` set component-specific base
-variables like `--button-color-base` or `--input-color-base` via the
-`__{component}_color_base` property convention.
+### Selector (container + options)
 
-## Base Styling
+- Container: transparent background, ink-tinted border, focus-within outline
+- Options: transparent background, ink-tinted text
+- Selected options: flip to button mode (base color fill, contrast text)
+- Hidden native inputs (radio/checkbox) via clip pattern
+- Supports `input:checked + label` mirroring for accessibility
 
-Buttons and selectable items:
+### Slider (range)
 
-- use component font tokens
-- default to a filled background derived from the current component color
-- have no visible border by default
-- use contrast text on filled button color variants
+- Track: field border color, thin bar
+- Thumb: button-colored circle with subtle border
+- Hover: track strengthens, thumb lightens and scales up
+- Active: thumb darkens
+- Focus: outline on control + ring on thumb
+- Blank variant: minimal track/thumb, no focus ring
 
-Inputs and textareas:
+### Panel
 
-- use component font tokens
-- default to a paper-tinted background based on the component color
-- default to a tinted `1px` border
-- use a stronger paper tint on focus
+- Light paper-tinted background with subtle paper-tinted border
+- Uses field text color
+- Outline variant: transparent background, ink-tinted border
+- Blank variant: no chrome
 
-Checkboxes:
+## Relationship With Color Utilities
 
-- use the same paper-tinted surface model as inputs
-- default to a tinted `1px` border
-- render a check mark for `:checked`
-- render a partial mark for `:indeterminate`
+Generic color utility classes from spec-001 do not redefine the control
+color pipeline. Controls compute their own `background`, `color`,
+`border-color`, and `outline-color` from `--ctrl-*` / `--control-*` tokens.
 
-Radios:
-
-- are separate from checkboxes
-- default to a circular paper surface with a tinted `1px` border
-- render a checked dot for `:checked`
-- apply color variants to the checked indicator
-
-Selectors:
-
-- wrap checkbox/radio inputs with styled option items
-- hide native inputs
-- use `aria-pressed` and `aria-checked` for selected state detection
-
-Range:
-
-- transparent background with custom track and thumb
-- uses `--range-current-color` for thumb fill
-- webkit and moz pseudo-element support
-
-## State Selectors
-
-Where supported, components use both pseudo-class and explicit class selectors:
-
-- hover: `:hover` and `.hover`
-- active: `:active` and `.active`
-- focus: `:focus`, `:focus-within`, `:focus-visible`, or `.focus` depending on the component
-- disabled: `[disabled]`, `:disabled`, `.disabled`, and `[aria-disabled="true"]`
-
-Selected state is class-driven in the current implementation.
-
-## Variant Semantics
-
-- `default` adds a stronger visible border
-- `outline` removes the filled background and keeps a visible border
-- `blank` reduces emphasis by clearing background and lowering color opacity
-- `bare` removes visual styling and interaction chrome
-- `ghost` is implemented for buttons, inputs, textareas, and selects
-- `icon` is implemented as a compact low-emphasis variant
+Color variant classes (`.primary`, `.danger`, etc.) set `--ctrl-color` to
+the corresponding `--color-{name}` semantic variable.
