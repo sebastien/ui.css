@@ -664,7 +664,7 @@ class Tokens extends Group {
 						}
 						break;
 					case undefined:
-					console.warn(`[uicss] Undefined key '${k}' in`, {
+						console.warn(`[uicss] Undefined key '${k}' in`, {
 							collection,
 						});
 						break;
@@ -813,5 +813,14 @@ export {
 	url,
 	vars,
 };
-export default Object.assign(css, { rule, block, vars, group, layer });
+export default Object.assign(css, {
+	css,
+	doc,
+	rule,
+	mods,
+	block,
+	vars,
+	group,
+	layer,
+});
 // EOF

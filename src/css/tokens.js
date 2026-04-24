@@ -221,8 +221,8 @@ export default group(
 	// SPACING & SIZING
 	//
 	// ------------------------------------------------------------------------
-		tokens({
-			motion: {
+	tokens({
+		motion: {
 			duration: {
 				fast: "0.1s",
 				normal: "0.2s",
@@ -236,24 +236,24 @@ export default group(
 				hover_dx: "20%",
 			},
 		},
-			control: {
-				color: {
-					border: {
-						base: `${vars.color.neutral}`,
-						tint: `${vars.color.ink}`,
-						blend: "88%",
-						opacity: "82%",
-					},
-					background: {
-						base: `${vars.color.neutral}`,
-						tint: `${vars.color.paper}`,
-						blend: "86%",
-						opacity: "100%",
-					},
-				},
-				transition: `background ${vars.motion.duration.normal} ${vars.motion.easing.standard}, color ${vars.motion.duration.normal} ${vars.motion.easing.standard}, border ${vars.motion.duration.normal} ${vars.motion.easing.standard}, outline-color ${vars.motion.duration.normal} ${vars.motion.easing.standard}`,
+		control: {
+			color: {
 				border: {
-					width: "1px",
+					base: `${vars.color.neutral}`,
+					tint: `${vars.color.ink}`,
+					blend: "88%",
+					opacity: "82%",
+				},
+				background: {
+					base: `${vars.color.neutral}`,
+					tint: `${vars.color.paper}`,
+					blend: "86%",
+					opacity: "100%",
+				},
+			},
+			transition: `background ${vars.motion.duration.normal} ${vars.motion.easing.standard}, color ${vars.motion.duration.normal} ${vars.motion.easing.standard}, border ${vars.motion.duration.normal} ${vars.motion.easing.standard}, outline-color ${vars.motion.duration.normal} ${vars.motion.easing.standard}`,
+			border: {
+				width: "1px",
 			},
 			focus: {
 				ring: {
@@ -276,10 +276,10 @@ export default group(
 				padding: "0.25em",
 				size: "1em",
 			},
-				disabled: {
-					blend: "50%",
-					opacity: "65%",
-				},
+			disabled: {
+				blend: "50%",
+				opacity: "65%",
+			},
 		},
 		size: [
 			"0em",
@@ -401,39 +401,38 @@ export default group(
 			},
 			padding: "0.65em 1em",
 			margin: "0px",
-			box: {
-				radius: `${vars.border.radius[1]}`,
-			},
-				normal: {
-					border: {
-						base: `${vars.control.color.border.base}`,
-						tint: `${vars.control.color.border.tint}`,
-						blend: `${vars.control.color.border.blend}`,
-						opacity: `${vars.control.color.border.opacity}`,
-						width: `${vars.control.border.width}`,
-						style: "solid",
-					},
+			normal: {
+				border: {
+					base: `${vars.control.color.border.base}`,
+					tint: `${vars.control.color.border.tint}`,
+					blend: `${vars.control.color.border.blend}`,
+					opacity: `${vars.control.color.border.opacity}`,
+					width: `${vars.control.border.width}`,
+					radius: `${vars.control.border.radius}`,
+					style: "solid",
+				},
 				text: {
 					base: `${vars.color.ink}`,
 					tint: `${vars.color.ink}`,
 					blend: "0%",
 					opacity: "100%",
 				},
-					background: {
-						base: `${vars.color.paper}`,
-						tint: `${vars.color.paper}`,
-						blend: "100%",
-						opacity: "100%",
-					},
-					outline: {
-						base: `${vars.color.neutral}`,
-						tint: `${vars.color.paper}`,
-						blend: "100%",
-						opacity: "50%",
-						width: "0px",
-						style: "solid",
-					},
+				background: {
+					base: `${vars.color.paper}`,
+					tint: `${vars.color.paper}`,
+					blend: "100%",
+					opacity: "100%",
 				},
+				outline: {
+					base: `${vars.color.neutral}`,
+					tint: `${vars.color.paper}`,
+					blend: "100%",
+					opacity: "50%",
+					width: "0px",
+					radius: `${vars.control.outline.radius}`,
+					style: "solid",
+				},
+			},
 			hover: {
 				background: {
 					tint: `${vars.color.ink}`,
@@ -441,15 +440,15 @@ export default group(
 					opacity: "50%",
 				},
 			},
-				focus: {
-					outline: {
-						tint: `${vars.color.paper}`,
-						blend: "62%",
-						opacity: "72%",
-						width: `${vars.control.focus.ring.width}`,
-						style: "solid",
-					},
+			focus: {
+				outline: {
+					tint: `${vars.color.paper}`,
+					blend: "62%",
+					opacity: "72%",
+					width: `${vars.control.focus.ring.width}`,
+					style: "solid",
 				},
+			},
 			active: {
 				background: {
 					tint: `${vars.color.paper}`,
@@ -549,7 +548,7 @@ export default group(
 			box: {
 				radius: `${vars.border.radius[1]}`,
 			},
-				normal: {
+			normal: {
 				border: {
 					base: `${vars.color.neutral}`,
 					tint: `${vars.color.paper}`,
@@ -570,15 +569,15 @@ export default group(
 					blend: "0%",
 					opacity: "0%",
 				},
-					outline: {
-						base: `${vars.color.neutral}`,
-						tint: `${vars.color.paper}`,
-						blend: "100%",
-						opacity: "25%",
-						width: "0px",
-						style: "solid",
-					},
+				outline: {
+					base: `${vars.color.neutral}`,
+					tint: `${vars.color.paper}`,
+					blend: "100%",
+					opacity: "25%",
+					width: "0px",
+					style: "solid",
 				},
+			},
 			hover: {
 				background: {
 					tint: `${vars.color.ink}`,
@@ -586,15 +585,15 @@ export default group(
 					opacity: "25%",
 				},
 			},
-				focus: {
-					outline: {
-						tint: `${vars.color.paper}`,
-						blend: "62%",
-						opacity: "72%",
-						width: `${vars.control.focus.ring.width}`,
-						style: "solid",
-					},
+			focus: {
+				outline: {
+					tint: `${vars.color.paper}`,
+					blend: "62%",
+					opacity: "72%",
+					width: `${vars.control.focus.ring.width}`,
+					style: "solid",
 				},
+			},
 			active: {
 				background: {
 					tint: `${vars.color.paper}`,
@@ -665,27 +664,27 @@ export default group(
 			item: {
 				padding: "0.5em 0.875em",
 			},
-				normal: {
-					border: {
-						base: `${vars.control.color.border.base}`,
-						tint: `${vars.control.color.border.tint}`,
-						blend: `${vars.control.color.border.blend}`,
-						opacity: `${vars.control.color.border.opacity}`,
-						width: `${vars.control.border.width}`,
-						style: "solid",
-					},
+			normal: {
+				border: {
+					base: `${vars.control.color.border.base}`,
+					tint: `${vars.control.color.border.tint}`,
+					blend: `${vars.control.color.border.blend}`,
+					opacity: `${vars.control.color.border.opacity}`,
+					width: `${vars.control.border.width}`,
+					style: "solid",
+				},
 				text: {
 					base: `${vars.color.ink}`,
 					tint: `${vars.color.ink}`,
 					blend: "0%",
 					opacity: "100%",
 				},
-					background: {
-						base: `${vars.color.paper}`,
-						tint: `${vars.color.paper}`,
-						blend: "100%",
-						opacity: "100%",
-					},
+				background: {
+					base: `${vars.color.paper}`,
+					tint: `${vars.color.paper}`,
+					blend: "100%",
+					opacity: "100%",
+				},
 				outline: {
 					base: `${vars.color.neutral}`,
 					tint: `${vars.color.paper}`,
@@ -766,63 +765,63 @@ export default group(
 			box: {
 				radius: `${vars.border.radius[1]}`,
 			},
-				normal: {
-					border: {
-						base: `${vars.control.color.border.base}`,
-						tint: `${vars.control.color.border.tint}`,
-						blend: `${vars.control.color.border.blend}`,
-						opacity: `${vars.control.color.border.opacity}`,
-						width: `${vars.control.border.width}`,
-						style: "solid",
-					},
+			normal: {
+				border: {
+					base: `${vars.control.color.border.base}`,
+					tint: `${vars.control.color.border.tint}`,
+					blend: `${vars.control.color.border.blend}`,
+					opacity: `${vars.control.color.border.opacity}`,
+					width: `${vars.control.border.width}`,
+					style: "solid",
+				},
 				text: {
 					base: `${vars.color.ink}`,
 					tint: `${vars.color.ink}`,
 					blend: "0%",
 					opacity: "100%",
 				},
-					background: {
-						base: `${vars.color.paper}`,
-						tint: `${vars.color.paper}`,
-						blend: "100%",
-						opacity: "100%",
-					},
-					outline: {
-						base: `${vars.color.neutral}`,
-						tint: `${vars.color.paper}`,
-						blend: "100%",
-						opacity: "10%",
-						width: "0px",
-						style: "solid",
-					},
+				background: {
+					base: `${vars.color.paper}`,
+					tint: `${vars.color.paper}`,
+					blend: "100%",
+					opacity: "100%",
 				},
-				hover: {
-					border: {
-						tint: `${vars.color.ink}`,
-						blend: "82%",
-						opacity: "90%",
-					},
-					background: {
-						blend: "4%",
-					},
+				outline: {
+					base: `${vars.color.neutral}`,
+					tint: `${vars.color.paper}`,
+					blend: "100%",
+					opacity: "10%",
+					width: "0px",
+					style: "solid",
 				},
-				focus: {
-					outline: {
-						base: `${vars.color.neutral}`,
-						tint: `${vars.color.paper}`,
-						blend: "62%",
-						opacity: "72%",
-						width: `${vars.control.focus.ring.width}`,
-						style: "solid",
-					},
+			},
+			hover: {
+				border: {
+					tint: `${vars.color.ink}`,
+					blend: "82%",
+					opacity: "90%",
 				},
-				active: {
-					border: {
-						tint: `${vars.color.ink}`,
-						blend: "74%",
-						opacity: "94%",
-					},
+				background: {
+					blend: "4%",
 				},
+			},
+			focus: {
+				outline: {
+					base: `${vars.color.neutral}`,
+					tint: `${vars.color.paper}`,
+					blend: "62%",
+					opacity: "72%",
+					width: `${vars.control.focus.ring.width}`,
+					style: "solid",
+				},
+			},
+			active: {
+				border: {
+					tint: `${vars.color.ink}`,
+					blend: "74%",
+					opacity: "94%",
+				},
+			},
 			selected: {
 				background: {
 					tint: `${vars.color.ink}`,
@@ -830,18 +829,18 @@ export default group(
 					opacity: "100%",
 				},
 			},
-					disabled: {
-						background: {
-							base: `${vars.color.neutral}`,
-							tint: `${vars.color.paper}`,
-							blend: "20%",
-							opacity: "100%",
-						},
-						text: {
-							tint: `${vars.color.ink}`,
-							blend: "42%",
-							opacity: "80%",
-						},
+			disabled: {
+				background: {
+					base: `${vars.color.neutral}`,
+					tint: `${vars.color.paper}`,
+					blend: "20%",
+					opacity: "100%",
+				},
+				text: {
+					tint: `${vars.color.ink}`,
+					blend: "42%",
+					opacity: "80%",
+				},
 				border: {
 					base: `${vars.control.color.border.base}`,
 					tint: `${vars.control.color.border.tint}`,
@@ -903,63 +902,63 @@ export default group(
 			box: {
 				radius: `${vars.border.radius[1]}`,
 			},
-				normal: {
-					border: {
-						base: `${vars.control.color.border.base}`,
-						tint: `${vars.control.color.border.tint}`,
-						blend: `${vars.control.color.border.blend}`,
-						opacity: `${vars.control.color.border.opacity}`,
-						width: `${vars.control.border.width}`,
-						style: "solid",
-					},
+			normal: {
+				border: {
+					base: `${vars.control.color.border.base}`,
+					tint: `${vars.control.color.border.tint}`,
+					blend: `${vars.control.color.border.blend}`,
+					opacity: `${vars.control.color.border.opacity}`,
+					width: `${vars.control.border.width}`,
+					style: "solid",
+				},
 				text: {
 					base: `${vars.color.ink}`,
 					tint: `${vars.color.ink}`,
 					blend: "0%",
 					opacity: "100%",
 				},
-					background: {
-						base: `${vars.color.paper}`,
-						tint: `${vars.color.paper}`,
-						blend: "100%",
-						opacity: "100%",
-					},
-					outline: {
-						base: `${vars.color.neutral}`,
-						tint: `${vars.color.paper}`,
-						blend: "100%",
-						opacity: "10%",
-						width: "0px",
-						style: "solid",
-					},
+				background: {
+					base: `${vars.color.paper}`,
+					tint: `${vars.color.paper}`,
+					blend: "100%",
+					opacity: "100%",
 				},
-				hover: {
-					border: {
-						tint: `${vars.color.ink}`,
-						blend: "82%",
-						opacity: "90%",
-					},
-					background: {
-						blend: "4%",
-					},
+				outline: {
+					base: `${vars.color.neutral}`,
+					tint: `${vars.color.paper}`,
+					blend: "100%",
+					opacity: "10%",
+					width: "0px",
+					style: "solid",
 				},
-				focus: {
-					outline: {
-						base: `${vars.color.neutral}`,
-						tint: `${vars.color.paper}`,
-						blend: "62%",
-						opacity: "72%",
-						width: `${vars.control.focus.ring.width}`,
-						style: "solid",
-					},
+			},
+			hover: {
+				border: {
+					tint: `${vars.color.ink}`,
+					blend: "82%",
+					opacity: "90%",
 				},
-				active: {
-					border: {
-						tint: `${vars.color.ink}`,
-						blend: "74%",
-						opacity: "94%",
-					},
+				background: {
+					blend: "4%",
 				},
+			},
+			focus: {
+				outline: {
+					base: `${vars.color.neutral}`,
+					tint: `${vars.color.paper}`,
+					blend: "62%",
+					opacity: "72%",
+					width: `${vars.control.focus.ring.width}`,
+					style: "solid",
+				},
+			},
+			active: {
+				border: {
+					tint: `${vars.color.ink}`,
+					blend: "74%",
+					opacity: "94%",
+				},
+			},
 			selected: {
 				background: {
 					tint: `${vars.color.ink}`,
@@ -967,18 +966,18 @@ export default group(
 					opacity: "100%",
 				},
 			},
-					disabled: {
-						background: {
-							base: `${vars.color.neutral}`,
-							tint: `${vars.color.paper}`,
-							blend: "20%",
-							opacity: "100%",
-						},
-						text: {
-							tint: `${vars.color.ink}`,
-							blend: "42%",
-							opacity: "80%",
-						},
+			disabled: {
+				background: {
+					base: `${vars.color.neutral}`,
+					tint: `${vars.color.paper}`,
+					blend: "20%",
+					opacity: "100%",
+				},
+				text: {
+					tint: `${vars.color.ink}`,
+					blend: "42%",
+					opacity: "80%",
+				},
 				border: {
 					base: `${vars.control.color.border.base}`,
 					tint: `${vars.control.color.border.tint}`,
@@ -1045,66 +1044,66 @@ export default group(
 				offset: "0.75em",
 				gap: "0.33em",
 			},
-				normal: {
-					border: {
-						base: `${vars.control.color.border.base}`,
-						tint: `${vars.control.color.border.tint}`,
-						blend: `${vars.control.color.border.blend}`,
-						opacity: `${vars.control.color.border.opacity}`,
-						width: `${vars.control.border.width}`,
-						style: "solid",
-					},
+			normal: {
+				border: {
+					base: `${vars.control.color.border.base}`,
+					tint: `${vars.control.color.border.tint}`,
+					blend: `${vars.control.color.border.blend}`,
+					opacity: `${vars.control.color.border.opacity}`,
+					width: `${vars.control.border.width}`,
+					style: "solid",
+				},
 				text: {
 					base: `${vars.color.ink}`,
 					tint: `${vars.color.ink}`,
 					blend: "0%",
 					opacity: "100%",
 				},
-					background: {
-						base: `${vars.control.color.background.base}`,
-						tint: `${vars.control.color.background.tint}`,
-						blend: `${vars.control.color.background.blend}`,
-						opacity: `${vars.control.color.background.opacity}`,
-					},
-					outline: {
-						base: `${vars.color.neutral}`,
-						tint: `${vars.color.paper}`,
-						blend: "100%",
-						opacity: "10%",
-						width: "0px",
-						style: "solid",
-					},
+				background: {
+					base: `${vars.control.color.background.base}`,
+					tint: `${vars.control.color.background.tint}`,
+					blend: `${vars.control.color.background.blend}`,
+					opacity: `${vars.control.color.background.opacity}`,
 				},
-				hover: {
-					border: {
-						tint: `${vars.color.ink}`,
-						blend: "82%",
-						opacity: "90%",
-					},
-					background: {
-						blend: "4%",
-					},
+				outline: {
+					base: `${vars.color.neutral}`,
+					tint: `${vars.color.paper}`,
+					blend: "100%",
+					opacity: "10%",
+					width: "0px",
+					style: "solid",
 				},
-				focus: {
-					background: {
-						blend: "6%",
-					},
-					outline: {
-						base: `${vars.color.neutral}`,
-						tint: `${vars.color.paper}`,
-						blend: "62%",
-						opacity: "72%",
-						width: `${vars.control.focus.ring.width}`,
-						style: "solid",
-					},
+			},
+			hover: {
+				border: {
+					tint: `${vars.color.ink}`,
+					blend: "82%",
+					opacity: "90%",
 				},
-				active: {
-					border: {
-						tint: `${vars.color.ink}`,
-						blend: "74%",
-						opacity: "94%",
-					},
+				background: {
+					blend: "4%",
 				},
+			},
+			focus: {
+				background: {
+					blend: "6%",
+				},
+				outline: {
+					base: `${vars.color.neutral}`,
+					tint: `${vars.color.paper}`,
+					blend: "62%",
+					opacity: "72%",
+					width: `${vars.control.focus.ring.width}`,
+					style: "solid",
+				},
+			},
+			active: {
+				border: {
+					tint: `${vars.color.ink}`,
+					blend: "74%",
+					opacity: "94%",
+				},
+			},
 			disabled: {
 				background: {
 					base: `${vars.color.neutral}`,
@@ -1139,7 +1138,7 @@ export default group(
 		// ====================================================================
 		// RANGE
 		// ====================================================================
-			range: {
+		range: {
 			font: {
 				family: `${vars.font.controls.family}`,
 				line: `${vars.font.controls.line}`,
