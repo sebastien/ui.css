@@ -1,3 +1,4 @@
 deps/*
+.fallow
 docs.json
 run/*

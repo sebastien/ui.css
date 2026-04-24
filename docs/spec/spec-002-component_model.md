@@ -22,6 +22,7 @@ States:
 
 Color variants:
 
+- `accent`
 - `primary`
 - `secondary`
 - `tertiary`
@@ -61,26 +62,28 @@ Every component should define the following properties in its token tree:
 ```js
 component: {
   font: {
-    family: …,
+    family: "…"
     line: …,
     weight: …,
     size: …,
   },
-  padding: …,
-  margin: …,
+  padding: "…",
+  margin: "…",
 
   // Normal defines the defaults for the component
   normal: {
+    color:  …,  // The CSS variable for the base color (neutral by default)
+    text: { base, tint, blend, opacity },
+    background: { base, tint, blend, opacity },
     border: {
       width: …,
+      radius: …,
       style: …,
       opacity: …,
       base: …,
       tint: …,
       blend: …,
     },
-    text: { base, tint, blend, opacity },
-    background: { base, tint, blend, opacity },
     outline: { width, style, base, tint, blend, opacity },
   },
 

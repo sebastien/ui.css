@@ -1,1268 +1,835 @@
-import {
-	contrast,
-	cross,
-	group,
-	mods,
-	named,
-	rule,
-	vars,
-} from "../js/uicss.js";
-import { colormixin } from "./colors.js";
+import { contrast as contrastColor, group, rule, vars } from "../js/uicss.js"
+import { colormixin } from "./colors.js"
+import DEFAULTS_SPEC from "./controls.defaults.js"
 
 // ----------------------------------------------------------------------------
 //
-// CONSTANTS
+// SHORTHAND PARSERS
 //
 // ----------------------------------------------------------------------------
 
-const SIZES = [
-	"smallest",
-	"smaller",
-	"small",
-	"regular",
-	"large",
-	"larger",
-	"largest",
-];
-const COLORS = [
-	"primary",
-	"secondary",
-	"tertiary",
-	"success",
-	"warning",
-	"danger",
-	"accent",
-];
-const STATES = [
-	"",
-	":hover",
-	"hover",
-	":active",
-	".active",
-	":focus",
-	":focus-within",
-	".focus",
-];
+// Property name expansions from shorthand keys.
+const PROPS = { tx: "text", bg: "background", bd: "border", ol: "outline" }
 
-// Inheritance chain: child inherits unset tokens from parent.
-const INHERIT = {
-	selectable: "button",
-	selector: "input",
-	checkbox: "input",
-	radio: "input",
-	textarea: "input",
-	select: "input",
-};
+// Color facets produced by the color pipeline.
+const COLOR_FACETS = ["base", "tint", "blend", "opacity"]
 
-const FALLBACK = {
-	font: { family: "sans-serif", line: "1.2", weight: "400", size: "1rem" },
-	spacing: {
-		padding: "0px",
-		margin: "0px",
-		radius: "0px",
-		gap: "0px",
-		item_padding: "0.5em 0.875em",
-	},
-	border: { width: "1px", style: "solid" },
-	outline: { width: "2px", style: "solid" },
-	color: {
-		border: {
-			base: `${vars.color.neutral}`,
-			tint: `${vars.color.paper}`,
-			blend: "70%",
-			opacity: "100%",
-		},
-		text: {
-			base: `${vars.color.ink}`,
-			tint: `${vars.color.ink}`,
-			blend: "0%",
-			opacity: "100%",
-		},
-		background: {
-			base: `${vars.color.neutral}`,
-			tint: `${vars.color.paper}`,
-			blend: "100%",
-			opacity: "100%",
-		},
-		outline: {
-			base: `${vars.color.neutral}`,
-			tint: `${vars.color.paper}`,
-			blend: "100%",
-			opacity: "25%",
-		},
-	},
-	hover: {
-		background: {
-			base: `${vars.color.neutral}`,
-			tint: `${vars.color.paper}`,
-			blend: "82%",
-			opacity: "100%",
-		},
-	},
-	active: {
-		background: {
-			base: `${vars.color.neutral}`,
-			tint: `${vars.color.paper}`,
-			blend: "100%",
-			opacity: "100%",
-		},
-		border: {
-			base: `${vars.color.neutral}`,
-			tint: `${vars.color.ink}`,
-			blend: "50%",
-			opacity: "100%",
-		},
-	},
-};
+// Structural facets for border/outline geometry.
+const GEOM_FACETS = ["width", "radius"]
 
-// ----------------------------------------------------------------------------
-//
-// TOKEN RESOLUTION
-//
-// ----------------------------------------------------------------------------
+// Function: parseColor
+// Parses a color shorthand into facet values.
+// `.` means inherit (null). `0` means transparent. Returns `{base, tint, blend, opacity}`.
+function parseColor(str) {
+	const s = str.trim()
+	if (s === "0") return { base: null, tint: null, blend: null, opacity: "0" }
+	if (s === ".") return { base: null, tint: null, blend: null, opacity: null }
+	if (s === "contrast") return { base: "contrast", tint: null, blend: null, opacity: null }
+	if (s === "inherit") return { base: "inherit", tint: null, blend: null, opacity: null }
 
-// Function: chain
-// Walks the inheritance chain for a component name.
-function chain(name) {
-	const res = [name];
-	let cur = name;
-	while (INHERIT[cur]) {
-		cur = INHERIT[cur];
-		res.push(cur);
+	const parts = s.split(/\s+/)
+	const [rawBase, rawTint] = (parts[0] || "./.").split("/")
+
+	if (rawBase === "contrast" || rawBase === "inherit") {
+		const inh = (v) => (v === undefined || v === "." ? null : v)
+		return { base: rawBase, tint: null, blend: null, opacity: inh(rawTint) }
 	}
-	return res;
+
+	const [rawBlend, rawOpacity] = (parts[1] || "./.").split("/")
+	const inh = (v) => (v === undefined || v === "." ? null : v)
+	return { base: inh(rawBase), tint: inh(rawTint), blend: inh(rawBlend), opacity: inh(rawOpacity) }
 }
 
-const norm = (v) => `${v}`.replaceAll("_", "-");
-const cssvar = (name, ...path) => `--${[name, ...path].map(norm).join("-")}`;
+// Function: parseBorder
+// Parses a border/outline shorthand. Returns `{width, radius, base, tint, blend, opacity}`.
+function parseBorder(str) {
+	const s = str.trim()
+	if (s === "0") return { width: "0px", radius: null, base: null, tint: null, blend: null, opacity: "0" }
+	if (s === ".") return { width: null, radius: null, base: null, tint: null, blend: null, opacity: null }
 
-// Function: tok
-// Builds a var() fallback chain through the inheritance hierarchy.
-// tok("checkbox", ["font","size"]) → var(--checkbox-font-size, var(--input-font-size, 1rem))
-function tok(name, path, fallback) {
-	return chain(name).reduceRight(
-		(acc, c) => `var(${cssvar(c, ...path)}, ${acc})`,
-		fallback,
-	);
+	const parts = s.split(/\s+/)
+
+	// Legacy tilde form
+	if (parts[0] && parts[0].includes("~")) {
+		const [w, r] = parts[0].split("~")
+		const inh = (v) => (v === "." || v === "_" ? null : v)
+		const color = parseColor(parts.slice(1).join(" ") || "./. ./.")
+		return { width: inh(w), radius: inh(r), ...color }
+	}
+
+	// Space form: "width radius color..."
+	const isDim = (v) => /^[0-9.]/.test(v) || v === "." || /^(0|[0-9]+(%|px|em|rem|vw|vh))$/.test(v)
+	if (parts.length >= 2 && isDim(parts[0]) && isDim(parts[1])) {
+		const inh = (v) => (v === "." ? null : v)
+		const color = parseColor(parts.slice(2).join(" ") || "./. ./.")
+		return { width: inh(parts[0]), radius: inh(parts[1]), ...color }
+	}
+
+	const color = parseColor(s)
+	return { width: null, radius: null, ...color }
 }
 
-// Function: ntok
-// Normal-state color token: tok(name, ["normal", prop, key], FALLBACK.color[prop][key])
-function ntok(name, prop, key) {
-	return tok(name, ["normal", prop, key], FALLBACK.color[prop][key]);
+// Function: parseProperty
+// Dispatches to parseBorder for bd/ol, parseColor for tx/bg.
+function parseProperty(key, value) {
+	return (key === "bd" || key === "ol") ? parseBorder(value) : parseColor(value)
 }
 
-// Function: stok
-// State color token with fallback to state-specific default, then normal.
-function stok(name, state, prop, key) {
-	const fb = FALLBACK[state]?.[prop]?.[key];
-	const normal = ntok(name, prop, key);
-	return tok(name, [state, prop, key], fb ? fb : normal);
+// ----------------------------------------------------------------------------
+//
+// TEXT TREE PARSER
+//
+// ----------------------------------------------------------------------------
+
+function measureIndent(line) {
+	const m = line.match(/^(\s*)/)
+	const leading = m ? m[1] : ""
+	return leading.includes("\t") ? leading.split("\t").length - 1 : leading.length
 }
 
-// Function: mix
-// Produces a colormixin expression for (name, state, prop).
-function mix(name, state, prop) {
-	return colormixin({
-		base: stok(name, state, prop, "base"),
-		tint: stok(name, state, prop, "tint"),
-		blend: stok(name, state, prop, "blend"),
-		opacity: stok(name, state, prop, "opacity"),
-	});
+function detectIndent(lines) {
+	let baseIndent = 0
+	let indentUnit = 0
+	for (const raw of lines) {
+		const stripped = raw.replace(/#.*$/, "").trimEnd()
+		if (stripped.trim() === "") continue
+		baseIndent = measureIndent(stripped)
+		break
+	}
+	for (const raw of lines) {
+		const stripped = raw.replace(/#.*$/, "").trimEnd()
+		if (stripped.trim() === "") continue
+		const len = measureIndent(stripped)
+		if (len > baseIndent) { indentUnit = len - baseIndent; break }
+	}
+	return { baseIndent, indentUnit: indentUnit || 1 }
 }
 
-// Function: mmix
-// Produces a colormixin expression for a mode (outline, ghost, etc).
-function mmix(name, mode, prop) {
-	return colormixin({
-		base: tok(name, [mode, prop, "base"], ntok(name, prop, "base")),
-		tint: tok(name, [mode, prop, "tint"], ntok(name, prop, "tint")),
-		blend: tok(name, [mode, prop, "blend"], ntok(name, prop, "blend")),
-		opacity: tok(name, [mode, prop, "opacity"], ntok(name, prop, "opacity")),
-	});
-}
+// Function: parseTree
+// Parses spec-003 indented text into `{ name: { control, definition } }`.
+function parseTree(text) {
+	const lines = text.split("\n")
+	const result = {}
+	let control = null, currentVariant = null, currentState = null, currentSubElement = null, definition = null
+	const { baseIndent, indentUnit } = detectIndent(lines)
 
-// Function: defined
-// Checks if a token value is actually set (not undefined, not a proxy Scope).
-function defined(value) {
-	return value !== undefined && !(value instanceof Object && value._name);
-}
+	for (const raw of lines) {
+		const stripped = raw.replace(/#.*$/, "").trimEnd()
+		if (stripped.trim() === "") continue
+		const depth = Math.round((measureIndent(stripped) - baseIndent) / indentUnit)
+		const content = stripped.trim()
+		if (!content) continue
+		const colonIdx = content.indexOf(":")
+		if (colonIdx < 0) continue
+		const key = content.substring(0, colonIdx).trim()
+		const value = content.substring(colonIdx + 1).trim()
 
-// Function: hastok
-// Returns true if any component in the chain defines the given token path.
-function hastok(name, path) {
-	for (const c of chain(name)) {
-		let v = vars[c];
-		for (const k of path) {
-			v = v?.[k];
+		if (depth === 0) {
+			control = key; definition = {}; currentVariant = null; currentState = null; currentSubElement = null
+			result[control] = { control, definition }
+		} else if (depth === 1 && definition) {
+			currentVariant = key; if (!definition[currentVariant]) definition[currentVariant] = {}
+			currentState = null; currentSubElement = null
+		} else if (depth === 2 && key.startsWith("!") && definition && currentVariant) {
+			currentState = key.substring(1)
+			if (!definition[currentVariant][currentState]) definition[currentVariant][currentState] = {}
+			currentSubElement = null
+		} else if (depth === 3 && definition && currentVariant && currentState) {
+			if (value === "" || value === undefined) { currentSubElement = key }
+			else if (currentSubElement) { definition[currentVariant][currentState][`${currentSubElement}.${key}`] = value }
+			else { definition[currentVariant][currentState][key] = value }
+		} else if (depth === 4 && definition && currentVariant && currentState && currentSubElement && value) {
+			definition[currentVariant][currentState][`${currentSubElement}.${key}`] = value
 		}
-		if (defined(v)) return true;
 	}
-	return false;
+
+	const keys = Object.keys(result)
+	if (keys.length === 1) { result.control = result[keys[0]].control; result.definition = result[keys[0]].definition }
+	return result
+}
+
+// Function: style
+// Tagged template literal for spec-003 shorthand.
+function style(strings, ...values) {
+	const text = Array.isArray(strings) ? strings.reduce((r, s, i) => r + s + (values[i] ?? ""), "") : strings
+	return parseTree(text)
+}
+
+const DEFAULTS = style(DEFAULTS_SPEC)
+
+// ----------------------------------------------------------------------------
+//
+// COLOR RESOLUTION — direct CSS values
+//
+// ----------------------------------------------------------------------------
+
+// Resolve a color name to a CSS value.
+function resolveColorName(name) {
+	if (!name) return null
+	if (name === "contrast") return "contrast"
+	if (name === "inherit") return "inherit"
+	if (name === "transparent") return "transparent"
+	// BASE_COLOR placeholder → the control's runtime color variable
+	if (name === BASE_COLOR || name === "self") return "var(--ctrl-color)"
+	// Already a CSS expression (from FACET_DEFAULTS)
+	if (name.startsWith("var(") || name.startsWith("#") || name.startsWith("color-mix(")) return name
+	return `var(--color-${name})`
+}
+
+// Normalize blend to percentage string.
+function normalizeBlend(v) {
+	if (!v) return null
+	if (v.endsWith("%")) return v
+	const n = Number.parseFloat(v)
+	return Number.isNaN(n) ? v : `${n}%`
+}
+
+// Normalize opacity to percentage string.
+function normalizeOpacity(v) {
+	if (!v) return null
+	if (v === "0") return "0%"
+	if (v.endsWith("%")) return v
+	const n = Number.parseFloat(v)
+	if (Number.isNaN(n)) return v
+	return n > 1 ? `${n}%` : `${Math.round(n * 100)}%`
 }
 
 // ----------------------------------------------------------------------------
 //
-// STYLE RECIPES
+// FACET RESOLUTION WITH INHERITANCE
 //
 // ----------------------------------------------------------------------------
 
-// Function: base
-// Common base style: border, outline, font, background, color.
-function base(n) {
-	return {
-		padding: tok(n, ["padding"], FALLBACK.spacing.padding),
-		margin: tok(n, ["margin"], FALLBACK.spacing.margin),
-		outline_width: tok(
-			n,
-			["normal", "outline", "width"],
-			FALLBACK.outline.width,
-		),
-		outline_style: tok(
-			n,
-			["normal", "outline", "style"],
-			FALLBACK.outline.style,
-		),
-		outline_color: "transparent",
-		border_width: tok(n, ["normal", "border", "width"], FALLBACK.border.width),
-		border_style: tok(n, ["normal", "border", "style"], FALLBACK.border.style),
-		border_color: mix(n, "normal", "border"),
-		border_radius: tok(n, ["box", "radius"], FALLBACK.spacing.radius),
-		transition: `${vars.control.transition}`,
-		font_family: tok(n, ["font", "family"], FALLBACK.font.family),
-		line_height: tok(n, ["font", "line"], FALLBACK.font.line),
-		font_weight: tok(n, ["font", "weight"], FALLBACK.font.weight),
-		font_size: tok(n, ["font", "size"], FALLBACK.font.size),
-		background: mix(n, "normal", "background"),
-		color: mix(n, "normal", "text"),
-	};
+// Default facet values when nothing is specified.
+// The base for bg/bd/ol uses the control's --color variable (set per semantic class).
+// This is a placeholder that gets replaced with the control-specific variable in buildColorValue.
+const BASE_COLOR = "__CONTROL_COLOR__"
+const FACET_DEFAULTS = {
+	text: { base: "var(--color-ink)", tint: "var(--color-ink)", blend: "0%", opacity: "100%" },
+	background: { base: BASE_COLOR, tint: "var(--color-paper)", blend: "100%", opacity: "100%" },
+	border: { base: BASE_COLOR, tint: "var(--color-paper)", blend: "80%", opacity: "100%", width: "1px", radius: "4px" },
+	outline: { base: BASE_COLOR, tint: "var(--color-paper)", blend: "80%", opacity: "0%", width: "2px", radius: "4px" },
 }
 
-// Function: state
-// Full state style: border width/style/color, outline, background, color.
-function state(n, s) {
-	return {
-		border_width: tok(
-			n,
-			[s, "border", "width"],
-			tok(n, ["normal", "border", "width"], FALLBACK.border.width),
-		),
-		border_style: tok(
-			n,
-			[s, "border", "style"],
-			tok(n, ["normal", "border", "style"], FALLBACK.border.style),
-		),
-		border_color: mix(n, s, "border"),
-		outline_width: tok(
-			n,
-			[s, "outline", "width"],
-			tok(n, ["normal", "outline", "width"], FALLBACK.outline.width),
-		),
-		outline_style: tok(
-			n,
-			[s, "outline", "style"],
-			tok(n, ["normal", "outline", "style"], FALLBACK.outline.style),
-		),
-		outline_color: mix(n, s, "outline"),
-		background: mix(n, s, "background"),
-		color: mix(n, s, "text"),
-	};
+// Function: resolveAllFacets
+// For a given variant+state, resolves all facets for a property by walking
+// the inheritance chain: state → variant default → definition default → FACET_DEFAULTS.
+function resolveAllFacets(definition, variant, state, shortKey) {
+	const propName = PROPS[shortKey]
+	const isEdge = shortKey === "bd" || shortKey === "ol"
+	const facetNames = isEdge ? [...COLOR_FACETS, ...GEOM_FACETS] : COLOR_FACETS
+	const defaults = FACET_DEFAULTS[propName] || {}
+
+	// Collect all parsed values at each level of the chain
+	const getValue = (v, s) => {
+		const raw = definition[v]?.[s]?.[shortKey]
+		return raw ? parseProperty(shortKey, raw) : null
+	}
+
+	const layers = []
+	// 1. Current variant+state
+	const current = getValue(variant, state)
+	if (current) layers.push(current)
+	// 2. Current variant default state (for state inheritance within same variant)
+	if (state !== "default") {
+		const vDefault = getValue(variant, "default")
+		if (vDefault) layers.push(vDefault)
+	}
+
+	// If the current variant defines this property at all (in any state above),
+	// don't fall through to the default variant — fill from FACET_DEFAULTS instead.
+	// Only fall through to default variant if the current variant never defines this property.
+	if (layers.length === 0 && variant !== "default") {
+		// Current variant doesn't define this property — try default variant
+		const dState = getValue("default", state)
+		if (dState) layers.push(dState)
+		const dDefault = getValue("default", "default")
+		if (dDefault) layers.push(dDefault)
+	}
+
+	if (layers.length === 0) {
+		return { ...defaults }
+	}
+
+	// Per-facet merge across layers (within same variant or default fallback)
+	const result = {}
+	for (const facet of facetNames) {
+		for (const layer of layers) {
+			if (layer[facet] !== null && layer[facet] !== undefined) {
+				result[facet] = layer[facet]
+				break
+			}
+		}
+		if (result[facet] === undefined) result[facet] = defaults[facet] || null
+	}
+	return result
 }
 
-// Function: variant
-// Solid color variant: background=color, border=color, text=contrast.
-function variant(n, v) {
-	const c = tok(n, ["color", v], `${vars.color.primary}`);
-	return { background: c, border_color: c, color: contrast(c) };
+// Function: resolveSubFacets
+// Same as resolveAllFacets but for sub-element properties like "marker.bg".
+function resolveSubFacets(definition, variant, state, subElement, shortKey) {
+	const propName = PROPS[shortKey]
+	const isEdge = shortKey === "bd" || shortKey === "ol"
+	const facetNames = isEdge ? [...COLOR_FACETS, ...GEOM_FACETS] : COLOR_FACETS
+	const defaults = FACET_DEFAULTS[propName] || {}
+	const fullKey = `${subElement}.${shortKey}`
+
+	const getValue = (v, s) => {
+		const raw = definition[v]?.[s]?.[fullKey]
+		return raw ? parseProperty(shortKey, raw) : null
+	}
+
+	const layers = []
+	const current = getValue(variant, state)
+	if (current) layers.push(current)
+	if (state !== "default") {
+		const vDefault = getValue(variant, "default")
+		if (vDefault) layers.push(vDefault)
+	}
+	if (layers.length === 0 && variant !== "default") {
+		const dState = getValue("default", state)
+		if (dState) layers.push(dState)
+		const dDefault = getValue("default", "default")
+		if (dDefault) layers.push(dDefault)
+	}
+
+	const result = {}
+	if (layers.length === 0) return { ...defaults }
+	for (const facet of facetNames) {
+		for (const layer of layers) {
+			if (layer[facet] !== null && layer[facet] !== undefined) {
+				result[facet] = layer[facet]
+				break
+			}
+		}
+		if (result[facet] === undefined) result[facet] = defaults[facet] || null
+	}
+	return result
 }
 
-// Function: fvariant
-// Field variant: tinted background, colored border, normal text.
-function fvariant(n, v) {
-	const c = tok(n, ["color", v], `${vars.color.primary}`);
-	return {
-		background: colormixin({
-			base: c,
-			tint: `${vars.color.paper}`,
-			blend: "6%",
-			opacity: "100%",
-		}),
-		border_color: colormixin({
-			base: c,
-			tint: c,
-			blend: "100%",
-			opacity: "90%",
-		}),
-		color: mix(n, "normal", "text"),
-	};
+// Function: buildColorValue
+// Builds a CSS color value from resolved facets.
+function buildColorValue(facets) {
+	const base = resolveColorName(facets.base)
+	const tint = resolveColorName(facets.tint)
+	const blend = normalizeBlend(facets.blend)
+	const opacity = normalizeOpacity(facets.opacity)
+
+	if (!base) return null
+
+	// Special: contrast uses contrast-color()
+	if (base === "contrast") {
+		if (opacity && opacity !== "100%") {
+			return `color-mix(in oklch, contrast-color(var(--ctrl-bg, var(--color-paper))), transparent calc(100% - ${opacity}))`
+		}
+		return `contrast-color(var(--ctrl-bg, var(--color-paper)))`
+	}
+
+	// Special: inherit
+	if (base === "inherit") {
+		if (opacity && opacity !== "100%") {
+			return `color-mix(in oklch, inherit, transparent calc(100% - ${opacity}))`
+		}
+		return "inherit"
+	}
+
+	// Special: transparent shorthand (opacity=0)
+	if (opacity === "0%") return "transparent"
+
+	// Normal color-mix
+	// Spec blend: 0% = pure base, 100% = pure tint.
+	// We emit color-mix directly: tint percentage = blend.
+	const b = blend || "0%"
+	const o = opacity || "100%"
+	const inner = `color-mix(in oklch, ${base}, ${tint || base} ${b})`
+	if (o !== "100%") {
+		return `color-mix(in oklch, ${inner}, transparent calc(100% - ${o}))`
+	}
+	return inner
 }
 
-// Function: focusol
-// Focus outline color from a base color.
-function focusol(base) {
-	return colormixin({
-		base,
-		tint: `${vars.color.paper}`,
-		blend: "62%",
-		opacity: "72%",
-	});
+// Function: buildCSSProps
+// Builds the CSS property object for a given variant+state.
+function buildCSSProps(definition, variant, state) {
+	const props = {}
+
+	// Text color
+	const txFacets = resolveAllFacets(definition, variant, state, "tx")
+	const txColor = buildColorValue(txFacets)
+	if (txColor) props.color = txColor
+
+	// Background
+	const bgFacets = resolveAllFacets(definition, variant, state, "bg")
+	const bgColor = buildColorValue(bgFacets)
+	if (bgColor) {
+		props.background = bgColor
+		// Store for contrast-color reference
+		if (bgColor !== "transparent" && bgColor !== "inherit") {
+			props["--ctrl-bg"] = bgColor
+		}
+	}
+
+	// Border
+	const bdFacets = resolveAllFacets(definition, variant, state, "bd")
+	const bdColor = buildColorValue(bdFacets)
+	if (bdColor) props.border_color = bdColor
+	if (bdFacets.width) props.border_width = bdFacets.width
+	if (bdFacets.radius) props.border_radius = bdFacets.radius
+	props.border_style = "solid"
+
+	// Outline
+	const olFacets = resolveAllFacets(definition, variant, state, "ol")
+	const olColor = buildColorValue(olFacets)
+	if (olColor) props.outline_color = olColor
+	if (olFacets.width) props.outline_width = olFacets.width
+	props.outline_style = "solid"
+	props.outline_offset = "0px"
+
+	return props
 }
 
-// Function: oltxt
-// Outline-mode text color.
-function oltxt(base) {
-	return colormixin({
-		base,
-		tint: `${vars.color.ink}`,
-		blend: "75%",
-		opacity: "100%",
-	});
+// Function: hasChanges
+// Returns true if the variant+state has any explicit property declarations.
+function hasChanges(definition, variant, state) {
+	const stateProps = definition[variant]?.[state]
+	return stateProps && Object.keys(stateProps).length > 0
 }
 
-// Function: oledge
-// Outline-mode edge color.
-function oledge(base) {
-	return colormixin({ base, tint: base, blend: "100%", opacity: "90%" });
+// Function: changedProps
+// Returns only the CSS properties that actually change relative to the base.
+// For the default variant+default state, returns everything.
+// For other states, returns only what the shorthand explicitly sets.
+function changedProps(definition, variant, state) {
+	const stateProps = definition[variant]?.[state]
+	if (!stateProps) return {}
+	const props = {}
+
+	for (const rawKey in stateProps) {
+		const dotIdx = rawKey.indexOf(".")
+		if (dotIdx >= 0) continue // Skip sub-elements here
+
+		const shortKey = rawKey
+		const propName = PROPS[shortKey]
+		if (!propName) continue
+
+		const facets = resolveAllFacets(definition, variant, state, shortKey)
+
+		if (propName === "text") {
+			const v = buildColorValue(facets)
+			if (v) props.color = v
+		} else if (propName === "background") {
+			const v = buildColorValue(facets)
+			if (v) {
+				props.background = v
+				if (v !== "transparent" && v !== "inherit") props["--ctrl-bg"] = v
+			}
+		} else if (propName === "border") {
+			const v = buildColorValue(facets)
+			if (v) props.border_color = v
+			if (facets.width) props.border_width = facets.width
+			if (facets.radius) props.border_radius = facets.radius
+		} else if (propName === "outline") {
+			const v = buildColorValue(facets)
+			if (v) props.outline_color = v
+			if (facets.width) props.outline_width = facets.width
+		}
+	}
+
+	return props
 }
 
-// Function: olfill
-// Outline-mode fill color.
-function olfill(base, opacity) {
-	return colormixin({
-		base,
-		tint: `${vars.color.paper}`,
-		blend: "82%",
-		opacity: `${opacity}`,
-	});
+// ----------------------------------------------------------------------------
+//
+// STATE SELECTORS
+//
+// ----------------------------------------------------------------------------
+
+const STATE_SELECTORS = {
+	default: [],
+	hover: [":hover", ".hover"],
+	active: [":active", ".active"],
+	focus: [":focus-visible", ":focus-within", ".focus"],
+	"focus-within": [":focus-within"],
+	disabled: ["[disabled]", ".disabled"],
+	selected: [".selected", '[aria-pressed="true"]'],
+	checked: [":checked"],
+	indeterminate: [":indeterminate"],
+	invalid: [":invalid", ".invalid"],
+	readonly: ["[readonly]", ".readonly"],
 }
 
-// Function: modestyle
-// Conditionally emits mode overrides only for tokens that are defined.
-function modestyle(n, mode) {
-	const s = {};
-	const keys = ["base", "tint", "blend", "opacity"];
-	if (keys.some((k) => hastok(n, [mode, "background", k])))
-		s.background = mmix(n, mode, "background");
-	if (keys.some((k) => hastok(n, [mode, "border", k])))
-		s.border_color = mmix(n, mode, "border");
-	if (keys.some((k) => hastok(n, [mode, "text", k])))
-		s.color = mmix(n, mode, "text");
-	if (keys.some((k) => hastok(n, [mode, "outline", k])))
-		s.outline_color = mmix(n, mode, "outline");
-	return s;
+function stateSelectors(state) {
+	if (STATE_SELECTORS[state]) return STATE_SELECTORS[state]
+	const parts = state.split("+")
+	if (parts.length > 1) {
+		const sets = parts.map((p) => STATE_SELECTORS[p] || [`.${p}`])
+		let combos = [...sets[0]]
+		for (let i = 1; i < sets.length; i++) {
+			const next = []
+			for (const a of combos) for (const b of sets[i]) next.push(`${a}${b}`)
+			combos = next
+		}
+		return combos
+	}
+	return [`.${state}`]
 }
 
-// Function: focusrule
-// Focus outline properties for a control.
-function focusrule(sel, n) {
-	return {
-		outline_width: tok(
-			n,
-			["focus", "outline", "width"],
-			tok(n, ["normal", "outline", "width"], FALLBACK.outline.width),
-		),
-		outline_style: tok(
-			n,
-			["focus", "outline", "style"],
-			tok(n, ["normal", "outline", "style"], FALLBACK.outline.style),
-		),
-		outline_color: mix(n, "focus", "outline"),
-	};
+// ----------------------------------------------------------------------------
+//
+// CONTROL SELECTORS
+//
+// ----------------------------------------------------------------------------
+
+const SELECTORS = {
+	button: ["button", ".button"],
+	input: ["input:not([type=checkbox]):not([type=radio]):not([type=range])", ".input"],
+	textarea: ["textarea", ".textarea"],
+	select: ["select", ".select"],
+	selectable: [".selectable"],
+	selector: [".selector"],
+	"selector.option": [".selector > .option", ".selector > label", ".selector > button", ".selector > a"],
+	checkbox: ['input[type="checkbox"]', ".checkbox"],
+	radio: ['input[type="radio"]', ".radio"],
+	range: ['input[type="range"]', ".range"],
+	slider: ['input[type="range"]', ".range", ".slider"],
+	panel: [".panel"],
 }
 
-// Function: sizerules
-// Size modifier rules.
-function sizerules(sel, n) {
-	return SIZES.map((size, i) =>
-		rule(mods(sel, size), {
-			font_size: `calc(${tok(n, ["font", "size"], FALLBACK.font.size)} * ${vars.textsize.size[i]})`,
-		}),
-	);
-}
+// ----------------------------------------------------------------------------
+//
+// CONTROL BUILDER
+//
+// ----------------------------------------------------------------------------
 
-// Function: bare
-// Strips all styling for the .bare modifier.
-function bare(sel) {
-	return rule(
-		[
-			...cross(sel, [".bare"]),
-			...cross(
-				sel,
-				[".bare"],
-				STATES.filter((_) => _),
-			),
-		],
-		{
-			margin: "0px",
-			padding: "0px",
-			background: "transparent",
-			border: "0px solid transparent",
-			outline: "0px solid transparent",
-			border_radius: "0px",
-			box_shadow: "none",
-			transition: "none",
+// Function: controlRules
+// Generates CSS rules for a single control from its shorthand definition.
+// Emits direct CSS properties (no --current-* indirection).
+function controlRules(control, selectors, definition) {
+	const rules = []
+
+	// Base rule: font, padding, transition + default variant default state colors
+	const CLICKABLE = new Set(["button", "selectable", "selector", "checkbox", "radio", "range", "slider"])
+	const baseProps = buildCSSProps(definition, "default", "default")
+	rules.push(rule(selectors, {
+		"--ctrl-color": `var(--color-neutral)`,
+		...(CLICKABLE.has(control) ? { cursor: "pointer" } : {}),
+		font_family: `var(--${control}-font-family, var(--font-control-family, sans-serif))`,
+		font_weight: `var(--${control}-font-weight, var(--font-control-weight, 500))`,
+		font_size: `var(--${control}-font-size, var(--font-control-size, var(--font-size)))`,
+		line_height: `var(--${control}-font-line, var(--font-control-line, 1em))`,
+		padding: `var(--${control}-padding, 0.65em 1em)`,
+		margin: `var(--${control}-margin, 0px)`,
+		transition: `var(--control-transition)`,
+		...baseProps,
+	}))
+
+	// Semantic color classes: .primary, .accent, etc. override --ctrl-color
+	const SEMANTIC_COLORS = ["neutral", "primary", "secondary", "tertiary", "accent", "success", "warning", "danger", "info", "error"]
+	for (const color of SEMANTIC_COLORS) {
+		const sel = selectors.map((s) => `${s}.${color}`)
+		rules.push(rule(sel, { "--ctrl-color": `var(--color-${color})` }))
+	}
+
+	// Variant + state rules
+	for (const variant in definition) {
+		for (const state in definition[variant]) {
+			// Skip default+default (already in base rule)
+			if (variant === "default" && state === "default") continue
+
+			// For variant defaults, use full resolution; for states, only changes
+			const props = (state === "default" && variant !== "default")
+				? buildCSSProps(definition, variant, state)
+				: changedProps(definition, variant, state)
+			if (Object.keys(props).length === 0) continue
+
+			// Build selectors
+			let sel
+			if (state === "default" && variant !== "default") {
+				sel = selectors.map((s) => `${s}.${variant}`)
+			} else if (variant === "default") {
+				const suffixes = stateSelectors(state)
+				sel = suffixes.flatMap((m) => selectors.map((s) => `${s}${m}`))
+			} else {
+				const variantSel = selectors.map((s) => `${s}.${variant}`)
+				const suffixes = stateSelectors(state)
+				sel = suffixes.flatMap((m) => variantSel.map((s) => `${s}${m}`))
+			}
+
+			// Add disabled extras
+			if (state === "disabled") {
+				props.cursor = "default"
+				props.pointer_events = "none"
+			}
+
+			rules.push(rule(sel, props))
+		}
+	}
+
+	// ----------------------------------------------------------------
+	// Control-specific structural rules (pseudo-elements, sizing, etc.)
+	// ----------------------------------------------------------------
+
+	if (control === "checkbox") {
+		// Checkbox: square box with checkmark pseudo-element
+		rules.push(rule(selectors, {
 			appearance: "none",
-		},
-	);
-}
-
-// ----------------------------------------------------------------------------
-//
-// BUTTON
-//
-// ----------------------------------------------------------------------------
-
-function button() {
-	const name = ["button", ".button"];
-	const selectable = [".selectable"];
-	const controls = [...name, ...selectable];
-	const n = "button";
-	const sn = "selectable";
-
-	return group(
-		// Base button
-		rule(name, {
-			cursor: "pointer",
-			...base(n),
+			width: "1.125em",
+			height: "1.125em",
+			min_width: "1.125em",
+			min_height: "1.125em",
+			padding: "0",
+			border_radius: "0.2em",
 			display: "inline-flex",
-			justify_content: "center",
 			align_items: "center",
-		}),
-		// Base selectable
-		rule(selectable, {
-			cursor: "pointer",
-			...base(sn),
 			justify_content: "center",
-			align_items: "center",
-		}),
-		// Color variants
-		...COLORS.flatMap((v) => [
-			rule(mods(name, v), variant(n, v)),
-			rule(mods(selectable, v), variant(sn, v)),
-		]),
-		// Color variant hover/active
-		...COLORS.flatMap((v) => {
-			const cn = tok(n, ["color", v], `${vars.color.primary}`);
-			const cs = tok(sn, ["color", v], `${vars.color.primary}`);
-			return [
-				rule(cross(name, [`.${v}`], [":hover", ".hover"]), {
-					background: `color-mix(in oklch, ${cn}, ${vars.color.paper} 14%)`,
-					border_color: `color-mix(in oklch, ${cn}, ${vars.color.paper} 14%)`,
-					color: contrast(
-						`color-mix(in oklch, ${cn}, ${vars.color.paper} 14%)`,
-					),
-				}),
-				rule(cross(name, [`.${v}`], [":active", ".active"]), {
-					background: `color-mix(in oklch, ${cn}, ${vars.color.ink} 18%)`,
-					border_color: `color-mix(in oklch, ${cn}, ${vars.color.ink} 18%)`,
-					color: contrast(`color-mix(in oklch, ${cn}, ${vars.color.ink} 18%)`),
-				}),
-				rule(cross(selectable, [`.${v}`], [":hover", ".hover"]), {
-					background: `color-mix(in oklch, ${cs}, ${vars.color.paper} 14%)`,
-					border_color: `color-mix(in oklch, ${cs}, ${vars.color.paper} 14%)`,
-					color: contrast(
-						`color-mix(in oklch, ${cs}, ${vars.color.paper} 14%)`,
-					),
-				}),
-				rule(cross(selectable, [`.${v}`], [":active", ".active"]), {
-					background: `color-mix(in oklch, ${cs}, ${vars.color.ink} 18%)`,
-					border_color: `color-mix(in oklch, ${cs}, ${vars.color.ink} 18%)`,
-					color: contrast(`color-mix(in oklch, ${cs}, ${vars.color.ink} 18%)`),
-				}),
-			];
-		}),
-		// Sizes
-		...SIZES.map((size, i) =>
-			rule(mods(name, size), {
-				font_size: `calc(${tok(n, ["font", "size"], FALLBACK.font.size)} * ${vars.textsize.size[i]})`,
-				padding: `calc(${tok(n, ["padding"], FALLBACK.spacing.padding)} * ${vars.textsize.size[i]})`,
-			}),
-		),
-		// States - button
-		rule(cross(name, [":focus-visible", ".focus"]), {
-			...focusrule(name, n),
-			...state(n, "focus"),
-		}),
-		...COLORS.map((v) => {
-			const vc = tok(n, ["color", v], `${vars.color.primary}`);
-			const vs = variant(n, v);
-			return rule(cross(name, [`.${v}`], [":focus-visible", ".focus"]), {
-				outline_color: focusol(vc),
-				background: vs.background,
-				border_color: vs.border_color,
-				color: vs.color,
-			});
-		}),
-		rule(mods(name, "hover"), state(n, "hover")),
-		rule(mods(name, "active"), state(n, "active")),
-		rule(mods(name, "selected"), state(n, "selected")),
-		rule(mods(name, "disabled"), {
-			cursor: "default",
-			...state(n, "disabled"),
-		}),
-		// States - selectable
-		rule(cross(selectable, [":focus-visible", ".focus"]), {
-			...focusrule(selectable, sn),
-			...state(sn, "focus"),
-		}),
-		...COLORS.map((v) => {
-			const vc = tok(sn, ["color", v], `${vars.color.primary}`);
-			const vs = variant(sn, v);
-			return rule(cross(selectable, [`.${v}`], [":focus-visible", ".focus"]), {
-				outline_color: focusol(vc),
-				background: vs.background,
-				border_color: vs.border_color,
-				color: vs.color,
-			});
-		}),
-		rule(mods(selectable, "hover"), state(sn, "hover")),
-		rule(mods(selectable, "active"), state(sn, "active")),
-		rule(mods(selectable, "selected"), state(sn, "selected")),
-		rule(mods(selectable, "disabled"), {
-			cursor: "default",
-			...state(sn, "disabled"),
-		}),
-		// Style variants
-		rule(mods(controls, "default"), {
-			border_width: `${vars.control.style.default.border.width}`,
-		}),
-		rule(mods(controls, "outline"), {
-			border_width: "1px",
-			...modestyle(n, "outline"),
-			...modestyle(sn, "outline"),
-			background: "transparent",
-			color: oltxt(`${vars.color.ink}`),
-			border_color: oledge(`${vars.color.ink}`),
-			outline_color: oledge(`${vars.color.ink}`),
-		}),
-		rule(["button.outline", ".button.outline"], {
-			border_width: "1px",
-			background: "transparent",
-			color: oltxt(`${vars.color.ink}`),
-			border_color: oledge(`${vars.color.ink}`),
-			outline_color: oledge(`${vars.color.ink}`),
-		}),
-		...COLORS.map((v) => {
-			const vc = tok(n, ["color", v], `${vars.color.primary}`);
-			return rule(cross(name, [`.outline.${v}`]), {
-				border_width: "1px",
-				background: "transparent",
-				color: oltxt(vc),
-				border_color: oledge(vc),
-				outline_color: oledge(vc),
-			});
-		}),
-		...COLORS.map((v) => {
-			const vc = tok(n, ["color", v], `${vars.color.primary}`);
-			return rule([`button.outline.${v}`, `.button.outline.${v}`], {
-				border_width: "1px",
-				background: "transparent",
-				color: oltxt(vc),
-				border_color: oledge(vc),
-				outline_color: oledge(vc),
-			});
-		}),
-		...COLORS.map((v) => {
-			const vc = tok(sn, ["color", v], `${vars.color.primary}`);
-			return rule(cross(selectable, [`.outline.${v}`]), {
-				border_width: "1px",
-				background: "transparent",
-				color: oltxt(vc),
-				border_color: oledge(vc),
-				outline_color: oledge(vc),
-			});
-		}),
-		rule(mods(name, "ghost"), {
-			...modestyle(n, "ghost"),
-			outline_width: "0px",
-			outline_color: "transparent",
-		}),
-		rule(cross(controls, [".blank"]), {
-			...modestyle(n, "blank"),
-			...modestyle(sn, "blank"),
-		}),
-		rule(cross(name, [".icon"]), {
-			...modestyle(n, "icon"),
-			background: "transparent",
-			padding: `${vars.control.icon.padding}`,
-			width: `${vars.control.icon.size}`,
-			height: `${vars.control.icon.size}`,
-			aspect_ratio: "1",
-			box_sizing: "content-box",
-		}),
-		rule(cross(selectable, [".icon"]), {
-			...modestyle(sn, "icon"),
-			background: "transparent",
-		}),
-		rule(cross(name, [".outline", ".icon"], [":hover", ".hover"]), {
-			background: olfill(`${vars.color.ink}`, "18%"),
-			color: oltxt(`${vars.color.ink}`),
-			border_color: oledge(`${vars.color.ink}`),
-			outline_color: oledge(`${vars.color.ink}`),
-		}),
-		rule(cross(name, [".outline", ".icon"], [":active", ".active"]), {
-			background: olfill(`${vars.color.ink}`, "30%"),
-			color: oltxt(`${vars.color.ink}`),
-			border_color: oledge(`${vars.color.ink}`),
-			outline_color: oledge(`${vars.color.ink}`),
-		}),
-		...COLORS.map((v) => {
-			const vc = tok(n, ["color", v], `${vars.color.primary}`);
-			return rule(cross(name, [`.outline.${v}`], [":hover", ".hover"]), {
-				background: olfill(vc, "18%"),
-				color: oltxt(vc),
-				border_color: oledge(vc),
-				outline_color: oledge(vc),
-			});
-		}),
-		...COLORS.map((v) => {
-			const vc = tok(n, ["color", v], `${vars.color.primary}`);
-			return rule(cross(name, [`.outline.${v}`], [":active", ".active"]), {
-				background: olfill(vc, "30%"),
-				color: oltxt(vc),
-				border_color: oledge(vc),
-				outline_color: oledge(vc),
-			});
-		}),
-		rule(
-			cross(name, [".outline", ".icon"], [".selected"]),
-			state(n, "selected"),
-		),
-		rule(cross(name, [".ghost"], [":hover", ".hover"]), state(n, "hover")),
-		rule(cross(name, [".ghost"], [":active", ".active"]), state(n, "active")),
-		rule(cross(name, [".ghost"], [".selected"]), state(n, "selected")),
-		rule(
-			cross(name, [".ghost"], [":focus-visible", ".focus"]),
-			state(n, "focus"),
-		),
-		rule(
-			cross(selectable, [".outline", ".icon"], [":hover", ".hover"]),
-			state(sn, "hover"),
-		),
-		rule(
-			cross(selectable, [".outline", ".icon"], [":active", ".active"]),
-			state(sn, "active"),
-		),
-		rule(
-			cross(selectable, [".outline", ".icon"], [".selected"]),
-			state(sn, "selected"),
-		),
-		bare(controls),
-	);
-}
+			flex_shrink: "0",
+			vertical_align: "middle",
+			box_sizing: "border-box",
+		}))
+		const afterSel = selectors.map((s) => `${s}::after`)
+		rules.push(rule(afterSel, {
+			content: '""',
+			display: "block",
+			width: "0.35em",
+			height: "0.6em",
+			border: "solid transparent",
+			border_width: "0 0.14em 0.14em 0",
+			transform: "rotate(45deg) translate(-0.02em, -0.02em)",
+			transition: "var(--control-transition)",
+		}))
+		const checkedAfterSel = selectors.flatMap((s) => [
+			`${s}:checked::after`, `${s}.selected::after`,
+		])
+		rules.push(rule(checkedAfterSel, {
+			border_color: "contrast-color(var(--ctrl-bg, var(--color-paper)))",
+		}))
+		const indeterminateAfterSel = selectors.flatMap((s) => [
+			`${s}:indeterminate::after`,
+		])
+		rules.push(rule(indeterminateAfterSel, {
+			width: "0.55em",
+			height: "0",
+			border_width: "0 0 0.14em 0",
+			transform: "none",
+			border_color: "contrast-color(var(--ctrl-bg, var(--color-paper)))",
+		}))
+	}
 
-// ----------------------------------------------------------------------------
-//
-// SELECTOR
-//
-// ----------------------------------------------------------------------------
-
-function selector() {
-	const name = [".selector"];
-	const sn = "selectable";
-	const option = [...cross(name, ["> .option", "> label", "> button", "> a"])];
-	const selected = [
-		...cross(name, [
-			"> .selected",
-			'> [aria-pressed="true"]',
-			'> [aria-checked="true"]',
-		]),
-		...cross(name, [" input:checked + label"]),
-	];
-	const n = "selector";
-
-	return group(
-		rule(name, {
+	if (control === "radio") {
+		// Radio: circular box with dot pseudo-element
+		rules.push(rule(selectors, {
+			appearance: "none",
+			width: "1.125em",
+			height: "1.125em",
+			min_width: "1.125em",
+			min_height: "1.125em",
+			padding: "0",
+			border_radius: "50%",
 			display: "inline-flex",
-			width: "fit-content",
-			align_self: "flex-start",
+			align_items: "center",
+			justify_content: "center",
+			flex_shrink: "0",
+			vertical_align: "middle",
+			box_sizing: "border-box",
+		}))
+		const afterSel = selectors.map((s) => `${s}::after`)
+		rules.push(rule(afterSel, {
+			content: '""',
+			display: "block",
+			width: "0.5em",
+			height: "0.5em",
+			border_radius: "50%",
+			background: "transparent",
+			transition: "var(--control-transition)",
+		}))
+		const checkedAfterSel = selectors.flatMap((s) => [
+			`${s}:checked::after`, `${s}.selected::after`,
+		])
+		rules.push(rule(checkedAfterSel, {
+			background: "contrast-color(var(--ctrl-bg, var(--color-paper)))",
+		}))
+	}
+
+	if (control === "selector") {
+		// Selector container: flex row, pill-shaped, small padding
+		rules.push(rule(selectors, {
+			display: "inline-flex",
 			flex_wrap: "nowrap",
 			align_items: "center",
+			gap: "2px",
+			padding: "2px",
+			border_style: "solid",
+		}))
+		// Hide radio/checkbox inputs inside selector
+		const inputSel = selectors.flatMap((s) => [
+			`${s} > input[type="radio"]`,
+			`${s} > input[type="checkbox"]`,
+		])
+		rules.push(rule(inputSel, {
+			position: "absolute",
+			width: "1px",
+			height: "1px",
+			padding: "0",
+			margin: "-1px",
 			overflow: "hidden",
-			gap: `max(1px, ${tok(n, ["box", "gap"], FALLBACK.spacing.gap)})`,
-			padding: `max(2px, ${tok(n, ["padding"], FALLBACK.spacing.padding)})`,
-			margin: tok(n, ["margin"], FALLBACK.spacing.margin),
-			outline_width: tok(
-				n,
-				["normal", "outline", "width"],
-				FALLBACK.outline.width,
-			),
-			outline_style: tok(
-				n,
-				["normal", "outline", "style"],
-				FALLBACK.outline.style,
-			),
-			outline_color: "transparent",
-			border_width: tok(
-				n,
-				["normal", "border", "width"],
-				FALLBACK.border.width,
-			),
-			border_style: tok(
-				n,
-				["normal", "border", "style"],
-				FALLBACK.border.style,
-			),
-			border_color: mix(n, "normal", "border"),
-			border_radius: tok(n, ["box", "radius"], FALLBACK.spacing.radius),
-			background: mix(n, "normal", "background"),
-			color: mix(n, "normal", "text"),
-			box_shadow: "none",
-			transition: `${vars.control.transition}`,
-			font_family: tok(n, ["font", "family"], FALLBACK.font.family),
-			line_height: tok(n, ["font", "line"], FALLBACK.font.line),
-			font_weight: tok(n, ["font", "weight"], FALLBACK.font.weight),
-			font_size: tok(n, ["font", "size"], FALLBACK.font.size),
-		}),
-		rule(option, {
-			cursor: "pointer",
-			display: "inline-flex",
-			flex: "0 0 auto",
-			align_items: "center",
-			justify_content: "center",
-			position: "relative",
-			padding: tok(n, ["item", "padding"], FALLBACK.spacing.item_padding),
-			border_width: tok(
-				sn,
-				["normal", "border", "width"],
-				FALLBACK.border.width,
-			),
-			border_style: tok(
-				sn,
-				["normal", "border", "style"],
-				FALLBACK.border.style,
-			),
-			border_color: "transparent",
-			border_radius: tok(n, ["box", "radius"], FALLBACK.spacing.radius),
-			background: "transparent",
-			color: "inherit",
+			clip: "rect(0,0,0,0)",
 			white_space: "nowrap",
-			font: "inherit",
-			text_decoration: "none",
-			line_height: "1",
+			border: "0",
+		}))
+	}
+
+	if (control === "selector.option") {
+		// Option labels: ghost-button style, with padding and cursor
+		rules.push(rule(selectors, {
+			padding: "0.35em 0.75em",
+			cursor: "pointer",
 			user_select: "none",
-			transition: `${vars.control.transition}`,
-			margin: "0px",
-		}),
-		rule(
-			option.map((s) => `${s}:not(:first-child):not(:last-child)`),
-			{ border_radius: "0px" },
-		),
-		rule(cross(name, [" input[type=checkbox]", " input[type=radio]"]), {
-			display: "none",
-		}),
-		...COLORS.map((v) => rule(mods(name, v), fvariant(n, v))),
-		rule(cross(name, [":focus-within", ".focus"]), {
-			...focusrule(name, n),
-			...state(n, "focus"),
-		}),
-		...COLORS.map((v) => {
-			const vc = tok(n, ["color", v], `${vars.color.primary}`);
-			return rule(cross(name, [`.${v}`], [":focus-within", ".focus"]), {
-				outline_color: focusol(vc),
-			});
-		}),
-		rule(cross(option, [":hover", ".hover"]), state(sn, "hover")),
-		rule(cross(option, [":active", ".active"]), {
-			box_shadow: "none",
-			...state(sn, "active"),
-		}),
-		rule(selected, { ...state(sn, "selected"), box_shadow: "none" }),
-		...COLORS.map((v) => {
-			const sv = variant(sn, v);
-			return rule(
-				[
-					...cross(
-						name,
-						[`.${v}`],
-						[
-							"> .selected",
-							'> [aria-pressed="true"]',
-							'> [aria-checked="true"]',
-						],
-					),
-					...cross(name, [`.${v}`], [" input:checked + label"]),
-				],
-				{
-					background: sv.background,
-					border_color: sv.border_color,
-					color: sv.color,
-				},
-			);
-		}),
-		rule(cross(option, [":focus-visible", ".focus"]), {
-			...focusrule(option, sn),
-			...state(sn, "focus"),
-		}),
-		rule(cross(name, [".disabled", '[aria-disabled="true"]']), {
-			cursor: "default",
-			...state(n, "disabled"),
-		}),
-		rule(cross(option, [":disabled", ".disabled", '[aria-disabled="true"]']), {
-			cursor: "default",
-			opacity: "0.65",
-			box_shadow: "none",
-		}),
-		rule(mods(name, "default"), {
-			border_width: `${vars.control.style.default.border.width}`,
-		}),
-		rule(mods(name, "outline"), {
-			border_width: `${vars.control.style.outline.border.width}`,
-			...modestyle(n, "outline"),
-			outline_color: mix(n, "normal", "background"),
-		}),
-		rule(cross(name, [".blank"]), {
-			background: "transparent",
-			border_color: "transparent",
-			...modestyle(n, "blank"),
-		}),
-		...sizerules(name, n),
-		bare(name),
-	);
-}
+			white_space: "nowrap",
+			border_style: "solid",
+			transition: "var(--control-transition)",
+		}))
 
-// ----------------------------------------------------------------------------
-//
-// FIELD CONTROL (input, textarea share this structure)
-//
-// ----------------------------------------------------------------------------
+		// :checked + label mirrors the .selected state for input+label pattern
+		const checkedLabelSel = [
+			".selector > input:checked + label",
+			".selector > input:checked + .option",
+		]
+		const selectedProps = buildCSSProps(definition, "default", "selected")
+		if (selectedProps && Object.keys(selectedProps).length > 0) {
+			rules.push(rule(checkedLabelSel, selectedProps))
+		}
+		// :checked + label hover
+		const checkedHoverLabelSel = [
+			".selector > input:checked + label:hover",
+			".selector > input:checked + .option:hover",
+		]
+		const selHoverProps = changedProps(definition, "default", "selected+hover")
+		if (Object.keys(selHoverProps).length > 0) {
+			rules.push(rule(checkedHoverLabelSel, selHoverProps))
+		}
+		// :checked + label active
+		const checkedActiveLabelSel = [
+			".selector > input:checked + label:active",
+			".selector > input:checked + .option:active",
+		]
+		const selActiveProps = changedProps(definition, "default", "selected+active")
+		if (Object.keys(selActiveProps).length > 0) {
+			rules.push(rule(checkedActiveLabelSel, selActiveProps))
+		}
+	}
 
-function field(sel, n, extra = {}) {
-	return group(
-		rule(sel, { ...base(n), ...extra }),
-		...COLORS.map((v) => rule(mods(sel, v), fvariant(n, v))),
-		rule(mods(sel, "hover"), state(n, "hover")),
-		rule(mods(sel, "focus"), {
-			...focusrule(sel, n),
-			border_width: tok(
-				n,
-				["focus", "border", "width"],
-				tok(n, ["normal", "border", "width"], FALLBACK.border.width),
-			),
-			border_style: tok(
-				n,
-				["focus", "border", "style"],
-				tok(n, ["normal", "border", "style"], FALLBACK.border.style),
-			),
-			border_color: mix(n, "focus", "border"),
-		}),
-		...COLORS.map((v) => {
-			const vc = tok(n, ["color", v], `${vars.color.primary}`);
-			return rule(
-				cross(sel, [`.${v}`], [":focus", ":focus-visible", ".focus"]),
-				{ outline_color: focusol(vc) },
-			);
-		}),
-		rule(mods(sel, "active"), state(n, "active")),
-		rule(
-			cross(
-				sel,
-				[":focus", ":focus-visible", ".focus"],
-				[":active", ".active"],
-			),
-			focusrule(sel, n),
-		),
-		...COLORS.map((v) => {
-			const vc = tok(n, ["color", v], `${vars.color.primary}`);
-			const fv = fvariant(n, v);
-			return rule(
-				cross(
-					sel,
-					[`.${v}`],
-					[":focus", ":focus-visible", ".focus"],
-					[":active", ".active"],
-				),
-				{
-					outline_color: focusol(vc),
-					border_color: fv.border_color,
-					background: fv.background,
-				},
-			);
-		}),
-		rule(mods(sel, "disabled"), { cursor: "default", ...state(n, "disabled") }),
-		rule(mods(sel, "default"), {
-			border_width: `${vars.control.style.default.border.width}`,
-		}),
-		rule(mods(sel, "outline"), {
-			border_width: `${vars.control.style.outline.border.width}`,
-			...modestyle(n, "outline"),
-			outline_color: mix(n, "normal", "background"),
-		}),
-		rule(mods(sel, "ghost"), {
-			...modestyle(n, "ghost"),
-			outline_width: "0px",
-			outline_color: "transparent",
-		}),
-		rule(cross(sel, [".blank"]), {
-			background: "transparent",
-			border_color: "transparent",
-			...modestyle(n, "blank"),
-		}),
-		rule(cross(sel, [".icon"]), {
-			background: "transparent",
-			...modestyle(n, "icon"),
-			aspect_ratio: "1",
-		}),
-		rule(
-			cross(sel, [".ghost"], [":focus", ":focus-visible", ".focus"]),
-			state(n, "focus"),
-		),
-		...sizerules(sel, n),
-		bare(sel),
-	);
-}
-
-// ----------------------------------------------------------------------------
-//
-// TOGGLE CONTROL (checkbox, radio share this structure)
-//
-// ----------------------------------------------------------------------------
-
-function toggle(sel, n, checkedAfterRadius) {
-	return group(
-		rule(sel, {
-			cursor: "pointer",
+	if (control === "range" || control === "slider") {
+		// Range/slider: custom track and thumb
+		rules.push(rule(selectors, {
 			appearance: "none",
-			font_size: tok(n, ["font", "size"], FALLBACK.font.size),
-			width: tok(n, ["box", "size"], "1.15em"),
-			height: tok(n, ["box", "size"], "1.15em"),
-			padding: tok(n, ["padding"], FALLBACK.spacing.padding),
-			margin: tok(n, ["margin"], FALLBACK.spacing.margin),
-			display: "inline-block",
-			position: "relative",
-			box_sizing: "border-box",
-			outline_width: tok(
-				n,
-				["normal", "outline", "width"],
-				FALLBACK.outline.width,
-			),
-			outline_style: tok(
-				n,
-				["normal", "outline", "style"],
-				FALLBACK.outline.style,
-			),
-			outline_color: "transparent",
-			border_width: tok(
-				n,
-				["normal", "border", "width"],
-				FALLBACK.border.width,
-			),
-			border_style: tok(
-				n,
-				["normal", "border", "style"],
-				FALLBACK.border.style,
-			),
-			border_color: mix(n, "normal", "border"),
-			border_radius: tok(n, ["box", "radius"], FALLBACK.spacing.radius),
-			transition: `${vars.control.transition}`,
-			font_family: tok(n, ["font", "family"], FALLBACK.font.family),
-			line_height: tok(n, ["font", "line"], FALLBACK.font.line),
-			font_weight: tok(n, ["font", "weight"], FALLBACK.font.weight),
-			background: mix(n, "normal", "background"),
-			color: mix(n, "normal", "text"),
-		}),
-		...COLORS.map((v) => rule(mods(sel, v), fvariant(n, v))),
-		rule(mods(sel, "hover"), state(n, "hover")),
-		rule(mods(sel, "focus"), {
-			outline_width: tok(
-				n,
-				["normal", "outline", "width"],
-				FALLBACK.outline.width,
-			),
-			outline_color: mix(n, "normal", "outline"),
-			...state(n, "focus"),
-		}),
-		...COLORS.map((v) => {
-			const vc = tok(n, ["color", v], `${vars.color.primary}`);
-			const fv = fvariant(n, v);
-			return rule(
-				cross(sel, [`.${v}`], [":focus", ":focus-visible", ".focus"]),
-				{
-					outline_color: focusol(vc),
-					border_color: fv.border_color,
-					background: fv.background,
-				},
-			);
-		}),
-		rule(mods(sel, "active"), state(n, "active")),
-		rule(mods(sel, "disabled"), { cursor: "default", ...state(n, "disabled") }),
-		rule(
-			sel.map((s) => `${s}:checked`),
-			{
-				position: "relative",
-				...state(n, "selected"),
-				background: mix(n, "normal", "background"),
-				color: `${vars.color.ink}`,
-			},
-		),
-		...COLORS.map((v) => {
-			const fv = fvariant(n, v);
-			return rule(
-				cross(
-					sel,
-					[`.${v}`],
-					[":checked", ...(n === "checkbox" ? [":indeterminate"] : [])],
-				),
-				{
-					background: mix(n, "normal", "background"),
-					border_color: fv.border_color,
-					color: fv.border_color,
-				},
-			);
-		}),
-		rule(
-			sel.map((s) => `${s}:checked::after`),
-			{
-				content: '""',
-				position: "absolute",
-				inset: "3px",
-				border_radius: checkedAfterRadius,
-				background: "currentColor",
-			},
-		),
-		// Checkbox-specific: indeterminate state
-		...(n === "checkbox"
-			? [
-					rule(
-						sel.map((s) => `${s}:indeterminate`),
-						{
-							position: "relative",
-							...state(n, "selected"),
-							background: mix(n, "normal", "background"),
-							color: `${vars.color.ink}`,
-						},
-					),
-					rule(
-						cross(
-							sel,
-							[":checked", ":indeterminate"],
-							[":focus", ":focus-visible", ".focus"],
-						),
-						focusrule(sel, n),
-					),
-					rule(
-						sel.map((s) => `${s}:indeterminate::after`),
-						{
-							content: '""',
-							position: "absolute",
-							inset: "3px",
-							border_radius: "inherit",
-							background: "currentColor",
-						},
-					),
-				]
-			: [
-					// Radio: focus on checked
-					rule(
-						cross(sel, [":checked"], [":focus", ":focus-visible", ".focus"]),
-						focusrule(sel, n),
-					),
-				]),
-		// Radio-specific: focus-visible
-		...(n === "radio"
-			? [rule(cross(sel, [":focus-visible", ".focus"]), focusrule(sel, n))]
-			: []),
-		rule(mods(sel, "default"), {
-			border_width: `${vars.control.style.default.border.width}`,
-		}),
-		rule(mods(sel, "outline"), {
-			border_width: `${vars.control.style.outline.border.width}`,
-			...modestyle(n, "outline"),
-		}),
-		rule(cross(sel, [".blank"]), {
-			background: "transparent",
-			border_color: "transparent",
-			...modestyle(n, "blank"),
-		}),
-		rule(cross(sel, [".icon"]), {
-			background: "transparent",
-			...modestyle(n, "icon"),
-			aspect_ratio: "1",
-		}),
-		...sizerules(sel, n),
-		bare(sel),
-	);
-}
-
-// ----------------------------------------------------------------------------
-//
-// RANGE
-//
-// ----------------------------------------------------------------------------
-
-function range() {
-	const sel = ['input[type="range"]', ".range"];
-	const n = "range";
-	const trackcolor = colormixin({
-		base: tok(
-			"input",
-			["normal", "border", "base"],
-			FALLBACK.color.border.base,
-		),
-		tint: tok(
-			"input",
-			["normal", "border", "tint"],
-			FALLBACK.color.border.tint,
-		),
-		blend: tok(
-			"input",
-			["normal", "border", "blend"],
-			FALLBACK.color.border.blend,
-		),
-		opacity: tok(
-			"input",
-			["normal", "border", "opacity"],
-			FALLBACK.color.border.opacity,
-		),
-	});
-
-	const track = {
-		height: tok(n, ["track", "size"], "0.28em"),
-		border_radius: tok(n, ["track", "radius"], "999px"),
-		background: tok(n, ["track", "color"], trackcolor),
-	};
-	const thumb = {
-		width: tok(n, ["thumb", "size"], "0.95em"),
-		height: tok(n, ["thumb", "size"], "0.95em"),
-		border_radius: tok(n, ["thumb", "radius"], "50%"),
-		background: tok(
-			n,
-			["thumb", "background"],
-			mix("input", "normal", "background"),
-		),
-		border_width: tok(
-			n,
-			["thumb", "border", "width"],
-			tok("input", ["normal", "border", "width"], FALLBACK.border.width),
-		),
-		border_style: tok(
-			n,
-			["thumb", "border", "style"],
-			tok("input", ["normal", "border", "style"], FALLBACK.border.style),
-		),
-		border_color: tok(
-			n,
-			["thumb", "border", "color"],
-			mix("input", "normal", "border"),
-		),
-	};
-
-	return group(
-		rule(sel, {
-			appearance: "none",
-			font_family: tok(n, ["font", "family"], FALLBACK.font.family),
-			line_height: tok(n, ["font", "line"], FALLBACK.font.line),
-			font_weight: tok(n, ["font", "weight"], FALLBACK.font.weight),
-			font_size: tok(n, ["font", "size"], FALLBACK.font.size),
 			width: "100%",
-			max_width: tok(n, ["box", "max", "width"], "100%"),
-			cursor: "pointer",
-			min_height: tok(n, ["thumb", "size"], "1em"),
-			padding: tok(n, ["padding"], FALLBACK.spacing.padding),
-			margin: tok(n, ["margin"], FALLBACK.spacing.margin),
+			height: "auto",
+			padding: "0.5em 0",
 			background: "transparent",
-			border: "0px solid transparent",
-			border_radius: "0px",
-			box_shadow: "none",
-			transition: "none",
-		}),
-		...COLORS.map((v) => rule(mods(sel, v), fvariant(n, v))),
-		rule(
-			sel.map((s) => `${s}::-webkit-slider-runnable-track`),
-			track,
-		),
-		rule(
-			sel.map((s) => `${s}::-webkit-slider-thumb`),
-			{
-				appearance: "none",
-				...thumb,
-				margin_top: `calc((${tok(n, ["track", "size"], "0.28em")} - ${tok(n, ["thumb", "size"], "0.95em")}) / 2)`,
-			},
-		),
-		rule(
-			sel.map((s) => `${s}::-moz-range-track`),
-			{ ...track, border: "0px solid transparent" },
-		),
-		rule(
-			sel.map((s) => `${s}::-moz-range-thumb`),
-			thumb,
-		),
-		rule(mods(sel, "focus"), {
-			outline_width: tok(
-				n,
-				["normal", "outline", "width"],
-				FALLBACK.outline.width,
-			),
-			outline_color: mix(n, "normal", "outline"),
-			...state(n, "focus"),
-		}),
-		rule(cross(sel, [":focus-visible", ".focus"]), focusrule(sel, n)),
-		...COLORS.map((v) => {
-			const vc = tok(n, ["color", v], `${vars.color.primary}`);
-			const fv = fvariant(n, v);
-			return rule(
-				cross(sel, [`.${v}`], [":focus", ":focus-visible", ".focus"]),
-				{
-					outline_color: focusol(vc),
-					border_color: fv.border_color,
-					background: fv.background,
-				},
-			);
-		}),
-		rule(cross(sel, [":focus-visible", ".focus"]), focusrule(sel, n)),
-		rule(
-			sel.map((s) => `${s}:focus-visible`),
-			{
-				outline_width: tok(
-					n,
-					["normal", "outline", "width"],
-					FALLBACK.outline.width,
-				),
-				outline_color: mix(n, "normal", "outline"),
-			},
-		),
-		...sizerules(sel, n),
-		bare(sel),
-	);
+			border: "none",
+			outline: "none",
+		}))
+		// Track — webkit
+		const trackWebkit = selectors.map((s) => `${s}::-webkit-slider-runnable-track`)
+		rules.push(rule(trackWebkit, {
+			height: "4px",
+			border_radius: "2px",
+			background: "color-mix(in oklch, var(--ctrl-color), var(--color-paper) 60%)",
+		}))
+		// Track — moz
+		const trackMoz = selectors.map((s) => `${s}::-moz-range-track`)
+		rules.push(rule(trackMoz, {
+			height: "4px",
+			border_radius: "2px",
+			background: "color-mix(in oklch, var(--ctrl-color), var(--color-paper) 60%)",
+		}))
+		// Thumb — webkit
+		const thumbWebkit = selectors.map((s) => `${s}::-webkit-slider-thumb`)
+		rules.push(rule(thumbWebkit, {
+			appearance: "none",
+			width: "1.25em",
+			height: "1.25em",
+			border_radius: "50%",
+			background: "var(--ctrl-color)",
+			border: "2px solid var(--color-paper)",
+			margin_top: "calc((1.25em - 4px) / -2)",
+			cursor: "pointer",
+			transition: "var(--control-transition)",
+		}))
+		// Thumb — moz
+		const thumbMoz = selectors.map((s) => `${s}::-moz-range-thumb`)
+		rules.push(rule(thumbMoz, {
+			appearance: "none",
+			width: "1.25em",
+			height: "1.25em",
+			border_radius: "50%",
+			background: "var(--ctrl-color)",
+			border: "2px solid var(--color-paper)",
+			cursor: "pointer",
+			transition: "var(--control-transition)",
+		}))
+		// Hover — enlarge thumb
+		const hoverThumbWebkit = selectors.map((s) => `${s}:hover::-webkit-slider-thumb`)
+		const hoverThumbMoz = selectors.map((s) => `${s}:hover::-moz-range-thumb`)
+		rules.push(rule(hoverThumbWebkit, {
+			transform: "scale(1.15)",
+		}))
+		rules.push(rule(hoverThumbMoz, {
+			transform: "scale(1.15)",
+		}))
+		// Focus — ring on thumb
+		const focusThumbWebkit = selectors.map((s) => `${s}:focus-visible::-webkit-slider-thumb`)
+		const focusThumbMoz = selectors.map((s) => `${s}:focus-visible::-moz-range-thumb`)
+		rules.push(rule(focusThumbWebkit, {
+			outline: "2px solid color-mix(in oklch, var(--ctrl-color), var(--color-paper) 50%)",
+			outline_offset: "2px",
+		}))
+		rules.push(rule(focusThumbMoz, {
+			outline: "2px solid color-mix(in oklch, var(--ctrl-color), var(--color-paper) 50%)",
+			outline_offset: "2px",
+		}))
+		// Disabled
+		const disabledTrackWebkit = selectors.flatMap((s) => [`${s}[disabled]::-webkit-slider-runnable-track`, `${s}.disabled::-webkit-slider-runnable-track`])
+		const disabledTrackMoz = selectors.flatMap((s) => [`${s}[disabled]::-moz-range-track`, `${s}.disabled::-moz-range-track`])
+		const disabledThumbWebkit = selectors.flatMap((s) => [`${s}[disabled]::-webkit-slider-thumb`, `${s}.disabled::-webkit-slider-thumb`])
+		const disabledThumbMoz = selectors.flatMap((s) => [`${s}[disabled]::-moz-range-thumb`, `${s}.disabled::-moz-range-thumb`])
+		rules.push(rule(disabledTrackWebkit, { opacity: "0.5" }))
+		rules.push(rule(disabledTrackMoz, { opacity: "0.5" }))
+		rules.push(rule(disabledThumbWebkit, { opacity: "0.5", cursor: "default" }))
+		rules.push(rule(disabledThumbMoz, { opacity: "0.5", cursor: "default" }))
+	}
+
+	return group(...rules)
 }
 
 // ----------------------------------------------------------------------------
 //
-// EXPORTS
+// CONTROLS FACTORY
 //
 // ----------------------------------------------------------------------------
 
-export default named({
-	button: button(),
-	selector: selector(),
-	input: field(["input", ".input"], "input", {
-		display: "inline-flex",
-		justify_content: "stretch",
-		align_items: "center",
-	}),
-	textarea: field(["textarea", ".textarea"], "textarea", {}),
-	select: group(
-		field(["select", ".select"], "select", {
-			appearance: "none",
-			display: "inline-flex",
-			justify_content: "stretch",
-			align_items: "center",
-		}),
-		rule(cross(["select", ".select"], [":not([multiple]):not([size])"]), {
-			padding_right: `calc(${tok("select", ["padding"], FALLBACK.spacing.padding)} + ${tok("select", ["arrow", "offset"], "0.75em")} + ${tok("select", ["arrow", "size"], "0.3em")})`,
-			background_image:
-				"linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%)",
-			background_position: `right ${tok("select", ["arrow", "offset"], "0.75em")} center, right calc(${tok("select", ["arrow", "offset"], "0.75em")} - ${tok("select", ["arrow", "gap"], "0.33em")}) center`,
-			background_size: `${tok("select", ["arrow", "size"], "0.3em")} ${tok("select", ["arrow", "size"], "0.3em")}, ${tok("select", ["arrow", "size"], "0.3em")} ${tok("select", ["arrow", "size"], "0.3em")}`,
-			background_repeat: "no-repeat",
-		}),
-	),
-	range: range(),
-	checkbox: toggle(
-		['input[type="checkbox"]', ".checkbox"],
-		"checkbox",
-		"inherit",
-	),
-	radio: toggle(['input[type="radio"]', ".radio"], "radio", "50%"),
-});
-// EOF
+function controls(defs = DEFAULTS, selectors = {}) {
+	const rules = []
+	for (const key in defs) {
+		const entry = defs[key]
+		if (!entry || !entry.control || !entry.definition) continue
+		const { control, definition } = entry
+		const sel = selectors[key] || SELECTORS[control] || SELECTORS[key] || [`.${control}`]
+		rules.push(controlRules(control, sel, definition))
+	}
+	return group(...rules)
+}
+
+// ----------------------------------------------------------------------------
+//
+// MAIN / EXPORT
+//
+// ----------------------------------------------------------------------------
+
+if (import.meta.main) {
+	const css = (await import("../js/uicss.js")).css
+	console.log([...css(controls())].join("\n"))
+}
+
+export { controls, controlRules, parseColor, parseBorder, parseTree, style, SELECTORS, DEFAULTS }
+export default controls()

@@ -240,16 +240,48 @@ const result = "fast, consistent styling"</code></pre>
             </div>
           </div>
           <div class="stack g-3">
-            <p class="b m-0">Color variants</p>
-            <div class="row wrap g-3">
+            <p class="b m-0">Color variants × States</p>
+            <div class="col-5 g-2">
               <button>Neutral</button>
+              <button class="focus">Focus</button>
+              <button class="hover">Hover</button>
+              <button class="active">Active</button>
+              <button disabled>Disabled</button>
               <button class="accent">Accent</button>
+              <button class="accent focus">Focus</button>
+              <button class="accent hover">Hover</button>
+              <button class="accent active">Active</button>
+              <button class="accent" disabled>Disabled</button>
               <button class="primary">Primary</button>
+              <button class="primary focus">Focus</button>
+              <button class="primary hover">Hover</button>
+              <button class="primary active">Active</button>
+              <button class="primary" disabled>Disabled</button>
               <button class="secondary">Secondary</button>
+              <button class="secondary focus">Focus</button>
+              <button class="secondary hover">Hover</button>
+              <button class="secondary active">Active</button>
+              <button class="secondary" disabled>Disabled</button>
               <button class="tertiary">Tertiary</button>
+              <button class="tertiary focus">Focus</button>
+              <button class="tertiary hover">Hover</button>
+              <button class="tertiary active">Active</button>
+              <button class="tertiary" disabled>Disabled</button>
               <button class="success">Success</button>
+              <button class="success focus">Focus</button>
+              <button class="success hover">Hover</button>
+              <button class="success active">Active</button>
+              <button class="success" disabled>Disabled</button>
               <button class="warning">Warning</button>
+              <button class="warning focus">Focus</button>
+              <button class="warning hover">Hover</button>
+              <button class="warning active">Active</button>
+              <button class="warning" disabled>Disabled</button>
               <button class="danger">Danger</button>
+              <button class="danger focus">Focus</button>
+              <button class="danger hover">Hover</button>
+              <button class="danger active">Active</button>
+              <button class="danger" disabled>Disabled</button>
             </div>
           </div>
           <div class="stack g-3">
@@ -282,6 +314,80 @@ const result = "fast, consistent styling"</code></pre>
               <button class="hover">Hover</button>
               <button class="active">Active</button>
               <button disabled>Disabled</button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="selectors-demo" class="panel stack g-4 p-6 bd bd-4o ">
+        <h2 class="h3 m-0">Selectors</h2>
+        <div class="stack g-5">
+          <div class="stack g-2">
+            <p class="b m-0">Single-select (radio-like)</p>
+            <div class="selector regular " role="radiogroup" aria-label="View mode">
+              <input type="radio" id="selector-view-list" name="selector-view" checked />
+              <label for="selector-view-list">List</label>
+              <input type="radio" id="selector-view-board" name="selector-view" />
+              <label for="selector-view-board">Board</label>
+              <input type="radio" id="selector-view-calendar" name="selector-view" />
+              <label for="selector-view-calendar">Calendar</label>
+            </div>
+          </div>
+          <div class="stack g-2">
+            <p class="b m-0">Multi-select (checkbox-like)</p>
+            <div class="selector regular outline" role="group" aria-label="Filters">
+              <input type="checkbox" id="selector-filter-open" checked />
+              <label for="selector-filter-open">Open</label>
+              <input type="checkbox" id="selector-filter-assigned" checked />
+              <label for="selector-filter-assigned">Assigned</label>
+              <input type="checkbox" id="selector-filter-priority" />
+              <label for="selector-filter-priority">Priority</label>
+              <input type="checkbox" id="selector-filter-blocked" />
+              <label for="selector-filter-blocked">Blocked</label>
+            </div>
+          </div>
+          <div class="stack g-3">
+            <p class="b m-0">Color variants</p>
+            <div class="stack g-2">
+              <div class="selector regular" role="radiogroup" aria-label="Neutral selector">
+                <input type="radio" id="sel-neutral-a" name="sel-neutral" checked /><label for="sel-neutral-a">One</label>
+                <input type="radio" id="sel-neutral-b" name="sel-neutral" /><label for="sel-neutral-b">Two</label>
+                <input type="radio" id="sel-neutral-c" name="sel-neutral" /><label for="sel-neutral-c">Three</label>
+              </div>
+              <div class="selector regular accent" role="radiogroup" aria-label="Accent selector">
+                <input type="radio" id="sel-accent-a" name="sel-accent" checked /><label for="sel-accent-a">One</label>
+                <input type="radio" id="sel-accent-b" name="sel-accent" /><label for="sel-accent-b">Two</label>
+                <input type="radio" id="sel-accent-c" name="sel-accent" /><label for="sel-accent-c">Three</label>
+              </div>
+              <div class="selector regular primary" role="radiogroup" aria-label="Primary selector">
+                <input type="radio" id="sel-primary-a" name="sel-primary" checked /><label for="sel-primary-a">One</label>
+                <input type="radio" id="sel-primary-b" name="sel-primary" /><label for="sel-primary-b">Two</label>
+                <input type="radio" id="sel-primary-c" name="sel-primary" /><label for="sel-primary-c">Three</label>
+              </div>
+              <div class="selector regular secondary" role="radiogroup" aria-label="Secondary selector">
+                <input type="radio" id="sel-secondary-a" name="sel-secondary" checked /><label for="sel-secondary-a">One</label>
+                <input type="radio" id="sel-secondary-b" name="sel-secondary" /><label for="sel-secondary-b">Two</label>
+                <input type="radio" id="sel-secondary-c" name="sel-secondary" /><label for="sel-secondary-c">Three</label>
+              </div>
+              <div class="selector regular tertiary" role="radiogroup" aria-label="Tertiary selector">
+                <input type="radio" id="sel-tertiary-a" name="sel-tertiary" checked /><label for="sel-tertiary-a">One</label>
+                <input type="radio" id="sel-tertiary-b" name="sel-tertiary" /><label for="sel-tertiary-b">Two</label>
+                <input type="radio" id="sel-tertiary-c" name="sel-tertiary" /><label for="sel-tertiary-c">Three</label>
+              </div>
+              <div class="selector regular success" role="radiogroup" aria-label="Success selector">
+                <input type="radio" id="sel-success-a" name="sel-success" checked /><label for="sel-success-a">One</label>
+                <input type="radio" id="sel-success-b" name="sel-success" /><label for="sel-success-b">Two</label>
+                <input type="radio" id="sel-success-c" name="sel-success" /><label for="sel-success-c">Three</label>
+              </div>
+              <div class="selector regular warning" role="radiogroup" aria-label="Warning selector">
+                <input type="radio" id="sel-warning-a" name="sel-warning" checked /><label for="sel-warning-a">One</label>
+                <input type="radio" id="sel-warning-b" name="sel-warning" /><label for="sel-warning-b">Two</label>
+                <input type="radio" id="sel-warning-c" name="sel-warning" /><label for="sel-warning-c">Three</label>
+              </div>
+              <div class="selector regular danger" role="radiogroup" aria-label="Danger selector">
+                <input type="radio" id="sel-danger-a" name="sel-danger" checked /><label for="sel-danger-a">One</label>
+                <input type="radio" id="sel-danger-b" name="sel-danger" /><label for="sel-danger-b">Two</label>
+                <input type="radio" id="sel-danger-c" name="sel-danger" /><label for="sel-danger-c">Three</label>
+              </div>
             </div>
           </div>
         </div>
@@ -328,15 +434,78 @@ const result = "fast, consistent styling"</code></pre>
             </div>
           </div>
           <div class="stack g-3">
-            <p class="b m-0">Field - Color variants</p>
-            <div class="row wrap g-3">
-              <input class="input regular" type="text" value="Neutral" />
-              <input class="input primary regular" type="text" value="Primary" />
-              <input class="input secondary regular" type="text" value="Secondary" />
-              <input class="input tertiary regular" type="text" value="Tertiary" />
-              <input class="input success regular" type="text" value="Success" />
-              <input class="input warning regular" type="text" value="Warning" />
-              <input class="input danger regular" type="text" value="Danger" />
+            <p class="b m-0">Field - Color variants × States</p>
+            <div class="stack g-3">
+              <div class="stack g-1">
+                <span class="small b">Neutral</span>
+                <div class="col-5 g-2">
+                  <input class="input regular" type="text" value="Normal" />
+                  <input class="input regular focus" type="text" value="Focus" />
+                  <input class="input regular hover" type="text" value="Hover" />
+                  <input class="input regular active" type="text" value="Active" />
+                  <input class="input regular" type="text" value="Disabled" disabled />
+                </div>
+              </div>
+              <div class="stack g-1">
+                <span class="small b">Primary</span>
+                <div class="col-5 g-2">
+                  <input class="input primary regular" type="text" value="Normal" />
+                  <input class="input primary regular focus" type="text" value="Focus" />
+                  <input class="input primary regular hover" type="text" value="Hover" />
+                  <input class="input primary regular active" type="text" value="Active" />
+                  <input class="input primary regular" type="text" value="Disabled" disabled />
+                </div>
+              </div>
+              <div class="stack g-1">
+                <span class="small b">Secondary</span>
+                <div class="col-5 g-2">
+                  <input class="input secondary regular" type="text" value="Normal" />
+                  <input class="input secondary regular focus" type="text" value="Focus" />
+                  <input class="input secondary regular hover" type="text" value="Hover" />
+                  <input class="input secondary regular active" type="text" value="Active" />
+                  <input class="input secondary regular" type="text" value="Disabled" disabled />
+                </div>
+              </div>
+              <div class="stack g-1">
+                <span class="small b">Tertiary</span>
+                <div class="col-5 g-2">
+                  <input class="input tertiary regular" type="text" value="Normal" />
+                  <input class="input tertiary regular focus" type="text" value="Focus" />
+                  <input class="input tertiary regular hover" type="text" value="Hover" />
+                  <input class="input tertiary regular active" type="text" value="Active" />
+                  <input class="input tertiary regular" type="text" value="Disabled" disabled />
+                </div>
+              </div>
+              <div class="stack g-1">
+                <span class="small b">Success</span>
+                <div class="col-5 g-2">
+                  <input class="input success regular" type="text" value="Normal" />
+                  <input class="input success regular focus" type="text" value="Focus" />
+                  <input class="input success regular hover" type="text" value="Hover" />
+                  <input class="input success regular active" type="text" value="Active" />
+                  <input class="input success regular" type="text" value="Disabled" disabled />
+                </div>
+              </div>
+              <div class="stack g-1">
+                <span class="small b">Warning</span>
+                <div class="col-5 g-2">
+                  <input class="input warning regular" type="text" value="Normal" />
+                  <input class="input warning regular focus" type="text" value="Focus" />
+                  <input class="input warning regular hover" type="text" value="Hover" />
+                  <input class="input warning regular active" type="text" value="Active" />
+                  <input class="input warning regular" type="text" value="Disabled" disabled />
+                </div>
+              </div>
+              <div class="stack g-1">
+                <span class="small b">Danger</span>
+                <div class="col-5 g-2">
+                  <input class="input danger regular" type="text" value="Normal" />
+                  <input class="input danger regular focus" type="text" value="Focus" />
+                  <input class="input danger regular hover" type="text" value="Hover" />
+                  <input class="input danger regular active" type="text" value="Active" />
+                  <input class="input danger regular" type="text" value="Disabled" disabled />
+                </div>
+              </div>
             </div>
           </div>
           <div class="stack g-3">
@@ -385,55 +554,40 @@ const result = "fast, consistent styling"</code></pre>
               <label class="row g-3 start"><input type="checkbox" class="checkbox large" checked /> Checked large</label>
               <label class="row g-3 start"><input type="checkbox" class="checkbox small" /> Unchecked small</label>
               <label class="row g-3 start"><input type="checkbox" class="checkbox small" checked /> Checked small</label>
-              <label class="row g-3 start"><input type="checkbox" class="checkbox regular" checked disabled /> Disabled checked</label>
             </div>
             <div class="stack g-3">
               <p class="b m-0">Checkboxes - States</p>
-              <label class="row g-3 start"><input type="checkbox" class="checkbox regular" /> Normal</label>
-              <label class="row g-3 start"><input type="checkbox" class="checkbox regular hover" /> Hover</label>
-              <label class="row g-3 start"><input type="checkbox" class="checkbox regular focus" /> Focus</label>
-              <label class="row g-3 start"><input type="checkbox" class="checkbox regular active" /> Active</label>
-              <label class="row g-3 start"><input type="checkbox" class="checkbox regular" disabled /> Disabled</label>
+              <div class="col-5 g-2">
+                <label class="row g-2 start"><input type="checkbox" class="checkbox regular" /> Normal</label>
+                <label class="row g-2 start"><input type="checkbox" class="checkbox regular focus" /> Focus</label>
+                <label class="row g-2 start"><input type="checkbox" class="checkbox regular hover" /> Hover</label>
+                <label class="row g-2 start"><input type="checkbox" class="checkbox regular active" /> Active</label>
+                <label class="row g-2 start"><input type="checkbox" class="checkbox regular" disabled /> Disabled</label>
+                <label class="row g-2 start"><input type="checkbox" class="checkbox regular" checked /> Normal</label>
+                <label class="row g-2 start"><input type="checkbox" class="checkbox regular focus" checked /> Focus</label>
+                <label class="row g-2 start"><input type="checkbox" class="checkbox regular hover" checked /> Hover</label>
+                <label class="row g-2 start"><input type="checkbox" class="checkbox regular active" checked /> Active</label>
+                <label class="row g-2 start"><input type="checkbox" class="checkbox regular" checked disabled /> Disabled</label>
+              </div>
             </div>
             <div class="stack g-3">
               <p class="b m-0">Radios</p>
               <label class="row g-3 start"><input type="radio" name="radio-states" class="radio regular" /> Unchecked</label>
               <label class="row g-3 start"><input type="radio" name="radio-states" class="radio regular" checked /> Checked</label>
-              <label class="row g-3 start"><input type="radio" name="radio-states-disabled" class="radio regular" checked disabled /> Disabled checked</label>
             </div>
             <div class="stack g-3">
               <p class="b m-0">Radios - States</p>
-              <label class="row g-3 start"><input type="radio" name="radio-variants" class="radio regular" /> Normal</label>
-              <label class="row g-3 start"><input type="radio" name="radio-variants" class="radio regular hover" /> Hover</label>
-              <label class="row g-3 start"><input type="radio" name="radio-variants" class="radio regular focus" /> Focus</label>
-              <label class="row g-3 start"><input type="radio" name="radio-variants" class="radio regular active" /> Active</label>
-              <label class="row g-3 start"><input type="radio" name="radio-variants-disabled" class="radio regular" disabled /> Disabled</label>
-            </div>
-          </div>
-          <div class="stack g-4">
-            <p class="b m-0">Selector (compact option bar)</p>
-            <div class="stack g-2">
-              <p class="small m-0">Single-select (radio-like)</p>
-              <div class="selector regular " role="radiogroup" aria-label="View mode">
-                <input type="radio" id="selector-view-list" name="selector-view" checked />
-                <label for="selector-view-list">List</label>
-                <input type="radio" id="selector-view-board" name="selector-view" />
-                <label for="selector-view-board">Board</label>
-                <input type="radio" id="selector-view-calendar" name="selector-view" />
-                <label for="selector-view-calendar">Calendar</label>
-              </div>
-            </div>
-            <div class="stack g-2">
-              <p class="small m-0">Multi-select (checkbox-like)</p>
-              <div class="selector regular outline" role="group" aria-label="Filters">
-                <input type="checkbox" id="selector-filter-open" checked />
-                <label for="selector-filter-open">Open</label>
-                <input type="checkbox" id="selector-filter-assigned" checked />
-                <label for="selector-filter-assigned">Assigned</label>
-                <input type="checkbox" id="selector-filter-priority" />
-                <label for="selector-filter-priority">Priority</label>
-                <input type="checkbox" id="selector-filter-blocked" />
-                <label for="selector-filter-blocked">Blocked</label>
+              <div class="col-5 g-2">
+                <label class="row g-2 start"><input type="radio" name="radio-s1" class="radio regular" /> Normal</label>
+                <label class="row g-2 start"><input type="radio" name="radio-s2" class="radio regular focus" /> Focus</label>
+                <label class="row g-2 start"><input type="radio" name="radio-s3" class="radio regular hover" /> Hover</label>
+                <label class="row g-2 start"><input type="radio" name="radio-s4" class="radio regular active" /> Active</label>
+                <label class="row g-2 start"><input type="radio" name="radio-s5" class="radio regular" disabled /> Disabled</label>
+                <label class="row g-2 start"><input type="radio" name="radio-c1" class="radio regular" checked /> Normal</label>
+                <label class="row g-2 start"><input type="radio" name="radio-c2" class="radio regular focus" checked /> Focus</label>
+                <label class="row g-2 start"><input type="radio" name="radio-c3" class="radio regular hover" checked /> Hover</label>
+                <label class="row g-2 start"><input type="radio" name="radio-c4" class="radio regular active" checked /> Active</label>
+                <label class="row g-2 start"><input type="radio" name="radio-c5" class="radio regular" checked disabled /> Disabled</label>
               </div>
             </div>
           </div>

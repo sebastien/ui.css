@@ -278,7 +278,7 @@ export default named({
 				border_width: vars.panel.normal.border.width,
 				border_style: vars.panel.normal.border.style,
 				border_color: colormixin(vars.panel.normal.border),
-				border_radius: vars.panel.box.radius,
+				border_radius: vars.panel.normal.border.radius,
 				padding: vars.panel.padding,
 				margin: vars.panel.margin,
 				background: colormixin(vars.panel.normal.background),
