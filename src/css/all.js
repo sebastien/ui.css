@@ -13,7 +13,7 @@ export default (cols = COLORS) =>
 		tokens,
 		reset,
 		controls,
-		components,
+		//components,
 		// NOTE: Style should be the last
 		text,
 		colors: colors(cols),

@@ -262,39 +262,10 @@ export default named({
 	),
 	// ------------------------------------------------------------------------
 	//
-	// PANELS
+	// PANELS — now handled by controls.js
 	//
 	// ------------------------------------------------------------------------
-	panel: group(
-		rule(".panel", {
-			__panel_color: vars.panel.normal.border.base,
-			border_width: vars.panel.normal.border.width,
-			border_style: vars.panel.normal.border.style,
-			border_color: colormixin({
-				base: "var(--panel-color)",
-				tint: vars.panel.normal.border.tint,
-				blend: vars.panel.normal.border.blend,
-				opacity: vars.panel.normal.border.opacity,
-			}),
-			border_radius: vars.panel.normal.border.radius,
-			padding: vars.panel.padding,
-			margin: vars.panel.margin,
-			background: colormixin({
-				base: "var(--panel-color)",
-				tint: vars.panel.normal.background.tint,
-				blend: vars.panel.normal.background.blend,
-				opacity: vars.panel.normal.background.opacity,
-			}),
-			color: colormixin(vars.panel.normal.text),
-			box_shadow: "none",
-		}),
-		...["primary", "secondary", "tertiary", "success", "warning", "danger"].map(
-			(variant) =>
-				rule(`.panel.${variant}`, {
-					__panel_color: vars.panel.color[variant],
-				}),
-		),
-	),
+	panel: group(),
 
 	// ------------------------------------------------------------------------
 	//
