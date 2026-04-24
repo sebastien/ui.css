@@ -16,7 +16,7 @@
     </script>
   </head>
   <body data-theme="default" class="m-0 bg-neutral bg tx centered g-6">
-    <main class="stack g-8 w-content bd bd-3o rounder bg-paper w-content p-8 m-8 bg">
+    <main class="stack g-6 w-content bd bd-3o rounder bg-paper w-content p-8 m-8 bg">
       <header class="stack g-3">
         <h1 class="h1 m-0">UI.css Specimen</h1>
         <p class="t limit-text m-0">A broad specimen page aligned with the pure CSS benchmark layout and coverage.</p>
@@ -290,30 +290,30 @@ const result = "fast, consistent styling"</code></pre>
         <h2 class="h3 m-0">Inputs</h2>
         <div class="stack g-5">
           <div class="col-3 g-4">
-            <label class="stack g-2">
+            <label class="stack g-1">
               <span class="b">Currency</span>
               <input class="input regular" type="text" placeholder="$ 1,000" />
             </label>
-            <label class="stack g-2">
+            <label class="stack g-1">
               <span class="b">Percent</span>
               <input class="input regular" type="text" placeholder="25%" />
             </label>
-            <label class="stack g-2">
+            <label class="stack g-1">
               <span class="b">Unit</span>
               <input class="input regular" type="text" placeholder="100 kg" />
             </label>
           </div>
           <div class="col-2 g-4">
-            <label class="stack g-2">
+            <label class="stack g-1">
               <span class="b">Default</span>
               <input class="input regular" type="text" value="Jane Doe" />
             </label>
-            <label class="stack g-2">
+            <label class="stack g-1">
               <span class="b">Disabled</span>
               <input class="input regular" type="text" value="Unavailable" disabled />
             </label>
           </div>
-          <div class="stack g-2">
+          <div class="stack g-1">
             <span class="b">Field</span>
             <input class="input" type="text" placeholder="Enter your legal full name" />
             <span class="small">This field is required</span>
@@ -358,19 +358,19 @@ const result = "fast, consistent styling"</code></pre>
               <input class="input regular" type="text" value="Disabled" disabled />
             </div>
           </div>
-          <label class="stack g-2">
+          <label class="stack g-1">
             <span class="b">Textarea</span>
             <textarea class="textarea fit-w" rows="4" placeholder="Write a longer note here..."></textarea>
           </label>
-          <label class="stack g-2">
+          <label class="stack g-1">
             <span class="b">Range</span>
             <input class="range fit-w" type="range" min="0" max="100" value="60" />
           </label>
           <fieldset class="stack g-3">
             <legend class="b">FieldSet</legend>
-            <div class="col-2 g-3">
-              <label class="stack g-2"><span>First Name</span><input class="input" type="text" /></label>
-              <label class="stack g-2"><span>Last Name</span><input class="input" type="text" /></label>
+            <div class="col-2 g-2">
+              <label class="stack g-1"><span>First Name</span><input class="input" type="text" /></label>
+              <label class="stack g-1"><span>Last Name</span><input class="input" type="text" /></label>
             </div>
           </fieldset>
         </div>
@@ -388,10 +388,26 @@ const result = "fast, consistent styling"</code></pre>
               <label class="row g-3 start"><input type="checkbox" class="checkbox regular" checked disabled /> Disabled checked</label>
             </div>
             <div class="stack g-3">
+              <p class="b m-0">Checkboxes - States</p>
+              <label class="row g-3 start"><input type="checkbox" class="checkbox regular" /> Normal</label>
+              <label class="row g-3 start"><input type="checkbox" class="checkbox regular hover" /> Hover</label>
+              <label class="row g-3 start"><input type="checkbox" class="checkbox regular focus" /> Focus</label>
+              <label class="row g-3 start"><input type="checkbox" class="checkbox regular active" /> Active</label>
+              <label class="row g-3 start"><input type="checkbox" class="checkbox regular" disabled /> Disabled</label>
+            </div>
+            <div class="stack g-3">
               <p class="b m-0">Radios</p>
               <label class="row g-3 start"><input type="radio" name="radio-states" class="radio regular" /> Unchecked</label>
               <label class="row g-3 start"><input type="radio" name="radio-states" class="radio regular" checked /> Checked</label>
               <label class="row g-3 start"><input type="radio" name="radio-states-disabled" class="radio regular" checked disabled /> Disabled checked</label>
+            </div>
+            <div class="stack g-3">
+              <p class="b m-0">Radios - States</p>
+              <label class="row g-3 start"><input type="radio" name="radio-variants" class="radio regular" /> Normal</label>
+              <label class="row g-3 start"><input type="radio" name="radio-variants" class="radio regular hover" /> Hover</label>
+              <label class="row g-3 start"><input type="radio" name="radio-variants" class="radio regular focus" /> Focus</label>
+              <label class="row g-3 start"><input type="radio" name="radio-variants" class="radio regular active" /> Active</label>
+              <label class="row g-3 start"><input type="radio" name="radio-variants-disabled" class="radio regular" disabled /> Disabled</label>
             </div>
           </div>
           <div class="stack g-4">

@@ -119,9 +119,9 @@ function colorVariantStateRules(name, selectors) {
 
 const INHERIT = {
 	selectable: "button",
-	selector: "button",
-	checkbox: "button",
-	radio: "button",
+	selector: "input",
+	checkbox: "input",
+	radio: "input",
 	textarea: "input",
 	select: "input",
 };
@@ -351,8 +351,12 @@ function button(colors) {
 		}),
 		...COLOR_VARIANTS.map((variant) => {
 			const variantColor = cascade(n, ["color", variant], `${vars.color.primary}`)
+			const variantButtonStyle = variantStyle(n, variant)
 			return rule(cross(name, [`.${variant}`], [":focus-visible", ".focus"]), {
 				outline_color: focusOutline(variantColor),
+				background: variantButtonStyle.background,
+				border_color: variantButtonStyle.border_color,
+				color: variantButtonStyle.color,
 			})
 		}),
 		rule(mods(name, "hover"), {
@@ -377,8 +381,12 @@ function button(colors) {
 		}),
 		...COLOR_VARIANTS.map((variant) => {
 			const variantColor = cascade(sn, ["color", variant], `${vars.color.primary}`)
+			const variantSelectableStyle = variantStyle(sn, variant)
 			return rule(cross(selectable, [`.${variant}`], [":focus-visible", ".focus"]), {
 				outline_color: focusOutline(variantColor),
+				background: variantSelectableStyle.background,
+				border_color: variantSelectableStyle.border_color,
+				color: variantSelectableStyle.color,
 			})
 		}),
 		rule(mods(selectable, "hover"), {
@@ -531,6 +539,7 @@ function button(colors) {
 // ----------------------------------------------------------------------------
 function selector(colors) {
 	const name = [".selector"];
+	const sn = "selectable";
 	const option = [
 		...cross(name, ["> .option", "> label", "> button", "> a"]),
 	];
@@ -548,12 +557,12 @@ function selector(colors) {
 			flex_wrap: "nowrap",
 			align_items: "center",
 			overflow: "hidden",
-			gap: cascade(n, ["box", "gap"], FALLBACK.spacing.gap),
-			padding: cascade(n, ["padding"], FALLBACK.spacing.padding),
+			gap: `max(1px, ${cascade(n, ["box", "gap"], FALLBACK.spacing.gap)})`,
+			padding: `max(2px, ${cascade(n, ["padding"], FALLBACK.spacing.padding)})`,
 			margin: cascade(n, ["margin"], FALLBACK.spacing.margin),
 			outline_width: cascade(n, ["normal", "outline", "width"], FALLBACK.outline.width),
 			outline_style: cascade(n, ["normal", "outline", "style"], FALLBACK.outline.style),
-			outline_color: mixState(n, "normal", "outline"),
+			outline_color: "transparent",
 			border_width: cascade(n, ["normal", "border", "width"], FALLBACK.border.width),
 			border_style: cascade(n, ["normal", "border", "style"], FALLBACK.border.style),
 			border_color: mixState(n, "normal", "border"),
@@ -567,7 +576,7 @@ function selector(colors) {
 			font_weight: cascade(n, ["font", "weight"], FALLBACK.font.weight),
 			font_size: cascade(n, ["font", "size"], FALLBACK.font.size),
 		}),
-		rule(option, {
+			rule(option, {
 			cursor: "pointer",
 			display: "inline-flex",
 			flex: "0 0 auto",
@@ -575,7 +584,9 @@ function selector(colors) {
 			justify_content: "center",
 			position: "relative",
 			padding: cascade(n, ["item", "padding"], FALLBACK.spacing.item_padding),
-			border: "0px solid transparent",
+			border_width: cascade(sn, ["normal", "border", "width"], FALLBACK.border.width),
+			border_style: cascade(sn, ["normal", "border", "style"], FALLBACK.border.style),
+			border_color: "transparent",
 			border_radius: cascade(n, ["box", "radius"], FALLBACK.spacing.radius),
 			background: "transparent",
 			color: "inherit",
@@ -587,6 +598,9 @@ function selector(colors) {
 			transition: `${vars.control.transition}`,
 			margin: "0px",
 		}),
+		rule(option.map((s) => `${s}:not(:first-child):not(:last-child)`), {
+			border_radius: "0px",
+		}),
 		rule(cross(name, [" input[type=checkbox]", " input[type=radio]"]), {
 			display: "none",
 		}),
@@ -596,29 +610,44 @@ function selector(colors) {
 			}),
 		),
 		rule(cross(name, [":focus-within", ".focus"]), {
-			outline_width: cascade(n, ["normal", "outline", "width"], FALLBACK.outline.width),
-			outline_color: mixState(n, "normal", "outline"),
+			outline_width: cascade(n, ["focus", "outline", "width"], cascade(n, ["normal", "outline", "width"], FALLBACK.outline.width)),
+			outline_style: cascade(n, ["focus", "outline", "style"], cascade(n, ["normal", "outline", "style"], FALLBACK.outline.style)),
+			outline_color: mixState(n, "focus", "outline"),
 			...stateStyle(n, "focus"),
+		}),
+		...COLOR_VARIANTS.map((variant) => {
+			const variantColor = cascade(n, ["color", variant], `${vars.color.primary}`)
+			return rule(cross(name, [`.${variant}`], [":focus-within", ".focus"]), {
+				outline_color: focusOutline(variantColor),
+			})
 		}),
 		rule(cross(option, [":hover", ".hover"]), {
-			background: mixState(n, "normal", "background"),
-			...stateStyle(n, "hover"),
+			...stateStyle(sn, "hover"),
 		}),
 		rule(cross(option, [":active", ".active"]), {
-			background: mixState(n, "normal", "background"),
 			box_shadow: "none",
-			...stateStyle(n, "active"),
+			...stateStyle(sn, "active"),
 		}),
 		rule(selected, {
-			background: mixState(n, "normal", "background"),
-			color: stateToken(n, "selected", "text", "base"),
+			...stateStyle(sn, "selected"),
 			box_shadow: "none",
-			...stateStyle(n, "selected"),
+		}),
+		...COLOR_VARIANTS.map((variant) => {
+			const selectedVariant = variantStyle(sn, variant)
+			return rule([
+				...cross(name, [`.${variant}`], ["> .selected", '> [aria-pressed="true"]', '> [aria-checked="true"]']),
+				...cross(name, [`.${variant}`], [" input:checked + label"]),
+			], {
+				background: selectedVariant.background,
+				border_color: selectedVariant.border_color,
+				color: selectedVariant.color,
+			})
 		}),
 		rule(cross(option, [":focus-visible", ".focus"]), {
-			outline_width: cascade(n, ["normal", "outline", "width"], FALLBACK.outline.width),
-			outline_color: mixState(n, "normal", "outline"),
-			...stateStyle(n, "focus"),
+			outline_width: cascade(sn, ["focus", "outline", "width"], cascade(sn, ["normal", "outline", "width"], FALLBACK.outline.width)),
+			outline_style: cascade(sn, ["focus", "outline", "style"], cascade(sn, ["normal", "outline", "style"], FALLBACK.outline.style)),
+			outline_color: mixState(sn, "focus", "outline"),
+			...stateStyle(sn, "focus"),
 		}),
 		rule(cross(name, [".disabled", '[aria-disabled="true"]']), {
 			cursor: "default",
@@ -714,8 +743,11 @@ function input(colors) {
 		}),
 		...COLOR_VARIANTS.map((variant) => {
 			const variantColor = cascade(n, ["color", variant], `${vars.color.primary}`)
+			const variantFieldStyle = fieldVariantStyle(n, variant)
 			return rule(cross(name, [`.${variant}`], [":focus", ":focus-visible", ".focus"], [":active", ".active"]), {
 				outline_color: focusOutline(variantColor),
+				border_color: variantFieldStyle.border_color,
+				background: variantFieldStyle.background,
 			})
 		}),
 		rule(mods(name, "disabled"), {
@@ -803,8 +835,11 @@ function textarea(colors) {
 		}),
 		...COLOR_VARIANTS.map((variant) => {
 			const variantColor = cascade(n, ["color", variant], `${vars.color.primary}`)
+			const variantFieldStyle = fieldVariantStyle(n, variant)
 			return rule(cross(name, [`.${variant}`], [":focus", ":focus-visible", ".focus"]), {
 				outline_color: focusOutline(variantColor),
+				border_color: variantFieldStyle.border_color,
+				background: variantFieldStyle.background,
 			})
 		}),
 		rule(mods(name, "active"), {
@@ -817,8 +852,11 @@ function textarea(colors) {
 		}),
 		...COLOR_VARIANTS.map((variant) => {
 			const variantColor = cascade(n, ["color", variant], `${vars.color.primary}`)
+			const variantFieldStyle = fieldVariantStyle(n, variant)
 			return rule(cross(name, [`.${variant}`], [":focus", ":focus-visible", ".focus"], [":active", ".active"]), {
 				outline_color: focusOutline(variantColor),
+				border_color: variantFieldStyle.border_color,
+				background: variantFieldStyle.background,
 			})
 		}),
 		rule(mods(name, "disabled"), {
@@ -902,7 +940,7 @@ function select(colors) {
 		}),
 		...colors.map((variant) =>
 			rule(mods(name, variant), {
-				...variantStyle(n, variant),
+				...fieldVariantStyle(n, variant),
 			}),
 		),
 		rule(mods(name, "focus"), {
@@ -947,6 +985,12 @@ function select(colors) {
 function range(colors) {
 	const name = ['input[type="range"]', ".range"];
 	const n = "range";
+	const inputTrackColor = colormixin({
+		base: cascade("input", ["normal", "border", "base"], FALLBACK.color.border.base),
+		tint: cascade("input", ["normal", "border", "tint"], FALLBACK.color.border.tint),
+		blend: cascade("input", ["normal", "border", "blend"], FALLBACK.color.border.blend),
+		opacity: cascade("input", ["normal", "border", "opacity"], FALLBACK.color.border.opacity),
+	})
 
 	return group(
 		rule(name, {
@@ -969,40 +1013,63 @@ function range(colors) {
 		}),
 		...colors.map((variant) =>
 			rule(mods(name, variant), {
-				...variantStyle(n, variant),
+				...fieldVariantStyle(n, variant),
 			}),
 		),
 		rule(name.map((s) => `${s}::-webkit-slider-runnable-track`), {
 			height: cascade(n, ["track", "size"], "0.28em"),
 			border_radius: cascade(n, ["track", "radius"], "999px"),
-			background: cascade(n, ["track", "color"], "#d7dbe0"),
+			background: cascade(n, ["track", "color"], inputTrackColor),
 		}),
 		rule(name.map((s) => `${s}::-webkit-slider-thumb`), {
 			appearance: "none",
 			width: cascade(n, ["thumb", "size"], "0.95em"),
 			height: cascade(n, ["thumb", "size"], "0.95em"),
 			border_radius: cascade(n, ["thumb", "radius"], "50%"),
-			background: mixState(n, "normal", "background"),
-			border: "0px solid transparent",
+			background: cascade(n, ["thumb", "background"], mixState("input", "normal", "background")),
+			border_width: cascade(n, ["thumb", "border", "width"], cascade("input", ["normal", "border", "width"], FALLBACK.border.width)),
+			border_style: cascade(n, ["thumb", "border", "style"], cascade("input", ["normal", "border", "style"], FALLBACK.border.style)),
+			border_color: cascade(n, ["thumb", "border", "color"], mixState("input", "normal", "border")),
 			margin_top: `calc((${cascade(n, ["track", "size"], "0.28em")} - ${cascade(n, ["thumb", "size"], "0.95em")}) / 2)`,
 		}),
 		rule(name.map((s) => `${s}::-moz-range-track`), {
 			height: cascade(n, ["track", "size"], "0.28em"),
 			border_radius: cascade(n, ["track", "radius"], "999px"),
-			background: cascade(n, ["track", "color"], "#d7dbe0"),
+			background: cascade(n, ["track", "color"], inputTrackColor),
 			border: "0px solid transparent",
 		}),
 		rule(name.map((s) => `${s}::-moz-range-thumb`), {
 			width: cascade(n, ["thumb", "size"], "0.95em"),
 			height: cascade(n, ["thumb", "size"], "0.95em"),
 			border_radius: cascade(n, ["thumb", "radius"], "50%"),
-			background: mixState(n, "normal", "background"),
-			border: "0px solid transparent",
+			background: cascade(n, ["thumb", "background"], mixState("input", "normal", "background")),
+			border_width: cascade(n, ["thumb", "border", "width"], cascade("input", ["normal", "border", "width"], FALLBACK.border.width)),
+			border_style: cascade(n, ["thumb", "border", "style"], cascade("input", ["normal", "border", "style"], FALLBACK.border.style)),
+			border_color: cascade(n, ["thumb", "border", "color"], mixState("input", "normal", "border")),
 		}),
 		rule(mods(name, "focus"), {
 			outline_width: cascade(n, ["normal", "outline", "width"], FALLBACK.outline.width),
 			outline_color: mixState(n, "normal", "outline"),
 			...stateStyle(n, "focus"),
+		}),
+		rule(cross(name, [":focus-visible", ".focus"]), {
+			outline_width: cascade(n, ["focus", "outline", "width"], cascade(n, ["normal", "outline", "width"], FALLBACK.outline.width)),
+			outline_style: cascade(n, ["focus", "outline", "style"], cascade(n, ["normal", "outline", "style"], FALLBACK.outline.style)),
+			outline_color: mixState(n, "focus", "outline"),
+		}),
+		...COLOR_VARIANTS.map((variant) => {
+			const variantColor = cascade(n, ["color", variant], `${vars.color.primary}`)
+			const variantFieldStyle = fieldVariantStyle(n, variant)
+			return rule(cross(name, [`.${variant}`], [":focus", ":focus-visible", ".focus"]), {
+				outline_color: focusOutline(variantColor),
+				border_color: variantFieldStyle.border_color,
+				background: variantFieldStyle.background,
+			})
+		}),
+		rule(cross(name, [":focus-visible", ".focus"]), {
+			outline_width: cascade(n, ["focus", "outline", "width"], cascade(n, ["normal", "outline", "width"], FALLBACK.outline.width)),
+			outline_style: cascade(n, ["focus", "outline", "style"], cascade(n, ["normal", "outline", "style"], FALLBACK.outline.style)),
+			outline_color: mixState(n, "focus", "outline"),
 		}),
 		rule(name.map((s) => `${s}:focus-visible`), {
 			outline_width: cascade(n, ["normal", "outline", "width"], FALLBACK.outline.width),
@@ -1040,7 +1107,7 @@ function checkbox(colors) {
 			box_sizing: "border-box",
 			outline_width: cascade(n, ["normal", "outline", "width"], FALLBACK.outline.width),
 			outline_style: cascade(n, ["normal", "outline", "style"], FALLBACK.outline.style),
-			outline_color: mixState(n, "normal", "outline"),
+			outline_color: "transparent",
 			border_width: cascade(n, ["normal", "border", "width"], FALLBACK.border.width),
 			border_style: cascade(n, ["normal", "border", "style"], FALLBACK.border.style),
 			border_color: mixState(n, "normal", "border"),
@@ -1054,7 +1121,7 @@ function checkbox(colors) {
 		}),
 		...colors.map((variant) =>
 			rule(mods(name, variant), {
-				...variantStyle(n, variant),
+				...fieldVariantStyle(n, variant),
 			}),
 		),
 		rule(mods(name, "hover"), {
@@ -1065,6 +1132,15 @@ function checkbox(colors) {
 			outline_color: mixState(n, "normal", "outline"),
 			...stateStyle(n, "focus"),
 		}),
+		...COLOR_VARIANTS.map((variant) => {
+			const variantColor = cascade(n, ["color", variant], `${vars.color.primary}`)
+			const variantFieldStyle = fieldVariantStyle(n, variant)
+			return rule(cross(name, [`.${variant}`], [":focus", ":focus-visible", ".focus"]), {
+				outline_color: focusOutline(variantColor),
+				border_color: variantFieldStyle.border_color,
+				background: variantFieldStyle.background,
+			})
+		}),
 		rule(mods(name, "active"), {
 			...stateStyle(n, "active"),
 		}),
@@ -1072,46 +1148,55 @@ function checkbox(colors) {
 			cursor: "default",
 			...stateStyle(n, "disabled"),
 		}),
-			rule(
+		rule(
 			name.map((s) => `${s}:checked`),
 			{
 				position: "relative",
-				border_color: mixState(n, "normal", "background"),
+				...stateStyle(n, "selected"),
 				background: mixState(n, "normal", "background"),
+				color: `${vars.color.ink}`,
 			},
 		),
+		...COLOR_VARIANTS.map((variant) => {
+			const variantFieldStyle = fieldVariantStyle(n, variant)
+			return rule(cross(name, [`.${variant}`], [":checked", ":indeterminate"]), {
+				background: mixState(n, "normal", "background"),
+				border_color: variantFieldStyle.border_color,
+				color: variantFieldStyle.border_color,
+			})
+		}),
 		rule(
 			name.map((s) => `${s}:checked::after`),
 			{
-				content: cascade(n, ["content", "checked"], "\"✓\""),
+				content: "\"\"",
 				position: "absolute",
-				top: "50%",
-				left: "50%",
-				transform: "translate(-50%, -50%)",
-				font_size: cascade(n, ["box", "marker"], "0.72em"),
-				line_height: "1",
-				color: stateToken(n, "normal", "text", "base"),
-			},
-		),
-			rule(
-			name.map((s) => `${s}:indeterminate`),
-			{
-				position: "relative",
-				border_color: mixState(n, "normal", "background"),
-				background: mixState(n, "normal", "background"),
+				inset: "3px",
+				border_radius: "inherit",
+				background: "currentColor",
 			},
 		),
 		rule(
+			name.map((s) => `${s}:indeterminate`),
+			{
+				position: "relative",
+				...stateStyle(n, "selected"),
+				background: mixState(n, "normal", "background"),
+				color: `${vars.color.ink}`,
+			},
+		),
+		rule(cross(name, [":checked", ":indeterminate"], [":focus", ":focus-visible", ".focus"]), {
+			outline_width: cascade(n, ["focus", "outline", "width"], cascade(n, ["normal", "outline", "width"], FALLBACK.outline.width)),
+			outline_style: cascade(n, ["focus", "outline", "style"], cascade(n, ["normal", "outline", "style"], FALLBACK.outline.style)),
+			outline_color: mixState(n, "focus", "outline"),
+		}),
+		rule(
 			name.map((s) => `${s}:indeterminate::after`),
 			{
-				content: cascade(n, ["content", "partial"], "\"─\""),
+				content: "\"\"",
 				position: "absolute",
-				top: "50%",
-				left: "50%",
-				transform: "translate(-50%, -50%)",
-				font_size: cascade(n, ["box", "marker"], "0.72em"),
-				line_height: "1",
-				color: stateToken(n, "normal", "text", "base"),
+				inset: "3px",
+				border_radius: "inherit",
+				background: "currentColor",
 			},
 		),
 		rule(mods(name, "default"), {
@@ -1163,7 +1248,7 @@ function radio(colors) {
 			box_sizing: "border-box",
 			outline_width: cascade(n, ["normal", "outline", "width"], FALLBACK.outline.width),
 			outline_style: cascade(n, ["normal", "outline", "style"], FALLBACK.outline.style),
-			outline_color: mixState(n, "normal", "outline"),
+			outline_color: "transparent",
 			border_width: cascade(n, ["normal", "border", "width"], FALLBACK.border.width),
 			border_style: cascade(n, ["normal", "border", "style"], FALLBACK.border.style),
 			border_color: mixState(n, "normal", "border"),
@@ -1177,7 +1262,7 @@ function radio(colors) {
 		}),
 		...colors.map((variant) =>
 			rule(mods(name, variant), {
-				...variantStyle(n, variant),
+				...fieldVariantStyle(n, variant),
 			}),
 		),
 		rule(mods(name, "hover"), {
@@ -1188,6 +1273,20 @@ function radio(colors) {
 			outline_color: mixState(n, "normal", "outline"),
 			...stateStyle(n, "focus"),
 		}),
+		rule(cross(name, [":focus-visible", ".focus"]), {
+			outline_width: cascade(n, ["focus", "outline", "width"], cascade(n, ["normal", "outline", "width"], FALLBACK.outline.width)),
+			outline_style: cascade(n, ["focus", "outline", "style"], cascade(n, ["normal", "outline", "style"], FALLBACK.outline.style)),
+			outline_color: mixState(n, "focus", "outline"),
+		}),
+		...COLOR_VARIANTS.map((variant) => {
+			const variantColor = cascade(n, ["color", variant], `${vars.color.primary}`)
+			const variantFieldStyle = fieldVariantStyle(n, variant)
+			return rule(cross(name, [`.${variant}`], [":focus", ":focus-visible", ".focus"]), {
+				outline_color: focusOutline(variantColor),
+				border_color: variantFieldStyle.border_color,
+				background: variantFieldStyle.background,
+			})
+		}),
 		rule(mods(name, "active"), {
 			...stateStyle(n, "active"),
 		}),
@@ -1195,25 +1294,36 @@ function radio(colors) {
 			cursor: "default",
 			...stateStyle(n, "disabled"),
 		}),
-			rule(
+		rule(
 			name.map((s) => `${s}:checked`),
 			{
 				position: "relative",
-				border_color: mixState(n, "normal", "background"),
+				...stateStyle(n, "selected"),
 				background: mixState(n, "normal", "background"),
+				color: `${vars.color.ink}`,
 			},
 		),
+		...COLOR_VARIANTS.map((variant) => {
+			const variantFieldStyle = fieldVariantStyle(n, variant)
+			return rule(cross(name, [`.${variant}`], [":checked"]), {
+				background: mixState(n, "normal", "background"),
+				border_color: variantFieldStyle.border_color,
+				color: variantFieldStyle.border_color,
+			})
+		}),
+		rule(cross(name, [":checked"], [":focus", ":focus-visible", ".focus"]), {
+			outline_width: cascade(n, ["focus", "outline", "width"], cascade(n, ["normal", "outline", "width"], FALLBACK.outline.width)),
+			outline_style: cascade(n, ["focus", "outline", "style"], cascade(n, ["normal", "outline", "style"], FALLBACK.outline.style)),
+			outline_color: mixState(n, "focus", "outline"),
+		}),
 		rule(
 			name.map((s) => `${s}:checked::after`),
 			{
-				content: cascade(n, ["content", "checked"], "\"●\""),
+				content: "\"\"",
 				position: "absolute",
-				top: "50%",
-				left: "50%",
-				transform: "translate(-50%, -50%)",
-				font_size: cascade(n, ["box", "marker"], "0.72em"),
-				line_height: "1",
-				color: stateToken(n, "normal", "text", "base"),
+				inset: "3px",
+				border_radius: "50%",
+				background: "currentColor",
 			},
 		),
 		rule(mods(name, "default"), {
