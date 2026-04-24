@@ -1,485 +1,147 @@
-import { Parser, contrast as contrastColor, group, nesting, rule, vars } from "../js/uicss.js?v=2"
-import { colormixin } from "./colors.js"
-import DEFAULTS_SPEC from "./controls.defaults.js"
-
-const PARSER = new Parser()
-
-// Property name expansions from shorthand keys.
-const PROPS = { tx: "text", bg: "background", bd: "border", ol: "outline" }
-
-// Color facets produced by the color pipeline.
-const COLOR_FACETS = ["base", "tint", "blend", "opacity"]
-
-// Structural facets for border/outline geometry.
-const GEOM_FACETS = ["width", "radius"]
-
-const DEFAULTS = PARSER.style(DEFAULTS_SPEC)
+import { group, nesting, rule } from "../js/uicss.js?v=2"
 
 // ----------------------------------------------------------------------------
 //
-// COLOR RESOLUTION — CSS variable indirection
+// COMPUTED-STATE CONTROLS
+//
+// Two visual categories: field-like and button-like.
+// State behavior (hover, focus, active, disabled) is computed from base values
+// using calc(). Variants (outline, ghost, blank) are structural presets.
+// Checked/selected flips from field → button styling.
+//
+// Theme surface:
+//   --field-bg-blend, --field-bd-opacity, --field-bd-width, --field-bd-radius
+//   --button-bg-blend, --button-bd-opacity, --button-bd-width, --button-bd-radius
+//   --ctrl-hover-blend-shift, --ctrl-hover-bd-shift, --ctrl-focus-ol-opacity
+//   --ctrl-disabled-opacity
+//   --ctrl-color (per-control semantic color)
 //
 // ----------------------------------------------------------------------------
 
-// Default facet values when nothing is specified.
-const BASE_COLOR = "__CONTROL_COLOR__"
-const FACET_DEFAULTS = {
-	text: { base: "var(--color-ink)", tint: "var(--color-ink)", blend: "0%", opacity: "100%" },
-	background: { base: BASE_COLOR, tint: "var(--color-paper)", blend: "100%", opacity: "100%" },
-	border: { base: BASE_COLOR, tint: "var(--color-paper)", blend: "80%", opacity: "100%", width: "1px", radius: "4px" },
-	outline: { base: BASE_COLOR, tint: "var(--color-paper)", blend: "80%", opacity: "0%", width: "2px", radius: "4px" },
-}
-
-// Resolve a color name to a CSS value.
-function resolveColorName(name) {
-	if (!name) return null
-	if (name === "contrast") return "contrast"
-	if (name === "inherit") return "inherit"
-	if (name === "transparent") return "transparent"
-	if (name === BASE_COLOR || name === "self") return "var(--ctrl-color)"
-	if (name.startsWith("var(") || name.startsWith("#") || name.startsWith("color-mix(")) return name
-	return `var(--color-${name})`
-}
-
-// Normalize blend to percentage string.
-function normalizeBlend(v) {
-	if (!v) return null
-	if (v.endsWith("%")) return v
-	const n = Number.parseFloat(v)
-	return Number.isNaN(n) ? v : `${n}%`
-}
-
-// Normalize opacity to percentage string.
-function normalizeOpacity(v) {
-	if (!v) return null
-	if (v === "0") return "0%"
-	if (v.endsWith("%")) return v
-	const n = Number.parseFloat(v)
-	if (Number.isNaN(n)) return v
-	return n > 1 ? `${n}%` : `${Math.round(n * 100)}%`
-}
+// Semantic colors assignable to any control via class.
+const SEMANTIC_COLORS = ["neutral", "primary", "secondary", "tertiary", "accent", "success", "warning", "danger", "info", "error"]
 
 // ----------------------------------------------------------------------------
 //
-// FACET RESOLUTION WITH INHERITANCE
+// SELECTORS
 //
 // ----------------------------------------------------------------------------
 
-function resolveAllFacets(definition, variant, state, shortKey) {
-	const propName = PROPS[shortKey]
-	const isEdge = shortKey === "bd" || shortKey === "ol"
-	const facetNames = isEdge ? [...COLOR_FACETS, ...GEOM_FACETS] : COLOR_FACETS
-	const defaults = FACET_DEFAULTS[propName] || {}
-
-	const getValue = (v, s) => {
-		const raw = definition[v]?.[s]?.[shortKey]
-		return raw ? PARSER.parseProperty(shortKey, raw) : null
-	}
-
-	const layers = []
-	const current = getValue(variant, state)
-	if (current) layers.push(current)
-	if (state !== "default") {
-		const vDefault = getValue(variant, "default")
-		if (vDefault) layers.push(vDefault)
-	}
-	if (layers.length === 0 && variant !== "default") {
-		const dState = getValue("default", state)
-		if (dState) layers.push(dState)
-		const dDefault = getValue("default", "default")
-		if (dDefault) layers.push(dDefault)
-	}
-
-	if (layers.length === 0) return { ...defaults }
-
-	const result = {}
-	for (const facet of facetNames) {
-		for (const layer of layers) {
-			if (layer[facet] !== null && layer[facet] !== undefined) {
-				result[facet] = layer[facet]
-				break
-			}
-		}
-		if (result[facet] === undefined) result[facet] = defaults[facet] || null
-	}
-	return result
-}
-
-function resolveSubFacets(definition, variant, state, subElement, shortKey) {
-	const propName = PROPS[shortKey]
-	const isEdge = shortKey === "bd" || shortKey === "ol"
-	const facetNames = isEdge ? [...COLOR_FACETS, ...GEOM_FACETS] : COLOR_FACETS
-	const defaults = FACET_DEFAULTS[propName] || {}
-	const fullKey = `${subElement}.${shortKey}`
-
-	const getValue = (v, s) => {
-		const raw = definition[v]?.[s]?.[fullKey]
-		return raw ? PARSER.parseProperty(shortKey, raw) : null
-	}
-
-	const layers = []
-	const current = getValue(variant, state)
-	if (current) layers.push(current)
-	if (state !== "default") {
-		const vDefault = getValue(variant, "default")
-		if (vDefault) layers.push(vDefault)
-	}
-	if (layers.length === 0 && variant !== "default") {
-		const dState = getValue("default", state)
-		if (dState) layers.push(dState)
-		const dDefault = getValue("default", "default")
-		if (dDefault) layers.push(dDefault)
-	}
-
-	const result = {}
-	if (layers.length === 0) return { ...defaults }
-	for (const facet of facetNames) {
-		for (const layer of layers) {
-			if (layer[facet] !== null && layer[facet] !== undefined) {
-				result[facet] = layer[facet]
-				break
-			}
-		}
-		if (result[facet] === undefined) result[facet] = defaults[facet] || null
-	}
-	return result
-}
-
-// Function: buildColorValue
-// Builds a CSS color value from resolved facets (used for special cases only).
-function buildColorValue(facets) {
-	const base = resolveColorName(facets.base)
-	const tint = resolveColorName(facets.tint)
-	const blend = normalizeBlend(facets.blend)
-	const opacity = normalizeOpacity(facets.opacity)
-
-	if (!base) return null
-
-	if (base === "contrast") {
-		if (opacity && opacity !== "100%") {
-			return `color-mix(in oklch, contrast-color(var(--ctrl-bg, var(--color-paper))), transparent calc(100% - ${opacity}))`
-		}
-		return `contrast-color(var(--ctrl-bg, var(--color-paper)))`
-	}
-
-	if (base === "inherit") {
-		if (opacity && opacity !== "100%") {
-			return `color-mix(in oklch, inherit, transparent calc(100% - ${opacity}))`
-		}
-		return "inherit"
-	}
-
-	if (opacity === "0%") return "transparent"
-
-	const b = blend || "0%"
-	const o = opacity || "100%"
-	const inner = `color-mix(in oklch, ${base}, ${tint || base} ${b})`
-	if (o !== "100%") {
-		return `color-mix(in oklch, ${inner}, transparent calc(100% - ${o}))`
-	}
-	return inner
-}
-
-// ----------------------------------------------------------------------------
-//
-// VARIABLE INDIRECTION — the core size optimization
-//
-// ----------------------------------------------------------------------------
-// Instead of emitting computed color-mix() per rule, we emit CSS variable
-// overrides. A shared base rule computes the actual colors from variables.
-//
-// Variables per channel (tx, bg, bd, ol):
-//   --ctrl-{ch}-base    color base (e.g. var(--ctrl-color))
-//   --ctrl-{ch}-tint    color tint (e.g. var(--color-paper))
-//   --ctrl-{ch}-blend   blend percentage (e.g. 20%)
-//   --ctrl-{ch}-opacity opacity percentage (e.g. 100%)
-// Plus geometry for bd/ol:
-//   --ctrl-{ch}-width   border/outline width
-//   --ctrl-{ch}-radius  border/outline radius
-
-// Channels that use the variable indirection system.
-const CHANNELS = ["tx", "bg", "bd", "ol"]
-
-// Check if facets use a special mode (contrast/inherit/transparent)
-// that cannot be expressed through variable indirection.
-function facetMode(facets) {
-	const base = facets.base
-	if (!base) return "normal"
-	if (base === "contrast") return "contrast"
-	if (base === "inherit") return "inherit"
-	const opacity = normalizeOpacity(facets.opacity)
-	if (opacity === "0%") return "transparent"
-	return "normal"
-}
-
-// Build variable overrides for a single channel.
-// Returns an object of CSS variable assignments, or null if all defaults.
-// `baseFacets` are the resolved facets for the base state to diff against.
-function channelVarOverrides(ch, facets, baseFacets) {
-	const overrides = {}
-	let hasOverride = false
-
-	const base = resolveColorName(facets.base)
-	const tint = resolveColorName(facets.tint)
-	const blend = normalizeBlend(facets.blend)
-	const opacity = normalizeOpacity(facets.opacity)
-
-	const baseBase = baseFacets ? resolveColorName(baseFacets.base) : null
-	const baseTint = baseFacets ? resolveColorName(baseFacets.tint) : null
-	const baseBlend = baseFacets ? normalizeBlend(baseFacets.blend) : null
-	const baseOpacity = baseFacets ? normalizeOpacity(baseFacets.opacity) : null
-
-	if (base && base !== baseBase) { overrides[`--ctrl-${ch}-base`] = base; hasOverride = true }
-	if (tint && tint !== baseTint) { overrides[`--ctrl-${ch}-tint`] = tint; hasOverride = true }
-	if (blend && blend !== baseBlend) { overrides[`--ctrl-${ch}-blend`] = blend; hasOverride = true }
-	if (opacity && opacity !== baseOpacity) { overrides[`--ctrl-${ch}-opacity`] = opacity; hasOverride = true }
-
-	// Geometry for border/outline
-	if (ch === "bd" || ch === "ol") {
-		const baseWidth = baseFacets?.width || null
-		const baseRadius = baseFacets?.radius || null
-		if (facets.width && facets.width !== baseWidth) { overrides[`--ctrl-${ch}-width`] = facets.width; hasOverride = true }
-		if (facets.radius && facets.radius !== baseRadius) { overrides[`--ctrl-${ch}-radius`] = facets.radius; hasOverride = true }
-	}
-
-	return hasOverride ? overrides : null
-}
-
-// Build the full set of variable overrides for all channels at a given variant+state.
-// `baseDefinition` is the resolved facets at the base state to diff against (null for absolute).
-function buildVarOverrides(definition, variant, state, baseFacetsMap) {
-	const overrides = {}
-	let hasOverride = false
-	const directProps = {} // For contrast/inherit special cases
-	let hasDirect = false
-
-	for (const ch of CHANNELS) {
-		const facets = resolveAllFacets(definition, variant, state, ch)
-		const mode = facetMode(facets)
-
-		if (mode === "contrast") {
-			// Direct property override for contrast
-			const value = buildColorValue(facets)
-			if (ch === "tx") directProps.color = value
-			else if (ch === "bg") { directProps.background = value; directProps["--ctrl-bg"] = value }
-			hasDirect = true
-			continue
-		}
-		if (mode === "inherit") {
-			const value = buildColorValue(facets)
-			if (ch === "tx") directProps.color = value
-			else if (ch === "bg") directProps.background = value
-			hasDirect = true
-			continue
-		}
-
-		const baseFacets = baseFacetsMap?.[ch] || null
-		const chOverrides = channelVarOverrides(ch, facets, baseFacets)
-		if (chOverrides) {
-			Object.assign(overrides, chOverrides)
-			hasOverride = true
-		}
-	}
-
-	return { vars: hasOverride ? overrides : null, direct: hasDirect ? directProps : null }
-}
-
-// Build variable overrides for state changes only (only channels explicitly set).
-function buildStateVarOverrides(definition, variant, state, baseFacetsMap) {
-	const stateProps = definition[variant]?.[state]
-	if (!stateProps) return { vars: null, direct: null }
-
-	const overrides = {}
-	let hasOverride = false
-	const directProps = {}
-	let hasDirect = false
-
-	for (const rawKey in stateProps) {
-		if (rawKey.indexOf(".") >= 0) continue
-		if (!PROPS[rawKey]) continue
-		const ch = rawKey
-
-		const facets = resolveAllFacets(definition, variant, state, ch)
-		const mode = facetMode(facets)
-
-		if (mode === "contrast") {
-			const value = buildColorValue(facets)
-			if (ch === "tx") directProps.color = value
-			else if (ch === "bg") { directProps.background = value; directProps["--ctrl-bg"] = value }
-			hasDirect = true
-			continue
-		}
-		if (mode === "inherit") {
-			const value = buildColorValue(facets)
-			if (ch === "tx") directProps.color = value
-			else if (ch === "bg") directProps.background = value
-			hasDirect = true
-			continue
-		}
-
-		const baseFacets = baseFacetsMap?.[ch] || null
-		const chOverrides = channelVarOverrides(ch, facets, baseFacets)
-		if (chOverrides) {
-			Object.assign(overrides, chOverrides)
-			hasOverride = true
-		}
-	}
-
-	return { vars: hasOverride ? overrides : null, direct: hasDirect ? directProps : null }
-}
-
-// Build the base facets map for a given variant+state (used as diff base).
-function buildBaseFacetsMap(definition, variant, state) {
-	const map = {}
-	for (const ch of CHANNELS) {
-		map[ch] = resolveAllFacets(definition, variant, state, ch)
-	}
-	return map
-}
-
-// ----------------------------------------------------------------------------
-//
-// STATE SELECTORS
-//
-// ----------------------------------------------------------------------------
-
-const STATE_SELECTORS = {
-	default: [],
-	hover: [":hover", ".hover"],
-	active: [":active", ".active"],
-	focus: [":focus-visible", ":focus-within", ".focus"],
-	"focus-within": [":focus-within"],
-	disabled: ["[disabled]", ".disabled"],
-	selected: [".selected", '[aria-pressed="true"]'],
-	checked: [":checked"],
-	indeterminate: [":indeterminate"],
-	invalid: [":invalid", ".invalid"],
-	readonly: ["[readonly]", ".readonly"],
-}
-
-// Combine state suffixes into a single :is() or direct suffix.
-// Returns a single suffix string to append to a base selector.
-function stateSuffix(state) {
-	const sels = STATE_SELECTORS[state]
-	if (sels) {
-		if (sels.length === 0) return ""
-		if (sels.length === 1) return sels[0]
-		return `:is(${sels.join(", ")})`
-	}
-	const parts = state.split("+")
-	if (parts.length > 1) {
-		return parts.map((p) => {
-			const s = STATE_SELECTORS[p] || [`.${p}`]
-			return s.length === 1 ? s[0] : `:is(${s.join(", ")})`
-		}).join("")
-	}
-	return `.${state}`
-}
-
-function stateSelectors(state) {
-	if (STATE_SELECTORS[state]) return STATE_SELECTORS[state]
-	const parts = state.split("+")
-	if (parts.length > 1) {
-		const sets = parts.map((p) => STATE_SELECTORS[p] || [`.${p}`])
-		let combos = [...sets[0]]
-		for (let i = 1; i < sets.length; i++) {
-			const next = []
-			for (const a of combos) for (const b of sets[i]) next.push(`${a}${b}`)
-			combos = next
-		}
-		return combos
-	}
-	return [`.${state}`]
-}
-
-// ----------------------------------------------------------------------------
-//
-// CONTROL SELECTORS
-//
-// ----------------------------------------------------------------------------
-
-const SELECTORS = {
-	button: ["button", ".button"],
-	input: ["input:not([type=checkbox]):not([type=radio]):not([type=range])", ".input"],
-	textarea: ["textarea", ".textarea"],
-	select: ["select", ".select"],
-	selectable: [".selectable"],
-	selector: [".selector"],
-	"selector.option": [".selector > .option", ".selector > label", ".selector > button", ".selector > a"],
-	checkbox: ['input[type="checkbox"]', ".checkbox"],
-	radio: ['input[type="radio"]', ".radio"],
-	range: ['input[type="range"]', ".range"],
-	slider: ['input[type="range"]', ".range", ".slider"],
-	panel: [".panel"],
-}
-
-// All control selectors combined — used for the shared computation base rule.
-// Uses :where() to keep specificity at 0 so per-control rules can override easily.
-const ALL_CONTROL_SELECTORS = [
-	":where(button, .button, input:not([type=checkbox]):not([type=radio]):not([type=range]), .input, textarea, .textarea, select, .select, .selectable, .selector, input[type=checkbox], .checkbox, input[type=radio], .radio, input[type=range], .range, .slider, .panel)",
+const FIELD_SELECTORS = [
+	"input:not([type=checkbox]):not([type=radio]):not([type=range])",
+	".input", "textarea", ".textarea", "select", ".select",
 ]
 
-// ----------------------------------------------------------------------------
-//
-// SHARED COMPUTATION BASE RULE
-//
-// ----------------------------------------------------------------------------
+const TOGGLE_SELECTORS = [
+	'input[type="checkbox"]', ".checkbox",
+	'input[type="radio"]', ".radio",
+]
 
-// The shared base defaults match the most common control pattern (input-like).
-// Button and other outliers override just the few variables that differ.
-const SHARED_BASE_FACETS = {
-	tx: { base: "var(--ctrl-color)", tint: "var(--color-ink)", blend: "75%", opacity: "100%" },
-	bg: { base: "var(--ctrl-color)", tint: "var(--color-paper)", blend: "95%", opacity: "100%" },
-	bd: { base: "var(--ctrl-color)", tint: "var(--color-ink)", blend: "85%", opacity: "25%", width: "1px", radius: "4px" },
-	ol: { base: "var(--ctrl-color)", tint: "var(--color-paper)", blend: "75%", opacity: "0%", width: "2px" },
+const BUTTON_SELECTORS = ["button", ".button"]
+
+const SLIDER_SELECTORS = ['input[type="range"]', ".range", ".slider"]
+
+const SELECTOR_SELECTORS = [".selector"]
+const OPTION_SELECTORS = [".selector > .option", ".selector > label", ".selector > button", ".selector > a"]
+
+const PANEL_SELECTORS = [".panel"]
+
+// All controls — used for the shared computation base.
+const ALL_CONTROLS = `:where(${[
+	...FIELD_SELECTORS, ...TOGGLE_SELECTORS, ...BUTTON_SELECTORS,
+	...SLIDER_SELECTORS, ...SELECTOR_SELECTORS, ...OPTION_SELECTORS,
+	...PANEL_SELECTORS,
+].join(", ")})`
+
+// Compact :where() wrappers for category selectors.
+const FIELD_SEL = `:where(${FIELD_SELECTORS.join(", ")})`
+const TOGGLE_SEL = `:where(${TOGGLE_SELECTORS.join(", ")})`
+const BUTTON_SEL = `:where(${BUTTON_SELECTORS.join(", ")})`
+const SLIDER_SEL = `:where(${SLIDER_SELECTORS.join(", ")})`
+const SELECTOR_SEL = `:where(${SELECTOR_SELECTORS.join(", ")})`
+const OPTION_SEL = `:where(${OPTION_SELECTORS.join(", ")})`
+const PANEL_SEL = `:where(${PANEL_SELECTORS.join(", ")})`
+
+// State selector fragments.
+const HOVER = ":is(:hover, .hover)"
+const ACTIVE = ":is(:active, .active)"
+const FOCUS = ":is(:focus-visible, .focus)"
+const DISABLED = ":is([disabled], .disabled)"
+const CHECKED = ":is(:checked, .selected)"
+const INVALID = ":is(:invalid, .invalid)"
+
+// ----------------------------------------------------------------------------
+//
+// COLOR COMPUTATION
+//
+// ----------------------------------------------------------------------------
+//
+// All controls share the same color-mix() formula.  State rules only change
+// the --ctrl-{ch}-{facet} variables; the computed properties are set once
+// in the base rule and never repeated.
+//
+// Color formula:  color-mix(in oklch,
+//   color-mix(in oklch, <base>, <tint> <blend>),
+//   transparent calc(100% - <opacity>))
+//
+
+function colormix(base, tint, blend, opacity) {
+	const inner = `color-mix(in oklch, ${base}, ${tint} ${blend})`
+	return `color-mix(in oklch, ${inner}, transparent calc(100% - ${opacity}))`
 }
 
-// Function: controlBase
-// Emits the shared base rule that computes actual CSS properties from
-// --ctrl-{channel}-{facet} variables. Emitted once for all controls.
+// ----------------------------------------------------------------------------
+//
+// SHARED BASE — emitted once for ALL controls
+//
+// ----------------------------------------------------------------------------
+
 function controlBase() {
-	// Semantic color classes — nested inside the shared base
-	const SEMANTIC_COLORS = ["neutral", "primary", "secondary", "tertiary", "accent", "success", "warning", "danger", "info", "error"]
-	const semanticRules = SEMANTIC_COLORS.map((color) =>
-		rule(`&.${color}`, { "--ctrl-color": `var(--color-${color})` })
+	const tx = colormix("var(--ctrl-tx-base)", "var(--ctrl-tx-tint)", "var(--ctrl-tx-blend)", "var(--ctrl-tx-opacity)")
+	const bg = colormix("var(--ctrl-bg-base)", "var(--ctrl-bg-tint)", "var(--ctrl-bg-blend)", "var(--ctrl-bg-opacity)")
+	const bd = colormix("var(--ctrl-bd-base)", "var(--ctrl-bd-tint)", "var(--ctrl-bd-blend)", "var(--ctrl-bd-opacity)")
+	const ol = colormix("var(--ctrl-ol-base)", "var(--ctrl-ol-tint)", "var(--ctrl-ol-blend)", "var(--ctrl-ol-opacity)")
+
+	const semanticRules = SEMANTIC_COLORS.map((c) =>
+		rule(`&.${c}`, { "--ctrl-color": `var(--color-${c})` })
 	)
 
-	return nesting(ALL_CONTROL_SELECTORS, {
+	return nesting([ALL_CONTROLS], {
 		"--ctrl-color": "var(--color-neutral)",
-		// Text color variables + computation
-		"--ctrl-tx-base": SHARED_BASE_FACETS.tx.base,
-		"--ctrl-tx-tint": SHARED_BASE_FACETS.tx.tint,
-		"--ctrl-tx-blend": SHARED_BASE_FACETS.tx.blend,
-		"--ctrl-tx-opacity": SHARED_BASE_FACETS.tx.opacity,
-		color: "color-mix(in oklch, color-mix(in oklch, var(--ctrl-tx-base), var(--ctrl-tx-tint) var(--ctrl-tx-blend)), transparent calc(100% - var(--ctrl-tx-opacity)))",
-		// Background variables + computation
-		"--ctrl-bg-base": SHARED_BASE_FACETS.bg.base,
-		"--ctrl-bg-tint": SHARED_BASE_FACETS.bg.tint,
-		"--ctrl-bg-blend": SHARED_BASE_FACETS.bg.blend,
-		"--ctrl-bg-opacity": SHARED_BASE_FACETS.bg.opacity,
-		background: "color-mix(in oklch, color-mix(in oklch, var(--ctrl-bg-base), var(--ctrl-bg-tint) var(--ctrl-bg-blend)), transparent calc(100% - var(--ctrl-bg-opacity)))",
-		"--ctrl-bg": "color-mix(in oklch, color-mix(in oklch, var(--ctrl-bg-base), var(--ctrl-bg-tint) var(--ctrl-bg-blend)), transparent calc(100% - var(--ctrl-bg-opacity)))",
-		// Border variables + computation
-		"--ctrl-bd-base": SHARED_BASE_FACETS.bd.base,
-		"--ctrl-bd-tint": SHARED_BASE_FACETS.bd.tint,
-		"--ctrl-bd-blend": SHARED_BASE_FACETS.bd.blend,
-		"--ctrl-bd-opacity": SHARED_BASE_FACETS.bd.opacity,
-		"--ctrl-bd-width": SHARED_BASE_FACETS.bd.width,
-		"--ctrl-bd-radius": SHARED_BASE_FACETS.bd.radius,
-		border_color: "color-mix(in oklch, color-mix(in oklch, var(--ctrl-bd-base), var(--ctrl-bd-tint) var(--ctrl-bd-blend)), transparent calc(100% - var(--ctrl-bd-opacity)))",
+		// Text
+		"--ctrl-tx-base": "var(--ctrl-color)",
+		"--ctrl-tx-tint": "var(--color-ink)",
+		"--ctrl-tx-blend": "75%",
+		"--ctrl-tx-opacity": "100%",
+		color: tx,
+		// Background
+		"--ctrl-bg-base": "var(--ctrl-color)",
+		"--ctrl-bg-tint": "var(--color-paper)",
+		"--ctrl-bg-blend": "95%",
+		"--ctrl-bg-opacity": "100%",
+		background: bg,
+		"--ctrl-bg": bg,
+		// Border
+		"--ctrl-bd-base": "var(--ctrl-color)",
+		"--ctrl-bd-tint": "var(--color-ink)",
+		"--ctrl-bd-blend": "85%",
+		"--ctrl-bd-opacity": "25%",
+		"--ctrl-bd-width": "1px",
+		"--ctrl-bd-radius": "4px",
+		border_color: bd,
 		border_width: "var(--ctrl-bd-width)",
 		border_radius: "var(--ctrl-bd-radius)",
 		border_style: "solid",
-		// Outline variables + computation
-		"--ctrl-ol-base": SHARED_BASE_FACETS.ol.base,
-		"--ctrl-ol-tint": SHARED_BASE_FACETS.ol.tint,
-		"--ctrl-ol-blend": SHARED_BASE_FACETS.ol.blend,
-		"--ctrl-ol-opacity": SHARED_BASE_FACETS.ol.opacity,
-		"--ctrl-ol-width": SHARED_BASE_FACETS.ol.width,
-		outline_color: "color-mix(in oklch, color-mix(in oklch, var(--ctrl-ol-base), var(--ctrl-ol-tint) var(--ctrl-ol-blend)), transparent calc(100% - var(--ctrl-ol-opacity)))",
+		// Outline
+		"--ctrl-ol-base": "var(--ctrl-color)",
+		"--ctrl-ol-tint": "var(--color-paper)",
+		"--ctrl-ol-blend": "75%",
+		"--ctrl-ol-opacity": "0%",
+		"--ctrl-ol-width": "2px",
+		outline_color: ol,
 		outline_width: "var(--ctrl-ol-width)",
 		outline_style: "solid",
-		outline_offset: "0px",
+		outline_offset: "2px",
 		// Shared
 		transition: "var(--control-transition)",
 	}, semanticRules)
@@ -487,437 +149,720 @@ function controlBase() {
 
 // ----------------------------------------------------------------------------
 //
-// CONTROL BUILDER
+// FIELD CATEGORY — input, textarea, select (+ unchecked toggles)
 //
 // ----------------------------------------------------------------------------
+//
+// Base: ink text, paper bg (95% blend), visible border (25% opacity).
+// Hover:  border opacity +15%, border blend -5%.
+// Focus:  border opacity +25%, border blend -10%, outline appears.
+// Active: bg blend +3% (slightly lighter).
+// Disabled: bg/tx/bd opacity × 0.5.
+// Invalid: border switches to danger color.
+//
 
-// Function: controlSharedRules
-// Emits state/variant variable-override rules with merged selectors.
-// Uses nesting to avoid repeating long selector lists.
-function controlSharedRules(selectors, definition) {
-	const defaultFacets = buildBaseFacetsMap(definition, "default", "default")
-
-	// Wrap selectors in :where() for compact output
-	const base = selectors.length > 2 ? [`:where(${selectors.join(", ")})`] : selectors
-
-	// Default variant overrides (diff against shared base)
-	const { vars: defaultVars, direct: defaultDirect } = buildVarOverrides(definition, "default", "default", SHARED_BASE_FACETS)
-	const defaultProps = { ...(defaultVars || {}), ...(defaultDirect || {}) }
-
-	// Collect nested child rules for variant+state
+function fieldRules() {
+	// Fields inherit the base defaults, so default props are minimal.
+	// Only need identity (font, padding) + state overrides.
+	const fieldSel = [FIELD_SEL]
 	const children = []
-	for (const variant in definition) {
-		const variantBaseFacets = buildBaseFacetsMap(definition, variant, "default")
-		for (const state in definition[variant]) {
-			if (variant === "default" && state === "default") continue
-			let result
-			if (state === "default" && variant !== "default") {
-				result = buildVarOverrides(definition, variant, state, defaultFacets)
-			} else {
-				result = buildStateVarOverrides(definition, variant, state, variantBaseFacets)
-			}
-			const { vars: stateVars, direct: stateDirect } = result
-			const props = { ...(stateVars || {}), ...(stateDirect || {}) }
-			if (Object.keys(props).length === 0) continue
 
-			let suffix_
-			const suffix = stateSuffix(state)
-			if (state === "default" && variant !== "default") {
-				suffix_ = `&.${variant}`
-			} else if (variant === "default") {
-				suffix_ = `&${suffix}`
-			} else {
-				suffix_ = `&.${variant}${suffix}`
-			}
-			if (state === "disabled") { props.cursor = "default"; props.pointer_events = "none" }
-			children.push(rule(suffix_, props))
-		}
-	}
-
-	return nesting(base, defaultProps, children)
-}
-
-// Function: controlIdentityRules
-// Emits per-control identity (font, padding, cursor) and structural rules.
-function controlIdentityRules(control, selectors, definition) {
-	const rules = []
-	const CLICKABLE = new Set(["button", "selectable", "selector", "checkbox", "radio", "range", "slider"])
-
-	rules.push(rule(selectors, {
-		...(CLICKABLE.has(control) ? { cursor: "pointer" } : {}),
-		font_family: `var(--${control}-font-family, var(--font-control-family, sans-serif))`,
-		font_weight: `var(--${control}-font-weight, var(--font-control-weight, 500))`,
-		font_size: `var(--${control}-font-size, var(--font-control-size, var(--font-size)))`,
-		line_height: `var(--${control}-font-line, var(--font-control-line, 1em))`,
-		padding: `var(--${control}-padding, 0.65em 1em)`,
-		margin: `var(--${control}-margin, 0px)`,
+	// -- Hover
+	children.push(rule(`&${HOVER}`, {
+		"--ctrl-bd-blend": "80%",
+		"--ctrl-bd-opacity": "40%",
 	}))
 
-	// Structural rules (checkbox, radio, etc.)
-	emitStructuralRules(control, selectors, definition, rules)
+	// -- Focus
+	children.push(rule(`&${FOCUS}`, {
+		"--ctrl-bd-blend": "75%",
+		"--ctrl-bd-opacity": "50%",
+		"--ctrl-ol-opacity": "var(--ctrl-focus-ol-opacity, 50%)",
+	}))
 
-	return group(...rules)
+	// -- Active
+	children.push(rule(`&${ACTIVE}`, {
+		"--ctrl-bg-blend": "98%",
+	}))
+
+	// -- Disabled
+	children.push(rule(`&${DISABLED}`, {
+		"--ctrl-tx-opacity": "50%",
+		"--ctrl-bg-blend": "90%",
+		"--ctrl-bg-opacity": "50%",
+		"--ctrl-bd-opacity": "15%",
+		cursor: "default",
+		pointer_events: "none",
+	}))
+
+	// -- Invalid
+	children.push(rule(`&${INVALID}`, {
+		"--ctrl-bd-base": "var(--color-danger)",
+		"--ctrl-bd-blend": "80%",
+		"--ctrl-bd-opacity": "50%",
+		"--ctrl-ol-base": "var(--color-danger)",
+	}))
+
+	// -- Invalid + Focus
+	children.push(rule(`&${INVALID}${FOCUS}`, {
+		"--ctrl-ol-opacity": "var(--ctrl-focus-ol-opacity, 50%)",
+	}))
+
+	// -- Variants
+	children.push(rule("&.outline", {
+		"--ctrl-bg-opacity": "0%",
+		"--ctrl-bd-opacity": "40%",
+	}))
+	children.push(rule(`&.outline${HOVER}`, {
+		"--ctrl-bd-opacity": "55%",
+		"--ctrl-bd-blend": "75%",
+	}))
+	children.push(rule(`&.outline${FOCUS}`, {
+		"--ctrl-bd-opacity": "60%",
+		"--ctrl-bd-blend": "70%",
+		"--ctrl-ol-opacity": "var(--ctrl-focus-ol-opacity, 50%)",
+	}))
+	children.push(rule(`&.outline${DISABLED}`, {
+		"--ctrl-tx-opacity": "50%",
+		"--ctrl-bd-opacity": "20%",
+		cursor: "default",
+		pointer_events: "none",
+	}))
+	children.push(rule(`&.outline${INVALID}`, {
+		"--ctrl-bd-base": "var(--color-danger)",
+		"--ctrl-bd-opacity": "50%",
+	}))
+
+	children.push(rule("&.ghost", {
+		"--ctrl-bg-opacity": "0%",
+		"--ctrl-bd-width": "0px",
+	}))
+	children.push(rule(`&.ghost${HOVER}`, {
+		"--ctrl-bg-tint": "var(--color-ink)",
+		"--ctrl-bg-blend": "95%",
+		"--ctrl-bg-opacity": "8%",
+	}))
+	children.push(rule(`&.ghost${FOCUS}`, {
+		"--ctrl-ol-opacity": "var(--ctrl-focus-ol-opacity, 50%)",
+	}))
+	children.push(rule(`&.ghost${DISABLED}`, {
+		"--ctrl-tx-opacity": "50%",
+		cursor: "default",
+		pointer_events: "none",
+	}))
+
+	children.push(rule("&.blank", {
+		color: "inherit",
+		"--ctrl-bg-opacity": "0%",
+		"--ctrl-bd-width": "0px",
+		"--ctrl-ol-width": "0px",
+	}))
+
+	return nesting(fieldSel, {
+		font_family: "var(--input-font-family, var(--font-control-family, sans-serif))",
+		font_weight: "var(--input-font-weight, var(--font-control-weight, 500))",
+		font_size: "var(--input-font-size, var(--font-control-size, var(--font-size)))",
+		line_height: "var(--input-font-line, var(--font-control-line, 1em))",
+		padding: "var(--input-padding, 0.65em 1em)",
+		margin: "var(--input-margin, 0px)",
+	}, children)
 }
 
-// Function: controlRules
-// Generates CSS rules for a single control from its shorthand definition.
-// Used for controls that don't share a definition with others.
-function controlRules(control, selectors, definition) {
-	const rules = []
-	const CLICKABLE = new Set(["button", "selectable", "selector", "checkbox", "radio", "range", "slider"])
+// Textarea gets same styling but its own identity vars.
+function textareaRules() {
+	return rule(["textarea", ".textarea"], {
+		font_family: "var(--textarea-font-family, var(--font-control-family, sans-serif))",
+		font_weight: "var(--textarea-font-weight, var(--font-control-weight, 500))",
+		font_size: "var(--textarea-font-size, var(--font-control-size, var(--font-size)))",
+		line_height: "var(--textarea-font-line, var(--font-control-line, 1em))",
+		padding: "var(--textarea-padding, 0.65em 1em)",
+		margin: "var(--textarea-margin, 0px)",
+	})
+}
 
-	// Use :where() for compact state selectors when multiple base selectors exist
-	const baseSel = selectors.length > 2 ? [`:where(${selectors.join(", ")})`] : selectors
-
-	// Per-control identity rule: font, padding, cursor + variable overrides
-	// that differ from the shared base.
-	const defaultFacets = buildBaseFacetsMap(definition, "default", "default")
-	const { vars: defaultVars, direct: defaultDirect } = buildVarOverrides(definition, "default", "default", SHARED_BASE_FACETS)
-
-	const identityProps = {
-		...(CLICKABLE.has(control) ? { cursor: "pointer" } : {}),
-		font_family: `var(--${control}-font-family, var(--font-control-family, sans-serif))`,
-		font_weight: `var(--${control}-font-weight, var(--font-control-weight, 500))`,
-		font_size: `var(--${control}-font-size, var(--font-control-size, var(--font-size)))`,
-		line_height: `var(--${control}-font-line, var(--font-control-line, 1em))`,
-		padding: `var(--${control}-padding, 0.65em 1em)`,
-		margin: `var(--${control}-margin, 0px)`,
-		...(defaultVars || {}),
-		...(defaultDirect || {}),
-	}
-
-	// Collect nested child rules for variant+state
+// Select arrow styling.
+function selectRules() {
 	const children = []
-	for (const variant in definition) {
-		const variantBaseFacets = buildBaseFacetsMap(definition, variant, "default")
 
-		for (const state in definition[variant]) {
-			if (variant === "default" && state === "default") continue
+	children.push(rule(`&${HOVER}`, {
+		"--ctrl-arrow-opacity": "75%",
+	}))
+	children.push(rule(`&${DISABLED}`, {
+		"--ctrl-arrow-opacity": "30%",
+	}))
 
-			let result
-			if (state === "default" && variant !== "default") {
-				result = buildVarOverrides(definition, variant, state, defaultFacets)
-			} else {
-				result = buildStateVarOverrides(definition, variant, state, variantBaseFacets)
-			}
-
-			const { vars: stateVars, direct: stateDirect } = result
-			const props = { ...(stateVars || {}), ...(stateDirect || {}) }
-
-			if (Object.keys(props).length === 0) continue
-
-			let suffix_
-			const suffix = stateSuffix(state)
-			if (state === "default" && variant !== "default") {
-				suffix_ = `&.${variant}`
-			} else if (variant === "default") {
-				suffix_ = `&${suffix}`
-			} else {
-				suffix_ = `&.${variant}${suffix}`
-			}
-
-			// Add disabled extras
-			if (state === "disabled") {
-				props.cursor = "default"
-				props.pointer_events = "none"
-			}
-
-			children.push(rule(suffix_, props))
-		}
-	}
-
-	// Emit as nesting rule: identity + state children nested inside
-	rules.push(nesting(selectors, identityProps, children))
-
-	// ----------------------------------------------------------------
-	// Control-specific structural rules (pseudo-elements, sizing, etc.)
-	// ----------------------------------------------------------------
-	emitStructuralRules(control, selectors, definition, rules)
-
-	return group(...rules)
-}
-
-// Function: emitStructuralRules
-// Emits control-specific structural rules (pseudo-elements, sizing, etc.)
-function emitStructuralRules(control, selectors, definition, rules) {
-	if (control === "checkbox") {
-		rules.push(rule(selectors, {
-			appearance: "none",
-			width: "1.125em",
-			height: "1.125em",
-			min_width: "1.125em",
-			min_height: "1.125em",
-			padding: "0",
-			border_radius: "0.2em",
-			display: "inline-flex",
-			align_items: "center",
-			justify_content: "center",
-			flex_shrink: "0",
-			vertical_align: "middle",
-			box_sizing: "border-box",
-		}))
-		const afterSel = selectors.map((s) => `${s}::after`)
-		rules.push(rule(afterSel, {
-			content: '""',
-			display: "block",
-			width: "0.35em",
-			height: "0.6em",
-			border: "solid transparent",
-			border_width: "0 0.14em 0.14em 0",
-			transform: "rotate(45deg) translate(-0.02em, -0.02em)",
-			transition: "var(--control-transition)",
-		}))
-		const checkedAfterSel = selectors.flatMap((s) => [
-			`${s}:checked::after`, `${s}.selected::after`,
-		])
-		rules.push(rule(checkedAfterSel, {
-			border_color: "contrast-color(var(--ctrl-bg, var(--color-paper)))",
-		}))
-		const indeterminateAfterSel = selectors.flatMap((s) => [
-			`${s}:indeterminate::after`,
-		])
-		rules.push(rule(indeterminateAfterSel, {
-			width: "0.55em",
-			height: "0",
-			border_width: "0 0 0.14em 0",
-			transform: "none",
-			border_color: "contrast-color(var(--ctrl-bg, var(--color-paper)))",
-		}))
-	}
-
-	if (control === "radio") {
-		rules.push(rule(selectors, {
-			appearance: "none",
-			width: "1.125em",
-			height: "1.125em",
-			min_width: "1.125em",
-			min_height: "1.125em",
-			padding: "0",
-			border_radius: "50%",
-			display: "inline-flex",
-			align_items: "center",
-			justify_content: "center",
-			flex_shrink: "0",
-			vertical_align: "middle",
-			box_sizing: "border-box",
-		}))
-		const afterSel = selectors.map((s) => `${s}::after`)
-		rules.push(rule(afterSel, {
-			content: '""',
-			display: "block",
-			width: "0.5em",
-			height: "0.5em",
-			border_radius: "50%",
-			background: "transparent",
-			transition: "var(--control-transition)",
-		}))
-		const checkedAfterSel = selectors.flatMap((s) => [
-			`${s}:checked::after`, `${s}.selected::after`,
-		])
-		rules.push(rule(checkedAfterSel, {
-			background: "contrast-color(var(--ctrl-bg, var(--color-paper)))",
-		}))
-	}
-
-	if (control === "selector") {
-		rules.push(rule(selectors, {
-			display: "inline-flex",
-			flex_wrap: "nowrap",
-			align_items: "center",
-			gap: "2px",
-			padding: "2px",
-			border_style: "solid",
-		}))
-		const inputSel = selectors.flatMap((s) => [
-			`${s} > input[type="radio"]`,
-			`${s} > input[type="checkbox"]`,
-		])
-		rules.push(rule(inputSel, {
-			position: "absolute",
-			width: "1px",
-			height: "1px",
-			padding: "0",
-			margin: "-1px",
-			overflow: "hidden",
-			clip: "rect(0,0,0,0)",
-			white_space: "nowrap",
-			border: "0",
-		}))
-	}
-
-	if (control === "selector.option") {
-		rules.push(rule(selectors, {
-			padding: "0.35em 0.75em",
-			cursor: "pointer",
-			user_select: "none",
-			white_space: "nowrap",
-			border_style: "solid",
-			transition: "var(--control-transition)",
-		}))
-
-		// :checked + label mirrors the .selected state
-		const checkedLabelSel = [
-			".selector > input:checked + label",
-			".selector > input:checked + .option",
-		]
-		const selectedBaseFacets = buildBaseFacetsMap(definition, "default", "default")
-		const { vars: selVars, direct: selDirect } = buildVarOverrides(definition, "default", "selected", selectedBaseFacets)
-		const selectedProps = { ...(selVars || {}), ...(selDirect || {}) }
-		if (Object.keys(selectedProps).length > 0) {
-			rules.push(rule(checkedLabelSel, selectedProps))
-		}
-		// :checked + label hover
-		const checkedHoverLabelSel = [
-			".selector > input:checked + label:hover",
-			".selector > input:checked + .option:hover",
-		]
-		const selHoverBaseFacets = buildBaseFacetsMap(definition, "default", "selected")
-		const { vars: selHoverVars, direct: selHoverDirect } = buildStateVarOverrides(definition, "default", "selected+hover", selHoverBaseFacets)
-		const selHoverProps = { ...(selHoverVars || {}), ...(selHoverDirect || {}) }
-		if (Object.keys(selHoverProps).length > 0) {
-			rules.push(rule(checkedHoverLabelSel, selHoverProps))
-		}
-		// :checked + label active
-		const checkedActiveLabelSel = [
-			".selector > input:checked + label:active",
-			".selector > input:checked + .option:active",
-		]
-		const { vars: selActiveVars, direct: selActiveDirect } = buildStateVarOverrides(definition, "default", "selected+active", selHoverBaseFacets)
-		const selActiveProps = { ...(selActiveVars || {}), ...(selActiveDirect || {}) }
-		if (Object.keys(selActiveProps).length > 0) {
-			rules.push(rule(checkedActiveLabelSel, selActiveProps))
-		}
-	}
-
-	if (control === "range" || control === "slider") {
-		rules.push(rule(selectors, {
-			appearance: "none",
-			width: "100%",
-			height: "auto",
-			padding: "0.5em 0",
-			background: "transparent",
-			border: "none",
-			outline: "none",
-		}))
-		const trackWebkit = selectors.map((s) => `${s}::-webkit-slider-runnable-track`)
-		rules.push(rule(trackWebkit, {
-			height: "4px",
-			border_radius: "2px",
-			background: "color-mix(in oklch, var(--ctrl-color), var(--color-paper) 60%)",
-		}))
-		const trackMoz = selectors.map((s) => `${s}::-moz-range-track`)
-		rules.push(rule(trackMoz, {
-			height: "4px",
-			border_radius: "2px",
-			background: "color-mix(in oklch, var(--ctrl-color), var(--color-paper) 60%)",
-		}))
-		const thumbWebkit = selectors.map((s) => `${s}::-webkit-slider-thumb`)
-		rules.push(rule(thumbWebkit, {
-			appearance: "none",
-			width: "1.25em",
-			height: "1.25em",
-			border_radius: "50%",
-			background: "var(--ctrl-color)",
-			border: "2px solid var(--color-paper)",
-			margin_top: "calc((1.25em - 4px) / -2)",
-			cursor: "pointer",
-			transition: "var(--control-transition)",
-		}))
-		const thumbMoz = selectors.map((s) => `${s}::-moz-range-thumb`)
-		rules.push(rule(thumbMoz, {
-			appearance: "none",
-			width: "1.25em",
-			height: "1.25em",
-			border_radius: "50%",
-			background: "var(--ctrl-color)",
-			border: "2px solid var(--color-paper)",
-			cursor: "pointer",
-			transition: "var(--control-transition)",
-		}))
-		const hoverThumbWebkit = selectors.map((s) => `${s}:hover::-webkit-slider-thumb`)
-		const hoverThumbMoz = selectors.map((s) => `${s}:hover::-moz-range-thumb`)
-		rules.push(rule(hoverThumbWebkit, { transform: "scale(1.15)" }))
-		rules.push(rule(hoverThumbMoz, { transform: "scale(1.15)" }))
-		const focusThumbWebkit = selectors.map((s) => `${s}:focus-visible::-webkit-slider-thumb`)
-		const focusThumbMoz = selectors.map((s) => `${s}:focus-visible::-moz-range-thumb`)
-		rules.push(rule(focusThumbWebkit, {
-			outline: "2px solid color-mix(in oklch, var(--ctrl-color), var(--color-paper) 50%)",
-			outline_offset: "2px",
-		}))
-		rules.push(rule(focusThumbMoz, {
-			outline: "2px solid color-mix(in oklch, var(--ctrl-color), var(--color-paper) 50%)",
-			outline_offset: "2px",
-		}))
-		const disabledTrackWebkit = selectors.flatMap((s) => [`${s}[disabled]::-webkit-slider-runnable-track`, `${s}.disabled::-webkit-slider-runnable-track`])
-		const disabledTrackMoz = selectors.flatMap((s) => [`${s}[disabled]::-moz-range-track`, `${s}.disabled::-moz-range-track`])
-		const disabledThumbWebkit = selectors.flatMap((s) => [`${s}[disabled]::-webkit-slider-thumb`, `${s}.disabled::-webkit-slider-thumb`])
-		const disabledThumbMoz = selectors.flatMap((s) => [`${s}[disabled]::-moz-range-thumb`, `${s}.disabled::-moz-range-thumb`])
-		rules.push(rule(disabledTrackWebkit, { opacity: "0.5" }))
-		rules.push(rule(disabledTrackMoz, { opacity: "0.5" }))
-		rules.push(rule(disabledThumbWebkit, { opacity: "0.5", cursor: "default" }))
-		rules.push(rule(disabledThumbMoz, { opacity: "0.5", cursor: "default" }))
-	}
+	return nesting(["select", ".select"], {
+		font_family: "var(--select-font-family, var(--font-control-family, sans-serif))",
+		font_weight: "var(--select-font-weight, var(--font-control-weight, 500))",
+		font_size: "var(--select-font-size, var(--font-control-size, var(--font-size)))",
+		line_height: "var(--select-font-line, var(--font-control-line, 1em))",
+		padding: "var(--select-padding, 0.65em 1em)",
+		margin: "var(--select-margin, 0px)",
+		"--ctrl-arrow-opacity": "60%",
+		"--ctrl-arrow-color": `color-mix(in oklch, color-mix(in oklch, var(--ctrl-color), var(--color-ink) 80%), transparent calc(100% - var(--ctrl-arrow-opacity)))`,
+	}, children)
 }
 
 // ----------------------------------------------------------------------------
 //
-// CONTROLS FACTORY
+// BUTTON CATEGORY — button (+ checked toggles, selected options)
 //
 // ----------------------------------------------------------------------------
+//
+// Base: contrast text, solid bg (0% blend = pure ctrl-color), subtle border.
+// Hover:  bg blend +20% toward paper.
+// Active: bg blend +20% toward ink.
+// Focus:  outline appears.
+// Disabled: opacity fade.
+//
 
-// Controls known to share nearly identical definitions — merged to save output bytes.
-// input/textarea/select share the same visual definition (input is the superset).
-const MERGE_GROUPS = {
-	"text-field": ["input", "textarea", "select"],
+function buttonRules() {
+	const children = []
+
+	// -- Hover
+	children.push(rule(`&${HOVER}`, {
+		"--ctrl-bg-blend": "20%",
+	}))
+
+	// -- Active
+	children.push(rule(`&${ACTIVE}`, {
+		"--ctrl-bg-tint": "var(--color-ink)",
+		"--ctrl-bg-blend": "20%",
+	}))
+
+	// -- Focus
+	children.push(rule(`&${FOCUS}`, {
+		"--ctrl-ol-opacity": "var(--ctrl-focus-ol-opacity, 50%)",
+	}))
+
+	// -- Disabled: visibly faded — override color directly since buttons use contrast-color
+	children.push(rule(`&${DISABLED}`, {
+		opacity: "var(--ctrl-disabled-opacity, 0.4)",
+		cursor: "default",
+		pointer_events: "none",
+	}))
+
+	// -- Variants
+	children.push(rule("&.outline", {
+		color: colormix("var(--ctrl-color)", "var(--color-ink)", "40%", "100%"),
+		"--ctrl-bg-opacity": "0%",
+		"--ctrl-bd-opacity": "60%",
+		"--ctrl-bd-blend": "80%",
+	}))
+	children.push(rule(`&.outline${HOVER}`, {
+		"--ctrl-bg-tint": "var(--color-paper)",
+		"--ctrl-bg-blend": "80%",
+		"--ctrl-bg-opacity": "90%",
+	}))
+	children.push(rule(`&.outline${ACTIVE}`, {
+		"--ctrl-bg-tint": "var(--color-paper)",
+		"--ctrl-bg-blend": "70%",
+		"--ctrl-bg-opacity": "80%",
+	}))
+	children.push(rule(`&.outline${FOCUS}`, {
+		"--ctrl-ol-opacity": "var(--ctrl-focus-ol-opacity, 50%)",
+	}))
+	children.push(rule(`&.outline${DISABLED}`, {
+		opacity: "var(--ctrl-disabled-opacity, 0.4)",
+		cursor: "default",
+		pointer_events: "none",
+	}))
+
+	children.push(rule("&.ghost", {
+		color: colormix("var(--ctrl-color)", "var(--color-ink)", "40%", "100%"),
+		"--ctrl-bg-opacity": "0%",
+		"--ctrl-bd-width": "0px",
+	}))
+	children.push(rule(`&.ghost${HOVER}`, {
+		"--ctrl-bg-tint": "var(--color-ink)",
+		"--ctrl-bg-blend": "95%",
+		"--ctrl-bg-opacity": "8%",
+	}))
+	children.push(rule(`&.ghost${ACTIVE}`, {
+		"--ctrl-bg-tint": "var(--color-ink)",
+		"--ctrl-bg-blend": "95%",
+		"--ctrl-bg-opacity": "12%",
+	}))
+	children.push(rule(`&.ghost${FOCUS}`, {
+		"--ctrl-ol-opacity": "var(--ctrl-focus-ol-opacity, 50%)",
+	}))
+	children.push(rule(`&.ghost${DISABLED}`, {
+		opacity: "var(--ctrl-disabled-opacity, 0.4)",
+		cursor: "default",
+		pointer_events: "none",
+	}))
+
+	children.push(rule("&.blank", {
+		color: "inherit",
+		"--ctrl-bg-opacity": "0%",
+		"--ctrl-bd-width": "0px",
+		"--ctrl-ol-width": "0px",
+	}))
+
+	return nesting([BUTTON_SEL], {
+		// Button-mode: contrast text, filled bg, subtle border
+		color: "contrast-color(var(--ctrl-bg, var(--color-paper)))",
+		"--ctrl-bg-blend": "var(--button-bg-blend, 0%)",
+		"--ctrl-bg-opacity": "var(--button-bg-opacity, 100%)",
+		"--ctrl-bd-opacity": "var(--button-bd-opacity, 15%)",
+		"--ctrl-bd-width": "var(--button-bd-width, 1px)",
+		"--ctrl-bd-radius": "var(--button-bd-radius, 4px)",
+		cursor: "pointer",
+		font_family: "var(--button-font-family, var(--font-control-family, sans-serif))",
+		font_weight: "var(--button-font-weight, var(--font-control-weight, 500))",
+		font_size: "var(--button-font-size, var(--font-control-size, var(--font-size)))",
+		line_height: "var(--button-font-line, var(--font-control-line, 1em))",
+		padding: "var(--button-padding, 0.65em 1em)",
+		margin: "var(--button-margin, 0px)",
+	}, children)
 }
 
-function controls(defs = DEFAULTS, selectors = {}) {
+// ----------------------------------------------------------------------------
+//
+// TOGGLE CONTROLS — checkbox, radio
+//
+// ----------------------------------------------------------------------------
+//
+// Unchecked: field-like (inherits field base from shared base).
+// Checked: flips to button-like (filled bg, contrast text).
+//
+
+function toggleRules() {
+	const children = []
+
+	// -- Field-mode states (unchecked)
+	children.push(rule(`&${HOVER}`, {
+		"--ctrl-bd-blend": "80%",
+		"--ctrl-bd-opacity": "40%",
+		"--ctrl-bg-blend": "92%",
+	}))
+	children.push(rule(`&${FOCUS}`, {
+		"--ctrl-ol-opacity": "var(--ctrl-focus-ol-opacity, 50%)",
+	}))
+	children.push(rule(`&${DISABLED}`, {
+		"--ctrl-tx-opacity": "50%",
+		"--ctrl-bg-opacity": "50%",
+		"--ctrl-bd-opacity": "15%",
+		"--ctrl-sub-opacity": "50%",
+		cursor: "default",
+		pointer_events: "none",
+	}))
+
+	// -- Checked: flip to button mode
+	children.push(rule(`&${CHECKED}`, {
+		"--ctrl-bg-blend": "var(--button-bg-blend, 0%)",
+		"--ctrl-bd-opacity": "var(--button-bd-opacity, 15%)",
+		"--ctrl-sub-color": "contrast-color(var(--ctrl-bg, var(--color-paper)))",
+	}))
+	children.push(rule(`&${CHECKED}${HOVER}`, {
+		"--ctrl-bg-tint": "var(--color-ink)",
+		"--ctrl-bg-blend": "10%",
+	}))
+
+	// -- Indeterminate (checkbox only, but harmless on radio)
+	children.push(rule("&:indeterminate", {
+		"--ctrl-bg-blend": "var(--button-bg-blend, 0%)",
+		"--ctrl-bd-opacity": "var(--button-bd-opacity, 15%)",
+		"--ctrl-sub-color": "contrast-color(var(--ctrl-bg, var(--color-paper)))",
+	}))
+
+	// -- Variants
+	children.push(rule("&.outline", {
+		"--ctrl-bg-opacity": "0%",
+		"--ctrl-bd-opacity": "40%",
+	}))
+	children.push(rule(`&.outline${HOVER}`, {
+		"--ctrl-bd-opacity": "55%",
+		"--ctrl-bd-blend": "75%",
+	}))
+	children.push(rule(`&.outline${FOCUS}`, {
+		"--ctrl-ol-opacity": "var(--ctrl-focus-ol-opacity, 50%)",
+	}))
+	children.push(rule(`&.outline${CHECKED}`, {
+		"--ctrl-bd-opacity": "60%",
+		"--ctrl-bd-blend": "75%",
+		"--ctrl-sub-color": colormix("var(--ctrl-color)", "var(--color-ink)", "25%", "100%"),
+	}))
+	children.push(rule(`&.outline${CHECKED}${HOVER}`, {
+		"--ctrl-bd-opacity": "70%",
+		"--ctrl-bd-blend": "70%",
+		"--ctrl-sub-color": colormix("var(--ctrl-color)", "var(--color-ink)", "20%", "100%"),
+	}))
+	children.push(rule(`&.outline${DISABLED}`, {
+		"--ctrl-tx-opacity": "50%",
+		"--ctrl-bd-opacity": "20%",
+		"--ctrl-sub-opacity": "50%",
+		cursor: "default",
+		pointer_events: "none",
+	}))
+
+	children.push(rule("&.blank", {
+		color: "inherit",
+		"--ctrl-bg-opacity": "0%",
+		"--ctrl-bd-width": "0px",
+		"--ctrl-ol-width": "0px",
+	}))
+	children.push(rule(`&.blank${CHECKED}`, {
+		"--ctrl-sub-color": "inherit",
+	}))
+
+	return nesting([TOGGLE_SEL], {
+		appearance: "none",
+		cursor: "pointer",
+		width: "1.125em",
+		height: "1.125em",
+		min_width: "1.125em",
+		min_height: "1.125em",
+		padding: "0",
+		display: "inline-flex",
+		align_items: "center",
+		justify_content: "center",
+		flex_shrink: "0",
+		vertical_align: "middle",
+		box_sizing: "border-box",
+		"--ctrl-sub-color": "transparent",
+		"--ctrl-sub-opacity": "100%",
+	}, children)
+}
+
+// Checkbox-specific: checkmark pseudo-element.
+function checkboxStructure() {
+	const cbSel = ['input[type="checkbox"]', ".checkbox"]
 	const rules = []
-	// Emit shared base rule once
-	rules.push(controlBase())
 
-	// Build entries
-	const entries = {}
-	for (const key in defs) {
-		const entry = defs[key]
-		if (!entry || !entry.control || !entry.definition) continue
-		const { control, definition } = entry
-		const sel = selectors[key] || SELECTORS[control] || SELECTORS[key] || [`.${control}`]
-		entries[key] = { key, control, definition, sel }
-	}
+	rules.push(rule(cbSel, { "--ctrl-bd-radius": "0.2em" }))
 
-	// Track which entries have been emitted via merge groups
-	const emitted = new Set()
+	const afterSel = cbSel.map((s) => `${s}::after`)
+	rules.push(rule(afterSel, {
+		content: '""',
+		display: "block",
+		width: "0.35em",
+		height: "0.6em",
+		border: "solid var(--ctrl-sub-color)",
+		border_width: "0 0.14em 0.14em 0",
+		opacity: "var(--ctrl-sub-opacity)",
+		transform: "rotate(45deg) translate(-0.02em, -0.02em)",
+		transition: "var(--control-transition)",
+	}))
 
-	// Emit merged groups first
-	for (const [, memberKeys] of Object.entries(MERGE_GROUPS)) {
-		const members = memberKeys.map((k) => entries[k]).filter(Boolean)
-		if (members.length < 2) continue
-		members.forEach((m) => emitted.add(m.key))
+	const indeterminateSel = cbSel.map((s) => `${s}:indeterminate::after`)
+	rules.push(rule(indeterminateSel, {
+		width: "0.55em",
+		height: "0",
+		border_width: "0 0 0.14em 0",
+		transform: "none",
+	}))
 
-		// Use the first member's definition as the superset (it should have all states)
-		const mergedSel = members.flatMap((e) => e.sel)
-		const { definition } = members[0]
-		rules.push(controlSharedRules(mergedSel, definition))
-		for (const { control, sel } of members) {
-			rules.push(controlIdentityRules(control, sel, definition))
-		}
-	}
+	return group(...rules)
+}
 
-	// Emit remaining controls individually
-	for (const key in entries) {
-		if (emitted.has(key)) continue
-		const { control, sel, definition } = entries[key]
-		rules.push(controlRules(control, sel, definition))
-	}
+// Radio-specific: dot pseudo-element.
+function radioStructure() {
+	const rdSel = ['input[type="radio"]', ".radio"]
+	const rules = []
+
+	rules.push(rule(rdSel, { "--ctrl-bd-radius": "50%" }))
+
+	const afterSel = rdSel.map((s) => `${s}::after`)
+	rules.push(rule(afterSel, {
+		content: '""',
+		display: "block",
+		width: "0.5em",
+		height: "0.5em",
+		border_radius: "50%",
+		background: "var(--ctrl-sub-color)",
+		opacity: "var(--ctrl-sub-opacity)",
+		transition: "var(--control-transition)",
+	}))
 
 	return group(...rules)
 }
 
 // ----------------------------------------------------------------------------
 //
-// MAIN / EXPORT
+// SELECTOR — container + options
 //
+// ----------------------------------------------------------------------------
+
+function selectorRules() {
+	const children = []
+
+	children.push(rule("&:is(:focus-within, .focus)", {
+		"--ctrl-ol-opacity": "var(--ctrl-focus-ol-opacity, 50%)",
+	}))
+	children.push(rule(`&${DISABLED}`, {
+		"--ctrl-bg-opacity": "50%",
+		"--ctrl-bd-opacity": "15%",
+		cursor: "default",
+		pointer_events: "none",
+	}))
+
+	return nesting([SELECTOR_SEL], {
+		display: "inline-flex",
+		flex_wrap: "nowrap",
+		align_items: "center",
+		gap: "2px",
+		padding: "2px",
+		width: "fit-content",
+		"--ctrl-bg-opacity": "0%",
+		"--ctrl-bd-opacity": "50%",
+		"--ctrl-bd-blend": "20%",
+		"--ctrl-bd-width": "1px",
+		"--ctrl-bd-radius": "var(--field-bd-radius, 4px)",
+		border_style: "solid",
+	}, children)
+}
+
+function selectorInputRules() {
+	const inputSel = [
+		'.selector > input[type="radio"]',
+		'.selector > input[type="checkbox"]',
+	]
+	return rule(inputSel, {
+		position: "absolute",
+		width: "1px",
+		height: "1px",
+		padding: "0",
+		margin: "-1px",
+		overflow: "hidden",
+		clip: "rect(0,0,0,0)",
+		white_space: "nowrap",
+		border: "0",
+	})
+}
+
+function optionRules() {
+	const children = []
+
+	// -- Ghost-like hover
+	children.push(rule(`&${HOVER}`, {
+		"--ctrl-bg-tint": "var(--color-ink)",
+		"--ctrl-bg-blend": "95%",
+		"--ctrl-bg-opacity": "8%",
+	}))
+	children.push(rule(`&${ACTIVE}`, {
+		"--ctrl-bg-tint": "var(--color-ink)",
+		"--ctrl-bg-blend": "95%",
+		"--ctrl-bg-opacity": "12%",
+	}))
+
+	// -- Selected: flip to button mode
+	children.push(rule(`&${CHECKED}`, {
+		color: "contrast-color(var(--ctrl-bg, var(--color-paper)))",
+		"--ctrl-bg-blend": "var(--button-bg-blend, 0%)",
+		"--ctrl-bg-opacity": "var(--button-bg-opacity, 100%)",
+	}))
+	children.push(rule(`&${CHECKED}${HOVER}`, {
+		"--ctrl-bg-blend": "20%",
+	}))
+	children.push(rule(`&${CHECKED}${ACTIVE}`, {
+		"--ctrl-bg-tint": "var(--color-ink)",
+		"--ctrl-bg-blend": "20%",
+	}))
+
+	// -- Disabled
+	children.push(rule(`&${DISABLED}`, {
+		"--ctrl-tx-opacity": "60%",
+		cursor: "default",
+		pointer_events: "none",
+	}))
+
+	// -- :checked + label mirroring
+	const checkedLabel = [
+		".selector > input:checked + label",
+		".selector > input:checked + .option",
+	]
+	children.push(rule(checkedLabel, {
+		color: "contrast-color(var(--ctrl-bg, var(--color-paper)))",
+		"--ctrl-bg-blend": "var(--button-bg-blend, 0%)",
+		"--ctrl-bg-opacity": "var(--button-bg-opacity, 100%)",
+	}))
+	children.push(rule(checkedLabel.map((s) => `${s}:hover`), {
+		"--ctrl-bg-blend": "20%",
+	}))
+	children.push(rule(checkedLabel.map((s) => `${s}:active`), {
+		"--ctrl-bg-tint": "var(--color-ink)",
+		"--ctrl-bg-blend": "20%",
+	}))
+
+	return nesting([OPTION_SEL], {
+		color: colormix("var(--ctrl-color)", "var(--color-ink)", "40%", "100%"),
+		"--ctrl-bg-opacity": "0%",
+		"--ctrl-bd-width": "0px",
+		"--ctrl-bd-radius": "4px",
+		padding: "0.35em 0.75em",
+		cursor: "pointer",
+		user_select: "none",
+		white_space: "nowrap",
+		border_style: "solid",
+		transition: "var(--control-transition)",
+	}, children)
+}
+
+// ----------------------------------------------------------------------------
+//
+// SLIDER — range input
+//
+// ----------------------------------------------------------------------------
+
+function sliderRules() {
+	const rules = []
+
+	// Track color = same as input border (ink blend 85%, opacity 25%)
+	const trackColor = colormix("var(--ctrl-color)", "var(--color-ink)", "var(--field-bd-blend, 85%)", "var(--field-bd-opacity, 25%)")
+	// Thumb = button-like (filled with ctrl-color, subtle border)
+	const thumbBg = colormix("var(--ctrl-color)", "var(--color-paper)", "var(--button-bg-blend, 0%)", "100%")
+	const thumbBd = colormix("var(--ctrl-color)", "var(--color-ink)", "85%", "var(--button-bd-opacity, 15%)")
+
+	// Base
+	rules.push(rule([SLIDER_SEL], {
+		appearance: "none",
+		cursor: "pointer",
+		width: "100%",
+		height: "auto",
+		padding: "0.5em 0",
+		background: "transparent",
+		border: "none",
+		outline: "none",
+		"--ctrl-track-color": trackColor,
+		"--ctrl-thumb-bg": thumbBg,
+		"--ctrl-thumb-bd": `var(--button-bd-width, 1px) solid ${thumbBd}`,
+	}))
+
+	// Track (webkit + moz)
+	const trackWebkit = SLIDER_SELECTORS.map((s) => `${s}::-webkit-slider-runnable-track`)
+	const trackMoz = SLIDER_SELECTORS.map((s) => `${s}::-moz-range-track`)
+	const trackProps = {
+		height: "var(--field-bd-width, 1px)",
+		border_radius: "var(--field-bd-radius, 4px)",
+		background: "var(--ctrl-track-color)",
+		transition: "var(--control-transition)",
+	}
+	rules.push(rule(trackWebkit, trackProps))
+	rules.push(rule(trackMoz, trackProps))
+
+	// Thumb (webkit + moz) — round button
+	const thumbWebkit = SLIDER_SELECTORS.map((s) => `${s}::-webkit-slider-thumb`)
+	const thumbMoz = SLIDER_SELECTORS.map((s) => `${s}::-moz-range-thumb`)
+	const thumbProps = {
+		appearance: "none",
+		width: "1.25em",
+		height: "1.25em",
+		border_radius: "50%",
+		background: "var(--ctrl-thumb-bg)",
+		border: "var(--ctrl-thumb-bd)",
+		cursor: "pointer",
+		transition: "var(--control-transition)",
+	}
+	rules.push(rule(thumbWebkit, { ...thumbProps, margin_top: "calc((1.25em - var(--field-bd-width, 1px)) / -2)" }))
+	rules.push(rule(thumbMoz, thumbProps))
+
+	// Hover — button hover style (blend toward paper)
+	const hoverSel = SLIDER_SELECTORS.map((s) => `${s}:hover`)
+	rules.push(rule(hoverSel, {
+		"--ctrl-track-color": colormix("var(--ctrl-color)", "var(--color-ink)", "82%", "40%"),
+		"--ctrl-thumb-bg": colormix("var(--ctrl-color)", "var(--color-paper)", "20%", "100%"),
+	}))
+	const hoverThumbWebkit = SLIDER_SELECTORS.map((s) => `${s}:hover::-webkit-slider-thumb`)
+	const hoverThumbMoz = SLIDER_SELECTORS.map((s) => `${s}:hover::-moz-range-thumb`)
+	rules.push(rule(hoverThumbWebkit, { transform: "scale(1.15)" }))
+	rules.push(rule(hoverThumbMoz, { transform: "scale(1.15)" }))
+
+	// Active — button active style (blend toward ink)
+	const activeSel = SLIDER_SELECTORS.map((s) => `${s}:active`)
+	rules.push(rule(activeSel, {
+		"--ctrl-thumb-bg": colormix("var(--ctrl-color)", "var(--color-ink)", "20%", "100%"),
+	}))
+
+	// Focus — outline on thumb
+	rules.push(rule(SLIDER_SELECTORS.map((s) => `${s}:focus-visible`), {
+		"--ctrl-ol-opacity": "var(--ctrl-focus-ol-opacity, 50%)",
+	}))
+	const focusThumbWebkit = SLIDER_SELECTORS.map((s) => `${s}:focus-visible::-webkit-slider-thumb`)
+	const focusThumbMoz = SLIDER_SELECTORS.map((s) => `${s}:focus-visible::-moz-range-thumb`)
+	const focusThumbProps = {
+		outline: `2px solid ${colormix("var(--ctrl-color)", "var(--color-paper)", "50%", "100%")}`,
+		outline_offset: "2px",
+	}
+	rules.push(rule(focusThumbWebkit, focusThumbProps))
+	rules.push(rule(focusThumbMoz, focusThumbProps))
+
+	// Disabled — faded like disabled button
+	const disabledSel = SLIDER_SELECTORS.flatMap((s) => [`${s}[disabled]`, `${s}.disabled`])
+	rules.push(rule(disabledSel, {
+		"--ctrl-track-color": colormix("var(--ctrl-color)", "var(--color-ink)", "85%", "12%"),
+		"--ctrl-thumb-bg": colormix("var(--ctrl-color)", "var(--color-paper)", "50%", "50%"),
+		"--ctrl-thumb-bd": `var(--button-bd-width, 1px) solid ${colormix("var(--ctrl-color)", "var(--color-ink)", "85%", "8%")}`,
+		cursor: "default",
+		pointer_events: "none",
+	}))
+
+	// Blank variant
+	const blankSel = SLIDER_SELECTORS.flatMap((s) => [`${s}.blank`])
+	rules.push(rule(blankSel, {
+		"--ctrl-ol-width": "0px",
+		"--ctrl-track-color": colormix("var(--ctrl-color)", "var(--color-ink)", "90%", "10%"),
+		"--ctrl-thumb-bg": colormix("var(--ctrl-color)", "var(--color-ink)", "25%", "100%"),
+		"--ctrl-thumb-bd": "none",
+	}))
+
+	return group(...rules)
+}
+
+// ----------------------------------------------------------------------------
+//
+// PANEL
+//
+// ----------------------------------------------------------------------------
+
+function panelRules() {
+	const children = []
+
+	children.push(rule("&.outline", {
+		"--ctrl-bg-opacity": "0%",
+		"--ctrl-bd-blend": "80%",
+		"--ctrl-bd-tint": "var(--color-ink)",
+		"--ctrl-bd-opacity": "40%",
+	}))
+	children.push(rule("&.blank", {
+		color: "inherit",
+		"--ctrl-bg-opacity": "0%",
+		"--ctrl-bd-width": "0px",
+		"--ctrl-ol-width": "0px",
+	}))
+
+	return nesting([PANEL_SEL], {
+		"--ctrl-bg-blend": "4%",
+		"--ctrl-bd-tint": "var(--color-paper)",
+		"--ctrl-bd-blend": "14%",
+		"--ctrl-bd-opacity": "100%",
+	}, children)
+}
+
+// ----------------------------------------------------------------------------
+//
+// MAIN EXPORT
+//
+// ----------------------------------------------------------------------------
+
+function controls() {
+	return group(
+		controlBase(),
+		fieldRules(),
+		textareaRules(),
+		selectRules(),
+		buttonRules(),
+		toggleRules(),
+		checkboxStructure(),
+		radioStructure(),
+		selectorRules(),
+		selectorInputRules(),
+		optionRules(),
+		sliderRules(),
+		panelRules(),
+	)
+}
+
 // ----------------------------------------------------------------------------
 
 if (import.meta.main) {
@@ -925,5 +870,5 @@ if (import.meta.main) {
 	console.log([...css(controls())].join("\n"))
 }
 
-export { controls, controlRules, SELECTORS, DEFAULTS }
+export { controls, SEMANTIC_COLORS }
 export default controls()

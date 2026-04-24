@@ -237,6 +237,7 @@ export default group(
 			rpem(24, vars.scaling.margin), // 5: l
 			rpem(32, vars.scaling.margin), // 6: xl
 			rpem(48, vars.scaling.margin), // 7: xxl
+			rpem(64, vars.scaling.margin), // 8: xxxl
 		],
 		pad: [
 			"0em",
@@ -247,6 +248,7 @@ export default group(
 			rpem(12, vars.scaling.pad), // 5: l
 			rpem(16, vars.scaling.pad), // 6: xl
 			rpem(24, vars.scaling.pad), // 7: xxl
+			rpem(32, vars.scaling.pad), // 8: xxxl
 		],
 		gap: [
 			"0em",

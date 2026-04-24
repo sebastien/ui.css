@@ -565,6 +565,55 @@ class Rule {
 	}
 }
 
+// Class: NestingRule
+// A rule that contains nested child rules emitted with native CSS nesting.
+// Children use `&` syntax inside the parent block, avoiding selector repetition.
+class NestingRule {
+	constructor(selectors, properties, children) {
+		this.selectors = selectors;
+		this.properties = properties;
+		this.children = children || [];
+	}
+	*lines(compact) {
+		const sel = this.selectors
+			? this.selectors.join(compact ? "," : ", ")
+			: "*";
+		yield compact ? `${sel}{` : `${sel} {`;
+		for (const k in this.properties) {
+			yield compact
+				? `${k}:${this.properties[k]};`
+				: `\t${k}: ${this.properties[k]};`;
+		}
+		for (const child of this.children) {
+			for (const line of child.lines(compact)) {
+				yield line;
+			}
+		}
+		yield "}";
+	}
+	*rules() {
+		yield [...this.lines(true)].join("\n");
+	}
+	*docs(path) {
+		for (const name of this.selectors) {
+			yield {
+				type: "NestingRule",
+				name,
+				path,
+				definition: Object.keys(this.properties).reduce((r, k) => {
+					r[k] = `${this.properties[k]}`;
+					return r;
+				}, {}),
+			};
+		}
+		for (const child of this.children) {
+			for (const d of child.docs(path)) {
+				yield d;
+			}
+		}
+	}
+}
+
 // Function: rule
 // Creates a `Rule` from selectors and mixed body inputs.
 function rule(selector, ...body) {
@@ -983,6 +1032,20 @@ css.mount = (...values) => {
 //
 // ----------------------------------------------------------------------------
 
+// Function: nesting
+// Creates a NestingRule with native CSS nesting. The parent selector and
+// properties are given first, followed by child Rule objects that will be
+// emitted inside the parent block using their selectors as-is (typically
+// starting with `&`).
+const nesting = (selector, props_, ...children) => {
+	const sel = Array.isArray(selector) ? selector : [selector];
+	const props = {};
+	for (const [k, v] of properties(props_)) {
+		props[k] = v;
+	}
+	return new NestingRule(sel, props, children.flat());
+};
+
 export {
 	Parser,
 	Vars,
@@ -1001,6 +1064,7 @@ export {
 	layers,
 	mods,
 	named,
+	nesting,
 	on,
 	percent,
 	percentages,

@@ -10,7 +10,7 @@ import {
 } from "../js/uicss.js";
 
 // Trimmed size scale for margin/padding utilities: 7 index steps.
-const SPACING_SIZES = [0, 2, 3, 4, 5, 6, 7]
+const SPACING_SIZES = [0, 1, 2, 3, 4, 5, 6, 7, 8]
 
 export default named({
 	base: rule(".base", {
