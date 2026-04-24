@@ -1,16 +1,14 @@
 import { group, sizes, tokens, vars } from "../js/uicss.js";
 
 const REM_PIXELS = 16;
-function pem(px, scale = undefined, base = REM_PIXELS) {
+function scaled(unit, px, scale = undefined, base = REM_PIXELS) {
 	return scale
-		? `calc( 1em * ${scale} * ${px} / ${base} )`
-		: `calc( 1em * ${px} / ${base} )`;
+		? `calc( ${unit} * ${scale} * ${px} / ${base} )`
+		: `calc( ${unit} * ${px} / ${base} )`;
 }
-function rpem(px, scale = undefined, base = REM_PIXELS) {
-	return scale
-		? `calc( 1rem * ${scale} * ${px} / ${base} )`
-		: `calc( 1rem * ${px} / ${base} )`;
-}
+const pem = (px, scale) => scaled("1em", px, scale);
+const rpem = (px, scale) => scaled("1rem", px, scale);
+const spacingScale = (fn, scaleVar, steps) => ["0em", ...steps.map((px) => fn(px, scaleVar))];
 
 // Module: tokens
 // This defines the main parameters for the style. They can be overriden
@@ -242,54 +240,10 @@ export default group(
 				bd: { opacity: "40%" },
 			},
 		},
-		size: [
-			"0em",
-			pem(4, vars.scaling.size), // 1: xxs
-			pem(8, vars.scaling.size), // 2: xs
-			pem(12, vars.scaling.size), // 3: s
-			pem(16, vars.scaling.size), // 4: m
-			pem(24, vars.scaling.size), // 5: l
-			pem(32, vars.scaling.size), // 6: xl
-			pem(48, vars.scaling.size), // 7: xxl
-			pem(64, vars.scaling.size), // 8: xxxl
-			pem(96, vars.scaling.size), // 9: xxxxl
-			pem(128, vars.scaling.size), // 10: xxxxxl
-		],
-		margin: [
-			"0em",
-			rpem(4, vars.scaling.margin), // 1: xxs
-			rpem(8, vars.scaling.margin), // 2: xs
-			rpem(12, vars.scaling.margin), // 3: s
-			rpem(16, vars.scaling.margin), // 4: m
-			rpem(24, vars.scaling.margin), // 5: l
-			rpem(32, vars.scaling.margin), // 6: xl
-			rpem(48, vars.scaling.margin), // 7: xxl
-			rpem(64, vars.scaling.margin), // 8: xxxl
-		],
-		pad: [
-			"0em",
-			rpem(2, vars.scaling.pad), // 1: xxs
-			rpem(4, vars.scaling.pad), // 2: xs
-			rpem(6, vars.scaling.pad), // 3: s
-			rpem(8, vars.scaling.pad), // 4: m
-			rpem(12, vars.scaling.pad), // 5: l
-			rpem(16, vars.scaling.pad), // 6: xl
-			rpem(24, vars.scaling.pad), // 7: xxl
-			rpem(32, vars.scaling.pad), // 8: xxxl
-		],
-		gap: [
-			"0em",
-			pem(4, vars.scaling.gap), // 1: xxs
-			pem(8, vars.scaling.gap), // 2: xs
-			pem(12, vars.scaling.gap), // 3: s
-			pem(16, vars.scaling.gap), // 4: m
-			pem(24, vars.scaling.gap), // 5: l
-			pem(32, vars.scaling.gap), // 6: xl
-			pem(48, vars.scaling.gap), // 7: xxl
-			pem(64, vars.scaling.gap), // 8: xxxl
-			pem(96, vars.scaling.gap), // 9: xxxxl
-			pem(128, vars.scaling.gap), // 10: xxxxxl
-		],
+		size: spacingScale(pem, vars.scaling.size, [4, 8, 12, 16, 24, 32, 48, 64, 96, 128]),
+		margin: spacingScale(rpem, vars.scaling.margin, [4, 8, 12, 16, 24, 32, 48, 64]),
+		pad: spacingScale(rpem, vars.scaling.pad, [2, 4, 6, 8, 12, 16, 24, 32]),
+		gap: spacingScale(pem, vars.scaling.gap, [4, 8, 12, 16, 24, 32, 48, 64, 96, 128]),
 
 		opacity: {
 			dim: 0.65,

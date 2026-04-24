@@ -30,24 +30,43 @@ const V = {
 	ink: "var(--color-ink)",
 	paper: "var(--color-paper)",
 	// Field defaults
-	ftxb: "var(--ctrl-tx-blend, var(--control-field-tx-blend))",
-	fbgb: "var(--ctrl-bg-blend, var(--control-field-bg-blend))",
-	fbgo: "var(--ctrl-bg-opacity, 100%)",
-	fbdb: "var(--ctrl-bd-blend, var(--control-field-bd-blend))",
-	fbdo: "var(--ctrl-bd-opacity, var(--control-field-bd-opacity))",
-	fbdw: "var(--control-field-bd-width)",
-	fbdr: "var(--control-field-bd-radius)",
+	fieldTxBlend: "var(--ctrl-tx-blend, var(--control-field-tx-blend))",
+	fieldBgBlend: "var(--ctrl-bg-blend, var(--control-field-bg-blend))",
+	fieldBgOpacity: "var(--ctrl-bg-opacity, 100%)",
+	fieldBdBlend: "var(--ctrl-bd-blend, var(--control-field-bd-blend))",
+	fieldBdOpacity: "var(--ctrl-bd-opacity, var(--control-field-bd-opacity))",
+	fieldBdWidth: "var(--control-field-bd-width)",
+	fieldBdRadius: "var(--control-field-bd-radius)",
 	// Button defaults
-	bbgb: "var(--ctrl-bg-blend, var(--control-button-bg-blend))",
-	bbdo: "var(--ctrl-bd-opacity, var(--control-button-bd-opacity))",
-	bbdw: "var(--control-button-bd-width)",
-	bbdr: "var(--control-button-bd-radius)",
+	btnBgBlend: "var(--ctrl-bg-blend, var(--control-button-bg-blend))",
+	btnBdOpacity: "var(--ctrl-bd-opacity, var(--control-button-bd-opacity))",
+	btnBdWidth: "var(--control-button-bd-width)",
+	btnBdRadius: "var(--control-button-bd-radius)",
 	// Focus ring
-	fro: "var(--control-focus-ring-opacity)",
-	frw: "var(--control-focus-ring-width)",
-	frf: "var(--control-focus-ring-offset)",
+	focusOpacity: "var(--control-focus-ring-opacity)",
+	focusWidth: "var(--control-focus-ring-width)",
+	focusOffset: "var(--control-focus-ring-offset)",
 	// Disabled
-	dis: "var(--control-disabled-opacity)",
+	disabledOpacity: "var(--control-disabled-opacity)",
+}
+
+// Shared state properties.
+const DISABLED_PROPS = { opacity: V.disabledOpacity, cursor: "default", pointer_events: "none" }
+const BLANK_PROPS = { color: "inherit", background: "transparent", border_width: "0px", outline: "none" }
+
+// Emit disabled rule for a variant selector prefix (e.g., "&.outline").
+function variantDisabled(prefix) { return rule(`${prefix}${DISABLED}`, { ...DISABLED_PROPS }) }
+
+// Generate font/padding/margin overrides for a control type.
+function controlFont(name) {
+	return {
+		font_family: `var(--${name}-font-family, var(--font-control-family, sans-serif))`,
+		font_weight: `var(--${name}-font-weight, var(--font-control-weight, 500))`,
+		font_size: `var(--${name}-font-size, var(--font-control-size, var(--font-size)))`,
+		line_height: `var(--${name}-font-line, var(--font-control-line, 1em))`,
+		padding: `var(--${name}-padding, 0.65em 1em)`,
+		margin: `var(--${name}-margin, 0px)`,
+	}
 }
 
 // ----------------------------------------------------------------------------
@@ -120,12 +139,12 @@ function safeBd(expr) { return { "--ctrl-bd": expr, border_color: "var(--ctrl-bd
 function safeOl(expr) { return { "--ctrl-ol": expr, outline_color: "var(--ctrl-ol, transparent)" } }
 
 // Precomputed color expressions using token variables.
-const FIELD_TX = cmix(V.color, V.ink, V.ftxb)
-const FIELD_BG = cmix(V.color, V.paper, V.fbgb, V.fbgo)
-const FIELD_BD = cmix(V.color, V.ink, V.fbdb, V.fbdo)
-const BUTTON_BG = cmix(V.color, V.paper, V.bbgb)
-const BUTTON_BD = cmix(V.color, V.ink, "85%", V.bbdo)
-const FOCUS_RING = cmix(V.color, V.paper, "75%", V.fro)
+const FIELD_TX = cmix(V.color, V.ink, V.fieldTxBlend)
+const FIELD_BG = cmix(V.color, V.paper, V.fieldBgBlend, V.fieldBgOpacity)
+const FIELD_BD = cmix(V.color, V.ink, V.fieldBdBlend, V.fieldBdOpacity)
+const BUTTON_BG = cmix(V.color, V.paper, V.btnBgBlend)
+const BUTTON_BD = cmix(V.color, V.ink, "85%", V.btnBdOpacity)
+const FOCUS_RING = cmix(V.color, V.paper, "75%", V.focusOpacity)
 
 // ----------------------------------------------------------------------------
 //
@@ -146,9 +165,9 @@ function controlBase() {
 		border_width: "0px",
 		border_style: "solid",
 		outline_color: "transparent",
-		outline_width: V.frw,
+		outline_width: V.focusWidth,
 		outline_style: "solid",
-		outline_offset: V.frf,
+		outline_offset: V.focusOffset,
 	}, semanticRules)
 }
 
@@ -181,9 +200,7 @@ function fieldRules() {
 
 	// -- Disabled
 	children.push(rule(`&${DISABLED}`, {
-		opacity: V.dis,
-		cursor: "default",
-		pointer_events: "none",
+		...DISABLED_PROPS,
 	}))
 
 	// -- Invalid
@@ -191,7 +208,7 @@ function fieldRules() {
 		border_color: cmix("var(--color-danger)", V.ink, "80%", "50%"),
 	}))
 	children.push(rule(`&${INVALID}${FOCUS}`, {
-		outline_color: cmix("var(--color-danger)", V.paper, "75%", V.fro),
+		outline_color: cmix("var(--color-danger)", V.paper, "75%", V.focusOpacity),
 	}))
 
 	// -- Variants
@@ -208,11 +225,7 @@ function fieldRules() {
 		"--ctrl-bd-blend": "70%",
 		outline_color: FOCUS_RING,
 	}))
-	children.push(rule(`&.outline${DISABLED}`, {
-		opacity: V.dis,
-		cursor: "default",
-		pointer_events: "none",
-	}))
+	children.push(variantDisabled("&.outline"))
 	children.push(rule(`&.outline${INVALID}`, {
 		border_color: cmix("var(--color-danger)", V.ink, "80%", "50%"),
 	}))
@@ -227,44 +240,25 @@ function fieldRules() {
 	children.push(rule(`&.ghost${FOCUS}`, {
 		outline_color: FOCUS_RING,
 	}))
-	children.push(rule(`&.ghost${DISABLED}`, {
-		opacity: V.dis,
-		cursor: "default",
-		pointer_events: "none",
-	}))
+	children.push(variantDisabled("&.ghost"))
 
-	children.push(rule("&.blank", {
-		color: "inherit",
-		background: "transparent",
-		border_width: "0px",
-		outline: "none",
-	}))
+	children.push(rule("&.blank", BLANK_PROPS))
 
 	return nesting([FIELD_SEL], {
 		color: FIELD_TX,
 		background: FIELD_BG,
 		border_color: FIELD_BD,
-		border_width: V.fbdw,
-		border_radius: V.fbdr,
+		border_width: V.fieldBdWidth,
+		border_radius: V.fieldBdRadius,
 		border_style: "solid",
-		font_family: "var(--input-font-family, var(--font-control-family, sans-serif))",
-		font_weight: "var(--input-font-weight, var(--font-control-weight, 500))",
-		font_size: "var(--input-font-size, var(--font-control-size, var(--font-size)))",
-		line_height: "var(--input-font-line, var(--font-control-line, 1em))",
-		padding: "var(--input-padding, 0.65em 1em)",
-		margin: "var(--input-margin, 0px)",
+		...controlFont("input"),
 	}, children)
 }
 
 // Textarea gets same styling but its own identity vars.
 function textareaRules() {
 	return rule(["textarea", ".textarea"], {
-		font_family: "var(--textarea-font-family, var(--font-control-family, sans-serif))",
-		font_weight: "var(--textarea-font-weight, var(--font-control-weight, 500))",
-		font_size: "var(--textarea-font-size, var(--font-control-size, var(--font-size)))",
-		line_height: "var(--textarea-font-line, var(--font-control-line, 1em))",
-		padding: "var(--textarea-padding, 0.65em 1em)",
-		margin: "var(--textarea-margin, 0px)",
+		...controlFont("textarea"),
 	})
 }
 
@@ -277,12 +271,7 @@ function selectRules() {
 	children.push(rule(`&${DISABLED}`, { "--ctrl-arrow-opacity": "30%" }))
 
 	return nesting(["select", ".select"], {
-		font_family: "var(--select-font-family, var(--font-control-family, sans-serif))",
-		font_weight: "var(--select-font-weight, var(--font-control-weight, 500))",
-		font_size: "var(--select-font-size, var(--font-control-size, var(--font-size)))",
-		line_height: "var(--select-font-line, var(--font-control-line, 1em))",
-		padding: "var(--select-padding, 0.65em 1em)",
-		margin: "var(--select-margin, 0px)",
+		...controlFont("select"),
 		"--ctrl-arrow-color": arrowColor,
 	}, children)
 }
@@ -313,9 +302,7 @@ function buttonRules() {
 
 	// -- Disabled
 	children.push(rule(`&${DISABLED}`, {
-		opacity: V.dis,
-		cursor: "default",
-		pointer_events: "none",
+		...DISABLED_PROPS,
 	}))
 
 	// -- Variants
@@ -333,11 +320,7 @@ function buttonRules() {
 	children.push(rule(`&.outline${FOCUS}`, {
 		outline_color: FOCUS_RING,
 	}))
-	children.push(rule(`&.outline${DISABLED}`, {
-		opacity: V.dis,
-		cursor: "default",
-		pointer_events: "none",
-	}))
+	children.push(variantDisabled("&.outline"))
 
 	children.push(rule("&.ghost", {
 		color: cmix(V.color, V.ink, "40%"),
@@ -353,34 +336,20 @@ function buttonRules() {
 	children.push(rule(`&.ghost${FOCUS}`, {
 		outline_color: FOCUS_RING,
 	}))
-	children.push(rule(`&.ghost${DISABLED}`, {
-		opacity: V.dis,
-		cursor: "default",
-		pointer_events: "none",
-	}))
+	children.push(variantDisabled("&.ghost"))
 
-	children.push(rule("&.blank", {
-		color: "inherit",
-		background: "transparent",
-		border_width: "0px",
-		outline: "none",
-	}))
+	children.push(rule("&.blank", BLANK_PROPS))
 
 	return nesting([BUTTON_SEL], {
 		color: "contrast-color(var(--ctrl-bg, var(--color-paper)))",
 		"--ctrl-bg": BUTTON_BG,
 		background: BUTTON_BG,
 		border_color: BUTTON_BD,
-		border_width: V.bbdw,
-		border_radius: V.bbdr,
+		border_width: V.btnBdWidth,
+		border_radius: V.btnBdRadius,
 		border_style: "solid",
 		cursor: "pointer",
-		font_family: "var(--button-font-family, var(--font-control-family, sans-serif))",
-		font_weight: "var(--button-font-weight, var(--font-control-weight, 500))",
-		font_size: "var(--button-font-size, var(--font-control-size, var(--font-size)))",
-		line_height: "var(--button-font-line, var(--font-control-line, 1em))",
-		padding: "var(--button-padding, 0.65em 1em)",
-		margin: "var(--button-margin, 0px)",
+		...controlFont("button"),
 	}, children)
 }
 
@@ -407,9 +376,7 @@ function toggleRules() {
 
 	// -- Disabled
 	children.push(rule(`&${DISABLED}`, {
-		opacity: V.dis,
-		cursor: "default",
-		pointer_events: "none",
+		...DISABLED_PROPS,
 	}))
 
 	// -- Checked: flip to button mode
@@ -454,19 +421,10 @@ function toggleRules() {
 		"--ctrl-bd-blend": "70%",
 		"--ctrl-sub-color": cmix(V.color, V.ink, "20%"),
 	}))
-	children.push(rule(`&.outline${DISABLED}`, {
-		opacity: V.dis,
-		cursor: "default",
-		pointer_events: "none",
-	}))
+	children.push(variantDisabled("&.outline"))
 
 	// -- Blank variant
-	children.push(rule("&.blank", {
-		color: "inherit",
-		background: "transparent",
-		border_width: "0px",
-		outline: "none",
-	}))
+	children.push(rule("&.blank", BLANK_PROPS))
 	children.push(rule(`&.blank${CHECKED}`, {
 		"--ctrl-sub-color": "inherit",
 	}))
@@ -489,7 +447,7 @@ function toggleRules() {
 		color: FIELD_TX,
 		background: FIELD_BG,
 		border_color: FIELD_BD,
-		border_width: V.fbdw,
+		border_width: V.fieldBdWidth,
 		border_style: "solid",
 		// Toggles get more visible border
 		"--ctrl-bd-opacity": "40%",
@@ -561,9 +519,7 @@ function selectorRules() {
 		outline_color: FOCUS_RING,
 	}))
 	children.push(rule(`&${DISABLED}`, {
-		opacity: V.dis,
-		cursor: "default",
-		pointer_events: "none",
+		...DISABLED_PROPS,
 	}))
 
 	return nesting([SELECTOR_SEL], {
@@ -576,7 +532,7 @@ function selectorRules() {
 		background: "transparent",
 		border_color: cmix(V.color, V.ink, "20%", "50%"),
 		border_width: "1px",
-		border_radius: V.fbdr,
+		border_radius: V.fieldBdRadius,
 		border_style: "solid",
 	}, children)
 }
@@ -625,9 +581,7 @@ function optionRules() {
 
 	// -- Disabled
 	children.push(rule(`&${DISABLED}`, {
-		opacity: V.dis,
-		cursor: "default",
-		pointer_events: "none",
+		...DISABLED_PROPS,
 	}))
 
 	// -- :checked + label mirroring
@@ -676,6 +630,20 @@ function sliderRules() {
 	const thumbBg = BUTTON_BG
 	const thumbBd = BUTTON_BD
 
+	// Selector helpers
+	const sliderSel = (suffix = "") => SLIDER_SELECTORS.map((s) => `${s}${suffix}`)
+	// Emit rules for both webkit and moz pseudo-elements.
+	function vendorThumb(suffix, props, webkitExtra) {
+		const wk = sliderSel(`${suffix}::-webkit-slider-thumb`)
+		const mz = sliderSel(`${suffix}::-moz-range-thumb`)
+		rules.push(rule(wk, webkitExtra ? { ...props, ...webkitExtra } : props))
+		rules.push(rule(mz, props))
+	}
+	function vendorTrack(suffix, props) {
+		rules.push(rule(sliderSel(`${suffix}::-webkit-slider-runnable-track`), props))
+		rules.push(rule(sliderSel(`${suffix}::-moz-range-track`), props))
+	}
+
 	// Base
 	rules.push(rule([SLIDER_SEL], {
 		appearance: "none",
@@ -686,29 +654,23 @@ function sliderRules() {
 		background: "transparent",
 		border: "none",
 		outline_color: "transparent",
-		outline_width: V.frw,
+		outline_width: V.focusWidth,
 		outline_style: "solid",
-		outline_offset: V.frf,
+		outline_offset: V.focusOffset,
 		"--ctrl-track-color": trackColor,
 		"--ctrl-thumb-bg": thumbBg,
-		"--ctrl-thumb-bd": `${V.bbdw} solid ${thumbBd}`,
+		"--ctrl-thumb-bd": `${V.btnBdWidth} solid ${thumbBd}`,
 	}))
 
-	// Track (webkit + moz)
-	const trackWebkit = SLIDER_SELECTORS.map((s) => `${s}::-webkit-slider-runnable-track`)
-	const trackMoz = SLIDER_SELECTORS.map((s) => `${s}::-moz-range-track`)
-	const trackProps = {
-		height: V.fbdw,
-		border_radius: V.fbdr,
+	// Track
+	vendorTrack("", {
+		height: V.fieldBdWidth,
+		border_radius: V.fieldBdRadius,
 		background: "var(--ctrl-track-color)",
 		transition: "var(--control-transition)",
-	}
-	rules.push(rule(trackWebkit, trackProps))
-	rules.push(rule(trackMoz, trackProps))
+	})
 
-	// Thumb (webkit + moz) — round button
-	const thumbWebkit = SLIDER_SELECTORS.map((s) => `${s}::-webkit-slider-thumb`)
-	const thumbMoz = SLIDER_SELECTORS.map((s) => `${s}::-moz-range-thumb`)
+	// Thumb — round button
 	const thumbProps = {
 		appearance: "none",
 		width: "1.25em",
@@ -719,50 +681,36 @@ function sliderRules() {
 		cursor: "pointer",
 		transition: "var(--control-transition)",
 	}
-	rules.push(rule(thumbWebkit, { ...thumbProps, margin_top: `calc((1.25em - ${V.fbdw}) / -2)` }))
-	rules.push(rule(thumbMoz, thumbProps))
+	vendorThumb("", thumbProps, { margin_top: `calc((1.25em - ${V.fieldBdWidth}) / -2)` })
 
 	// Hover
-	const hoverSel = SLIDER_SELECTORS.map((s) => `${s}:hover`)
-	rules.push(rule(hoverSel, {
+	rules.push(rule(sliderSel(":hover"), {
 		"--ctrl-track-color": cmix(V.color, V.ink, "82%", "40%"),
 		"--ctrl-thumb-bg": cmix(V.color, V.paper, "20%"),
 	}))
-	const hoverThumbWebkit = SLIDER_SELECTORS.map((s) => `${s}:hover::-webkit-slider-thumb`)
-	const hoverThumbMoz = SLIDER_SELECTORS.map((s) => `${s}:hover::-moz-range-thumb`)
-	rules.push(rule(hoverThumbWebkit, { transform: "scale(1.15)" }))
-	rules.push(rule(hoverThumbMoz, { transform: "scale(1.15)" }))
+	vendorThumb(":hover", { transform: "scale(1.15)" })
 
 	// Active
-	const activeSel = SLIDER_SELECTORS.map((s) => `${s}:active`)
-	rules.push(rule(activeSel, {
+	rules.push(rule(sliderSel(":active"), {
 		"--ctrl-thumb-bg": cmix(V.color, V.ink, "20%"),
 	}))
 
 	// Focus
-	rules.push(rule(SLIDER_SELECTORS.map((s) => `${s}:focus-visible`), {
+	rules.push(rule(sliderSel(":focus-visible"), {
 		outline_color: FOCUS_RING,
 	}))
-	const focusThumbWebkit = SLIDER_SELECTORS.map((s) => `${s}:focus-visible::-webkit-slider-thumb`)
-	const focusThumbMoz = SLIDER_SELECTORS.map((s) => `${s}:focus-visible::-moz-range-thumb`)
-	const focusThumbProps = {
-		outline: `${V.frw} solid ${cmix(V.color, V.paper, "50%")}`,
-		outline_offset: V.frf,
-	}
-	rules.push(rule(focusThumbWebkit, focusThumbProps))
-	rules.push(rule(focusThumbMoz, focusThumbProps))
+	vendorThumb(":focus-visible", {
+		outline: `${V.focusWidth} solid ${cmix(V.color, V.paper, "50%")}`,
+		outline_offset: V.focusOffset,
+	})
 
 	// Disabled
-	const disabledSel = SLIDER_SELECTORS.flatMap((s) => [`${s}[disabled]`, `${s}.disabled`])
-	rules.push(rule(disabledSel, {
-		opacity: V.dis,
-		cursor: "default",
-		pointer_events: "none",
+	rules.push(rule(SLIDER_SELECTORS.flatMap((s) => [`${s}[disabled]`, `${s}.disabled`]), {
+		...DISABLED_PROPS,
 	}))
 
 	// Blank variant
-	const blankSel = SLIDER_SELECTORS.flatMap((s) => [`${s}.blank`])
-	rules.push(rule(blankSel, {
+	rules.push(rule(sliderSel(".blank"), {
 		outline: "none",
 		"--ctrl-track-color": cmix(V.color, V.ink, "90%", "10%"),
 		"--ctrl-thumb-bg": cmix(V.color, V.ink, "25%"),
@@ -785,19 +733,14 @@ function panelRules() {
 		background: "transparent",
 		border_color: cmix(V.color, V.ink, "80%", "40%"),
 	}))
-	children.push(rule("&.blank", {
-		color: "inherit",
-		background: "transparent",
-		border_width: "0px",
-		outline: "none",
-	}))
+	children.push(rule("&.blank", BLANK_PROPS))
 
 	return nesting([PANEL_SEL], {
 		color: FIELD_TX,
 		background: cmix(V.color, V.paper, "4%"),
 		border_color: cmix(V.color, V.paper, "14%"),
-		border_width: V.fbdw,
-		border_radius: V.fbdr,
+		border_width: V.fieldBdWidth,
+		border_radius: V.fieldBdRadius,
 		border_style: "solid",
 	}, children)
 }
