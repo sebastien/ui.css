@@ -1,12 +1,8 @@
-import { contrast as contrastColor, group, rule, vars } from "../js/uicss.js"
+import { Parser, contrast as contrastColor, group, rule, vars } from "../js/uicss.js?v=2"
 import { colormixin } from "./colors.js"
 import DEFAULTS_SPEC from "./controls.defaults.js"
 
-// ----------------------------------------------------------------------------
-//
-// SHORTHAND PARSERS
-//
-// ----------------------------------------------------------------------------
+const PARSER = new Parser()
 
 // Property name expansions from shorthand keys.
 const PROPS = { tx: "text", bg: "background", bd: "border", ol: "outline" }
@@ -17,145 +13,7 @@ const COLOR_FACETS = ["base", "tint", "blend", "opacity"]
 // Structural facets for border/outline geometry.
 const GEOM_FACETS = ["width", "radius"]
 
-// Function: parseColor
-// Parses a color shorthand into facet values.
-// `.` means inherit (null). `0` means transparent. Returns `{base, tint, blend, opacity}`.
-function parseColor(str) {
-	const s = str.trim()
-	if (s === "0") return { base: null, tint: null, blend: null, opacity: "0" }
-	if (s === ".") return { base: null, tint: null, blend: null, opacity: null }
-	if (s === "contrast") return { base: "contrast", tint: null, blend: null, opacity: null }
-	if (s === "inherit") return { base: "inherit", tint: null, blend: null, opacity: null }
-
-	const parts = s.split(/\s+/)
-	const [rawBase, rawTint] = (parts[0] || "./.").split("/")
-
-	if (rawBase === "contrast" || rawBase === "inherit") {
-		const inh = (v) => (v === undefined || v === "." ? null : v)
-		return { base: rawBase, tint: null, blend: null, opacity: inh(rawTint) }
-	}
-
-	const [rawBlend, rawOpacity] = (parts[1] || "./.").split("/")
-	const inh = (v) => (v === undefined || v === "." ? null : v)
-	return { base: inh(rawBase), tint: inh(rawTint), blend: inh(rawBlend), opacity: inh(rawOpacity) }
-}
-
-// Function: parseBorder
-// Parses a border/outline shorthand. Returns `{width, radius, base, tint, blend, opacity}`.
-function parseBorder(str) {
-	const s = str.trim()
-	if (s === "0") return { width: "0px", radius: null, base: null, tint: null, blend: null, opacity: "0" }
-	if (s === ".") return { width: null, radius: null, base: null, tint: null, blend: null, opacity: null }
-
-	const parts = s.split(/\s+/)
-
-	// Legacy tilde form
-	if (parts[0] && parts[0].includes("~")) {
-		const [w, r] = parts[0].split("~")
-		const inh = (v) => (v === "." || v === "_" ? null : v)
-		const color = parseColor(parts.slice(1).join(" ") || "./. ./.")
-		return { width: inh(w), radius: inh(r), ...color }
-	}
-
-	// Space form: "width radius color..."
-	const isDim = (v) => /^[0-9.]/.test(v) || v === "." || /^(0|[0-9]+(%|px|em|rem|vw|vh))$/.test(v)
-	if (parts.length >= 2 && isDim(parts[0]) && isDim(parts[1])) {
-		const inh = (v) => (v === "." ? null : v)
-		const color = parseColor(parts.slice(2).join(" ") || "./. ./.")
-		return { width: inh(parts[0]), radius: inh(parts[1]), ...color }
-	}
-
-	const color = parseColor(s)
-	return { width: null, radius: null, ...color }
-}
-
-// Function: parseProperty
-// Dispatches to parseBorder for bd/ol, parseColor for tx/bg.
-function parseProperty(key, value) {
-	return (key === "bd" || key === "ol") ? parseBorder(value) : parseColor(value)
-}
-
-// ----------------------------------------------------------------------------
-//
-// TEXT TREE PARSER
-//
-// ----------------------------------------------------------------------------
-
-function measureIndent(line) {
-	const m = line.match(/^(\s*)/)
-	const leading = m ? m[1] : ""
-	return leading.includes("\t") ? leading.split("\t").length - 1 : leading.length
-}
-
-function detectIndent(lines) {
-	let baseIndent = 0
-	let indentUnit = 0
-	for (const raw of lines) {
-		const stripped = raw.replace(/#.*$/, "").trimEnd()
-		if (stripped.trim() === "") continue
-		baseIndent = measureIndent(stripped)
-		break
-	}
-	for (const raw of lines) {
-		const stripped = raw.replace(/#.*$/, "").trimEnd()
-		if (stripped.trim() === "") continue
-		const len = measureIndent(stripped)
-		if (len > baseIndent) { indentUnit = len - baseIndent; break }
-	}
-	return { baseIndent, indentUnit: indentUnit || 1 }
-}
-
-// Function: parseTree
-// Parses spec-003 indented text into `{ name: { control, definition } }`.
-function parseTree(text) {
-	const lines = text.split("\n")
-	const result = {}
-	let control = null, currentVariant = null, currentState = null, currentSubElement = null, definition = null
-	const { baseIndent, indentUnit } = detectIndent(lines)
-
-	for (const raw of lines) {
-		const stripped = raw.replace(/#.*$/, "").trimEnd()
-		if (stripped.trim() === "") continue
-		const depth = Math.round((measureIndent(stripped) - baseIndent) / indentUnit)
-		const content = stripped.trim()
-		if (!content) continue
-		const colonIdx = content.indexOf(":")
-		if (colonIdx < 0) continue
-		const key = content.substring(0, colonIdx).trim()
-		const value = content.substring(colonIdx + 1).trim()
-
-		if (depth === 0) {
-			control = key; definition = {}; currentVariant = null; currentState = null; currentSubElement = null
-			result[control] = { control, definition }
-		} else if (depth === 1 && definition) {
-			currentVariant = key; if (!definition[currentVariant]) definition[currentVariant] = {}
-			currentState = null; currentSubElement = null
-		} else if (depth === 2 && key.startsWith("!") && definition && currentVariant) {
-			currentState = key.substring(1)
-			if (!definition[currentVariant][currentState]) definition[currentVariant][currentState] = {}
-			currentSubElement = null
-		} else if (depth === 3 && definition && currentVariant && currentState) {
-			if (value === "" || value === undefined) { currentSubElement = key }
-			else if (currentSubElement) { definition[currentVariant][currentState][`${currentSubElement}.${key}`] = value }
-			else { definition[currentVariant][currentState][key] = value }
-		} else if (depth === 4 && definition && currentVariant && currentState && currentSubElement && value) {
-			definition[currentVariant][currentState][`${currentSubElement}.${key}`] = value
-		}
-	}
-
-	const keys = Object.keys(result)
-	if (keys.length === 1) { result.control = result[keys[0]].control; result.definition = result[keys[0]].definition }
-	return result
-}
-
-// Function: style
-// Tagged template literal for spec-003 shorthand.
-function style(strings, ...values) {
-	const text = Array.isArray(strings) ? strings.reduce((r, s, i) => r + s + (values[i] ?? ""), "") : strings
-	return parseTree(text)
-}
-
-const DEFAULTS = style(DEFAULTS_SPEC)
+const DEFAULTS = PARSER.style(DEFAULTS_SPEC)
 
 // ----------------------------------------------------------------------------
 //
@@ -223,7 +81,7 @@ function resolveAllFacets(definition, variant, state, shortKey) {
 	// Collect all parsed values at each level of the chain
 	const getValue = (v, s) => {
 		const raw = definition[v]?.[s]?.[shortKey]
-		return raw ? parseProperty(shortKey, raw) : null
+		return raw ? PARSER.parseProperty(shortKey, raw) : null
 	}
 
 	const layers = []
@@ -276,7 +134,7 @@ function resolveSubFacets(definition, variant, state, subElement, shortKey) {
 
 	const getValue = (v, s) => {
 		const raw = definition[v]?.[s]?.[fullKey]
-		return raw ? parseProperty(shortKey, raw) : null
+		return raw ? PARSER.parseProperty(shortKey, raw) : null
 	}
 
 	const layers = []
@@ -831,5 +689,5 @@ if (import.meta.main) {
 	console.log([...css(controls())].join("\n"))
 }
 
-export { controls, controlRules, parseColor, parseBorder, parseTree, style, SELECTORS, DEFAULTS }
+export { controls, controlRules, SELECTORS, DEFAULTS }
 export default controls()
