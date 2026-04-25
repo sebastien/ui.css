@@ -4,6 +4,14 @@
 //
 // ----------------------------------------------------------------------------
 
+function list(value) {
+	return value === null || value === undefined
+		? []
+		: Array.isArray(value)
+			? value
+			: [value];
+}
+
 // Function: kebab
 // Normalizes a name to kebab-case for CSS keys and variables.
 const kebab = (str) =>
@@ -28,7 +36,8 @@ const times = (n, f) => {
 
 // Function: percent
 // Formats a decimal number as a rounded percentage string.
-const percent = (v) => `${Math.round(v * 10000) / 100}%`;
+const percent = (v) =>
+	typeof v === "number" ? `${Math.round(v * 10000) / 100}%` : `${v}`;
 
 // Function: properties
 // Flattens nested property objects into `[key, value]` CSS pairs.
@@ -195,6 +204,8 @@ class Scope {
 		if (
 			typeof property === "string" &&
 			property !== "_name" &&
+			property !== "get" &&
+			property !== "inherit" &&
 			property !== "walk" &&
 			property !== "or"
 		) {
@@ -226,10 +237,53 @@ class Scope {
 			}
 		}
 	}
+	get(path) {
+		const segments = Array.isArray(path) ? path : `${path}`.split(".");
+		let current = this;
+		for (const segment of segments) {
+			if (!segment) {
+				continue;
+			}
+			current = current[segment];
+		}
+		return current;
+	}
+	inherit(property, groups, ...fallbacks) {
+		const paths = Array.isArray(groups) ? groups : [groups];
+		const [head, ...tail] = paths.map((group) => this.get(group).get(property));
+		return head.or(...tail, ...fallbacks);
+	}
+	// get percent() {
+	// 	return `calc(100% * var(--${this._name}))`;
+	// }
 	toString() {
 		return `var(--${this._name})`;
 	}
-	or(fallback) {
+	or(...fallbacks) {
+		if (fallbacks.length === 0) {
+			return `var(--${this._name})`;
+		}
+
+		const format = (fallback) => {
+			if (fallback instanceof Scope) {
+				return `var(--${fallback._name})`;
+			}
+			return typeof fallback === "number"
+				? Math.floor(fallback) === fallback
+					? `${fallback}px`
+					: `${100 * fallback}%`
+				: `${fallback}`;
+		};
+
+		let fallback = format(fallbacks[fallbacks.length - 1]);
+		for (let i = fallbacks.length - 2; i >= 0; i--) {
+			if (fallbacks[i] instanceof Scope) {
+				fallback = `var(--${fallbacks[i]._name}, ${fallback})`;
+			} else {
+				fallback = format(fallbacks[i]);
+			}
+		}
+
 		return `var(--${this._name}, ${fallback})`;
 	}
 }
@@ -301,7 +355,7 @@ const mods = (classes, ...modifiers) =>
 					return _ ? `.${_}` : "";
 			}
 		})
-		.flatMap((m) => classes.map((c) => `${c}${m}`));
+		.flatMap((m) => list(classes).map((c) => `${c}${m}`));
 
 // ----------------------------------------------------------------------------
 //
@@ -316,21 +370,22 @@ class Rule {
 		this.selectors = selectors;
 		this.properties = properties;
 	}
-	*lines(compact) {
+	*lines(compact, depth = 0) {
+		const indent = compact ? "" : "\t".repeat(depth);
 		const sel = this.selectors
 			? this.selectors.join(compact ? "," : ", ")
 			: "*";
-		yield compact ? `${sel}{` : `${sel} {`;
+		yield compact ? `${sel}{` : `${indent}${sel} {`;
 		for (const k in this.properties) {
 			yield compact
 				? `${k}:${this.properties[k]};`
-				: `\t${k}: ${this.properties[k]};`;
+				: `${indent}\t${k}: ${this.properties[k]};`;
 		}
-		yield "}";
+		yield `${indent}}`;
 	}
 
 	*rules() {
-		yield [...this.lines(true)].join("\n");
+		yield [...this.lines(false)].join("\n");
 	}
 	*docs(path) {
 		for (const name of this.selectors) {
@@ -356,25 +411,26 @@ class NestingRule {
 		this.properties = properties;
 		this.children = children || [];
 	}
-	*lines(compact) {
+	*lines(compact, depth = 0) {
+		const indent = compact ? "" : "\t".repeat(depth);
 		const sel = this.selectors
 			? this.selectors.join(compact ? "," : ", ")
 			: "*";
-		yield compact ? `${sel}{` : `${sel} {`;
+		yield compact ? `${sel}{` : `${indent}${sel} {`;
 		for (const k in this.properties) {
 			yield compact
 				? `${k}:${this.properties[k]};`
-				: `\t${k}: ${this.properties[k]};`;
+				: `${indent}\t${k}: ${this.properties[k]};`;
 		}
 		for (const child of this.children) {
-			for (const line of child.lines(compact)) {
+			for (const line of child.lines(compact, depth + 1)) {
 				yield line;
 			}
 		}
-		yield "}";
+		yield `${indent}}`;
 	}
 	*rules() {
-		yield [...this.lines(true)].join("\n");
+		yield [...this.lines(false)].join("\n");
 	}
 	*docs(path) {
 		for (const name of this.selectors) {
@@ -565,12 +621,12 @@ class Group {
 		}
 	}
 
-	*lines(compact = true) {
+	*lines(compact = true, depth = 0) {
 		if (!compact && this.name) {
 			yield `/* @${this.constructor.name.toLowerCase()} ${this.name} */`;
 		}
 		for (const r of this.contents) {
-			for (const _ of r.lines(compact)) {
+			for (const _ of r.lines(compact, depth)) {
 				yield _;
 			}
 		}
@@ -587,15 +643,16 @@ const group = (...rules) => new Group(rules);
 // Class: Layer
 // Specialized group that emits its content inside `@layer`.
 class Layer extends Group {
-	*lines(compact = true) {
+	*lines(compact = true, depth = 0) {
+		const indent = compact ? "" : "\t".repeat(depth);
 		if (this.name) {
-			yield `@layer ${this.name} {`;
+			yield compact ? `@layer ${this.name} {` : `${indent}@layer ${this.name} {`;
 		}
-		for (const line of super.lines(compact)) {
+		for (const line of super.lines(compact, depth + 1)) {
 			yield line;
 		}
 		if (this.name) {
-			yield `}`;
+			yield `${indent}}`;
 		}
 	}
 }
@@ -705,18 +762,19 @@ class Tokens extends Group {
 			}
 		}
 	}
-	*lines() {
-		yield "/* @tokens */";
-		yield ":root {";
+	*lines(compact = true, depth = 0) {
+		const indent = compact ? "" : "\t".repeat(depth);
+		yield compact ? "/* @tokens */" : `${indent}/* @tokens */`;
+		yield compact ? ":root {" : `${indent}:root {`;
 		for (const token of this.contents) {
-			for (const line of token.lines()) {
+			for (const line of token.lines(compact, depth + 1)) {
 				yield line;
 			}
 		}
-		yield "}";
+		yield `${indent}}`;
 	}
 	*rules() {
-		const lines = [...this.lines()];
+		const lines = [...this.lines(false)];
 		lines.splice(0, 1);
 		yield lines.join("\n");
 	}
@@ -746,7 +804,7 @@ function* css(...values) {
 		} else if (v.constructor === Object) {
 			yield* css(Object.values(v));
 		} else if (v && typeof v.lines === "function") {
-			for (const l of v.lines(true)) {
+			for (const l of v.lines(false, 0)) {
 				yield l;
 			}
 		}
@@ -851,6 +909,7 @@ export {
 	sizes,
 	times,
 	tokens,
+	percent,
 	vars,
 	where,
 };
@@ -861,7 +920,10 @@ export default Object.assign(css, {
 	mods,
 	block,
 	vars,
+	nesting,
 	group,
+	named,
+	percent,
 	layer,
 });
 // EOF

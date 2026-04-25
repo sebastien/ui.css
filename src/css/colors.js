@@ -1,4 +1,12 @@
-import { contrast, group, rule, sides, times, vars } from "../js/uicss.js";
+import {
+	contrast,
+	group,
+	rule,
+	sides,
+	times,
+	vars,
+	percent,
+} from "../js/uicss.js";
 
 // ----------------------------------------------------------------------------
 //
@@ -78,39 +86,42 @@ const shorthands = {
 	ol: { name: "outline-color", css: "outline-color" },
 };
 
-const ckey = (...path) => `__${path.join("_")}`;
-
 function colorvar(name) {
 	return {
-		[ckey(name, "color")]:
-			`color-mix(in oklch, color-mix(in oklch, ${vars[name].base}, ${vars[name].tint} calc((1 - ${vars[name].blend}) * 100%)), transparent calc((1 - ${vars[name].opacity})) * 100%))`,
+		[`__${name}_color`]: colormix(
+			vars[name].base,
+			vars[name].tint,
+			vars[name].blend,
+			vars[name].opacity,
+		),
 	};
 }
 
 function colorvars(name, mode = "color") {
 	return {
-		[ckey(name, "base")]: vars[name][mode].base,
-		[ckey(name, "tint")]: vars[name][mode].tint,
-		[ckey(name, "blend")]: vars[name][mode].blend,
-		[ckey(name, "opacity")]: vars[name][mode].opacity,
+		[`__${name}_base`]: vars[name][mode].base,
+		[`__${name}_tint`]: vars[name][mode].tint,
+		[`__${name}_blend`]: vars[name][mode].blend,
+		[`__${name}_opacity`]: vars[name][mode].opacity,
 		...colorvar(name),
 	};
 }
+function alpha(base, opacity = 1.0) {
+	return `color-mix(in oklch, ${base}, transparent calc(100% - ${percent(opacity)}))`;
+}
 
-function colormix(base, tint, blend, opacity) {
-	const color = `color-mix(in srgb,${tint},${base} ${blend})`;
-	return `color-mix(in srgb, transparent, ${color} ${opacity})`;
+function colormix(base, tint = vars.color.paper, blend = 1.0, opacity = 1.0) {
+	const inner = `color-mix(in oklch, ${base}, ${tint} calc(100% - ${percent(blend)}))`;
+	return opacity === undefined
+		? inner
+		: `color-mix(in oklch, ${inner}, transparent calc(100% - ${percent(opacity)}))`;
 }
 
 // Function: colormixin
 // Generates a color-mix() CSS expression using variable references.
 // With opacity: wraps in a second color-mix for transparency.
 function colormixin(color) {
-	const inner = `color-mix(in oklch, ${color.base}, ${color.tint} calc(100% - ${color.blend}))`;
-	if (color.opacity) {
-		return `color-mix(in oklch, ${inner}, transparent calc(100% - ${color.opacity}))`;
-	}
-	return inner;
+	return colormix(color.base, color.tint, color.blend, color.opacity);
 }
 
 // NOTE: component token helper mutators were removed.
@@ -274,8 +285,10 @@ function colors(colors = COLORS) {
 
 export { COLORS, SEMANTIC, colormix, colormixin, colorvars };
 export default Object.assign(colors, {
-	mix: colormix,
-	colormixin,
+	mix: colormixin,
+	mixed: colormix,
 	vars: colorvars,
+	alpha,
+	names: Object.keys(SEMANTIC),
 });
 // EOF

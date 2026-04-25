@@ -8,7 +8,10 @@ function scaled(unit, px, scale = undefined, base = REM_PIXELS) {
 }
 const pem = (px, scale) => scaled("1em", px, scale);
 const rpem = (px, scale) => scaled("1rem", px, scale);
-const spacingScale = (fn, scaleVar, steps) => ["0em", ...steps.map((px) => fn(px, scaleVar))];
+const spacingScale = (fn, scaleVar, steps) => [
+	"0em",
+	...steps.map((px) => fn(px, scaleVar)),
+];
 
 // Module: tokens
 // This defines the main parameters for the style. They can be overriden
@@ -210,40 +213,22 @@ export default group(
 				hover_dx: "20%",
 			},
 		},
-		control: {
-			transition: `background ${vars.motion.duration.normal} ${vars.motion.easing.standard}, color ${vars.motion.duration.normal} ${vars.motion.easing.standard}, border ${vars.motion.duration.normal} ${vars.motion.easing.standard}, outline-color ${vars.motion.duration.normal} ${vars.motion.easing.standard}`,
-			// Default control color — overridden per-element by .primary, .danger, etc.
-			color: `${vars.color.neutral}`,
-			// Disabled state
-			disabled: { opacity: 0.4 },
-			// Focus ring
-			focus: {
-				ring: { width: "2px", offset: "2px", opacity: "50%" },
-			},
-			// Field category (inputs, textareas, selects, unchecked toggles)
-			field: {
-				tx: { blend: "75%" },
-				bg: { blend: "95%" },
-				bd: { blend: "85%", opacity: "25%", width: "1.5px", radius: "4px" },
-				hover: { bd: { blend: "80%", opacity: "40%" } },
-				focus: { bd: { blend: "75%", opacity: "50%" } },
-			},
-			// Button category (buttons, checked toggles, selected options)
-			button: {
-				bg: { blend: "0%" },
-				bd: { opacity: "15%", width: "1px", radius: "4px" },
-				hover: { bg: { blend: "20%" } },
-				active: { bg: { blend: "20%" } },
-			},
-			// Outline style for field variant
-			outline: {
-				bd: { opacity: "40%" },
-			},
-		},
-		size: spacingScale(pem, vars.scaling.size, [4, 8, 12, 16, 24, 32, 48, 64, 96, 128]),
-		margin: spacingScale(rpem, vars.scaling.margin, [4, 8, 12, 16, 24, 32, 48, 64]),
+		size: spacingScale(
+			pem,
+			vars.scaling.size,
+			[4, 8, 12, 16, 24, 32, 48, 64, 96, 128],
+		),
+		margin: spacingScale(
+			rpem,
+			vars.scaling.margin,
+			[4, 8, 12, 16, 24, 32, 48, 64],
+		),
 		pad: spacingScale(rpem, vars.scaling.pad, [2, 4, 6, 8, 12, 16, 24, 32]),
-		gap: spacingScale(pem, vars.scaling.gap, [4, 8, 12, 16, 24, 32, 48, 64, 96, 128]),
+		gap: spacingScale(
+			pem,
+			vars.scaling.gap,
+			[4, 8, 12, 16, 24, 32, 48, 64, 96, 128],
+		),
 
 		opacity: {
 			dim: 0.65,

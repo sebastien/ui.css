@@ -1,5 +1,4 @@
 import { group, named, rule, vars } from "../js/uicss.js";
-import { panel } from "./controls.js"
 import { inputs } from "./lib/tags.js";
 import { colormix, colormixin, colorvars } from "./colors.js";
 
@@ -256,14 +255,6 @@ export default named({
 	// PANEL
 	//
 	// ------------------------------------------------------------------------
-	panel: panel(),
-
-	// ------------------------------------------------------------------------
-	//
-	// CONTROLS
-	//
-	// ------------------------------------------------------------------------
-	controls: group(),
 
 	// ------------------------------------------------------------------------
 	//
