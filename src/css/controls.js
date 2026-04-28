@@ -34,6 +34,8 @@ function base(selector, ...rest) {
 				vars.control.color.blend.or(0.8),
 				vars.control.color.alpha.or(0.5),
 			),
+			// No user select
+			user_select: "none",
 		}),
 		// Color variants
 		...colors.names.map((color) =>
@@ -260,6 +262,293 @@ function field(selector, ...rest) {
 	);
 }
 
+function checkbox() {
+	return field(
+		["input[type=checkbox]", ".checkbox"],
+		css.rule("&", {
+			appearance: "none",
+			padding: "0em",
+			margin: "0em",
+			aspect_ratio: "1/1",
+			width: vars.checkbox.size.or("1.125em"),
+			place_content: "center",
+			display: "inline-grid",
+			vertical_align: "middle",
+			border_radius: vars.checkbox.border.radius.or("0.2em"),
+			cursor: "pointer",
+			color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.paper),
+				0.0,
+				1.0,
+			),
+		}),
+		// Checkbox content is rendered with a pseudo element, which is scaled up when checked or indeterminate.
+		css.rule("&::before", {
+			content: '""',
+			box_sizing: "border-box",
+			width: "0.32em",
+			height: "0.62em",
+			border_style: "solid",
+			border_width: "0 0.14em 0.14em 0",
+			transform: "rotate(45deg) scale(0)",
+			transform_origin: "center",
+			color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.ink),
+				0.3,
+				0.9,
+			),
+		}),
+		css.rule(css.mods("&", "checked"), {
+			// Full color when checked
+			background_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.ink),
+				1.0,
+				1.0,
+			),
+			// Slightly darker border when checked
+			border_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.ink),
+				0.95,
+				1.0,
+			),
+		}),
+		css.rule("&:checked::before, &.checked::before", {
+			transform: "rotate(45deg) scale(1)",
+		}),
+		css.rule("&:indeterminate, &.indeterminate", {
+			background_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.ink),
+				0.9,
+				1.0,
+			),
+			border_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.ink),
+				0.9,
+				1.0,
+			),
+		}),
+		css.rule("&:indeterminate::before, &.indeterminate::before", {
+			width: "0.6em",
+			height: "0.14em",
+			border_width: "0",
+			background_color: "currentColor",
+			transform: "scale(1)",
+		}),
+		css.rule("&:disabled, &.disabled", {
+			cursor: "not-allowed",
+		}),
+	);
+}
+
+function radio() {
+	return field(
+		["input[type=radio]", ".radio"],
+		css.rule("&", {
+			appearance: "none",
+			padding: "0em",
+			margin: "0em",
+			width: vars.radio.size.or("1.125em"),
+			height: vars.radio.size.or("1.125em"),
+			min_width: vars.radio.size.or("1.125em"),
+			min_height: vars.radio.size.or("1.125em"),
+			place_content: "center",
+			display: "inline-grid",
+			vertical_align: "middle",
+			border_radius: "100%",
+			cursor: "pointer",
+		}),
+		css.rule("&::before", {
+			content: '""',
+			width: vars.radio.dot.size.or("0.5em"),
+			height: vars.radio.dot.size.or("0.5em"),
+			border_radius: "100%",
+			background_color: "currentColor",
+			transform: "scale(0)",
+			transform_origin: "center",
+			color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.ink),
+				0.3,
+				0.9,
+			),
+		}),
+		css.rule("&:checked, &.checked", {
+			background_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.ink),
+				1.0,
+				1.0,
+			),
+			border_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.ink),
+				0.95,
+				1.0,
+			),
+			color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.paper),
+				0.0,
+				1.0,
+			),
+		}),
+		css.rule("&:checked::before, &.checked::before", {
+			transform: "scale(1)",
+		}),
+		css.rule("&:disabled, &.disabled", {
+			cursor: "not-allowed",
+		}),
+	);
+}
+
+function range() {
+	return field(
+		["input[type=range]", ".range"],
+		css.rule("&", {
+			appearance: "none",
+			padding: "0em",
+			margin: "0em",
+			border_width: "0px",
+			background: "transparent",
+			height: vars.range.height.or("1.5em"),
+			min_height: vars.range.height.or("1.5em"),
+			cursor: "pointer",
+		}),
+		css.rule("&::-webkit-slider-runnable-track", {
+			height: vars.range.track.height.or("0.45em"),
+			border_radius: vars.range.track.radius.or("999px"),
+			border_width: vars.control.border.size.or("1px"),
+			border_style: "solid",
+			border_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.paper),
+				0.6,
+				1.0,
+			),
+			background_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.paper),
+				0.2,
+				0.95,
+			),
+		}),
+		css.rule("&::-webkit-slider-thumb", {
+			appearance: "none",
+			margin_top: `calc(( ${vars.range.track.height.or("0.45em")} - ${vars.range.thumb.size.or("1em")} ) / 2)`,
+			width: vars.range.thumb.size.or("1em"),
+			height: vars.range.thumb.size.or("1em"),
+			border_radius: "100%",
+			border_width: vars.control.border.size.or("1px"),
+			border_style: "solid",
+			border_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.ink),
+				0.9,
+				1.0,
+			),
+			background_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.ink),
+				1.0,
+				1.0,
+			),
+		}),
+		css.rule("&::-moz-range-track", {
+			height: vars.range.track.height.or("0.45em"),
+			border_radius: vars.range.track.radius.or("999px"),
+			border_width: vars.control.border.size.or("1px"),
+			border_style: "solid",
+			border_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.paper),
+				0.6,
+				1.0,
+			),
+			background_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.paper),
+				0.2,
+				0.95,
+			),
+		}),
+		css.rule("&::-moz-range-progress", {
+			height: vars.range.track.height.or("0.45em"),
+			border_radius: vars.range.track.radius.or("999px"),
+			background_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.ink),
+				0.7,
+				1.0,
+			),
+		}),
+		css.rule("&::-moz-range-thumb", {
+			width: vars.range.thumb.size.or("1em"),
+			height: vars.range.thumb.size.or("1em"),
+			border_radius: "100%",
+			border_width: vars.control.border.size.or("1px"),
+			border_style: "solid",
+			border_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.ink),
+				0.9,
+				1.0,
+			),
+			background_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.ink),
+				1.0,
+				1.0,
+			),
+		}),
+		css.rule("&:hover::-webkit-slider-runnable-track, &.hover::-webkit-slider-runnable-track", {
+			border_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.paper),
+				0.8,
+				1.0,
+			),
+		}),
+		css.rule("&:focus::-webkit-slider-runnable-track, &:focus-within::-webkit-slider-runnable-track, &.focus::-webkit-slider-runnable-track", {
+			border_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.paper),
+				0.85,
+				1.0,
+			),
+		}),
+		css.rule("&:focus, &:focus-within, &.focus", {
+			outline_width: "0px",
+		}),
+		css.rule("&:focus::-webkit-slider-thumb, &:focus-within::-webkit-slider-thumb, &.focus::-webkit-slider-thumb", {
+			box_shadow: `0 0 0 ${vars.control.outline.width.or("2px")} ${colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.paper),
+				0.8,
+				0.5,
+			)}`,
+		}),
+		css.rule("&:focus::-moz-range-thumb, &:focus-within::-moz-range-thumb, &.focus::-moz-range-thumb", {
+			box_shadow: `0 0 0 ${vars.control.outline.width.or("2px")} ${colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.paper),
+				0.8,
+				0.5,
+			)}`,
+		}),
+		css.rule("&:active::-webkit-slider-thumb, &.active::-webkit-slider-thumb", {
+			transform: "scale(0.95)",
+		}),
+		css.rule("&:disabled, &.disabled", {
+			cursor: "not-allowed",
+		}),
+	)
+}
 function selector() {
 	// Selectors are like a `div` with `input + label`
 	return field(
@@ -360,6 +649,9 @@ export default css.named({
 		".select",
 		".selector",
 	]),
+	checkbox: checkbox(),
+	radio: radio(),
+	range: range(),
 	selector: selector(),
 });
 // EOF

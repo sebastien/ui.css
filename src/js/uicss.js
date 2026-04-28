@@ -346,6 +346,10 @@ const mods = (classes, ...modifiers) =>
 			switch (_) {
 				case "disabled":
 					return ["[disabled]", ".disabled"];
+				case "checked":
+					return [":checked", ".checked"];
+				case "indeterminate":
+					return [":indeterminate", ".indeterminate"];
 				case "hover":
 				case "active":
 					return [`:${_}`, `.${_}`];
@@ -646,7 +650,9 @@ class Layer extends Group {
 	*lines(compact = true, depth = 0) {
 		const indent = compact ? "" : "\t".repeat(depth);
 		if (this.name) {
-			yield compact ? `@layer ${this.name} {` : `${indent}@layer ${this.name} {`;
+			yield compact
+				? `@layer ${this.name} {`
+				: `${indent}@layer ${this.name} {`;
 		}
 		for (const line of super.lines(compact, depth + 1)) {
 			yield line;

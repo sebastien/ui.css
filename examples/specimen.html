@@ -403,6 +403,17 @@ const result = "fast, consistent styling"</code></pre>
               <label for="selector-filter-blocked">Blocked</label>
             </div>
           </div>
+          <div class="stack g-2">
+            <p class="b m-0">Toggle (checkbox-like)</p>
+            <div class="selector regular" role="group" aria-label="Notifications">
+              <input type="checkbox" id="selector-toggle-email" checked />
+              <label for="selector-toggle-email">Email</label>
+              <input type="checkbox" id="selector-toggle-sms" />
+              <label for="selector-toggle-sms">SMS</label>
+              <input type="checkbox" id="selector-toggle-push" checked />
+              <label for="selector-toggle-push">Push</label>
+            </div>
+          </div>
           <div class="stack g-3">
             <p class="b m-0">Color variants</p>
             <div class="stack g-2">
@@ -589,10 +600,33 @@ const result = "fast, consistent styling"</code></pre>
             <span class="b">Textarea</span>
             <textarea class="textarea fit-w" rows="4" placeholder="Write a longer note here..."></textarea>
           </label>
-          <label class="stack g-1">
-            <span class="b">Range</span>
-            <input class="range fit-w" type="range" min="0" max="100" value="60" />
-          </label>
+          <div class="stack g-3">
+            <p class="b m-0">Select</p>
+            <div class="col-3 g-4">
+              <label class="stack g-1">
+                <span class="b">Default</span>
+                <select class="selector regular" aria-label="Default select">
+                  <option>List</option>
+                  <option>Board</option>
+                  <option>Calendar</option>
+                </select>
+              </label>
+              <label class="stack g-1">
+                <span class="b">Disabled</span>
+                <select class="selector regular" aria-label="Disabled select" disabled>
+                  <option>Unavailable</option>
+                </select>
+              </label>
+              <label class="stack g-1">
+                <span class="b">Outline</span>
+                <select class="selector regular outline" aria-label="Outline select">
+                  <option>Low</option>
+                  <option selected>Medium</option>
+                  <option>High</option>
+                </select>
+              </label>
+            </div>
+          </div>
           <fieldset class="stack g-3">
             <legend class="b">FieldSet</legend>
             <div class="col-2 g-2">
@@ -600,6 +634,56 @@ const result = "fast, consistent styling"</code></pre>
               <label class="stack g-1"><span>Last Name</span><input class="input" type="text" /></label>
             </div>
           </fieldset>
+        </div>
+      </section>
+      <section id="range-demo" class="panel stack g-4 p-6 bd bd-4o ">
+        <h2 class="h3 m-0">Range Inputs</h2>
+        <div class="stack g-5">
+          <div class="stack g-3">
+            <p class="b m-0">Default</p>
+            <label class="stack g-1">
+              <span class="small">Neutral</span>
+              <input class="range fit-w" type="range" min="0" max="100" value="60" />
+            </label>
+          </div>
+          <div class="stack g-3">
+            <p class="b m-0">Color variants</p>
+            <div class="stack g-2">
+              <label class="stack g-1">
+                <span class="small">Primary</span>
+                <input class="range primary fit-w" type="range" min="0" max="100" value="25" />
+              </label>
+              <label class="stack g-1">
+                <span class="small">Secondary</span>
+                <input class="range secondary fit-w" type="range" min="0" max="100" value="45" />
+              </label>
+              <label class="stack g-1">
+                <span class="small">Success</span>
+                <input class="range success fit-w" type="range" min="0" max="100" value="70" />
+              </label>
+              <label class="stack g-1">
+                <span class="small">Warning</span>
+                <input class="range warning fit-w" type="range" min="0" max="100" value="80" />
+              </label>
+              <label class="stack g-1">
+                <span class="small">Danger</span>
+                <input class="range danger fit-w" type="range" min="0" max="100" value="90" />
+              </label>
+            </div>
+          </div>
+          <div class="stack g-3">
+            <p class="b m-0">Disabled</p>
+            <div class="stack g-2">
+              <label class="stack g-1">
+                <span class="small">Neutral disabled</span>
+                <input class="range fit-w" type="range" min="0" max="100" value="35" disabled />
+              </label>
+              <label class="stack g-1">
+                <span class="small">Primary disabled</span>
+                <input class="range primary fit-w" type="range" min="0" max="100" value="65" disabled />
+              </label>
+            </div>
+          </div>
         </div>
       </section>
       <section id="checks-radios-demo" class="panel stack g-4 p-6 bd bd-4o ">
