@@ -25,6 +25,7 @@ export default group(
 			cursive: "cursive",
 			base: 14,
 			size: `calc(1rem * ${vars.font.base} / ${REM_PIXELS})`,
+			weight: 400,
 			line: "1.25em",
 			text: {
 				family: `${vars.font.sans}`,
@@ -57,7 +58,7 @@ export default group(
 			},
 		},
 		block: {
-			width: "140px",
+			width: "220px",
 		},
 		column: {
 			width: `${vars.block.width}`,

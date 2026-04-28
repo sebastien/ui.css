@@ -2,160 +2,149 @@ import css, { vars } from "../js/uicss.js";
 import { colormix } from "./colors.js";
 import colors from "./colors.js";
 
-function badge(...rest) {
+function pill(...rest) {
 	return css.nesting(
-		".badge",
+		[".pill", ".badge"],
 		{},
 		css.rule("&", {
 			// Box
 			display: "inline-flex",
-			padding: vars.badge.padding.or("0.75em 0.5em"),
+			padding: vars.pill.padding.or("0.25em 0.75em"),
+			font_size: "inherit",
+			line_height: vars.pill.font.line.or("1.15em"),
 			// Border
-			border_width: vars.badge.border.size.or("1px"),
+			border_width: vars.pill.border.size.or("0px"),
+			border_radius: vars.pill.border.radius.or("1em"),
 			border_color: colors.mixed(
-				vars.badge.color.base.or(vars.color.neutral),
-				vars.badge.color.tint.or(vars.color.ink),
-				0.8,
+				vars.pill.color.base.or(vars.color.neutral),
+				vars.pill.color.tint.or(vars.color.paper),
+				0.5,
 				1.0,
 			),
 			background_color: colors.mixed(
-				vars.badge.color.base.or(vars.color.neutral),
-				vars.badge.color.tint.or(vars.color.paper),
+				vars.pill.color.base.or(vars.color.neutral),
+				vars.pill.color.tint.or(vars.color.paper),
 				1.0,
 				1.0,
 			),
-			color: colors.mixed(
-				vars.badge.color.base.or(vars.color.neutral),
-				vars.badge.color.tint.or(vars.color.ink),
-				0.2,
+			color: `contrast-color(${vars.pill.color.base.or(vars.color.neutral)})`,
+		}),
+		// Color variants
+		...colors.names.map((color) =>
+			css.rule(css.mods("&", color), {
+				__pill_color_base: vars.color[color],
+			}),
+		),
+		css.rule("&.outline", {
+			background_color: "transparent",
+			border_width: vars.pill.border.size.or("1px"),
+			border_color: colors.mixed(
+				vars.pill.color.base.or(vars.color.neutral),
+				vars.pill.color.tint.or(vars.color.paper),
+				0.5,
 				1.0,
+			),
+			color: colors.mixed(
+				vars.pill.color.base.or(vars.color.neutral),
+				vars.pill.color.tint.or(vars.color.ink),
+				0.8,
+				1.0,
+			),
+		}),
+		...rest,
+	);
+}
+
+function status(...rest) {
+	return css.nesting(
+		[".status"],
+		{},
+		css.rule("&", {
+			// Box
+			display: "inline-flex",
+			padding: vars.status.padding.or("2px"),
+			font_size: "inherit",
+			gap: "0.25em",
+			// Border
+			border_width: vars.status.border.size.or("0px"),
+			border_radius: vars.status.border.radius.or("1em"),
+			border_color: colors.mixed(
+				vars.status.color.base.or(vars.color.neutral),
+				vars.status.color.tint.or(vars.color.paper),
+				0.5,
+				1.0,
+			),
+			background_color: colors.mixed(
+				vars.color.neutral,
+				vars.color.paper,
+				0.5,
+				0.9,
+			),
+			color: `contrast-color(${vars.status.color.base.or(vars.color.neutral)})`,
+		}),
+		// Color variants
+		...colors.names.map((color) =>
+			css.rule(css.mods(["&", "& > *"], color), {
+				__status_color_base: vars.color[color],
+			}),
+		),
+		css.rule("& > *", {
+			display: "inline-block",
+			border_radius: vars.status.border.radius.or("1em"),
+			width: "2em",
+			height: "0.25em",
+			background_color: colors.mixed(
+				vars.status.color.base.or(vars.color.neutral),
+				vars.status.color.tint.or(vars.color.paper),
+				1.0,
+				1.0,
+			),
+		}),
+		css.rule("&.outline > *", {
+			background_color: "transparent",
+			border_width: vars.status.border.size.or("1px"),
+			border_color: colors.mixed(
+				vars.status.color.base.or(vars.color.neutral),
+				vars.status.color.tint.or(vars.color.paper),
+				1.0,
+				1.0,
+			),
+		}),
+		...rest,
+	);
+}
+
+function card(...rest) {
+	return css.nesting(
+		[".card", ".panel"],
+		{},
+		css.rule("&", {
+			padding: vars.card.padding.or("1.5em"),
+			// Border
+			border_width: vars.card.border.size.or("1px"),
+			border_radius: vars.card.border.radius.or("0.5em"),
+			border_color: colors.mixed(
+				vars.card.color.base.or(vars.color.neutral),
+				vars.card.color.tint.or(vars.color.paper),
+				vars.card.color.blend.or(0.5),
+				vars.card.color.alpha.or(0.5),
+			),
+			// Background
+			background_color: colors.mixed(
+				vars.card.color.base.or(vars.color.neutral),
+				vars.card.color.tint.or(vars.color.paper),
+				vars.card.color.blend.or(0.1),
+				vars.card.color.alpha.or(1.0),
 			),
 		}),
 		// Color variants
 		...colors.names.map((color) =>
 			css.rule(css.mods("&", color), {
-				___color_base: vars.color[color],
+				__control_color_base: vars.color[color],
 			}),
 		),
 		...rest,
 	);
-}
-function pill() {
-	return css.group(
-		css.rule(".pill", {
-			__pill_tone: vars.color.neutral,
-			__pill_contrast: vars.color.paper,
-			display: "inline-flex",
-			align_items: "center",
-			justify_content: "center",
-			gap: "0.45em",
-			padding: "0.3em 0.8em",
-			border_radius: "999px",
-			border: "1px solid transparent",
-			font_size: "0.82em",
-			line_height: "1.2",
-			font_weight: "600",
-			white_space: "nowrap",
-			background: colormix(vars.pill.tone, vars.color.paper, "82%", "100%"),
-			color: colormix(vars.pill.tone, vars.color.ink, "58%", "100%"),
-			border_color: colormix(vars.pill.tone, vars.color.paper, "66%", "53%"),
-		}),
-		css.rule(".pill-dot", {
-			width: "0.5em",
-			height: "0.5em",
-			border_radius: "50%",
-			background: "currentColor",
-			opacity: "0.9",
-			flex: "0 0 auto",
-		}),
-		...[
-			["primary", vars.color.primary, vars.color.paper],
-			["secondary", vars.color.secondary, vars.color.paper],
-			["tertiary", vars.color.tertiary, vars.color.paper],
-			["success", vars.color.success, vars.color.paper],
-			["warning", vars.color.warning, vars.color.ink],
-			["danger", vars.color.danger, vars.color.paper],
-			["error", vars.color.danger, vars.color.paper],
-			["neutral", vars.color.neutral, vars.color.paper],
-		].map(([name, color, contrast]) =>
-			css.rule([`.pill.${name}`, `.pill[data-color='${name}']`], {
-				__pill_tone: `${color}`,
-				__pill_contrast: `${contrast}`,
-			}),
-		),
-		css.rule(".pill[data-inverse='true']", {
-			background: vars.pill.tone,
-			color: vars.pill.contrast,
-			border_color: "transparent",
-		}),
-		css.rule(".pill[data-inverse='true'] .pill-dot", {
-			background: vars.color.paper,
-			opacity: "0.95",
-		}),
-		css.rule(".pill[data-size='small']", {
-			font_size: "0.72em",
-			padding: "0.22em 0.62em",
-		}),
-		css.rule(".pill[data-size='medium']", {
-			font_size: "0.82em",
-			padding: "0.3em 0.8em",
-		}),
-		css.rule(".pill[data-width='full']", {
-			display: "flex",
-			width: "100%",
-			justify_content: "center",
-		}),
-	)
-}
-
-function status() {
-	return css.group(
-		css.rule(".status", {
-			display: "inline-grid",
-			grid_auto_flow: "column",
-			align_items: "center",
-			gap: "0.32em",
-			padding: "0.18em",
-			border_radius: "999px",
-			background: colormix(vars.color.neutral, vars.color.paper, "88%", "100%"),
-			border: `1px solid ${colormix(vars.color.neutral, vars.color.paper, "72%", "48%")}`,
-		}),
-		css.rule([".status > .start", ".status > .middle", ".status > .end"], {
-			width: "1.65em",
-			height: "0.45em",
-			border_radius: "999px",
-			background: colormix(vars.color.neutral, vars.color.paper, "56%", "100%"),
-		}),
-		css.rule(
-			[
-				".status > .start",
-				".status.success > .start",
-				".status.warning > .start",
-				".status.error > .start",
-			],
-			{
-				background: vars.color.primary,
-			},
-		),
-		css.rule(".status.success > .middle", {
-			background: vars.color.success,
-		}),
-		css.rule(".status.success > .end", {
-			background: colormix(vars.color.success, vars.color.paper, "20%", "100%"),
-		}),
-		css.rule(".status.warning > .middle", {
-			background: vars.color.warning,
-		}),
-		css.rule(".status.warning > .end", {
-			background: colormix(vars.color.warning, vars.color.paper, "20%", "100%"),
-		}),
-		css.rule(".status.error > .middle", {
-			background: vars.color.danger,
-		}),
-		css.rule(".status.error > .end", {
-			background: colormix(vars.color.danger, vars.color.paper, "20%", "100%"),
-		}),
-	)
 }
 
 function breadcrumbs() {
@@ -180,7 +169,7 @@ function breadcrumbs() {
 			display: "block",
 			rotate: "45deg",
 		}),
-	)
+	);
 }
 
 function section() {
@@ -225,7 +214,7 @@ function section() {
 		css.rule("details.section > *:not(summary)", {
 			padding: `${vars.pad[2]}`,
 		}),
-	)
+	);
 }
 
 function panels() {
@@ -321,7 +310,7 @@ function panels() {
 		css.rule('.panels[data-panel="5"]', {
 			__panels_current: "5",
 		}),
-	)
+	);
 }
 
 function tree() {
@@ -378,13 +367,13 @@ function tree() {
 		css.rule("details.tree details details details details details", {
 			__tree_depth: 5,
 		}),
-	)
+	);
 }
 
 export default css.named({
-	badge: badge(),
 	pill: pill(),
 	status: status(),
+	card: card(),
 	breadcrumbs: breadcrumbs(),
 	section: section(),
 	panels: panels(),

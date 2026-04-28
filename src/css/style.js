@@ -1,12 +1,4 @@
-import {
-	group,
-	mods,
-	named,
-	rule,
-	sides,
-	times,
-	vars,
-} from "../js/uicss.js";
+import { group, mods, named, rule, sides, times, vars } from "../js/uicss.js";
 
 // Module: style
 // Visual styling utilities for spacing, typography, borders, shadows, depth,
@@ -24,7 +16,7 @@ import {
 // ----------------------------------------------------------------------------
 
 // Spacing index scale for margin/padding utilities (0–8).
-const spacingSizes = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+const spacingSizes = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
 export default named({
 	// .base — root font setup from token variables
@@ -42,6 +34,7 @@ export default named({
 		rule(".nolh", { line_height: "0em" }),
 		rule(".noblur", { __shadow_spread: "0" }),
 		rule(".nogap", { gap: "0em" }),
+		rule(".nosel", { user_select: "none" }),
 		rule(".ma", { margin: "auto" }),
 		spacingSizes.map((i) =>
 			rule(`.m-${i}`, {
@@ -62,13 +55,13 @@ export default named({
 			rule(`.mr-${i}`, { margin_right: `${vars.margin[i]}` }),
 		),
 		spacingSizes.map((i) =>
-			rule(`.mh-${i}`, {
+			rule(`.mw-${i}`, {
 				margin_left: `${vars.margin[i]}`,
 				margin_right: `${vars.margin[i]}`,
 			}),
 		),
 		spacingSizes.map((i) =>
-			rule(`.mv-${i}`, {
+			rule(`.mh-${i}`, {
 				margin_top: `${vars.margin[i]}`,
 				margin_bottom: `${vars.margin[i]}`,
 			}),
@@ -92,13 +85,13 @@ export default named({
 			rule(`.pr-${i}`, { padding_right: `${vars.pad[i]}` }),
 		),
 		spacingSizes.map((i) =>
-			rule(`.ph-${i}`, {
+			rule(`.pw-${i}`, {
 				padding_left: `${vars.pad[i]}`,
 				padding_right: `${vars.pad[i]}`,
 			}),
 		),
 		spacingSizes.map((i) =>
-			rule(`.pv-${i}`, {
+			rule(`.ph-${i}`, {
 				padding_top: `${vars.pad[i]}`,
 				padding_bottom: `${vars.pad[i]}`,
 			}),
@@ -246,8 +239,7 @@ export default named({
 
 	table: group(
 		rule("table", {
-			border_collapse: "separate",
-			border_spacing: `0px ${vars.gap[3]}`,
+			border_collapse: "collapse",
 		}),
 		rule(["table.lined tbody th", "table.lined tbody td"], {
 			border_bottom_width: vars.border.width,

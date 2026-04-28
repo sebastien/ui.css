@@ -1,6 +1,6 @@
 import { vars, named, group, rule } from "../js/uicss.js";
 
-	export default named({
+export default named({
 	undim: group(
 		rule(".hover-undim", {
 			transition: `opacity ${vars.motion.duration.normal} ${vars.motion.easing.emphasized}`,
@@ -23,6 +23,11 @@ import { vars, named, group, rule } from "../js/uicss.js";
 	summary: group(
 		rule("details .open-show", { display: "none" }),
 		rule("details:open .open-show", { display: "unset" }),
+		rule("details .open-rotate", {
+			transform: "rotate(0deg)",
+			transition: `transform ${vars.motion.duration.fast} ${vars.motion.easing.standard}`,
+		}),
+		rule("details:open .open-rotate", { transform: "rotate(90deg)" }),
 	),
 	show: group(
 		rule(".hovered .hover-show", { opacity: "0.0" }),

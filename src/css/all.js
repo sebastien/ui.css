@@ -13,13 +13,13 @@ export default (cols = COLORS) =>
 		tokens,
 		reset,
 		controls,
-		//components,
-		// NOTE: Style should be the last
-		text,
-		colors: colors(cols),
-		layout,
-		style,
+		components,
 		behavior,
+		layout,
+		// NOTE: Style should be the last
+		colors: colors(cols),
+		text,
+		style,
 		theme: group(rule(".theme", {})),
 	});
 // EOF

@@ -10,7 +10,8 @@ function base(selector, ...rest) {
 		css.rule("&", {
 			// Font
 			font_family: vars.control.font.family.or(vars.font.controls.family),
-			font_size: vars.control.font.size.or(vars.font.controls.size),
+			// We inerit font size
+			font_size: "inherit",
 			line_height: vars.control.font.line.or(vars.font.controls.line),
 			font_weight: vars.control.font.weight.or(vars.font.controls.weight),
 			// Box
@@ -52,6 +53,48 @@ function base(selector, ...rest) {
 }
 
 // Base style for all action controls (button-like)
+function selectable(...rest) {
+	return css.nesting(
+		".selectable",
+		{
+			// Cursor
+			cursor: "pointer",
+			// Default syling, background is pure primary color
+			background_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.ink.or(vars.color.paper),
+				0.75,
+				0.0,
+			),
+		},
+		// Hover state, typically a blent to paper
+		css.rule(css.mods("&", "hover"), {
+			background_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.paper),
+				0.75,
+				1.0,
+			),
+		}),
+		// Active state, typically a blend to ink
+		css.rule(css.mods("&", "active"), {
+			background_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.paper),
+				0.9,
+				1.0,
+			),
+		}),
+		// Disabled variant
+		css.rule(css.mods("&", "disabled"), {
+			background_color: "transparent",
+			cursor: "default",
+		}),
+		...rest,
+	);
+}
+
+// Base style for all action controls (button-like)
 function action(selector, ...rest) {
 	return base(
 		selector,
@@ -65,6 +108,9 @@ function action(selector, ...rest) {
 				1.0,
 				1.0,
 			),
+			color: `contrast-color(${vars.control.color.base.or(
+				vars.color.neutral,
+			)})`,
 			// Border
 			border_radius: vars.action.border.radius.or("0.25em"),
 		}),
@@ -264,7 +310,7 @@ function field(selector, ...rest) {
 
 function checkbox() {
 	return field(
-		["input[type=checkbox]", ".checkbox"],
+		["input[type=checkbox]:not(.toggle)", ".checkbox"],
 		css.rule("&", {
 			appearance: "none",
 			padding: "0em",
@@ -407,6 +453,116 @@ function radio() {
 	);
 }
 
+function toggle() {
+	return field(
+		["input[type=checkbox].toggle", ".toggle"],
+		css.rule("&", {
+			// Box
+			cursor: "pointer",
+			position: "relative",
+			display: "inline-flex",
+			vertical_align: "middle",
+			appearance: "none",
+			padding: "0em",
+			margin: "0em",
+			width: vars.toggle.width.or("2.5em"),
+			height: vars.toggle.height.or("1.5em"),
+			// Background
+			background_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.paper),
+				0.0,
+				0.95,
+			),
+			// Border
+			border_radius: vars.control.border.radius.or("0.25em"),
+			border_color: colors.mixed(
+				vars.color.neutral,
+				vars.color.paper,
+				0.8,
+				0.9,
+			),
+			// Outline
+			outline_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.paper),
+				0.8,
+				0.6,
+			),
+			// Transition
+			transition: "background-color 140ms ease, outline-color 140ms ease",
+		}),
+		css.rule("&::before", {
+			// Content
+			content: '""',
+			// Box
+			display: "block",
+			position: "absolute",
+			top: "2px",
+			bottom: "2px",
+			left: "2px",
+			aspect_ratio: "1/1",
+			// Border
+			border_style: "solid",
+			border_radius: vars.toggle.knob.border.radius.or(
+				vars.control.border.radius,
+				"0.25em",
+			),
+			border_width: vars.toggle.knob.border.width.or(
+				vars.control.border.width,
+				"1px",
+			),
+			border_color: colors.mixed(vars.color.neutral, vars.color.ink, 0.8, 0.6),
+			// Background
+			background_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.paper),
+				0.7,
+				1.0,
+			),
+			transition: "all 140ms ease",
+		}),
+
+		css.rule("&:checked, &.checked", {
+			background_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.paper),
+				vars.control.color.blend.or(0.9),
+				0.9,
+			),
+		}),
+		css.rule("&:checked::before, &.checked::before", {
+			left: "calc(100% - 2px)",
+			border_color: colors.mixed(vars.color.neutral, vars.color.ink, 0.7, 0.8),
+			transform: "translateX(-100%)",
+		}),
+		css.rule("&:active::before, &.active::before", {}),
+		css.rule("&:checked:active::before, &.checked.active::before", {}),
+		css.rule("&:hover, &.hover", {
+			background_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.paper),
+				0.35,
+				1.0,
+			),
+		}),
+		css.rule("&:checked:hover, &.checked.hover", {
+			background_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.ink),
+				0.82,
+				1.0,
+			),
+		}),
+		css.rule("&:focus, &:focus-within, &.focus", {
+			outline_width: vars.control.outline.width.or("2px"),
+		}),
+		css.rule("&:disabled, &.disabled", {
+			cursor: "not-allowed",
+		}),
+	);
+}
+
 function range() {
 	return field(
 		["input[type=range]", ".range"],
@@ -506,49 +662,78 @@ function range() {
 				1.0,
 			),
 		}),
-		css.rule("&:hover::-webkit-slider-runnable-track, &.hover::-webkit-slider-runnable-track", {
-			border_color: colors.mixed(
-				vars.control.color.base.or(vars.color.neutral),
-				vars.control.color.tint.or(vars.color.paper),
-				0.8,
-				1.0,
-			),
-		}),
-		css.rule("&:focus::-webkit-slider-runnable-track, &:focus-within::-webkit-slider-runnable-track, &.focus::-webkit-slider-runnable-track", {
-			border_color: colors.mixed(
-				vars.control.color.base.or(vars.color.neutral),
-				vars.control.color.tint.or(vars.color.paper),
-				0.85,
-				1.0,
-			),
-		}),
+		css.rule(
+			"&:hover::-webkit-slider-runnable-track, &.hover::-webkit-slider-runnable-track",
+			{
+				border_color: colors.mixed(
+					vars.control.color.base.or(vars.color.neutral),
+					vars.control.color.tint.or(vars.color.paper),
+					0.8,
+					1.0,
+				),
+			},
+		),
+		css.rule(
+			"&:focus::-webkit-slider-runnable-track, &:focus-within::-webkit-slider-runnable-track, &.focus::-webkit-slider-runnable-track",
+			{
+				border_color: colors.mixed(
+					vars.control.color.base.or(vars.color.neutral),
+					vars.control.color.tint.or(vars.color.paper),
+					0.85,
+					1.0,
+				),
+			},
+		),
 		css.rule("&:focus, &:focus-within, &.focus", {
 			outline_width: "0px",
 		}),
-		css.rule("&:focus::-webkit-slider-thumb, &:focus-within::-webkit-slider-thumb, &.focus::-webkit-slider-thumb", {
-			box_shadow: `0 0 0 ${vars.control.outline.width.or("2px")} ${colors.mixed(
-				vars.control.color.base.or(vars.color.neutral),
-				vars.control.color.tint.or(vars.color.paper),
-				0.8,
-				0.5,
-			)}`,
-		}),
-		css.rule("&:focus::-moz-range-thumb, &:focus-within::-moz-range-thumb, &.focus::-moz-range-thumb", {
-			box_shadow: `0 0 0 ${vars.control.outline.width.or("2px")} ${colors.mixed(
-				vars.control.color.base.or(vars.color.neutral),
-				vars.control.color.tint.or(vars.color.paper),
-				0.8,
-				0.5,
-			)}`,
-		}),
+		css.rule(
+			"&:focus::-webkit-slider-thumb, &:focus-within::-webkit-slider-thumb, &.focus::-webkit-slider-thumb",
+			{
+				box_shadow: `0 0 0 ${vars.control.outline.width.or("2px")} ${colors.mixed(
+					vars.control.color.base.or(vars.color.neutral),
+					vars.control.color.tint.or(vars.color.paper),
+					0.8,
+					0.5,
+				)}`,
+			},
+		),
+		css.rule(
+			"&:focus::-moz-range-thumb, &:focus-within::-moz-range-thumb, &.focus::-moz-range-thumb",
+			{
+				box_shadow: `0 0 0 ${vars.control.outline.width.or("2px")} ${colors.mixed(
+					vars.control.color.base.or(vars.color.neutral),
+					vars.control.color.tint.or(vars.color.paper),
+					0.8,
+					0.5,
+				)}`,
+			},
+		),
 		css.rule("&:active::-webkit-slider-thumb, &.active::-webkit-slider-thumb", {
 			transform: "scale(0.95)",
 		}),
 		css.rule("&:disabled, &.disabled", {
 			cursor: "not-allowed",
 		}),
-	)
+	);
 }
+function select() {
+	return field(
+		["select", ".select"],
+		css.rule("&", {
+			appearance: "none",
+			cursor: "pointer",
+			padding_right: vars.select.icon.gap.or("2.2em"),
+			background_repeat: "no-repeat",
+			background_position: "right 0.75em center",
+			background_size: vars.select.icon.size.or("0.65em 0.45em"),
+		}),
+		css.rule("&:disabled, &.disabled", {
+			cursor: "not-allowed",
+		}),
+	);
+}
+
 function selector() {
 	// Selectors are like a `div` with `input + label`
 	return field(
@@ -561,7 +746,7 @@ function selector() {
 			border_width: "0px",
 		}),
 		css.nesting("& > input", {
-			display: "none",
+			display: "none !important",
 		}),
 		// Labels are rendered as buttons, ghost-like by default ,filled in
 		// with a border. The selector may have rounded borders, which is then
@@ -621,12 +806,9 @@ function selector() {
 			border_bottom_left_radius: vars.selector.border.radius.or("0.25em"),
 		}),
 		css.nesting("& > input:checked + label", {
-			color: colors.mixed(
-				vars.control.color.base.or(vars.color.neutral),
-				vars.control.color.tint.or(vars.color.ink),
-				vars.control.color.blend.or(0.1),
-				1.0,
-			),
+			color: `contrast-color(${vars.control.color.base.or(
+				vars.color.neutral,
+			)})`,
 			background_color: colors.mixed(
 				vars.control.color.base.or(vars.color.neutral),
 				vars.control.color.tint.or(vars.color.paper),
@@ -652,6 +834,9 @@ export default css.named({
 	checkbox: checkbox(),
 	radio: radio(),
 	range: range(),
+	toggle: toggle(),
+	select: select(),
 	selector: selector(),
+	selectabe: selectable(),
 });
 // EOF

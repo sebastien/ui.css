@@ -7,10 +7,10 @@ export default layer(
 		margin: "0px",
 		padding: "0px",
 		margin_block: "unset",
-		font_style: "unset",
-		font_weight: "unset",
-		font_family: `${vars.font.text.family}`,
-		line_height: `${vars.font.text.line}`,
+		font_style: "inherit",
+		font_weight: "inherit",
+		font_family: "inherit",
+		line_height: "inherit",
 		border: "0px solid transparent",
 		outline: "0px solid transparent",
 		vertical_align: "baseline",
@@ -25,13 +25,16 @@ export default layer(
 	rule("html body", {
 		font_family: `${vars.font.text.family}`,
 		font_size: `${vars.font.size}`,
+		font_weight: `${vars.font.weight}`,
 		line_height: `${vars.font.line}`,
 	}),
 	rule(inputs, {
 		display: `inline-flex`,
 		width: `min-content`,
+		min_width: `0`,
 		appearance: "none",
 		font_family: `${vars.font.controls.family}`,
+		font_weight: `${vars.font.controls.weight}`,
 		font_size: `${vars.textsize.size[3]}`,
 		line_height: `${vars.font.controls.line}`,
 	}),
@@ -44,7 +47,7 @@ export default layer(
 		],
 		{
 			outline: "0px solid transparent",
-		}
+		},
 	),
 	rule([times(7, (i) => `h${i + 1}`)], {
 		font_family: `${vars.font.heading}`,
@@ -54,7 +57,7 @@ export default layer(
 	}),
 	rule("summary::-webkit-details-marker", {
 		display: "none",
-	})
+	}),
 );
 
 // EOF

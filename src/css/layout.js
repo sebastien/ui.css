@@ -146,6 +146,14 @@ export default named({
 			min_width: "100vw",
 			min_height: "100vh",
 		}),
+		rule(".fill-w", {
+			box_sizing: "border-box",
+			min_width: "100%",
+		}),
+		rule(".fill-h", {
+			box_sizing: "border-box",
+			min_height: "100%",
+		}),
 	),
 	limit: group(
 		...["text", "content", "page"].map((_) =>
@@ -158,13 +166,13 @@ export default named({
 	sizing: group(
 		named({
 			// TODO: Support min/max width
-		width: group(
-			...sizes.map((k, i) =>
-				rule(`.w-${i}`, { width: `${vars.size[i + 1]}` }),
-			),
-			...sizes.map((k, i) =>
-				rule(`.h-${i}`, { height: `${vars.size[i + 1]}` }),
-			),
+			width: group(
+				...sizes.map((k, i) =>
+					rule(`.w-${i}`, { width: `${vars.size[i + 1]}` }),
+				),
+				...sizes.map((k, i) =>
+					rule(`.h-${i}`, { height: `${vars.size[i + 1]}` }),
+				),
 				rule(".w-screen", { width: "100vw" }),
 				rule(".h-screen", { width: "100vh" }),
 				rule(".w-text", { max_width: `${vars.limit.text}` }),
@@ -183,33 +191,33 @@ export default named({
 					max_width: "unset",
 				}),
 			),
-		chars: group(
-			...times(5, (_) =>
-				rule(`.w-${_ + 1}ch`, {
-					width: `${Math.round(1.25 * (_ + 1))}ch`,
-				}),
+			chars: group(
+				...times(5, (_) =>
+					rule(`.w-${_ + 1}ch`, {
+						width: `${Math.round(1.25 * (_ + 1))}ch`,
+					}),
+				),
 			),
-		),
-		columns: group(
-			...times(5, (_) =>
-				rule(`.w-${_ + 1}cl`, {
-					width: `calc(${vars.column.width}*${_ + 1})`,
-				}),
+			columns: group(
+				...times(5, (_) =>
+					rule(`.w-${_ + 1}cl`, {
+						width: `calc(${vars.column.width}*${_ + 1})`,
+					}),
+				),
 			),
-		),
 
-		blocks: group(
-			...times(5, (_) =>
-				rule(`.w-${_ + 1}bl`, {
-					width: `calc(${vars.block.width}*${_ + 1})`,
-				}),
+			blocks: group(
+				...times(5, (_) =>
+					rule(`.w-${_ + 1}bl`, {
+						width: `calc(${vars.block.width}*${_ + 1})`,
+					}),
+				),
+				...times(5, (_) =>
+					rule(`.h-${_ + 1}bl`, {
+						width: `calc(${vars.block.width}*${_ + 1})`,
+					}),
+				),
 			),
-			...times(5, (_) =>
-				rule(`.h-${_ + 1}bl`, {
-					width: `calc(${vars.block.width}*${_ + 1})`,
-				}),
-			),
-		),
 			percentage: group(
 				...percentages.map((p) =>
 					rule(`.w-${p}p`, {
@@ -237,7 +245,7 @@ export default named({
 		rule(".row", {
 			display: "flex",
 			align_items: "center",
-			gap: `${vars.gap[3]}`,
+			gap: vars.gap,
 		}),
 		rule(".row.stretch", {
 			align_items: "stretch",
@@ -246,7 +254,7 @@ export default named({
 			justify_content: "flex-end",
 		}),
 		rule(".row.lined > *", {
-			border_right: `${vars.border.width} ${vars.border.style} ${vars.border.color} `,
+			border_right: `${vars.border.width.or("1px")} ${vars.border.style.or("solid")} ${vars.border.color.or(vars.color.neutral)} `,
 			border_collapse: "collapse",
 		}),
 		rule(".row.lined > *:last-child", {
@@ -257,6 +265,10 @@ export default named({
 		rule(".stack", {
 			display: "flex",
 			flex_direction: "column",
+			align_items: "unset",
+			align_self: "unset",
+			justify_content: "unset",
+			gap: vars.gap,
 		}),
 		rule([".stack > .left", ".stack > .start"], {
 			align_self: "flex-start",
@@ -265,7 +277,7 @@ export default named({
 			align_self: "flex-end",
 		}),
 		rule(".stack.lined > *", {
-			border_bottom: `${vars.border.width} ${vars.border.style} ${vars.border.color} `,
+			border_bottom: `${vars.border.width.or("1px")} ${vars.border.style.or("solid")} ${vars.border.color.or(vars.color.neutral)} `,
 			border_collapse: "collapse",
 		}),
 		rule(".stack.lined > *:last-child", {
@@ -297,7 +309,7 @@ export default named({
 			rule(`.col-${_ + 1}`, {
 				display: "grid",
 				grid_template_columns: `repeat(${_ + 1}, 1fr)`,
-				grid_column_gap: `${vars.gap[3]}`,
+				gap: vars.gap,
 			}),
 		),
 	),

@@ -380,516 +380,546 @@ const result = "fast, consistent styling"</code></pre>
         <h2 class="h3 m-0">Selectors</h2>
         <div class="stack g-5">
           <div class="stack g-2">
-            <p class="b m-0">Single-select (radio-like)</p>
-            <div class="selector regular " role="radiogroup" aria-label="View mode">
-              <input type="radio" id="selector-view-list" name="selector-view" checked />
-              <label for="selector-view-list">List</label>
-              <input type="radio" id="selector-view-board" name="selector-view" />
-              <label for="selector-view-board">Board</label>
-              <input type="radio" id="selector-view-calendar" name="selector-view" />
-              <label for="selector-view-calendar">Calendar</label>
-            </div>
-          </div>
-          <div class="stack g-2">
-            <p class="b m-0">Multi-select (checkbox-like)</p>
-            <div class="selector regular outline" role="group" aria-label="Filters">
-              <input type="checkbox" id="selector-filter-open" checked />
-              <label for="selector-filter-open">Open</label>
-              <input type="checkbox" id="selector-filter-assigned" checked />
-              <label for="selector-filter-assigned">Assigned</label>
-              <input type="checkbox" id="selector-filter-priority" />
-              <label for="selector-filter-priority">Priority</label>
-              <input type="checkbox" id="selector-filter-blocked" />
-              <label for="selector-filter-blocked">Blocked</label>
-            </div>
-          </div>
-          <div class="stack g-2">
-            <p class="b m-0">Toggle (checkbox-like)</p>
-            <div class="selector regular" role="group" aria-label="Notifications">
-              <input type="checkbox" id="selector-toggle-email" checked />
-              <label for="selector-toggle-email">Email</label>
-              <input type="checkbox" id="selector-toggle-sms" />
-              <label for="selector-toggle-sms">SMS</label>
-              <input type="checkbox" id="selector-toggle-push" checked />
-              <label for="selector-toggle-push">Push</label>
-            </div>
-          </div>
-          <div class="stack g-3">
-            <p class="b m-0">Color variants</p>
-            <div class="stack g-2">
-              <div class="selector regular" role="radiogroup" aria-label="Neutral selector">
-                <input type="radio" id="sel-neutral-a" name="sel-neutral" checked /><label for="sel-neutral-a">One</label>
-                <input type="radio" id="sel-neutral-b" name="sel-neutral" /><label for="sel-neutral-b">Two</label>
-                <input type="radio" id="sel-neutral-c" name="sel-neutral" /><label for="sel-neutral-c">Three</label>
-              </div>
-              <div class="selector regular accent" role="radiogroup" aria-label="Accent selector">
-                <input type="radio" id="sel-accent-a" name="sel-accent" checked /><label for="sel-accent-a">One</label>
-                <input type="radio" id="sel-accent-b" name="sel-accent" /><label for="sel-accent-b">Two</label>
-                <input type="radio" id="sel-accent-c" name="sel-accent" /><label for="sel-accent-c">Three</label>
-              </div>
-              <div class="selector regular primary" role="radiogroup" aria-label="Primary selector">
-                <input type="radio" id="sel-primary-a" name="sel-primary" checked /><label for="sel-primary-a">One</label>
-                <input type="radio" id="sel-primary-b" name="sel-primary" /><label for="sel-primary-b">Two</label>
-                <input type="radio" id="sel-primary-c" name="sel-primary" /><label for="sel-primary-c">Three</label>
-              </div>
-              <div class="selector regular secondary" role="radiogroup" aria-label="Secondary selector">
-                <input type="radio" id="sel-secondary-a" name="sel-secondary" checked /><label for="sel-secondary-a">One</label>
-                <input type="radio" id="sel-secondary-b" name="sel-secondary" /><label for="sel-secondary-b">Two</label>
-                <input type="radio" id="sel-secondary-c" name="sel-secondary" /><label for="sel-secondary-c">Three</label>
-              </div>
-              <div class="selector regular tertiary" role="radiogroup" aria-label="Tertiary selector">
-                <input type="radio" id="sel-tertiary-a" name="sel-tertiary" checked /><label for="sel-tertiary-a">One</label>
-                <input type="radio" id="sel-tertiary-b" name="sel-tertiary" /><label for="sel-tertiary-b">Two</label>
-                <input type="radio" id="sel-tertiary-c" name="sel-tertiary" /><label for="sel-tertiary-c">Three</label>
-              </div>
-              <div class="selector regular success" role="radiogroup" aria-label="Success selector">
-                <input type="radio" id="sel-success-a" name="sel-success" checked /><label for="sel-success-a">One</label>
-                <input type="radio" id="sel-success-b" name="sel-success" /><label for="sel-success-b">Two</label>
-                <input type="radio" id="sel-success-c" name="sel-success" /><label for="sel-success-c">Three</label>
-              </div>
-              <div class="selector regular warning" role="radiogroup" aria-label="Warning selector">
-                <input type="radio" id="sel-warning-a" name="sel-warning" checked /><label for="sel-warning-a">One</label>
-                <input type="radio" id="sel-warning-b" name="sel-warning" /><label for="sel-warning-b">Two</label>
-                <input type="radio" id="sel-warning-c" name="sel-warning" /><label for="sel-warning-c">Three</label>
-              </div>
-              <div class="selector regular danger" role="radiogroup" aria-label="Danger selector">
-                <input type="radio" id="sel-danger-a" name="sel-danger" checked /><label for="sel-danger-a">One</label>
-                <input type="radio" id="sel-danger-b" name="sel-danger" /><label for="sel-danger-b">Two</label>
-                <input type="radio" id="sel-danger-c" name="sel-danger" /><label for="sel-danger-c">Three</label>
-              </div>
-            </div>
+            <p class="b m-0">Toggle</p>
+            <input class="toggle" type="checkbox" id="selector-toggle" name="selector-view" checked />
+            <label for="selector-toggle">Selector Toggle</label>
           </div>
         </div>
-      </section>
-      <section id="inputs-demo" class="panel stack g-4 p-6 bd bd-4o ">
-        <h2 class="h3 m-0">Inputs</h2>
-        <div class="stack g-5">
+        <div class="stack g-3">
+          <p class="b m-0">Select (Combo)</p>
           <div class="col-3 g-4">
             <label class="stack g-1">
-              <span class="b">Currency</span>
-              <input class="input regular" type="text" placeholder="$ 1,000" />
-            </label>
-            <label class="stack g-1">
-              <span class="b">Percent</span>
-              <input class="input regular" type="text" placeholder="25%" />
-            </label>
-            <label class="stack g-1">
-              <span class="b">Unit</span>
-              <input class="input regular" type="text" placeholder="100 kg" />
-            </label>
-          </div>
-          <div class="col-2 g-4">
-            <label class="stack g-1">
               <span class="b">Default</span>
-              <input class="input regular" type="text" value="Jane Doe" />
+              <select class="regular" aria-label="Default select">
+                <option>List</option>
+                <option>Board</option>
+                <option>Calendar</option>
+              </select>
             </label>
             <label class="stack g-1">
               <span class="b">Disabled</span>
-              <input class="input regular" type="text" value="Unavailable" disabled />
+              <select class="regular" aria-label="Disabled select" disabled>
+                <option>Unavailable</option>
+              </select>
             </label>
-          </div>
-          <div class="stack g-1">
-            <span class="b">Field</span>
-            <input class="input" type="text" placeholder="Enter your legal full name" />
-            <span class="small">This field is required</span>
-          </div>
-          <div class="stack g-3">
-            <p class="b m-0">Field - Style variants</p>
-            <div class="row wrap g-3">
-              <input class="input regular" type="text" value="Regular" />
-              <input class="input outline regular" type="text" value="Outline" />
-              <input class="input ghost regular" type="text" value="Ghost" />
-              <input class="input blank regular" type="text" value="Blank" />
-            </div>
-          </div>
-          <div class="stack g-3">
-            <p class="b m-0">Field - Color variants × States</p>
-            <div class="stack g-3">
-              <div class="stack g-1">
-                <span class="small b">Neutral</span>
-                <div class="col-5 g-2">
-                  <input class="input regular" type="text" value="Normal" />
-                  <input class="input regular focus" type="text" value="Focus" />
-                  <input class="input regular hover" type="text" value="Hover" />
-                  <input class="input regular active" type="text" value="Active" />
-                  <input class="input regular" type="text" value="Disabled" disabled />
-                </div>
-              </div>
-              <div class="stack g-1">
-                <span class="small b">Primary</span>
-                <div class="col-5 g-2">
-                  <input class="input primary regular" type="text" value="Normal" />
-                  <input class="input primary regular focus" type="text" value="Focus" />
-                  <input class="input primary regular hover" type="text" value="Hover" />
-                  <input class="input primary regular active" type="text" value="Active" />
-                  <input class="input primary regular" type="text" value="Disabled" disabled />
-                </div>
-              </div>
-              <div class="stack g-1">
-                <span class="small b">Secondary</span>
-                <div class="col-5 g-2">
-                  <input class="input secondary regular" type="text" value="Normal" />
-                  <input class="input secondary regular focus" type="text" value="Focus" />
-                  <input class="input secondary regular hover" type="text" value="Hover" />
-                  <input class="input secondary regular active" type="text" value="Active" />
-                  <input class="input secondary regular" type="text" value="Disabled" disabled />
-                </div>
-              </div>
-              <div class="stack g-1">
-                <span class="small b">Tertiary</span>
-                <div class="col-5 g-2">
-                  <input class="input tertiary regular" type="text" value="Normal" />
-                  <input class="input tertiary regular focus" type="text" value="Focus" />
-                  <input class="input tertiary regular hover" type="text" value="Hover" />
-                  <input class="input tertiary regular active" type="text" value="Active" />
-                  <input class="input tertiary regular" type="text" value="Disabled" disabled />
-                </div>
-              </div>
-              <div class="stack g-1">
-                <span class="small b">Success</span>
-                <div class="col-5 g-2">
-                  <input class="input success regular" type="text" value="Normal" />
-                  <input class="input success regular focus" type="text" value="Focus" />
-                  <input class="input success regular hover" type="text" value="Hover" />
-                  <input class="input success regular active" type="text" value="Active" />
-                  <input class="input success regular" type="text" value="Disabled" disabled />
-                </div>
-              </div>
-              <div class="stack g-1">
-                <span class="small b">Warning</span>
-                <div class="col-5 g-2">
-                  <input class="input warning regular" type="text" value="Normal" />
-                  <input class="input warning regular focus" type="text" value="Focus" />
-                  <input class="input warning regular hover" type="text" value="Hover" />
-                  <input class="input warning regular active" type="text" value="Active" />
-                  <input class="input warning regular" type="text" value="Disabled" disabled />
-                </div>
-              </div>
-              <div class="stack g-1">
-                <span class="small b">Danger</span>
-                <div class="col-5 g-2">
-                  <input class="input danger regular" type="text" value="Normal" />
-                  <input class="input danger regular focus" type="text" value="Focus" />
-                  <input class="input danger regular hover" type="text" value="Hover" />
-                  <input class="input danger regular active" type="text" value="Active" />
-                  <input class="input danger regular" type="text" value="Disabled" disabled />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="stack g-3">
-            <p class="b m-0">Field - Sizes</p>
-            <div class="row wrap g-3">
-              <input class="input large" type="text" value="Large" />
-              <input class="input regular" type="text" value="Regular" />
-              <input class="input small" type="text" value="Small" />
-              <input class="input smaller" type="text" value="Smaller" />
-            </div>
-          </div>
-          <div class="stack g-3">
-            <p class="b m-0">Field - States</p>
-            <div class="row wrap g-3">
-              <input class="input regular" type="text" value="Normal" />
-              <input class="input regular focus" type="text" value="Focus" />
-              <input class="input regular hover" type="text" value="Hover" />
-              <input class="input regular active" type="text" value="Active" />
-              <input class="input regular" type="text" value="Disabled" disabled />
-            </div>
-          </div>
-          <label class="stack g-1">
-            <span class="b">Textarea</span>
-            <textarea class="textarea fit-w" rows="4" placeholder="Write a longer note here..."></textarea>
-          </label>
-          <div class="stack g-3">
-            <p class="b m-0">Select</p>
-            <div class="col-3 g-4">
-              <label class="stack g-1">
-                <span class="b">Default</span>
-                <select class="selector regular" aria-label="Default select">
-                  <option>List</option>
-                  <option>Board</option>
-                  <option>Calendar</option>
-                </select>
-              </label>
-              <label class="stack g-1">
-                <span class="b">Disabled</span>
-                <select class="selector regular" aria-label="Disabled select" disabled>
-                  <option>Unavailable</option>
-                </select>
-              </label>
-              <label class="stack g-1">
-                <span class="b">Outline</span>
-                <select class="selector regular outline" aria-label="Outline select">
-                  <option>Low</option>
-                  <option selected>Medium</option>
-                  <option>High</option>
-                </select>
-              </label>
-            </div>
-          </div>
-          <fieldset class="stack g-3">
-            <legend class="b">FieldSet</legend>
-            <div class="col-2 g-2">
-              <label class="stack g-1"><span>First Name</span><input class="input" type="text" /></label>
-              <label class="stack g-1"><span>Last Name</span><input class="input" type="text" /></label>
-            </div>
-          </fieldset>
-        </div>
-      </section>
-      <section id="range-demo" class="panel stack g-4 p-6 bd bd-4o ">
-        <h2 class="h3 m-0">Range Inputs</h2>
-        <div class="stack g-5">
-          <div class="stack g-3">
-            <p class="b m-0">Default</p>
             <label class="stack g-1">
-              <span class="small">Neutral</span>
-              <input class="range fit-w" type="range" min="0" max="100" value="60" />
+              <span class="b">Outline</span>
+              <select class="regular outline" aria-label="Outline select">
+                <option>Low</option>
+                <option selected>Medium</option>
+                <option>High</option>
+              </select>
             </label>
           </div>
-          <div class="stack g-3">
-            <p class="b m-0">Color variants</p>
-            <div class="stack g-2">
-              <label class="stack g-1">
-                <span class="small">Primary</span>
-                <input class="range primary fit-w" type="range" min="0" max="100" value="25" />
-              </label>
-              <label class="stack g-1">
-                <span class="small">Secondary</span>
-                <input class="range secondary fit-w" type="range" min="0" max="100" value="45" />
-              </label>
-              <label class="stack g-1">
-                <span class="small">Success</span>
-                <input class="range success fit-w" type="range" min="0" max="100" value="70" />
-              </label>
-              <label class="stack g-1">
-                <span class="small">Warning</span>
-                <input class="range warning fit-w" type="range" min="0" max="100" value="80" />
-              </label>
-              <label class="stack g-1">
-                <span class="small">Danger</span>
-                <input class="range danger fit-w" type="range" min="0" max="100" value="90" />
-              </label>
-            </div>
+        </div>
+        <div class="stack g-2">
+          <p class="b m-0">Single-select (radio-like)</p>
+          <div class="selector regular " role="radiogroup" aria-label="View mode">
+            <input type="radio" id="selector-view-list" name="selector-view" checked />
+            <label for="selector-view-list">List</label>
+            <input type="radio" id="selector-view-board" name="selector-view" />
+            <label for="selector-view-board">Board</label>
+            <input type="radio" id="selector-view-calendar" name="selector-view" />
+            <label for="selector-view-calendar">Calendar</label>
           </div>
-          <div class="stack g-3">
-            <p class="b m-0">Disabled</p>
-            <div class="stack g-2">
-              <label class="stack g-1">
-                <span class="small">Neutral disabled</span>
-                <input class="range fit-w" type="range" min="0" max="100" value="35" disabled />
-              </label>
-              <label class="stack g-1">
-                <span class="small">Primary disabled</span>
-                <input class="range primary fit-w" type="range" min="0" max="100" value="65" disabled />
-              </label>
+        </div>
+        <div class="stack g-2">
+          <p class="b m-0">Multi-select (checkbox-like)</p>
+          <div class="selector regular outline" role="group" aria-label="Filters">
+            <input type="checkbox" id="selector-filter-open" checked />
+            <label for="selector-filter-open">Open</label>
+            <input type="checkbox" id="selector-filter-assigned" checked />
+            <label for="selector-filter-assigned">Assigned</label>
+            <input type="checkbox" id="selector-filter-priority" />
+            <label for="selector-filter-priority">Priority</label>
+            <input type="checkbox" id="selector-filter-blocked" />
+            <label for="selector-filter-blocked">Blocked</label>
+          </div>
+        </div>
+        <div class="stack g-2">
+          <p class="b m-0">Toggle (checkbox-like)</p>
+          <div class="selector regular" role="group" aria-label="Notifications">
+            <input type="checkbox" id="selector-toggle-email" checked />
+            <label for="selector-toggle-email">Email</label>
+            <input type="checkbox" id="selector-toggle-sms" />
+            <label for="selector-toggle-sms">SMS</label>
+            <input type="checkbox" id="selector-toggle-push" checked />
+            <label for="selector-toggle-push">Push</label>
+          </div>
+        </div>
+        <div class="stack g-3">
+          <p class="b m-0">Color variants</p>
+          <div class="stack g-2">
+            <div class="selector regular" role="radiogroup" aria-label="Neutral selector">
+              <input type="radio" id="sel-neutral-a" name="sel-neutral" checked /><label for="sel-neutral-a">One</label>
+              <input type="radio" id="sel-neutral-b" name="sel-neutral" /><label for="sel-neutral-b">Two</label>
+              <input type="radio" id="sel-neutral-c" name="sel-neutral" /><label for="sel-neutral-c">Three</label>
+            </div>
+            <div class="selector regular accent" role="radiogroup" aria-label="Accent selector">
+              <input type="radio" id="sel-accent-a" name="sel-accent" checked /><label for="sel-accent-a">One</label>
+              <input type="radio" id="sel-accent-b" name="sel-accent" /><label for="sel-accent-b">Two</label>
+              <input type="radio" id="sel-accent-c" name="sel-accent" /><label for="sel-accent-c">Three</label>
+            </div>
+            <div class="selector regular primary" role="radiogroup" aria-label="Primary selector">
+              <input type="radio" id="sel-primary-a" name="sel-primary" checked /><label for="sel-primary-a">One</label>
+              <input type="radio" id="sel-primary-b" name="sel-primary" /><label for="sel-primary-b">Two</label>
+              <input type="radio" id="sel-primary-c" name="sel-primary" /><label for="sel-primary-c">Three</label>
+            </div>
+            <div class="selector regular secondary" role="radiogroup" aria-label="Secondary selector">
+              <input type="radio" id="sel-secondary-a" name="sel-secondary" checked /><label for="sel-secondary-a">One</label>
+              <input type="radio" id="sel-secondary-b" name="sel-secondary" /><label for="sel-secondary-b">Two</label>
+              <input type="radio" id="sel-secondary-c" name="sel-secondary" /><label for="sel-secondary-c">Three</label>
+            </div>
+            <div class="selector regular tertiary" role="radiogroup" aria-label="Tertiary selector">
+              <input type="radio" id="sel-tertiary-a" name="sel-tertiary" checked /><label for="sel-tertiary-a">One</label>
+              <input type="radio" id="sel-tertiary-b" name="sel-tertiary" /><label for="sel-tertiary-b">Two</label>
+              <input type="radio" id="sel-tertiary-c" name="sel-tertiary" /><label for="sel-tertiary-c">Three</label>
+            </div>
+            <div class="selector regular success" role="radiogroup" aria-label="Success selector">
+              <input type="radio" id="sel-success-a" name="sel-success" checked /><label for="sel-success-a">One</label>
+              <input type="radio" id="sel-success-b" name="sel-success" /><label for="sel-success-b">Two</label>
+              <input type="radio" id="sel-success-c" name="sel-success" /><label for="sel-success-c">Three</label>
+            </div>
+            <div class="selector regular warning" role="radiogroup" aria-label="Warning selector">
+              <input type="radio" id="sel-warning-a" name="sel-warning" checked /><label for="sel-warning-a">One</label>
+              <input type="radio" id="sel-warning-b" name="sel-warning" /><label for="sel-warning-b">Two</label>
+              <input type="radio" id="sel-warning-c" name="sel-warning" /><label for="sel-warning-c">Three</label>
+            </div>
+            <div class="selector regular danger" role="radiogroup" aria-label="Danger selector">
+              <input type="radio" id="sel-danger-a" name="sel-danger" checked /><label for="sel-danger-a">One</label>
+              <input type="radio" id="sel-danger-b" name="sel-danger" /><label for="sel-danger-b">Two</label>
+              <input type="radio" id="sel-danger-c" name="sel-danger" /><label for="sel-danger-c">Three</label>
             </div>
           </div>
         </div>
-      </section>
-      <section id="checks-radios-demo" class="panel stack g-4 p-6 bd bd-4o ">
-        <h2 class="h3 m-0">Checkboxes and Radios</h2>
-        <div class="stack g-6">
-          <div class="col-2 g-8">
-            <div class="stack g-3">
-              <p class="b m-0">Checkboxes</p>
-              <label class="row g-3 start"><input type="checkbox" class="checkbox large" /> Unchecked large</label>
-              <label class="row g-3 start"><input type="checkbox" class="checkbox large" checked /> Checked large</label>
-              <label class="row g-3 start"><input type="checkbox" class="checkbox small" /> Unchecked small</label>
-              <label class="row g-3 start"><input type="checkbox" class="checkbox small" checked /> Checked small</label>
-            </div>
-            <div class="stack g-3">
-              <p class="b m-0">Checkboxes - States</p>
+      </div>
+    </section>
+    <section id="inputs-demo" class="panel stack g-4 p-6 bd bd-4o ">
+      <h2 class="h3 m-0">Inputs</h2>
+      <div class="stack g-5">
+        <div class="col-3 g-4">
+          <label class="stack g-1">
+            <span class="b">Currency</span>
+            <input class="input regular" type="text" placeholder="$ 1,000" />
+          </label>
+          <label class="stack g-1">
+            <span class="b">Percent</span>
+            <input class="input regular" type="text" placeholder="25%" />
+          </label>
+          <label class="stack g-1">
+            <span class="b">Unit</span>
+            <input class="input regular" type="text" placeholder="100 kg" />
+          </label>
+        </div>
+        <div class="col-2 g-4">
+          <label class="stack g-1">
+            <span class="b">Default</span>
+            <input class="input regular" type="text" value="Jane Doe" />
+          </label>
+          <label class="stack g-1">
+            <span class="b">Disabled</span>
+            <input class="input regular" type="text" value="Unavailable" disabled />
+          </label>
+        </div>
+        <div class="stack g-1">
+          <span class="b">Field</span>
+          <input class="input" type="text" placeholder="Enter your legal full name" />
+          <span class="small">This field is required</span>
+        </div>
+        <div class="stack g-3">
+          <p class="b m-0">Field - Style variants</p>
+          <div class="row wrap g-3">
+            <input class="input regular" type="text" value="Regular" />
+            <input class="input outline regular" type="text" value="Outline" />
+            <input class="input ghost regular" type="text" value="Ghost" />
+            <input class="input blank regular" type="text" value="Blank" />
+          </div>
+        </div>
+        <div class="stack g-3">
+          <p class="b m-0">Field - Color variants × States</p>
+          <div class="stack g-3">
+            <div class="stack g-1">
+              <span class="small b">Neutral</span>
               <div class="col-5 g-2">
-                <label class="row g-2 start"><input type="checkbox" class="checkbox regular" /> Normal</label>
-                <label class="row g-2 start"><input type="checkbox" class="checkbox regular focus" /> Focus</label>
-                <label class="row g-2 start"><input type="checkbox" class="checkbox regular hover" /> Hover</label>
-                <label class="row g-2 start"><input type="checkbox" class="checkbox regular active" /> Active</label>
-                <label class="row g-2 start"><input type="checkbox" class="checkbox regular" disabled /> Disabled</label>
-                <label class="row g-2 start"><input type="checkbox" class="checkbox regular" checked /> Normal</label>
-                <label class="row g-2 start"><input type="checkbox" class="checkbox regular focus" checked /> Focus</label>
-                <label class="row g-2 start"><input type="checkbox" class="checkbox regular hover" checked /> Hover</label>
-                <label class="row g-2 start"><input type="checkbox" class="checkbox regular active" checked /> Active</label>
-                <label class="row g-2 start"><input type="checkbox" class="checkbox regular" checked disabled /> Disabled</label>
+                <input class="input regular" type="text" value="Normal" />
+                <input class="input regular focus" type="text" value="Focus" />
+                <input class="input regular hover" type="text" value="Hover" />
+                <input class="input regular active" type="text" value="Active" />
+                <input class="input regular" type="text" value="Disabled" disabled />
               </div>
             </div>
-            <div class="stack g-3">
-              <p class="b m-0">Radios</p>
-              <label class="row g-3 start"><input type="radio" name="radio-states" class="radio regular" /> Unchecked</label>
-              <label class="row g-3 start"><input type="radio" name="radio-states" class="radio regular" checked /> Checked</label>
-            </div>
-            <div class="stack g-3">
-              <p class="b m-0">Radios - States</p>
+            <div class="stack g-1">
+              <span class="small b">Primary</span>
               <div class="col-5 g-2">
-                <label class="row g-2 start"><input type="radio" name="radio-s1" class="radio regular" /> Normal</label>
-                <label class="row g-2 start"><input type="radio" name="radio-s2" class="radio regular focus" /> Focus</label>
-                <label class="row g-2 start"><input type="radio" name="radio-s3" class="radio regular hover" /> Hover</label>
-                <label class="row g-2 start"><input type="radio" name="radio-s4" class="radio regular active" /> Active</label>
-                <label class="row g-2 start"><input type="radio" name="radio-s5" class="radio regular" disabled /> Disabled</label>
-                <label class="row g-2 start"><input type="radio" name="radio-c1" class="radio regular" checked /> Normal</label>
-                <label class="row g-2 start"><input type="radio" name="radio-c2" class="radio regular focus" checked /> Focus</label>
-                <label class="row g-2 start"><input type="radio" name="radio-c3" class="radio regular hover" checked /> Hover</label>
-                <label class="row g-2 start"><input type="radio" name="radio-c4" class="radio regular active" checked /> Active</label>
-                <label class="row g-2 start"><input type="radio" name="radio-c5" class="radio regular" checked disabled /> Disabled</label>
+                <input class="input primary regular" type="text" value="Normal" />
+                <input class="input primary regular focus" type="text" value="Focus" />
+                <input class="input primary regular hover" type="text" value="Hover" />
+                <input class="input primary regular active" type="text" value="Active" />
+                <input class="input primary regular" type="text" value="Disabled" disabled />
+              </div>
+            </div>
+            <div class="stack g-1">
+              <span class="small b">Secondary</span>
+              <div class="col-5 g-2">
+                <input class="input secondary regular" type="text" value="Normal" />
+                <input class="input secondary regular focus" type="text" value="Focus" />
+                <input class="input secondary regular hover" type="text" value="Hover" />
+                <input class="input secondary regular active" type="text" value="Active" />
+                <input class="input secondary regular" type="text" value="Disabled" disabled />
+              </div>
+            </div>
+            <div class="stack g-1">
+              <span class="small b">Tertiary</span>
+              <div class="col-5 g-2">
+                <input class="input tertiary regular" type="text" value="Normal" />
+                <input class="input tertiary regular focus" type="text" value="Focus" />
+                <input class="input tertiary regular hover" type="text" value="Hover" />
+                <input class="input tertiary regular active" type="text" value="Active" />
+                <input class="input tertiary regular" type="text" value="Disabled" disabled />
+              </div>
+            </div>
+            <div class="stack g-1">
+              <span class="small b">Success</span>
+              <div class="col-5 g-2">
+                <input class="input success regular" type="text" value="Normal" />
+                <input class="input success regular focus" type="text" value="Focus" />
+                <input class="input success regular hover" type="text" value="Hover" />
+                <input class="input success regular active" type="text" value="Active" />
+                <input class="input success regular" type="text" value="Disabled" disabled />
+              </div>
+            </div>
+            <div class="stack g-1">
+              <span class="small b">Warning</span>
+              <div class="col-5 g-2">
+                <input class="input warning regular" type="text" value="Normal" />
+                <input class="input warning regular focus" type="text" value="Focus" />
+                <input class="input warning regular hover" type="text" value="Hover" />
+                <input class="input warning regular active" type="text" value="Active" />
+                <input class="input warning regular" type="text" value="Disabled" disabled />
+              </div>
+            </div>
+            <div class="stack g-1">
+              <span class="small b">Danger</span>
+              <div class="col-5 g-2">
+                <input class="input danger regular" type="text" value="Normal" />
+                <input class="input danger regular focus" type="text" value="Focus" />
+                <input class="input danger regular hover" type="text" value="Hover" />
+                <input class="input danger regular active" type="text" value="Active" />
+                <input class="input danger regular" type="text" value="Disabled" disabled />
               </div>
             </div>
           </div>
         </div>
-      </section>
-      <section class="panel stack g-4 p-6 bd bd-4o ">
-        <h2 class="h3 m-0">Cards, Badges, Pills, and Status</h2>
-        <div class="stack g-5">
-          <div class="col-2 g-4">
-            <article class="panel stack g-2 p-4">
-              <h3 class="h4 m-0">Basic Card</h3>
-              <p class="m-0">This is the card body content.</p>
-            </article>
-            <article class="panel stack g-3 p-4">
-              <h3 class="h4 m-0">Card with Columns</h3>
-              <div class="col-2 g-3">
-                <div class="stack g-1"><strong>Column 1</strong><span>Smaller column.</span></div>
-                <div class="stack g-1"><strong>Column 2</strong><span>Larger column with more content space.</span></div>
+        <div class="stack g-3">
+          <p class="b m-0">Field - Sizes</p>
+          <div class="row wrap g-3">
+            <input class="input large" type="text" value="Large" />
+            <input class="input regular" type="text" value="Regular" />
+            <input class="input small" type="text" value="Small" />
+            <input class="input smaller" type="text" value="Smaller" />
+          </div>
+        </div>
+        <div class="stack g-3">
+          <p class="b m-0">Field - States</p>
+          <div class="row wrap g-3">
+            <input class="input regular" type="text" value="Normal" />
+            <input class="input regular focus" type="text" value="Focus" />
+            <input class="input regular hover" type="text" value="Hover" />
+            <input class="input regular active" type="text" value="Active" />
+            <input class="input regular" type="text" value="Disabled" disabled />
+          </div>
+        </div>
+        <label class="stack g-1">
+          <span class="b">Textarea</span>
+          <textarea class="textarea fit-w" rows="4" placeholder="Write a longer note here..."></textarea>
+        </label>
+        <fieldset class="stack g-3">
+          <legend class="b">FieldSet</legend>
+          <div class="col-2 g-2">
+            <label class="stack g-1"><span>First Name</span><input class="input" type="text" /></label>
+            <label class="stack g-1"><span>Last Name</span><input class="input" type="text" /></label>
+          </div>
+        </fieldset>
+      </div>
+    </section>
+    <section id="range-demo" class="panel stack g-4 p-6 bd bd-4o ">
+      <h2 class="h3 m-0">Range Inputs</h2>
+      <div class="stack g-5">
+        <div class="stack g-3">
+          <p class="b m-0">Default</p>
+          <label class="stack g-1">
+            <span class="small">Neutral</span>
+            <input class="range fit-w" type="range" min="0" max="100" value="60" />
+          </label>
+        </div>
+        <div class="stack g-3">
+          <p class="b m-0">Color variants</p>
+          <div class="stack g-2">
+            <label class="stack g-1">
+              <span class="small">Primary</span>
+              <input class="range primary fit-w" type="range" min="0" max="100" value="25" />
+            </label>
+            <label class="stack g-1">
+              <span class="small">Secondary</span>
+              <input class="range secondary fit-w" type="range" min="0" max="100" value="45" />
+            </label>
+            <label class="stack g-1">
+              <span class="small">Success</span>
+              <input class="range success fit-w" type="range" min="0" max="100" value="70" />
+            </label>
+            <label class="stack g-1">
+              <span class="small">Warning</span>
+              <input class="range warning fit-w" type="range" min="0" max="100" value="80" />
+            </label>
+            <label class="stack g-1">
+              <span class="small">Danger</span>
+              <input class="range danger fit-w" type="range" min="0" max="100" value="90" />
+            </label>
+          </div>
+        </div>
+        <div class="stack g-3">
+          <p class="b m-0">Disabled</p>
+          <div class="stack g-2">
+            <label class="stack g-1">
+              <span class="small">Neutral disabled</span>
+              <input class="range fit-w" type="range" min="0" max="100" value="35" disabled />
+            </label>
+            <label class="stack g-1">
+              <span class="small">Primary disabled</span>
+              <input class="range primary fit-w" type="range" min="0" max="100" value="65" disabled />
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="checks-radios-demo" class="panel stack g-4 p-6 bd bd-4o ">
+      <h2 class="h3 m-0">Checkboxes and Radios</h2>
+      <div class="stack g-6">
+        <div class="col-2 g-8">
+          <div class="stack g-3">
+            <p class="b m-0">Checkboxes</p>
+            <label class="row g-3 start"><input type="checkbox" class="checkbox large" /> Unchecked large</label>
+            <label class="row g-3 start"><input type="checkbox" class="checkbox large" checked /> Checked large</label>
+            <label class="row g-3 start"><input type="checkbox" class="checkbox small" /> Unchecked small</label>
+            <label class="row g-3 start"><input type="checkbox" class="checkbox small" checked /> Checked small</label>
+          </div>
+          <div class="stack g-3">
+            <p class="b m-0">Checkboxes - States</p>
+            <div class="col-5 g-2">
+              <label class="row g-2 start"><input type="checkbox" class="checkbox regular" /> Normal</label>
+              <label class="row g-2 start"><input type="checkbox" class="checkbox regular focus" /> Focus</label>
+              <label class="row g-2 start"><input type="checkbox" class="checkbox regular hover" /> Hover</label>
+              <label class="row g-2 start"><input type="checkbox" class="checkbox regular active" /> Active</label>
+              <label class="row g-2 start"><input type="checkbox" class="checkbox regular" disabled /> Disabled</label>
+              <label class="row g-2 start"><input type="checkbox" class="checkbox regular" checked /> Normal</label>
+              <label class="row g-2 start"><input type="checkbox" class="checkbox regular focus" checked /> Focus</label>
+              <label class="row g-2 start"><input type="checkbox" class="checkbox regular hover" checked /> Hover</label>
+              <label class="row g-2 start"><input type="checkbox" class="checkbox regular active" checked /> Active</label>
+              <label class="row g-2 start"><input type="checkbox" class="checkbox regular" checked disabled /> Disabled</label>
+            </div>
+          </div>
+          <div class="stack g-3">
+            <p class="b m-0">Radios</p>
+            <label class="row g-3 start"><input type="radio" name="radio-states" class="radio regular" /> Unchecked</label>
+            <label class="row g-3 start"><input type="radio" name="radio-states" class="radio regular" checked /> Checked</label>
+          </div>
+          <div class="stack g-3">
+            <p class="b m-0">Radios - States</p>
+            <div class="col-5 g-2">
+              <label class="row g-2 start"><input type="radio" name="radio-s1" class="radio regular" /> Normal</label>
+              <label class="row g-2 start"><input type="radio" name="radio-s2" class="radio regular focus" /> Focus</label>
+              <label class="row g-2 start"><input type="radio" name="radio-s3" class="radio regular hover" /> Hover</label>
+              <label class="row g-2 start"><input type="radio" name="radio-s4" class="radio regular active" /> Active</label>
+              <label class="row g-2 start"><input type="radio" name="radio-s5" class="radio regular" disabled /> Disabled</label>
+              <label class="row g-2 start"><input type="radio" name="radio-c1" class="radio regular" checked /> Normal</label>
+              <label class="row g-2 start"><input type="radio" name="radio-c2" class="radio regular focus" checked /> Focus</label>
+              <label class="row g-2 start"><input type="radio" name="radio-c3" class="radio regular hover" checked /> Hover</label>
+              <label class="row g-2 start"><input type="radio" name="radio-c4" class="radio regular active" checked /> Active</label>
+              <label class="row g-2 start"><input type="radio" name="radio-c5" class="radio regular" checked disabled /> Disabled</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="panel stack g-4 p-6 bd bd-4o ">
+      <h2 class="h3 m-0">Cards, Badges, Pills, and Status</h2>
+      <div class="stack g-5">
+        <div class="col-2 g-4">
+          <article class="panel stack g-2 p-4">
+            <h3 class="h4 m-0">Basic Card</h3>
+            <p class="m-0">This is the card body content.</p>
+          </article>
+          <article class="panel stack g-3 p-4">
+            <h3 class="h4 m-0">Card with Columns</h3>
+            <div class="col-2 g-3">
+              <div class="stack g-1"><strong>Column 1</strong><span>Smaller column.</span></div>
+              <div class="stack g-1"><strong>Column 2</strong><span>Larger column with more content space.</span></div>
+            </div>
+          </article>
+        </div>
+        <div class="stack g-3">
+          <p class="b m-0">Pills - Colors</p>
+          <div class="row wrap g-2">
+            <span class="pill neutral">   Neutral   </span>
+            <span class="pill primary">   Primary   </span>
+            <span class="pill secondary"> Secondary </span>
+            <span class="pill tertiary">  Tertiary  </span>
+            <span class="pill success">   Success   </span>
+            <span class="pill warning">   Warning   </span>
+            <span class="pill danger">   Danger  </span>
+            <span class="pill error">    Warning  </span>
+          </div>
+        </div>
+        <div class="stack g-3">
+          <p class="b m-0">Pills - Outline</p>
+          <div class="row wrap g-2">
+            <span class="pill outline neutral"   ><span>Neutral inverse</span></span>
+            <span class="pill outline primary"   ><span>Primary inverse</span></span>
+            <span class="pill outline secondary" ><span>Secondary inverse</span></span>
+            <span class="pill outline tertiary"  ><span>Tertiary inverse</span></span>
+            <span class="pill outline success"   ><span>Success inverse</span></span>
+            <span class="pill outline warning"   ><span>Warning inverse</span></span>
+            <span class="pill outline danger"    ><span>Danger inverse</span></span>
+            <span class="pill outline error"     ><span>Error inverse</span></span>
+          </div>
+        </div>
+        <div class="stack g-3">
+          <p class="b m-0">Status Loader</p>
+          <div class="row wrap g-2">
+            <div class="stack g-1">
+              <span class="small">Default</span>
+              <div class="status">
+                <div class="start"></div>
+                <div class="middle"></div>
+                <div class="end"></div>
               </div>
-            </article>
-          </div>
-          <div class="stack g-3">
-            <p class="b m-0">Badges - Colors</p>
-            <div class="row wrap g-2">
-              <span class="badge">Default</span>
-              <span class="badge primary">Primary</span>
-              <span class="badge secondary">Secondary</span>
-              <span class="badge tertiary">Tertiary</span>
-              <span class="badge success">Success</span>
-              <span class="badge warning">Warning</span>
-              <span class="badge danger">Danger</span>
-              <span class="badge active">Active</span>
             </div>
-          </div>
-          <div class="stack g-3">
-            <p class="b m-0">Badges - Number and Text variants</p>
-            <div class="row wrap g-2">
-              <span class="badge primary" data-variant="number">1</span>
-              <span class="badge secondary" data-variant="number">2</span>
-              <span class="badge success" data-variant="number">3</span>
-              <span class="badge warning" data-variant="number">4</span>
-              <span class="badge danger" data-variant="number">5</span>
-              <span class="badge tertiary" data-variant="text">Text badge</span>
-            </div>
-          </div>
-          <div class="stack g-3">
-            <p class="b m-0">Pills - Colors</p>
-            <div class="row wrap g-2">
-              <span class="pill neutral"><span class="pill-dot"></span><span>Neutral</span></span>
-              <span class="pill primary"><span class="pill-dot"></span><span>Primary</span></span>
-              <span class="pill secondary"><span class="pill-dot"></span><span>Secondary</span></span>
-              <span class="pill tertiary"><span class="pill-dot"></span><span>Tertiary</span></span>
-              <span class="pill success"><span class="pill-dot"></span><span>Success</span></span>
-              <span class="pill warning"><span class="pill-dot"></span><span>Warning</span></span>
-              <span class="pill danger"><span class="pill-dot"></span><span>Danger</span></span>
-              <span class="pill error"><span class="pill-dot"></span><span>Error</span></span>
-            </div>
-          </div>
-          <div class="stack g-3">
-            <p class="b m-0">Pills - Inverse</p>
-            <div class="row wrap g-2">
-              <span class="pill neutral" data-inverse="true"><span>Neutral inverse</span></span>
-              <span class="pill primary" data-inverse="true"><span>Primary inverse</span></span>
-              <span class="pill secondary" data-inverse="true"><span>Secondary inverse</span></span>
-              <span class="pill tertiary" data-inverse="true"><span>Tertiary inverse</span></span>
-              <span class="pill success" data-inverse="true"><span>Success inverse</span></span>
-              <span class="pill warning" data-inverse="true"><span>Warning inverse</span></span>
-              <span class="pill danger" data-inverse="true"><span>Danger inverse</span></span>
-              <span class="pill error" data-inverse="true"><span>Error inverse</span></span>
-            </div>
-          </div>
-          <div class="stack g-3">
-            <p class="b m-0">Pills - Sizes and Widths</p>
-            <div class="row wrap g-2">
-              <span class="pill primary" data-size="small"><span class="pill-dot"></span><span>Small</span></span>
-              <span class="pill primary" data-size="medium"><span class="pill-dot"></span><span>Medium</span></span>
-              <span class="pill primary" data-width="full"><span class="pill-dot"></span><span>Full width</span></span>
-            </div>
-          </div>
-          <div class="stack g-3">
-            <p class="b m-0">Status Loader</p>
-            <div class="row wrap g-2">
-              <div class="stack g-1">
-                <span class="small">Default</span>
-                <div class="status">
-                  <div class="start"></div>
-                  <div class="middle"></div>
-                  <div class="end"></div>
-                </div>
+            <div class="stack g-1">
+              <span class="small">Success</span>
+              <div class="status success">
+                <div class="start"></div>
+                <div class="middle"></div>
+                <div class="end"></div>
               </div>
-              <div class="stack g-1">
-                <span class="small">Success</span>
-                <div class="status success">
-                  <div class="start"></div>
-                  <div class="middle"></div>
-                  <div class="end"></div>
-                </div>
+            </div>
+            <div class="stack g-1">
+              <span class="small">Warning</span>
+              <div class="status warning">
+                <div class="start"></div>
+                <div class="middle"></div>
+                <div class="end"></div>
               </div>
-              <div class="stack g-1">
-                <span class="small">Warning</span>
-                <div class="status warning">
-                  <div class="start"></div>
-                  <div class="middle"></div>
-                  <div class="end"></div>
-                </div>
-              </div>
-              <div class="stack g-1">
-                <span class="small">Error</span>
-                <div class="status error">
-                  <div class="start"></div>
-                  <div class="middle"></div>
-                  <div class="end"></div>
-                </div>
+            </div>
+            <div class="stack g-1">
+              <span class="small">Error</span>
+              <div class="status error">
+                <div class="start"></div>
+                <div class="middle"></div>
+                <div class="end"></div>
               </div>
             </div>
           </div>
         </div>
-      </section>
-      <section class="panel stack g-4 p-6 bd bd-4o ">
-        <h2 class="h3 m-0">Containers, Layout, Utilities</h2>
-        <div class="stack g-5">
-          <div class="col-3 g-3">
-            <div class="panel bg-neutral bg-5o bg stack g-2 p-4"><strong>Wrapper</strong><span>This is a wrapper container.</span></div>
-            <div class="panel bg-neutral bg-5o bg stack g-2 p-4"><strong>Group</strong><span>This is a group container.</span></div>
-            <div class="panel bg-neutral bg-5o bg stack g-2 p-4"><strong>Contrast</strong><span>This is a contrast container.</span></div>
+      </div>
+    </section>
+    <section class="panel stack g-4 p-6 bd bd-4o ">
+      <h2 class="h3 m-0">Containers, Layout, Utilities</h2>
+      <div class="stack g-5">
+        <div class="col-3 g-3">
+          <div class="panel bg-neutral bg-5o bg stack g-2 p-4"><strong>Wrapper</strong><span>This is a wrapper container.</span></div>
+          <div class="panel bg-neutral bg-5o bg stack g-2 p-4"><strong>Group</strong><span>This is a group container.</span></div>
+          <div class="panel bg-neutral bg-5o bg stack g-2 p-4"><strong>Contrast</strong><span>This is a contrast container.</span></div>
+        </div>
+        <div class="stack g-2">
+          <p class="b m-0">Grid and Stack Helpers</p>
+          <div class="col-4 g-2">
+            <div class="panel bg-neutral bg-5o bg p-2">1</div>
+            <div class="panel bg-neutral bg-5o bg p-2">2</div>
+            <div class="panel bg-neutral bg-5o bg p-2">3</div>
+            <div class="panel bg-neutral bg-5o bg p-2">4</div>
+          </div>
+          <div class="row g-2">
+            <div class="panel bg-neutral bg-5o bg p-2">Row item 1</div>
+            <div class="panel bg-neutral bg-5o bg p-2">Row item 2</div>
           </div>
           <div class="stack g-2">
-            <p class="b m-0">Grid and Stack Helpers</p>
-            <div class="col-4 g-2">
-              <div class="panel bg-neutral bg-5o bg p-2">1</div>
-              <div class="panel bg-neutral bg-5o bg p-2">2</div>
-              <div class="panel bg-neutral bg-5o bg p-2">3</div>
-              <div class="panel bg-neutral bg-5o bg p-2">4</div>
-            </div>
-            <div class="row g-2">
-              <div class="panel bg-neutral bg-5o bg p-2">Row item 1</div>
-              <div class="panel bg-neutral bg-5o bg p-2">Row item 2</div>
-            </div>
-            <div class="stack g-2">
-              <div class="panel bg-neutral bg-5o bg p-2">Stack item 1</div>
-              <div class="panel bg-neutral bg-5o bg p-2">Stack item 2</div>
-            </div>
+            <div class="panel bg-neutral bg-5o bg p-2">Stack item 1</div>
+            <div class="panel bg-neutral bg-5o bg p-2">Stack item 2</div>
           </div>
-          <div class="stack g-2">
-            <p class="b m-0">Utility Scale</p>
-            <div class="row wrap g-2">
-              <code>.m-1 (0.25rem)</code>
-              <code>.m-2 (0.5rem)</code>
-              <code>.m-4 (1rem)</code>
-              <code>.m-8 (2rem)</code>
+        </div>
+        <div class="stack g-2">
+          <p class="b m-0">Utility Scale</p>
+          <div class="row wrap stretch g-3">
+            <div class="card stack g-2 fill">
+              <p class="small b m-0">Size</p>
+              <div class="col-2 g-2">
+                <code>.w-1</code>
+                <div class="ibl bg-primary bg w-1" style="height: 0.75em"></div>
+                <code>.w-2</code>
+                <div class="ibl bg-primary bg w-2" style="height: 0.75em"></div>
+                <code>.w-4</code>
+                <div class="ibl bg-primary bg w-4" style="height: 0.75em"></div>
+                <code>.w-6</code>
+                <div class="ibl bg-primary bg w-6" style="height: 0.75em"></div>
+                <code>.w-8</code>
+                <div class="ibl bg-primary bg w-8" style="height: 0.75em"></div>
+              </div>
             </div>
-            <div class="row wrap g-2">
-              <code>.p-1</code>
-              <code>.p-2</code>
-              <code>.p-4</code>
-              <code>.p-8</code>
+            <div class="card stack g-2 fill">
+              <p class="small b m-0">Gap</p>
+              <div class="stack g-1">
+                <code>.g-1</code>
+                <div class="row g-1">
+                  <div class="panel bg-neutral bg-5o bg p-1">A</div>
+                  <div class="panel bg-neutral bg-5o bg p-1">B</div>
+                  <div class="panel bg-neutral bg-5o bg p-1">C</div>
+                </div>
+                <code>.g-2</code>
+                <div class="row g-2">
+                  <div class="panel bg-neutral bg-5o bg p-1">A</div>
+                  <div class="panel bg-neutral bg-5o bg p-1">B</div>
+                  <div class="panel bg-neutral bg-5o bg p-1">C</div>
+                </div>
+                <code>.g-4</code>
+                <div class="row g-4">
+                  <div class="panel bg-neutral bg-5o bg p-1">A</div>
+                  <div class="panel bg-neutral bg-5o bg p-1">B</div>
+                  <div class="panel bg-neutral bg-5o bg p-1">C</div>
+                </div>
+                <code>.g-8</code>
+                <div class="row g-8">
+                  <div class="panel bg-neutral bg-5o bg p-1">A</div>
+                  <div class="panel bg-neutral bg-5o bg p-1">B</div>
+                  <div class="panel bg-neutral bg-5o bg p-1">C</div>
+                </div>
+              </div>
+            </div>
+            <div class="card stack g-2 fill">
+              <p class="small b m-0">Padding</p>
+              <div class="row wrap g-2">
+                <div class="panel bg-neutral bg-5o bg p-1"><code>.p-1</code></div>
+                <div class="panel bg-neutral bg-5o bg p-2"><code>.p-2</code></div>
+                <div class="panel bg-neutral bg-5o bg p-4"><code>.p-4</code></div>
+                <div class="panel bg-neutral bg-5o bg p-8"><code>.p-8</code></div>
+              </div>
+            </div>
+            <div class="card stack g-2 fill">
+              <p class="small b m-0">Margin</p>
+              <div class="col-2 g-2">
+                <code>.m-1</code>
+                <div class="ibl bg-primary bg" style="width: var(--margin-1); height: 0.75em"></div>
+                <code>.m-2</code>
+                <div class="ibl bg-primary bg" style="width: var(--margin-2); height: 0.75em"></div>
+                <code>.m-4</code>
+                <div class="ibl bg-primary bg" style="width: var(--margin-4); height: 0.75em"></div>
+                <code>.m-8</code>
+                <div class="ibl bg-primary bg" style="width: var(--margin-8); height: 0.75em"></div>
+              </div>
             </div>
           </div>
         </div>
-      </section>
-    </main>
-  </body>
+      </div>
+    </section>
+  </main>
+</body>
 </html>

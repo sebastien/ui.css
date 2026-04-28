@@ -212,6 +212,19 @@ function colors(colors = COLORS) {
 		),
 
 		// ------------------------------------------------------------------------
+		// COLOR CLASSES - Palette colors
+		// ------------------------------------------------------------------------
+		// Creates .{bg,tx,bd,ol}-{color} classes from the provided colors list
+		Object.keys(shorthands).flatMap((short) =>
+			colors.map((color) =>
+				rule(`.${short}-${color}`, {
+					[`__${shorthands[short].name.replaceAll("-", "_")}_base`]:
+						vars.color[color],
+				}),
+			),
+		),
+
+		// ------------------------------------------------------------------------
 		// OPACITY CLASSES
 		// ------------------------------------------------------------------------
 		// Creates .{bg,tx,bd,ol}-{0,2,4,6,8,10}o classes for opacity control
