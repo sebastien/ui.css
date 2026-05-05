@@ -1,4 +1,5 @@
 import { group, sizes, tokens, vars } from "../js/uicss.js";
+import { colormix } from "./colors";
 
 const REM_PIXELS = 16;
 function scaled(unit, px, scale = undefined, base = REM_PIXELS) {
@@ -82,6 +83,8 @@ export default group(
 			// Scale endpoint colors
 			ink: "var(--color-slate-950, #020617)",
 			paper: "#FFFFFF",
+			white: "#FFFFFF",
+			black: "#000000",
 			// Semantic colors (reference palette variables with fallback defaults)
 			neutral: "var(--color-gray-200, #e5e7eb)",
 			primary: "#1400ff",
@@ -240,9 +243,16 @@ export default group(
 			x: "2px",
 			y: "2px",
 			spread: "1px",
-			base: `${vars.color.ink}`,
-			opacity: 0.25,
-			color: `color-mix(in oklch, ${vars.shadow.base}, transparent calc(100% - 100% * ${vars.shadow.opacity}))`,
+			base: vars.color.shadow.or(vars.color.ink),
+			tint: vars.color.paper,
+			blend: 0.25,
+			opacity: 0.15,
+			color: colormix(
+				vars.shadow.base,
+				vars.shadow.tint,
+				vars.shadow.blend,
+				vars.shadow.opacity,
+			),
 		},
 		limit: {
 			text: "80ch",

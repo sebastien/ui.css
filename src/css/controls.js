@@ -30,7 +30,7 @@ function base(selector, ...rest) {
 			// Outline
 			outline_width: "0px",
 			outline_color: colors.mixed(
-				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.base.or(vars.color.focus, vars.color.neutral),
 				vars.control.color.tint.or(vars.color.paper),
 				vars.control.color.blend.or(0.8),
 				vars.control.color.alpha.or(0.5),
@@ -52,6 +52,99 @@ function base(selector, ...rest) {
 	);
 }
 
+function field(selector, ...rest) {
+	return base(
+		selector,
+		css.rule("&", {
+			padding: vars.field.padding.or("0.5em 0.75em"),
+			border_radius: vars.field.border.radius.or("0.25em"),
+			// By default, a small tint and a bit of transparency
+			background_color: colors.mixed(
+				vars.control.color.base.or(vars.color.paper),
+				vars.control.color.tint.or(vars.color.paper),
+				0.1,
+				0.9,
+			),
+			// Border blended to paper, fully opaque
+			border_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.paper),
+				0.5,
+				1.0,
+			),
+		}),
+		// Focus state, reinforcing opacity
+		css.rule(css.mods("&", "focus"), {
+			background_color: colors.mixed(
+				vars.control.color.base.or(vars.color.paper),
+				vars.control.color.tint.or(vars.color.paper),
+				0.1,
+				1.0,
+			),
+			// Border focus, less tinted
+			border_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.paper),
+				0.7,
+				1.0,
+			),
+		}),
+		// Hover state, reinforcing opacity
+		css.rule(css.mods("&", "hover"), {
+			// Same as focus
+			background_color: colors.mixed(
+				vars.control.color.base.or(vars.color.paper),
+				vars.control.color.tint.or(vars.color.paper),
+				0.1,
+				1.0,
+			),
+			// But slighly less tinted border
+			border_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.paper),
+				0.8,
+				1.0,
+			),
+		}),
+		// Active state, typically a blend to ink
+		css.rule(css.mods("&", "active"), {
+			border_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.paper),
+				0.9,
+				1.0,
+			),
+		}),
+
+		// Disabled variant
+		css.rule(css.mods("&", "disabled"), {
+			opacity: 0.5,
+			pointer_events: "none",
+			cursor: "not-allowed",
+		}),
+		// Ghost variant, typically no background, unless on hover
+		css.nesting(css.mods("&", "ghost"), {
+			border_color: "transparent",
+		}),
+
+		// Blank variant
+		css.rule(css.mods("&", "blank"), {
+			background_color: "transparent !important",
+			border_color: "transparent !important",
+			outline_color: "transparent !important",
+			padding: "unset",
+		}),
+		// Icon variant
+		css.rule(css.mods("&", "icon"), {
+			aspect_ratio: "1/1",
+			box_sizing: "border-box",
+			justify_content: "center",
+			align_items: "center",
+			height: "2em",
+		}),
+		...rest,
+	);
+}
 // Base style for all action controls (button-like)
 function selectable(...rest) {
 	return css.nesting(
@@ -114,6 +207,15 @@ function action(selector, ...rest) {
 			// Border
 			border_radius: vars.action.border.radius.or("0.25em"),
 		}),
+		css.rule(css.mods("&", "default"), {
+			outline_width: vars.control.outline.width.or("2px"),
+			outline_color: colors.mixed(
+				vars.control.color.base.or(vars.color.neutral),
+				vars.control.color.tint.or(vars.color.ink),
+				0.9,
+				vars.control.default.outline.opacity.or(0.9),
+			),
+		}),
 		// Hover state, typically a blent to paper
 		css.rule(css.mods("&", "hover"), {
 			background_color: colors.mixed(
@@ -143,6 +245,7 @@ function action(selector, ...rest) {
 		css.nesting(
 			css.mods("&", "outline"),
 			{
+				__control_default_outline_opacity: 0.4,
 				color: colors.mixed(
 					vars.control.color.base.or(vars.color.neutral),
 					vars.control.color.tint.or(vars.color.ink),
@@ -184,6 +287,7 @@ function action(selector, ...rest) {
 			css.mods("&", "ghost"),
 			{
 				__control_color_opacity: 0,
+				__control_default_outline_opacity: 0.2,
 				background_color: colors.mix(vars.control.color),
 			},
 			css.rule("&:hover, &.hover", {
@@ -201,101 +305,9 @@ function action(selector, ...rest) {
 			background_color: "transparent !important",
 			border_color: "transparent !important",
 			outline_color: "transparent !important",
+			padding: "unset",
 		}),
 
-		// Icon variant
-		css.rule(css.mods("&", "icon"), {
-			aspect_ratio: "1/1",
-			box_sizing: "border-box",
-			justify_content: "center",
-			align_items: "center",
-			height: "2em",
-		}),
-		...rest,
-	);
-}
-
-function field(selector, ...rest) {
-	return base(
-		selector,
-		css.rule("&", {
-			padding: vars.field.padding.or("0.5em 0.75em"),
-			border_radius: vars.field.border.radius.or("0.25em"),
-			// By default, a small tint and a bit of transparency
-			background_color: colors.mixed(
-				vars.control.color.base.or(vars.color.neutral),
-				vars.control.color.tint.or(vars.color.paper),
-				0.1,
-				0.9,
-			),
-			// Border blended to paper, fully opaque
-			border_color: colors.mixed(
-				vars.control.color.base.or(vars.color.neutral),
-				vars.control.color.tint.or(vars.color.paper),
-				0.5,
-				1.0,
-			),
-		}),
-		// Focus state, reinforcing opacity
-		css.rule(css.mods("&", "focus"), {
-			background_color: colors.mixed(
-				vars.control.color.base.or(vars.color.neutral),
-				vars.control.color.tint.or(vars.color.paper),
-				0.1,
-				1.0,
-			),
-			// Border focus, less tinted
-			border_color: colors.mixed(
-				vars.control.color.base.or(vars.color.neutral),
-				vars.control.color.tint.or(vars.color.paper),
-				0.7,
-				1.0,
-			),
-		}),
-		// Hover state, reinforcing opacity
-		css.rule(css.mods("&", "hover"), {
-			// Same as focus
-			background_color: colors.mixed(
-				vars.control.color.base.or(vars.color.neutral),
-				vars.control.color.tint.or(vars.color.paper),
-				0.1,
-				1.0,
-			),
-			// But slighly less tinted border
-			border_color: colors.mixed(
-				vars.control.color.base.or(vars.color.neutral),
-				vars.control.color.tint.or(vars.color.paper),
-				0.8,
-				1.0,
-			),
-		}),
-		// Active state, typically a blend to ink
-		css.rule(css.mods("&", "active"), {
-			border_color: colors.mixed(
-				vars.control.color.base.or(vars.color.neutral),
-				vars.control.color.tint.or(vars.color.paper),
-				0.9,
-				1.0,
-			),
-		}),
-
-		// Disabled variant
-		css.rule(css.mods("&", "disabled"), {
-			opacity: 0.5,
-			pointer_events: "none",
-			cursor: "not-allowed",
-		}),
-		// Ghost variant, typically no background, unless on hover
-		css.nesting(css.mods("&", "ghost"), {
-			border_color: "transparent",
-		}),
-
-		// Blank variant
-		css.rule(css.mods("&", "blank"), {
-			background_color: "transparent !important",
-			border_color: "transparent !important",
-			outline_color: "transparent !important",
-		}),
 		// Icon variant
 		css.rule(css.mods("&", "icon"), {
 			aspect_ratio: "1/1",

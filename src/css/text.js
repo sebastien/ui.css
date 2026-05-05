@@ -172,7 +172,7 @@ export default named({
 		rule(".ellipsis", { text_overflow: "ellipsis", overflow: "hidden" }),
 	),
 	transform: group(
-		rule([".upper", ".caps"], { text_transform: "uppercase" }),
+		rule([".caps", ".upper"], { text_transform: "uppercase" }),
 		rule(".lower", { text_transform: "lowercase" }),
 		rule(".cap", { text_transform: "capitalize" }),
 	),
@@ -277,6 +277,7 @@ export default named({
 				}),
 				rule(`.${k}`, {
 					font_size: `calc(1em * ${vars.textsize.size[i]})`,
+					line_height: vars.font.line.or("1.25em"),
 				}),
 			),
 		),

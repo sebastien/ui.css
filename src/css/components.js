@@ -15,38 +15,41 @@ function pill(...rest) {
 			// Border
 			border_width: vars.pill.border.size.or("0px"),
 			border_radius: vars.pill.border.radius.or("1em"),
+			__background_color_base: vars.pills.color.base.or(vars.color.neutral),
+			__background_color_opacity: vars.pill.color.opacity.or("100%"),
+			__background_color_tint: vars.pill.color.tint.or(vars.color.paper),
 			border_color: colors.mixed(
-				vars.pill.color.base.or(vars.color.neutral),
-				vars.pill.color.tint.or(vars.color.paper),
+				vars.background.color.base,
+				vars.background.color.tint,
 				0.5,
-				1.0,
+				vars.background.color.opacity,
 			),
 			background_color: colors.mixed(
-				vars.pill.color.base.or(vars.color.neutral),
-				vars.pill.color.tint.or(vars.color.paper),
+				vars.background.color.base,
+				vars.background.color.tint,
 				1.0,
-				1.0,
+				vars.background.color.opacity,
 			),
 			color: `contrast-color(${vars.pill.color.base.or(vars.color.neutral)})`,
 		}),
 		// Color variants
 		...colors.names.map((color) =>
 			css.rule(css.mods("&", color), {
-				__pill_color_base: vars.color[color],
+				__background_color_base: vars.color[color],
 			}),
 		),
 		css.rule("&.outline", {
 			background_color: "transparent",
 			border_width: vars.pill.border.size.or("1px"),
 			border_color: colors.mixed(
-				vars.pill.color.base.or(vars.color.neutral),
-				vars.pill.color.tint.or(vars.color.paper),
+				vars.background.color.base,
+				vars.background.color.tint,
 				0.5,
-				1.0,
+				vars.background.color.opacity,
 			),
 			color: colors.mixed(
-				vars.pill.color.base.or(vars.color.neutral),
-				vars.pill.color.tint.or(vars.color.ink),
+				vars.background.color.base,
+				vars.background.color.tint,
 				0.8,
 				1.0,
 			),

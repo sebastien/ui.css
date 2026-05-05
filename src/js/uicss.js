@@ -29,7 +29,7 @@ const kebab = (str) =>
 const times = (n, f) => {
 	const r = new Array(n);
 	for (let i = 0; i < n; i++) {
-		r[i] = f(i);
+		r[i] = f ? f(i) : i;
 	}
 	return r;
 };
@@ -265,13 +265,8 @@ class Scope {
 		}
 
 		const format = (fallback) => {
-			if (fallback instanceof Scope) {
-				return `var(--${fallback._name})`;
-			}
-			return typeof fallback === "number"
-				? Math.floor(fallback) === fallback
-					? `${fallback}px`
-					: `${100 * fallback}%`
+			return fallback instanceof Scope
+				? `var(--${fallback._name})`
 				: `${fallback}`;
 		};
 

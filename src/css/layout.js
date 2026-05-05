@@ -57,6 +57,10 @@ export default named({
 		rule(".to-e", { left: "0%" }),
 		rule(".to-w", { left: "100%" }),
 		rule(".to-hc", { left: "50%" }),
+		rule(".tx-100", { transform: "translateX(100%)" }),
+		rule(".ty-100", { transform: "translateY(100%)" }),
+		rule(".rl-90", { transform: "rotate(-90deg)" }),
+		rule(".rr-90", { transform: "rotate(90deg)" }),
 	),
 	gap: group(
 		sizes.map((k, i) =>
@@ -173,6 +177,7 @@ export default named({
 				...sizes.map((k, i) =>
 					rule(`.h-${i}`, { height: `${vars.size[i + 1]}` }),
 				),
+				...times(10).map((_) => rule(`.w-${_}em`, { width: `${_}em` })),
 				rule(".w-screen", { width: "100vw" }),
 				rule(".h-screen", { width: "100vh" }),
 				rule(".w-text", { max_width: `${vars.limit.text}` }),
@@ -214,7 +219,7 @@ export default named({
 				),
 				...times(5, (_) =>
 					rule(`.h-${_ + 1}bl`, {
-						width: `calc(${vars.block.width}*${_ + 1})`,
+						height: `calc(${vars.block.width}*${_ + 1})`,
 					}),
 				),
 			),
@@ -239,7 +244,7 @@ export default named({
 	sticky: group(rule(".sticky", { position: "sticky", top: 0 })),
 	shapes: group(
 		rule(".square", { aspect_ratio: "1/1" }),
-		rule(".circle", { aspect_ratio: "1/1", border_radius: "50%" }),
+		rule([".circle", ".disc"], { aspect_ratio: "1/1", border_radius: "50%" }),
 	),
 	row: group(
 		rule(".row", {

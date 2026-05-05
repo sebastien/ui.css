@@ -201,6 +201,11 @@ export default named({
 			__border_radius: "1.5lh",
 			border_radius: vars.border.radius,
 		}),
+		rule(".nord", { border_radius: "0px" }),
+		rule(".nord-tl", { border_top_left_radius: "0px" }),
+		rule(".nord-tr", { border_top_right_radius: "0px" }),
+		rule(".nord-br", { border_bottom_right_radius: "0px" }),
+		rule(".nord-bl", { border_bottom_left_radius: "0px" }),
 	),
 	border: group(
 		rule(".rd", { border_radius: vars.border.radius }),

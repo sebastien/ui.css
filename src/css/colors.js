@@ -54,6 +54,8 @@ const COLORS = [
 	"mauve",
 	"mist",
 	"olive",
+	"white",
+	"black",
 ];
 
 // Semantic colors (subsets of palette)
@@ -107,14 +109,14 @@ function colorvars(name, mode = "color") {
 	};
 }
 function alpha(base, opacity = 1.0) {
-	return `color-mix(in oklch, ${base}, transparent calc(100% - ${percent(opacity)}))`;
+	return `color-mix(in oklch, ${base}, transparent calc(100% - 100% * ${opacity}))`;
 }
 
 function colormix(base, tint = vars.color.paper, blend = 1.0, opacity = 1.0) {
-	const inner = `color-mix(in oklch, ${base}, ${tint} calc(100% - ${percent(blend)}))`;
+	const inner = `color-mix(in oklch, ${base}, ${tint} calc(100% - 100% * ${blend}))`;
 	return opacity === undefined
 		? inner
-		: `color-mix(in oklch, ${inner}, transparent calc(100% - ${percent(opacity)}))`;
+		: `color-mix(in oklch, ${inner}, transparent calc(100% - 100% * ${opacity}))`;
 }
 
 // Function: colormixin
@@ -134,10 +136,30 @@ function colormixin(color) {
 // ----------------------------------------------------------------------------
 
 function colors(colors = COLORS) {
-	const backgroundColor = `color-mix(in oklch, color-mix(in oklch, ${vars.background.color.base}, ${vars.background.color.tint} calc((1 - ${vars.background.color.blend}) * 100%)), transparent calc((1 - ${vars.background.color.opacity}) * 100%))`;
-	const textColor = `color-mix(in oklch, color-mix(in oklch, ${vars.text.color.base}, ${vars.text.color.tint} calc((1 - ${vars.text.color.blend}) * 100%)), transparent calc((1 - ${vars.text.color.opacity}) * 100%))`;
-	const borderColor = `color-mix(in oklch, color-mix(in oklch, ${vars.border.color.base}, ${vars.border.color.tint} calc((1 - ${vars.border.color.blend}) * 100%)), transparent calc((1 - ${vars.border.color.opacity}) * 100%))`;
-	const outlineColor = `color-mix(in oklch, color-mix(in oklch, ${vars.outline.color.base}, ${vars.outline.color.tint} calc((1 - ${vars.outline.color.blend}) * 100%)), transparent calc((1 - ${vars.outline.color.opacity}) * 100%))`;
+	const backgroundColor = colormix(
+		vars.background.color.base,
+		vars.background.color.tint,
+		vars.background.color.blend,
+		vars.background.color.opacity,
+	);
+	const textColor = colormix(
+		vars.text.color.base,
+		vars.text.color.tint,
+		vars.text.color.blend,
+		vars.text.color.opacity,
+	);
+	const borderColor = colormix(
+		vars.border.color.base,
+		vars.border.color.tint,
+		vars.border.color.blend,
+		vars.border.color.opacity,
+	);
+	const outlineColor = colormix(
+		vars.outline.color.base,
+		vars.outline.color.tint,
+		vars.outline.color.blend,
+		vars.outline.color.opacity,
+	);
 
 	return group(
 		// ------------------------------------------------------------------------
@@ -227,24 +249,27 @@ function colors(colors = COLORS) {
 		// ------------------------------------------------------------------------
 		// OPACITY CLASSES
 		// ------------------------------------------------------------------------
-		// Creates .{bg,tx,bd,ol}-{0,2,4,6,8,10}o classes for opacity control
+		// Creates .{bg,tx,bd,ol}-{0-10}o classes for opacity control
 		// 0 = transparent, 10 = opaque
-		Object.keys(shorthands).flatMap((short) =>
-			[0, 2, 4, 6, 8, 10].map((index) =>
+		Object.keys(shorthands).flatMap((short) => [
+			...times(10).map((index) =>
 				rule(`.${short}-${index}o`, {
 					[`__${shorthands[short].name.replaceAll("-", "_")}_opacity`]:
 						index / 10,
 				}),
 			),
-		),
+			rule(`.${short}-o`, {
+				[`__${shorthands[short].name.replaceAll("-", "_")}_opacity`]: 1.0,
+			}),
+		]),
 
 		// ------------------------------------------------------------------------
 		// BLEND CLASSES
 		// ------------------------------------------------------------------------
-		// Creates .{bg,tx,bd,ol}-{0,2,4,6,8,10}b classes for blending
+		// Creates .{bg,tx,bd,ol}-{0-10}b classes for blending
 		// 0 = 100% tint, 10 = 100% base
 		Object.keys(shorthands).flatMap((short) =>
-			[0, 2, 4, 6, 8, 10].map((index) =>
+			times(10).map((index) =>
 				rule(`.${short}-${index}b`, {
 					[`__${shorthands[short].name.replaceAll("-", "_")}_blend`]:
 						index / 10,
