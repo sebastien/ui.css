@@ -15,13 +15,19 @@ function pill(...rest) {
 			// Border
 			border_width: vars.pill.border.size.or("0px"),
 			border_radius: vars.pill.border.radius.or("1em"),
-			__background_color_base: vars.pills.color.base.or(vars.color.neutral),
-			__background_color_opacity: vars.pill.color.opacity.or("100%"),
-			__background_color_tint: vars.pill.color.tint.or(vars.color.paper),
 			border_color: colors.mixed(
 				vars.background.color.base,
 				vars.background.color.tint,
 				0.5,
+				vars.background.color.opacity,
+			),
+			__background_color_base: vars.pills.color.base.or(vars.color.neutral),
+			__background_color_opacity: vars.pill.color.opacity.or(1.0),
+			__background_color_tint: vars.pill.color.tint.or(vars.color.paper),
+			__background_color: colors.mixed(
+				vars.background.color.base,
+				vars.background.color.tint,
+				1.0,
 				vars.background.color.opacity,
 			),
 			background_color: colors.mixed(
@@ -30,7 +36,10 @@ function pill(...rest) {
 				1.0,
 				vars.background.color.opacity,
 			),
-			color: `contrast-color(${vars.pill.color.base.or(vars.color.neutral)})`,
+			color: `contrast-color(${vars.background.color} max ${vars.color.paper}, ${vars.color.ink})`,
+		}),
+		css.rule("&.compact", {
+			padding: vars.pill.padding.compact.or("0.125em 0.5em"),
 		}),
 		// Color variants
 		...colors.names.map((color) =>

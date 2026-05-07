@@ -127,6 +127,7 @@ export default named({
 		rule(".ev", { pointer_events: "auto" }),
 		rule(".move", { cursor: "move" }),
 		rule(".pointer", { cursor: "pointer" }),
+		rule(".action", { cursor: "pointer", user_select: "none" }),
 		rule(".help", { cursor: "help" }),
 		rule(".grab", { cursor: "grab" }),
 		rule(".grabbing", { cursor: "grabbing" }),
@@ -177,7 +178,8 @@ export default named({
 		}),
 	),
 	visibility: group(
-		rule(".skip", { display: "none !important" }),
+		// Uppercase SKIP is nice for temporary debugging
+		rule([".skip", ".SKIP"], { display: "none !important" }),
 		rule(".invisible", { opacity: "0 !important" }),
 		rule(".hidden", { visibility: "hidden !important" }),
 	),

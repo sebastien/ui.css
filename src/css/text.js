@@ -177,10 +177,10 @@ export default named({
 		rule(".cap", { text_transform: "capitalize" }),
 	),
 	alignment: group(
-		rule(".t-center", { text_align: "center" }),
-		rule(".t-right", { text_align: "right" }),
-		rule(".t-left", { text_align: "left" }),
-		rule(".t-justify", { text_align: "justify" }),
+		rule(".center, .t-center", { text_align: "center" }),
+		rule(".right, .t-right", { text_align: "right" }),
+		rule(".left, .t-left", { text_align: "left" }),
+		rule(".justify, .t-justify", { text_align: "justify" }),
 	),
 	direction: group(
 		rule(".t-rtl", {

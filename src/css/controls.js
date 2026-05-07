@@ -16,6 +16,9 @@ function base(selector, ...rest) {
 			font_weight: vars.control.font.weight.or(vars.font.controls.weight),
 			// Box
 			display: "inline-flex",
+			align_items: "center",
+			__gap: "0.25em",
+			gap: vars.control.gap.or(vars.gap),
 			box_sizing: "border-box",
 			padding: vars.control.padding.or("0.5em 1em"),
 			margin: vars.control.margin.or("0em"),
@@ -37,6 +40,9 @@ function base(selector, ...rest) {
 			),
 			// No user select
 			user_select: "none",
+		}),
+		css.rule("&.compact", {
+			padding: vars.control.padding.or("0.35em 0.5em"),
 		}),
 		// Color variants
 		...colors.names.map((color) =>
@@ -152,31 +158,27 @@ function selectable(...rest) {
 		{
 			// Cursor
 			cursor: "pointer",
-			// Default syling, background is pure primary color
-			background_color: colors.mixed(
-				vars.control.color.base.or(vars.color.neutral),
-				vars.control.color.ink.or(vars.color.paper),
-				0.75,
-				0.0,
-			),
-		},
-		// Hover state, typically a blent to paper
-		css.rule(css.mods("&", "hover"), {
+			// Default styling, background is pure primary color
 			background_color: colors.mixed(
 				vars.control.color.base.or(vars.color.neutral),
 				vars.control.color.tint.or(vars.color.paper),
-				0.75,
-				1.0,
+				vars.control.color.blend.or(0.75),
+				vars.control.color.opacity.or(0.0),
 			),
+		},
+		// Color variants
+		...colors.names.map((color) =>
+			css.rule(css.mods("&", color), {
+				__control_color_base: vars.color[color],
+			}),
+		),
+		// Hover state, typically a blent to paper
+		css.rule(css.mods("&", "hover"), {
+			__control_color_opacity: 0.25,
 		}),
 		// Active state, typically a blend to ink
 		css.rule(css.mods("&", "active"), {
-			background_color: colors.mixed(
-				vars.control.color.base.or(vars.color.neutral),
-				vars.control.color.tint.or(vars.color.paper),
-				0.9,
-				1.0,
-			),
+			__control_color_opacity: 0.5,
 		}),
 		// Disabled variant
 		css.rule(css.mods("&", "disabled"), {
@@ -249,7 +251,7 @@ function action(selector, ...rest) {
 				color: colors.mixed(
 					vars.control.color.base.or(vars.color.neutral),
 					vars.control.color.tint.or(vars.color.ink),
-					vars.control.color.blend.or(0.9),
+					vars.control.color.blend.or(0.5),
 					1.0,
 				),
 				border_color: colors.mixed(

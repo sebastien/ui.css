@@ -218,8 +218,28 @@ export default named({
 					}),
 				),
 				...times(5, (_) =>
+					rule(`.wmn-${_ + 1}bl`, {
+						min_width: `calc(${vars.block.width}*${_ + 1})`,
+					}),
+				),
+				...times(5, (_) =>
+					rule(`.wmx-${_ + 1}bl`, {
+						max_width: `calc(${vars.block.width}*${_ + 1})`,
+					}),
+				),
+				...times(5, (_) =>
 					rule(`.h-${_ + 1}bl`, {
 						height: `calc(${vars.block.width}*${_ + 1})`,
+					}),
+				),
+				...times(5, (_) =>
+					rule(`.hmn-${_ + 1}bl`, {
+						min_height: `calc(${vars.block.width}*${_ + 1})`,
+					}),
+				),
+				...times(5, (_) =>
+					rule(`.hmx-${_ + 1}bl`, {
+						max_width: `calc(${vars.block.width}*${_ + 1})`,
 					}),
 				),
 			),
@@ -238,6 +258,15 @@ export default named({
 						}`,
 					}),
 				),
+			),
+			delta: group(
+				rule(".d", {
+					transform: `translate(var(--dx, 0px),var(--dy,0px))`,
+				}),
+				...times(5, (_) => rule(`.dr-${_ + 1}`, { __dx: `${_ + 1}px` })),
+				...times(5, (_) => rule(`.dl-${_ + 1}`, { __dx: `-${_ + 1}px` })),
+				...times(5, (_) => rule(`.db-${_ + 1}`, { __dy: `${_ + 1}px` })),
+				...times(5, (_) => rule(`.dt-${_ + 1}`, { __dy: `-${_ + 1}px` })),
 			),
 		}),
 	),
@@ -310,11 +339,21 @@ export default named({
 		}),
 	),
 	grid: group(
+		rule(".grid", {
+			display: "grid",
+			gap: vars.gap,
+			display: "grid",
+		}),
+		rule(".grid.lined > *", {
+			border_right: `${vars.border.width.or("1px")} ${vars.border.style.or("solid")} ${vars.border.color.or(vars.color.neutral)} `,
+			border_collapse: "collapse",
+		}),
+		rule(".grid.lined > *:last-child", {
+			border_right_width: "0px",
+		}),
 		...times(7, (_) =>
 			rule(`.col-${_ + 1}`, {
-				display: "grid",
 				grid_template_columns: `repeat(${_ + 1}, 1fr)`,
-				gap: vars.gap,
 			}),
 		),
 	),

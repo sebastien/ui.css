@@ -21,13 +21,25 @@ export default named({
 		),
 	),
 	summary: group(
-		rule("details .open-show", { display: "none" }),
-		rule("details:open .open-show", { display: "unset" }),
-		rule("details .open-rotate", {
+		rule("details .open-show, details .when-open", { display: "none" }),
+		rule("details:open .open-show, details:open .when-open", {
+			display: "inherit",
+		}),
+		rule(".open-rotate", {
 			transform: "rotate(0deg)",
+			transform_origin: "center",
 			transition: `transform ${vars.motion.duration.fast} ${vars.motion.easing.standard}`,
 		}),
 		rule("details:open .open-rotate", { transform: "rotate(90deg)" }),
+		rule("details::details-content", {
+			transition: `height ${vars.motion.duration.fast} ${vars.motion.easing.standard}, opacity ${vars.motion.duration.fast} ${vars.motion.easing.standard}`,
+			height: "0",
+			overflow: "hidden",
+		}),
+		rule("details[open]::details-content", {
+			height: "auto",
+			opacity: "1",
+		}),
 	),
 	show: group(
 		rule(".hovered .hover-show", { opacity: "0.0" }),

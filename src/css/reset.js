@@ -27,6 +27,8 @@ export default layer(
 		font_size: `${vars.font.size}`,
 		font_weight: `${vars.font.weight}`,
 		line_height: `${vars.font.line}`,
+		// For "auto" dimensions
+		interpolate_size: "allow-keywords",
 	}),
 	rule(inputs, {
 		display: `inline-flex`,
