@@ -27,7 +27,7 @@ export default named({
 	}),
 	style: group(
 		rule([".nolink", ".nolink:hover"], {
-			color: "unset",
+			color: vars.text.color.or("currentColor"),
 			text_decoration: "none",
 		}),
 		rule(".noresize", { resize: "none" }),

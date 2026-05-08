@@ -57,8 +57,6 @@ export default named({
 		rule(".to-e", { left: "0%" }),
 		rule(".to-w", { left: "100%" }),
 		rule(".to-hc", { left: "50%" }),
-		rule(".tx-100", { transform: "translateX(100%)" }),
-		rule(".ty-100", { transform: "translateY(100%)" }),
 		rule(".rl-90", { transform: "rotate(-90deg)" }),
 		rule(".rr-90", { transform: "rotate(90deg)" }),
 	),
@@ -263,17 +261,47 @@ export default named({
 				rule(".d", {
 					transform: `translate(var(--dx, 0px),var(--dy,0px))`,
 				}),
+				rule(".dp", {
+					position: "relative",
+					top: "var(--dy, 0px)",
+					left: "var(--dy, 0px)",
+				}),
+				rule(".dm", {
+					margin_top: "var(--dy, 0px)",
+					margin_left: "var(--dy, 0px)",
+				}),
 				...times(5, (_) => rule(`.dr-${_ + 1}`, { __dx: `${_ + 1}px` })),
 				...times(5, (_) => rule(`.dl-${_ + 1}`, { __dx: `-${_ + 1}px` })),
 				...times(5, (_) => rule(`.db-${_ + 1}`, { __dy: `${_ + 1}px` })),
 				...times(5, (_) => rule(`.dt-${_ + 1}`, { __dy: `-${_ + 1}px` })),
+				...times(4, (_) =>
+					rule(`.dr-${(_ + 1) * 25}`, { __dx: `${(_ + 1) * 25}%` }),
+				),
+				...times(4, (_) =>
+					rule(`.dl-${(_ + 1) * 25}`, { __dx: `-${(_ + 1) * 25}%` }),
+				),
+				...times(4, (_) =>
+					rule(`.db-${(_ + 1) * 25}`, { __dy: `${(_ + 1) * 25}%` }),
+				),
+				...times(4, (_) =>
+					rule(`.dt-${(_ + 1) * 25}`, { __dy: `-${(_ + 1) * 25}%` }),
+				),
 			),
 		}),
 	),
 	sticky: group(rule(".sticky", { position: "sticky", top: 0 })),
 	shapes: group(
-		rule(".square", { aspect_ratio: "1/1" }),
-		rule([".circle", ".disc"], { aspect_ratio: "1/1", border_radius: "50%" }),
+		rule([".square", ".disc", ".circle"], {
+			box_sizing: "border-box",
+			display: "inline-flex",
+			align_items: "center",
+			justify_content: "center",
+			aspect_ratio: "1/1",
+			line_height: "0em",
+		}),
+		rule([".circle", ".disc"], {
+			border_radius: "50%",
+		}),
 	),
 	row: group(
 		rule(".row", {
@@ -287,6 +315,7 @@ export default named({
 		rule(".row.end", {
 			justify_content: "flex-end",
 		}),
+
 		rule(".row.lined > *", {
 			border_right: `${vars.border.width.or("1px")} ${vars.border.style.or("solid")} ${vars.border.color.or(vars.color.neutral)} `,
 			border_collapse: "collapse",
@@ -378,6 +407,11 @@ export default named({
 		}),
 		rule([".nooverflow", ".noflow"], {
 			overflow: "hidden",
+		}),
+	),
+	misc: group(
+		rule(".lined", {
+			gap: "0em",
 		}),
 	),
 });

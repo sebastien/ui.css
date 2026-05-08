@@ -41,12 +41,25 @@ function pill(...rest) {
 		css.rule("&.compact", {
 			padding: vars.pill.padding.compact.or("0.125em 0.5em"),
 		}),
+		css.rule("&.expanded", {
+			padding: vars.pill.padding.expanded.or("0.5em 1.25em"),
+		}),
 		// Color variants
 		...colors.names.map((color) =>
 			css.rule(css.mods("&", color), {
 				__background_color_base: vars.color[color],
 			}),
 		),
+		css.rule("&.tinted", {
+			__background_color_opacity: 0.25,
+			__text_color_opacity: 1.0,
+			color: colors.mixed(
+				vars.background.color.base,
+				vars.background.color.tint,
+				1.0,
+				vars.text.color.opacity.or(1.0),
+			),
+		}),
 		css.rule("&.outline", {
 			background_color: "transparent",
 			border_width: vars.pill.border.size.or("1px"),

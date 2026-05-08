@@ -28,7 +28,7 @@ function base(selector, ...rest) {
 				vars.control.color.base.or(vars.color.neutral),
 				vars.control.color.tint.or(vars.color.paper),
 				vars.control.color.blend.or(0.8),
-				vars.control.color.alpha.or(0.8),
+				vars.control.color.border.opacity.or(0.8),
 			),
 			// Outline
 			outline_width: "0px",
@@ -36,10 +36,22 @@ function base(selector, ...rest) {
 				vars.control.color.base.or(vars.color.focus, vars.color.neutral),
 				vars.control.color.tint.or(vars.color.paper),
 				vars.control.color.blend.or(0.8),
-				vars.control.color.alpha.or(0.5),
+				vars.control.color.opacity.or(0.5),
 			),
 			// No user select
 			user_select: "none",
+			transition: [
+				"opacity",
+				"outline-color",
+				"border-color",
+				"color",
+				"background-color",
+			]
+				.map(
+					(_) =>
+						`${_} ${vars.motion.duration.normal} ${vars.motion.easing.emphasized}`,
+				)
+				.join(", "),
 		}),
 		css.rule("&.compact", {
 			padding: vars.control.padding.or("0.35em 0.5em"),
@@ -158,10 +170,11 @@ function selectable(...rest) {
 		{
 			// Cursor
 			cursor: "pointer",
+			__control_color_opacity: 0.0,
 			// Default styling, background is pure primary color
 			background_color: colors.mixed(
 				vars.control.color.base.or(vars.color.neutral),
-				vars.control.color.tint.or(vars.color.paper),
+				vars.control.color.tint.or(vars.color.tint),
 				vars.control.color.blend.or(0.75),
 				vars.control.color.opacity.or(0.0),
 			),
@@ -174,11 +187,11 @@ function selectable(...rest) {
 		),
 		// Hover state, typically a blent to paper
 		css.rule(css.mods("&", "hover"), {
-			__control_color_opacity: 0.25,
+			__control_color_opacity: 0.5,
 		}),
 		// Active state, typically a blend to ink
 		css.rule(css.mods("&", "active"), {
-			__control_color_opacity: 0.5,
+			__control_color_opacity: 0.75,
 		}),
 		// Disabled variant
 		css.rule(css.mods("&", "disabled"), {
@@ -290,6 +303,7 @@ function action(selector, ...rest) {
 			{
 				__control_color_opacity: 0,
 				__control_default_outline_opacity: 0.2,
+				__control_color_border_opacity: 0,
 				background_color: colors.mix(vars.control.color),
 			},
 			css.rule("&:hover, &.hover", {

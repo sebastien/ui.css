@@ -92,7 +92,7 @@ function colorvar(name) {
 	return {
 		[`__${name}_color`]: colormix(
 			vars[name].base,
-			vars[name].tint,
+			vars[name].tint.or(vars.color.tint),
 			vars[name].blend,
 			vars[name].opacity,
 		),
@@ -102,7 +102,7 @@ function colorvar(name) {
 function colorvars(name, mode = "color") {
 	return {
 		[`__${name}_base`]: vars[name][mode].base,
-		[`__${name}_tint`]: vars[name][mode].tint,
+		[`__${name}_tint`]: vars[name][mode].tint.or(vars.color.tint),
 		[`__${name}_blend`]: vars[name][mode].blend,
 		[`__${name}_opacity`]: vars[name][mode].opacity,
 		...colorvar(name),
@@ -112,7 +112,12 @@ function alpha(base, opacity = 1.0) {
 	return `color-mix(in oklch, ${base}, transparent calc(100% - 100% * ${opacity}))`;
 }
 
-function colormix(base, tint = vars.color.paper, blend = 1.0, opacity = 1.0) {
+function colormix(
+	base,
+	tint = vars.color.tint.or(vars.color.paper),
+	blend = 1.0,
+	opacity = 1.0,
+) {
 	const inner = `color-mix(in oklch, ${base}, ${tint} calc(100% - 100% * ${blend}))`;
 	return opacity === undefined
 		? inner
@@ -276,18 +281,31 @@ function colors(colors = COLORS) {
 				}),
 			),
 		),
-
+		Object.keys(shorthands).map((short) =>
+			rule(`.${short}-b`, {
+				[`__${shorthands[short].name.replaceAll("-", "_")}_blend`]: 1.0,
+			}),
+		),
 		// ------------------------------------------------------------------------
 		// TINT COLOR CLASSES
 		// ------------------------------------------------------------------------
 		// Creates .{bg,tx,bd,ol}-to-{semantic} classes for setting tint
 		Object.keys(shorthands).flatMap((short) =>
-			Object.keys(SEMANTIC).map((semantic) =>
-				rule(`.${short}-to-${semantic}`, {
+			[...Object.keys(SEMANTIC), ...colors].map((color) =>
+				rule(`.${short}-to-${color}`, {
 					[`__${shorthands[short].name.replaceAll("-", "_")}_tint`]:
-						vars.color[semantic],
+						vars.color[color],
 				}),
 			),
+		),
+		// Sets all the tints to the given color
+		[...Object.keys(SEMANTIC), ...colors].map((color) =>
+			rule(`.to-${color}`, {
+				__color_tint: vars.color[color],
+				__border_color_tint: vars.color[color],
+				__background_color_tint: vars.color[color],
+				__outline_color_tint: vars.color[color],
+			}),
 		),
 
 		// Special tint classes (no index required)

@@ -192,14 +192,32 @@ export default named({
 		}),
 	),
 	delimiter: group(
-		rule(".sep-path>*:after", { content: '"/"' }),
-		rule(".sep-comma>*:after", { content: '", "' }),
-		rule(".sep-dash>*:after", { content: '"―"' }),
+		rule(".sep-path>*:after", {
+			display: "inline-block",
+			padding_left: vars.gap,
+			content: '"/"',
+		}),
+		rule(".sep-comma>*:after", {
+			display: "inline-block",
+			padding_left: vars.gap,
+			content: '", "',
+		}),
+		rule(".sep-dash>*:after", {
+			display: "inline-block",
+			padding_left: vars.gap,
+			content: '"―"',
+		}),
+		rule(".sep-dot>*:after", {
+			display: "inline-block",
+			padding_left: vars.gap,
+			content: '"·"',
+		}),
 		rule(
 			[
 				".sep-path>*:last-child:after",
 				".sep-comma>*:last-child:after",
 				".sep-dash>*:last-child:after",
+				".sep-dot>*:last-child:after",
 			],
 			{ display: "none" },
 		),

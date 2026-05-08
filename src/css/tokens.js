@@ -9,7 +9,7 @@ function scaled(unit, px, scale = undefined, base = REM_PIXELS) {
 }
 const pem = (px, scale) => scaled("1em", px, scale);
 const rpem = (px, scale) => scaled("1rem", px, scale);
-const spacingScale = (fn, scaleVar, steps) => [
+const scale = (fn, scaleVar, steps) => [
 	"0em",
 	...steps.map((px) => fn(px, scaleVar)),
 ];
@@ -67,8 +67,8 @@ export default group(
 		scaling: {
 			size: 1.0,
 			pad: 1.25,
+			margin: 1.25,
 			gap: 1.25,
-			margin: 1.0,
 		},
 	}),
 	// ------------------------------------------------------------------------
@@ -97,7 +97,9 @@ export default group(
 			danger: vars.color.error,
 			accent: vars.color.primary,
 			// Mode-dependent colors (defaults to light mode, swapped by .dark)
-			text: `${vars.color.ink}`,
+			text: vars.color.ink,
+			// Aliases
+			tint: vars.color.paper,
 		},
 	}),
 
@@ -111,17 +113,16 @@ export default group(
 	tokens({
 		background: {
 			color: {
-				base: `${vars.color.paper}`,
-				tint: `${vars.color.paper}`,
+				base: vars.color.paper,
+				tint: vars.color.tint.or(vars.color.paper),
 				blend: 1.0,
 				opacity: 1.0,
 			},
-			o: 9,
 		},
 		text: {
 			color: {
-				base: `${vars.color.ink}`,
-				tint: `${vars.color.paper}`,
+				base: vars.color.ink,
+				tint: vars.color.tint.or(vars.color.paper),
 				blend: 1.0,
 				opacity: 1.0,
 			},
@@ -158,8 +159,8 @@ export default group(
 		},
 		border: {
 			color: {
-				base: `${vars.color.ink}`,
-				tint: `${vars.color.paper}`,
+				base: vars.color.ink,
+				tint: vars.color.tint,
 				blend: 0.5,
 				opacity: 0.9,
 			},
@@ -179,8 +180,8 @@ export default group(
 		},
 		outline: {
 			color: {
-				base: `${vars.color.ink}`,
-				tint: `${vars.color.paper}`,
+				base: vars.color.ink,
+				tint: vars.color.tint.or(vars.color.paper),
 				blend: 0.3,
 				opacity: 0.8,
 			},
@@ -217,22 +218,14 @@ export default group(
 				hover_dx: "20%",
 			},
 		},
-		size: spacingScale(
+		size: scale(
 			pem,
 			vars.scaling.size,
 			[4, 8, 12, 16, 24, 32, 48, 64, 96, 128],
 		),
-		margin: spacingScale(
-			rpem,
-			vars.scaling.margin,
-			[4, 8, 12, 16, 24, 32, 48, 64],
-		),
-		pad: spacingScale(rpem, vars.scaling.pad, [2, 4, 6, 8, 12, 16, 24, 32]),
-		gap: spacingScale(
-			pem,
-			vars.scaling.gap,
-			[4, 8, 12, 16, 24, 32, 48, 64, 96, 128],
-		),
+		pad: scale(rpem, vars.scaling.pad, [2, 4, 6, 8, 12, 16, 24, 32]),
+		margin: scale(rpem, vars.scaling.margin, [2, 4, 6, 8, 12, 16, 24, 32]),
+		gap: scale(pem, vars.scaling.gap, [4, 8, 12, 16, 24, 32, 48, 64, 96, 128]),
 
 		opacity: {
 			dim: 0.65,
@@ -278,6 +271,14 @@ export default group(
 				"200%", // 5: xl
 				"240%", // 6: xxl
 			],
+		},
+		control: {
+			color: {
+				base: vars.color.neutral,
+				tint: vars.color.tint,
+				blend: 1.0,
+				opacity: 1.0,
+			},
 		},
 	}),
 );
