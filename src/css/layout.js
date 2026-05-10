@@ -176,6 +176,7 @@ export default named({
 					rule(`.h-${i}`, { height: `${vars.size[i + 1]}` }),
 				),
 				...times(10).map((_) => rule(`.w-${_}em`, { width: `${_}em` })),
+				...times(10).map((_) => rule(`.h-${_}em`, { height: `${_}em` })),
 				rule(".w-screen", { width: "100vw" }),
 				rule(".h-screen", { width: "100vh" }),
 				rule(".w-text", { max_width: `${vars.limit.text}` }),
@@ -349,6 +350,9 @@ export default named({
 	),
 	flex: group(
 		rule(".fill", {
+			flex_grow: "1",
+		}),
+		rule(".filled > *", {
 			flex_grow: "1",
 		}),
 		rule(".shrink", {

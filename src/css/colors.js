@@ -335,7 +335,10 @@ function colors(colors = COLORS) {
 		rule(".nobg", { background_color: "transparent" }),
 		rule(".notx", { color: "inherit" }),
 		rule(".nobd", { border_color: "transparent" }),
-		rule(".nool", { outline_color: "transparent" }),
+		rule(".nool", {
+			outline_color: "transparent !important",
+			outline_width: "0px !important",
+		}),
 	);
 }
 

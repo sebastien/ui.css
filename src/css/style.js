@@ -203,7 +203,7 @@ export default named({
 			__border_radius: "1.5lh",
 			border_radius: vars.border.radius,
 		}),
-		rule(".nord", { border_radius: "0px" }),
+		rule(["squared", ".nord"], { border_radius: "0px" }),
 		rule(".nord-tl", { border_top_left_radius: "0px" }),
 		rule(".nord-tr", { border_top_right_radius: "0px" }),
 		rule(".nord-br", { border_bottom_right_radius: "0px" }),
@@ -246,7 +246,11 @@ export default named({
 
 	table: group(
 		rule("table", {
-			border_collapse: "collapse",
+			border_collapse: "separate",
+			border_spacing: "0px",
+		}),
+		rule("table.collapse", {
+			borter_collapse: "collapse",
 		}),
 		rule(["table.lined tbody th", "table.lined tbody td"], {
 			border_bottom_width: vars.border.width,
@@ -282,7 +286,7 @@ export default named({
 		}),
 	),
 	depth: group(
-		...times(6, (i) => rule(`.z-${i}`, { z_index: i * 10 })),
+		...times(10, (i) => rule(`.z-${i}`, { z_index: i * 10 })),
 		rule(mods([".inset"], undefined, "focus", "hover", "active"), {
 			__inset_shadow: `oklch(0 0 0 / 0.1)`,
 			__inset_light: `oklch(1 0 0 / 0.5)`,

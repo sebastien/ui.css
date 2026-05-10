@@ -86,7 +86,8 @@ export default group(
 			white: "#FFFFFF",
 			black: "#000000",
 			// Semantic colors (reference palette variables with fallback defaults)
-			neutral: "var(--color-gray-200, #e5e7eb)",
+			neutral: "var(--color-gray-500, #a5a7ab)",
+			neutral_background: "var(--color-gray-200, #e5e7eb)",
 			primary: "#1400ff",
 			secondary: "#469485",
 			tertiary: "var(--color-teal-500, #14b8a6)",
