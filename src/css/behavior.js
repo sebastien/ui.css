@@ -1,6 +1,7 @@
 import { vars, named, group, rule } from "../js/uicss.js";
 
 export default named({
+	// NOTE: We use hovered as hover is reserved as a :hover alias.
 	undim: group(
 		rule(".hover-undim", {
 			transition: `opacity ${vars.motion.duration.normal} ${vars.motion.easing.emphasized}`,
@@ -17,6 +18,69 @@ export default named({
 			{
 				opacity: "1.0",
 				transition: `opacity ${vars.motion.duration.normal} ${vars.motion.easing.emphasized}`,
+			},
+		),
+	),
+	reveal: group(
+		rule(".hovered .hover-reveal", { opacity: "0.0" }),
+		rule(
+			[".hovered:hover .hover-reveal", ".hover-reveal:hover"].map(
+				(_) => `body:not(.nohover) ${_}`,
+			),
+			{
+				opacity: "1.0",
+				transition: `opacity ${vars.motion.duration.normal} ${vars.motion.easing.emphasized}`,
+			},
+		),
+	),
+	show: group(
+		rule([".hovered .hover-show", ".hovered:not(:hover) .hover-show"], {
+			visibility: "hidden",
+		}),
+		rule(
+			[".hovered:hover .hover-show", ".hover-show:hover"].map(
+				(_) => `body:not(.nohover) ${_}`,
+			),
+			{
+				visibility: "visible",
+			},
+		),
+		rule([".focused .focus-show"], {
+			visibility: "hidden",
+		}),
+		rule(
+			[
+				".focused:focus .focus-show",
+				".focused:focus-within .focus-show",
+				".focus-show:focus",
+				".focus-show:focus-within",
+				".focus-show:hover",
+			].map((_) => `body:not(.nofocus) ${_}`),
+			{
+				visibility: "visible",
+			},
+		),
+	),
+	whenhover: group(
+		rule(".hovered .when-hover", { display: "none" }),
+		rule("body:not(.nohover) .hovered:hover .when-hover", {
+			display: "unset",
+		}),
+		rule("body:not(.nohover) .hovered:hover .when-not-hover", {
+			display: "none",
+		}),
+	),
+	shift: group(
+		rule(".hover-dx", {
+			transition: `transform ${vars.motion.duration.fast} ${vars.motion.easing.standard}`,
+		}),
+		rule(
+			[
+				"body:not(.no-hover) .hover-dx:hover",
+				"body:not(.no-hover) .hovered:hover .hover-dx",
+			],
+			{
+				transform: `translateX(${vars.motion.shift.hover_dx})`,
 			},
 		),
 	),
@@ -40,58 +104,6 @@ export default named({
 			height: "auto",
 			opacity: "1",
 		}),
-	),
-	show: group(
-		rule(".hovered .hover-show", { opacity: "0.0" }),
-		rule(
-			[
-				".hovered:focus .hover-show",
-				".hovered:focus-within .hover-show",
-				".hovered:hover .hover-show",
-				".hover-show:hover",
-				".hover-show:focus",
-				".hover-show:focus-within",
-			].map((_) => `body:not(.no-hover) ${_}`),
-			{
-				opacity: "1.0",
-				transition: `opacity ${vars.motion.duration.normal} ${vars.motion.easing.emphasized}`,
-			},
-		),
-		rule(".hover .hover-visible", { opacity: "hidden" }),
-		rule(
-			[
-				".hovered:focus .hover-show",
-				".hovered:focus-within .hover-show",
-				".hovered:hover .hover-show",
-				".hover-show:hover",
-				".hover-show:focus",
-				".hover-show:focus-within",
-			].map((_) => `body:not(.no-hover) ${_}`),
-			{
-				visibility: "visible",
-			},
-		),
-		rule(".hovered .when-hovered", { display: "none" }),
-		rule("body:not(.no-hover) .hovered:hover .when-hovered", {
-			display: "unset",
-		}),
-		rule("body:not(.no-hover) .hovered:hover .when-not-hovered", {
-			display: "none",
-		}),
-	),
-	shift: group(
-		rule(".hover-dx", {
-			transition: `transform ${vars.motion.duration.fast} ${vars.motion.easing.standard}`,
-		}),
-		rule(
-			[
-				"body:not(.no-hover) .hover-dx:hover",
-				"body:not(.no-hover) .hovered:hover .hover-dx",
-			],
-			{
-				transform: `translateX(${vars.motion.shift.hover_dx})`,
-			},
-		),
 	),
 });
 // EOF

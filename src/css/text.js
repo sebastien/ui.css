@@ -286,8 +286,8 @@ export default named({
 		rule(".tight", { letter_spacing: "-0.05ch" }),
 		rule(".tighter", { letter_spacing: "-0.10ch" }),
 		rule(".tightest", { letter_spacing: "-0.15ch" }),
-		rule(".ul", { text_decoration: "underline" }),
-		rule(".ol", { text_decoration: "overline" }),
+		rule(".unl", { text_decoration: "underline" }),
+		rule(".ovl", { text_decoration: "overline" }),
 		...Object.keys(sizenames).map((k, i) =>
 			group(
 				rule(`.t-${k}`, {

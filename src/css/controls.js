@@ -63,6 +63,15 @@ function base(selector, ...rest) {
 				__control_color_base: vars.color[color],
 			}),
 		),
+		// Color variants
+		css.rule("&.bw", {
+			__control_color_base: vars.color.ink,
+			__control_color_tint: vars.color.paper,
+			__control_color_blend: 1.0,
+			__control_color_opacity: 1.0,
+			__control_color_border_opacity: 1.0,
+			__control_color_outline_opacity: 1.0,
+		}),
 		// Focus ring
 		css.rule(css.mods("&", "focus"), {
 			outline_width: vars.control.outline.width.or("2px"),
@@ -101,6 +110,10 @@ function field(selector, ...rest) {
 				),
 			}),
 		),
+		css.rule("&.bw", {
+			__control_background_base: vars.color.paper,
+			outline_style: "groove",
+		}),
 		// Focus state, reinforcing opacity
 		css.rule(css.mods("&", "focus"), {
 			background_color: colors.mixed(
@@ -151,10 +164,28 @@ function field(selector, ...rest) {
 			cursor: "not-allowed",
 		}),
 		// Ghost variant, typically no background, unless on hover
-		css.nesting(css.mods("&", "ghost"), {
-			border_color: "transparent",
-		}),
-
+		css.nesting(
+			"&.ghost",
+			{
+				border_color: "transparent",
+				// No outline for ghost
+				outline_width: "0px",
+				background_color: colors.mixed(
+					vars.control.base.or(vars.color.ink),
+					vars.control.color.tint.or(vars.color.paper),
+					0.1,
+					0.0,
+				),
+			},
+			css.rule(css.mods("&", "focus", "active"), {
+				background_color: colors.mixed(
+					vars.control.base.or(vars.color.ink),
+					vars.control.color.tint.or(vars.color.paper),
+					0.1,
+					0.5,
+				),
+			}),
+		),
 		// Blank variant
 		css.rule(css.mods("&", "blank"), {
 			background_color: "transparent !important",
@@ -168,7 +199,14 @@ function field(selector, ...rest) {
 			box_sizing: "border-box",
 			justify_content: "center",
 			align_items: "center",
+			padding: "0.15em",
 			height: "2em",
+			background_color: colors.mixed(
+				vars.control.base.or(vars.color.ink),
+				vars.control.color.tint.or(vars.color.paper),
+				0.1,
+				0.0,
+			),
 		}),
 		...rest,
 	);

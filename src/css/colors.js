@@ -212,6 +212,11 @@ function colors(colors = COLORS) {
 			border_width: `${vars.border.width}`,
 			border_style: `${vars.border.style}`,
 		}),
+		...times(7).map((_) =>
+			rule(`.bd-${_}`, {
+				__border_width: `${_}px`,
+			}),
+		),
 		Object.entries(sides).map(([short, side]) =>
 			rule(`.bd-${short}`, {
 				[`border_${side}_color`]: borderColor,
@@ -223,8 +228,24 @@ function colors(colors = COLORS) {
 		rule(".ol", {
 			__outline_color: outlineColor,
 			outline_color: `${vars.outline.color}`,
+			outline_width: `${vars.outline.width.or("1px")}`,
+			outline_offset: `${vars.outline.offset.or("0px")}`,
 		}),
-
+		...times(7).map((index) =>
+			rule(`.oli-${index}`, {
+				__outline_offset: `-${index}px`,
+			}),
+		),
+		...times(7).map((index) =>
+			rule(`.olo-${index}`, {
+				__outline_offset: `${index}px`,
+			}),
+		),
+		...times(7).map((index) =>
+			rule(`.ol-${index}`, {
+				__outline_width: `${index}px`,
+			}),
+		),
 		// ------------------------------------------------------------------------
 		// COLOR CLASSES - Semantic colors
 		// ------------------------------------------------------------------------

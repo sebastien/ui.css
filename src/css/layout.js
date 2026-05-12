@@ -303,6 +303,8 @@ export default named({
 		rule([".circle", ".disc"], {
 			border_radius: "50%",
 		}),
+		rule(".r-4_3", { aspect_ratio: "4/3" }),
+		rule(".r-16_9", { aspect_ratio: "16/9" }),
 	),
 	row: group(
 		rule(".row", {
@@ -384,6 +386,13 @@ export default named({
 		rule(".grid.lined > *:last-child", {
 			border_right_width: "0px",
 		}),
+		...times(5, (_) =>
+			rule(`.span-${_ + 1}`, {
+				__color: "red",
+				grid_column: `span ${_ + 1}`,
+			}),
+		),
+
 		...times(7, (_) =>
 			rule(`.col-${_ + 1}`, {
 				grid_template_columns: `repeat(${_ + 1}, 1fr)`,
