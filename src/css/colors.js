@@ -1,6 +1,7 @@
 import {
 	contrast,
 	group,
+	root,
 	rule,
 	sides,
 	times,
@@ -170,14 +171,14 @@ function colors(colors = COLORS) {
 		// ------------------------------------------------------------------------
 		// DARK / LIGHT MODE
 		// ------------------------------------------------------------------------
-		rule(".light, :root", {
+		rule([root, `${root}.light`, `${root} .light`], {
 			__color_page: `${vars.color.paper}`,
 			__color_text: `${vars.color.ink}`,
 			// Apply actual properties
 			background_color: `${vars.color.paper}`,
 			color: `${vars.color.ink}`,
 		}),
-		rule(".dark", {
+		rule([`${root}.dark`, `${root} .dark`], {
 			__color_page: `${vars.color.ink}`,
 			__color_text: `${vars.color.paper}`,
 			// Apply actual properties with swapped colors

@@ -1,4 +1,5 @@
 import { group, mods, named, rule, sides, times, vars } from "../js/uicss.js";
+import colors from "./colors.js";
 
 // Module: style
 // Visual styling utilities for spacing, typography, borders, shadows, depth,
@@ -251,10 +252,6 @@ export default named({
 		}),
 		rule("table.collapse", {
 			borter_collapse: "collapse",
-		}),
-		rule(["table.lined tbody th", "table.lined tbody td"], {
-			border_bottom_width: vars.border.width,
-			border_bottom_style: "solid",
 		}),
 		rule(
 			[

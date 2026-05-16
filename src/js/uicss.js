@@ -296,6 +296,10 @@ const Vars = new Scope();
 // Proxied root scope for ergonomic variable access.
 const vars = scope(Vars);
 
+// Constant: root
+// Selector token representing the stylesheet host root.
+const root = ":root";
+
 // ----------------------------------------------------------------------------
 //
 // SELECTORS
@@ -643,16 +647,18 @@ const group = (...rules) => new Group(rules);
 // Specialized group that emits its content inside `@layer`.
 class Layer extends Group {
 	*lines(compact = true, depth = 0) {
+		const embed = process?.env?.UICSS_EMBED;
+		const shouldWrap = this.name && !embed;
 		const indent = compact ? "" : "\t".repeat(depth);
-		if (this.name) {
+		if (shouldWrap) {
 			yield compact
 				? `@layer ${this.name} {`
 				: `${indent}@layer ${this.name} {`;
 		}
-		for (const line of super.lines(compact, depth + 1)) {
+		for (const line of super.lines(compact, shouldWrap ? depth + 1 : depth)) {
 			yield line;
 		}
-		if (this.name) {
+		if (shouldWrap) {
 			yield `${indent}}`;
 		}
 	}
@@ -690,6 +696,83 @@ const named = (mapping) => {
 	return new Group(items);
 };
 
+// Function: guard
+// Scopes CSS values under a root selector with native nesting.
+const tokenlike = (value) =>
+	value instanceof Tokens ||
+	(value instanceof Group && value.contents.every(tokenlike));
+
+const rerootselector = (selector) => `${selector}`.replaceAll(root, "&");
+
+const reroot = (value) => {
+	if (value === null || value === undefined) {
+		return value;
+	}
+	if (Array.isArray(value)) {
+		return value.map(reroot);
+	}
+	if (value instanceof NestingRule) {
+		return new NestingRule(
+			value.selectors.map(rerootselector),
+			value.properties,
+			value.children.map(reroot),
+		);
+	}
+	if (value instanceof Rule) {
+		return new Rule(value.selectors.map(rerootselector), value.properties);
+	}
+	if (value instanceof Group) {
+		return new Group(value.contents.map(reroot), value.name);
+	}
+	if (value.constructor === Object) {
+		return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, reroot(v)]));
+	}
+	return value;
+};
+
+const guard = (value, selector) => {
+	if (!selector || value === null || value === undefined) {
+		return value;
+	}
+	if (Array.isArray(value)) {
+		return value.map((_) => guard(_, selector));
+	}
+	if (value instanceof Tokens) {
+		const res = new Tokens(value.contents, selector);
+		res.name = value.name;
+		return res;
+	}
+	if (value instanceof Layer) {
+		const contents = tokenlike(value)
+			? value.contents.map((_) => guard(_, selector))
+			: value.contents.map(reroot);
+		const res = tokenlike(value)
+			? new Layer(contents)
+			: new Layer([nesting(selector, {}, ...contents)]);
+		res.name = value.name;
+		return res;
+	}
+	if (value instanceof Group) {
+		const contents = tokenlike(value)
+			? value.contents.map((_) => guard(_, selector))
+			: value.contents.map(reroot);
+		const res = tokenlike(value)
+			? new Group(contents, value.name)
+			: new Group([nesting(selector, {}, ...contents)], value.name);
+		return res;
+	}
+	if (value instanceof NestingRule) {
+		return nesting(selector, {}, reroot(value));
+	}
+	if (value instanceof Rule) {
+		return nesting(selector, {}, reroot(value));
+	}
+	if (value.constructor === Object) {
+		return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, guard(v, selector)]));
+	}
+	return value;
+};
+
 // ----------------------------------------------------------------------------
 //
 // TOKENS
@@ -725,6 +808,10 @@ class Token {
 // Class: Tokens
 // Group wrapper that expands objects into token declarations.
 class Tokens extends Group {
+	constructor(contents, selector = ":root") {
+		super(contents);
+		this.selector = selector;
+	}
 	static *Expand(collection, prefix = undefined) {
 		if (Array.isArray(collection)) {
 			for (const v of collection) {
@@ -766,7 +853,7 @@ class Tokens extends Group {
 	*lines(compact = true, depth = 0) {
 		const indent = compact ? "" : "\t".repeat(depth);
 		yield compact ? "/* @tokens */" : `${indent}/* @tokens */`;
-		yield compact ? ":root {" : `${indent}:root {`;
+		yield compact ? `${this.selector} {` : `${indent}${this.selector} {`;
 		for (const token of this.contents) {
 			for (const line of token.lines(compact, depth + 1)) {
 				yield line;
@@ -897,6 +984,7 @@ export {
 	doc,
 	docs,
 	group,
+	guard,
 	layer,
 	layers,
 	mods,
@@ -904,6 +992,7 @@ export {
 	nesting,
 	on,
 	percentages,
+	root,
 	rule,
 	sides,
 	sizenames,
@@ -923,8 +1012,10 @@ export default Object.assign(css, {
 	vars,
 	nesting,
 	group,
+	guard,
 	named,
 	percent,
 	layer,
+	root,
 });
 // EOF

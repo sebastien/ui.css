@@ -1,4 +1,4 @@
-import { vars, on, rule, layer, times } from "../js/uicss.js";
+import { vars, on, root, rule, layer, times } from "../js/uicss.js";
 import { all, inputs, controls } from "./lib/tags.js";
 
 export default layer(
@@ -22,7 +22,7 @@ export default layer(
 		text_align: "unset",
 		color: "currentColor",
 	}),
-	rule("html body", {
+	rule(root, {
 		font_family: `${vars.font.text.family}`,
 		font_size: `${vars.font.size}`,
 		font_weight: `${vars.font.weight}`,

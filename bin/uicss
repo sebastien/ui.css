@@ -1,6 +1,24 @@
 #!/usr/bin/env bash
 BASE="$(dirname "$(dirname "$(readlink -f "$0")")")"
 RESOLVE="const resolve=(mod)=>typeof mod==='function'?mod():mod;"
+RENDER="const render=(mod,scoped)=>{const guard=process.env.UICSS_GUARD;const res=resolve(mod);return guard?scoped(res,guard):res};"
+GUARD=""
+EMBED=""
+while [ "$#" -gt 0 ]; do
+	case "$1" in
+	--guard)
+		GUARD="$2"
+		shift 2
+		;;
+	--embed)
+		EMBED="1"
+		shift
+		;;
+	*)
+		break
+		;;
+	esac
+done
 case $1 in
 -d | --doc)
 	shift
@@ -17,13 +35,13 @@ case $1 in
 	;;
 *)
 	if [ -z "$1" ]; then
-		bun -e "import all from '$BASE/src/css/all.js';import css from '$BASE/src/js/uicss.js';console.log([...css(all())].join('\n'));"
+		UICSS_GUARD="$GUARD" UICSS_EMBED="$EMBED" bun -e "import all from '$BASE/src/css/all.js';import css from '$BASE/src/js/uicss.js';const guard=process.env.UICSS_GUARD;console.log([...css(guard?all(undefined,{guard}):all())].join('\n'));"
 	else
 		for ARG in "$@"; do
 			if [ "$#" == "1" ]; then
-				bun -e "import mod from './$ARG';import css from '$BASE/src/js/uicss.js';$RESOLVE console.log([...css(resolve(mod))].join('\n'));"
+				UICSS_GUARD="$GUARD" UICSS_EMBED="$EMBED" bun -e "import mod from './$ARG';import css,{guard as scoped} from '$BASE/src/js/uicss.js';$RESOLVE $RENDER const res=render(mod,scoped);console.log([...css(res)].join('\n'));"
 			else
-				bun -e "import mod from './$ARG';import css, {layers} from '$BASE/src/js/uicss.js';$RESOLVE console.log([...css(layers({['$ARG'.split('.').at(0)]:resolve(mod)}))].join('\n'));"
+				UICSS_GUARD="$GUARD" UICSS_EMBED="$EMBED" bun -e "import mod from './$ARG';import css,{guard as scoped,layers} from '$BASE/src/js/uicss.js';$RESOLVE $RENDER const res=layers({['$ARG'.split('.').at(0)]:render(mod,scoped)});console.log([...css(res)].join('\n'));"
 			fi
 		done
 	fi

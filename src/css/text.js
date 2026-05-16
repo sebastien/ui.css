@@ -178,9 +178,14 @@ export default named({
 	),
 	alignment: group(
 		rule(".center, .t-center", { text_align: "center" }),
-		rule(".right, .t-right", { text_align: "right" }),
-		rule(".left, .t-left", { text_align: "left" }),
+		rule(".right, .t-right", { text_align: "start" }),
+		rule(".left, .t-left", { text_align: "end" }),
 		rule(".justify, .t-justify", { text_align: "justify" }),
+		rule(".middle, .v-m", { vertical_align: "middle" }),
+		rule(".baseline, .v-bl", { vertical_align: "baseline" }),
+		rule(".top, .v-t", { vertical_align: "top" }),
+		rule(".text-top, .v-tt", { vertical_align: "text-top" }),
+		rule(".bottom, .v-bt", { vertical_align: "bottom" }),
 	),
 	direction: group(
 		rule(".t-rtl", {

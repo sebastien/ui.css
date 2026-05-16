@@ -1,4 +1,7 @@
-import { vars, named, group, rule } from "../js/uicss.js";
+import { vars, root, named, group, rule } from "../js/uicss.js";
+
+const gated = (condition, ...selectors) =>
+	selectors.map((selector) => `${root}${condition} ${selector}`);
 
 export default named({
 	// NOTE: We use hovered as hover is reserved as a :hover alias.
@@ -7,14 +10,15 @@ export default named({
 			transition: `opacity ${vars.motion.duration.normal} ${vars.motion.easing.emphasized}`,
 		}),
 		rule(
-			[
+			gated(
+				".nohover",
 				".hovered:focus .hover-undim",
 				".hovered:focus-within .hover-undim",
 				".hovered:hover .hover-undim",
 				".hover-undim:hover",
 				".hover-undim:focus",
 				".hover-undim:focus-within",
-			].map((_) => `body.no-hover ${_}`),
+			),
 			{
 				opacity: "1.0",
 				transition: `opacity ${vars.motion.duration.normal} ${vars.motion.easing.emphasized}`,
@@ -23,39 +27,30 @@ export default named({
 	),
 	reveal: group(
 		rule(".hovered .hover-reveal", { opacity: "0.0" }),
-		rule(
-			[".hovered:hover .hover-reveal", ".hover-reveal:hover"].map(
-				(_) => `body:not(.nohover) ${_}`,
-			),
-			{
-				opacity: "1.0",
-				transition: `opacity ${vars.motion.duration.normal} ${vars.motion.easing.emphasized}`,
-			},
-		),
+		rule(gated(":not(.nohover)", ".hovered:hover .hover-reveal", ".hover-reveal:hover"), {
+			opacity: "1.0",
+			transition: `opacity ${vars.motion.duration.normal} ${vars.motion.easing.emphasized}`,
+		}),
 	),
 	show: group(
 		rule([".hovered .hover-show", ".hovered:not(:hover) .hover-show"], {
 			visibility: "hidden",
 		}),
-		rule(
-			[".hovered:hover .hover-show", ".hover-show:hover"].map(
-				(_) => `body:not(.nohover) ${_}`,
-			),
-			{
-				visibility: "visible",
-			},
-		),
+		rule(gated(":not(.nohover)", ".hovered:hover .hover-show", ".hover-show:hover"), {
+			visibility: "visible",
+		}),
 		rule([".focused .focus-show"], {
 			visibility: "hidden",
 		}),
 		rule(
-			[
+			gated(
+				":not(.nofocus)",
 				".focused:focus .focus-show",
 				".focused:focus-within .focus-show",
 				".focus-show:focus",
 				".focus-show:focus-within",
 				".focus-show:hover",
-			].map((_) => `body:not(.nofocus) ${_}`),
+			),
 			{
 				visibility: "visible",
 			},
@@ -63,10 +58,10 @@ export default named({
 	),
 	whenhover: group(
 		rule(".hovered .when-hover", { display: "none" }),
-		rule("body:not(.nohover) .hovered:hover .when-hover", {
+		rule(`${root}:not(.nohover) .hovered:hover .when-hover`, {
 			display: "unset",
 		}),
-		rule("body:not(.nohover) .hovered:hover .when-not-hover", {
+		rule(`${root}:not(.nohover) .hovered:hover .when-not-hover`, {
 			display: "none",
 		}),
 	),
@@ -74,15 +69,9 @@ export default named({
 		rule(".hover-dx", {
 			transition: `transform ${vars.motion.duration.fast} ${vars.motion.easing.standard}`,
 		}),
-		rule(
-			[
-				"body:not(.no-hover) .hover-dx:hover",
-				"body:not(.no-hover) .hovered:hover .hover-dx",
-			],
-			{
-				transform: `translateX(${vars.motion.shift.hover_dx})`,
-			},
-		),
+		rule(gated(":not(.nohover)", ".hover-dx:hover", ".hovered:hover .hover-dx"), {
+			transform: `translateX(${vars.motion.shift.hover_dx})`,
+		}),
 	),
 	summary: group(
 		rule("details .open-show, details .when-open", { display: "none" }),
@@ -106,4 +95,5 @@ export default named({
 		}),
 	),
 });
+
 // EOF

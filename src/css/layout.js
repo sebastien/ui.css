@@ -408,7 +408,9 @@ export default named({
 				"table.lined tbody tr th",
 			],
 			{
-				border_bottom: `${vars.border.width} ${vars.border.style} ${vars.border.color} `,
+				border_bottom: `${vars.border.width} ${vars.border.style} ${vars.border.color.or(
+					vars.color.neutral,
+				)} `,
 			},
 		),
 	),
@@ -423,7 +425,7 @@ export default named({
 		}),
 	),
 	misc: group(
-		rule(".lined", {
+		rule([".stack.lined", ".row.lined", "table.lined"], {
 			gap: "0em",
 		}),
 	),
