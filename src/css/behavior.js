@@ -27,30 +27,44 @@ export default named({
 	),
 	reveal: group(
 		rule(".hovered .hover-reveal", { opacity: "0.0" }),
-		rule(gated(":not(.nohover)", ".hovered:hover .hover-reveal", ".hover-reveal:hover"), {
-			opacity: "1.0",
-			transition: `opacity ${vars.motion.duration.normal} ${vars.motion.easing.emphasized}`,
-		}),
+		rule(
+			gated(
+				":not(.nohover)",
+				".hovered:hover .hover-reveal",
+				".hover-reveal:hover",
+			),
+			{
+				opacity: "1.0",
+				transition: `opacity ${vars.motion.duration.normal} ${vars.motion.easing.emphasized}`,
+			},
+		),
 	),
 	show: group(
 		rule([".hovered .hover-show", ".hovered:not(:hover) .hover-show"], {
 			visibility: "hidden",
 		}),
-		rule(gated(":not(.nohover)", ".hovered:hover .hover-show", ".hover-show:hover"), {
-			visibility: "visible",
-		}),
+		rule(
+			gated(
+				":not(.nohover)",
+				".hovered:hover .hover-show",
+				".hover-show:hover",
+			),
+			{
+				visibility: "visible",
+			},
+		),
 		rule([".focused .focus-show"], {
 			visibility: "hidden",
 		}),
 		rule(
-			gated(
-				":not(.nofocus)",
-				".focused:focus .focus-show",
-				".focused:focus-within .focus-show",
-				".focus-show:focus",
-				".focus-show:focus-within",
-				".focus-show:hover",
-			),
+			".focused.focus .focus-show",
+			".focused:focus .focus-show",
+			".focused:focus-within .focus-show",
+			".focus-show:focus",
+			".focus-show.focus",
+			".focus-show:focus-within",
+			".focus-show:hover",
+			".focus-show.hover",
 			{
 				visibility: "visible",
 			},
@@ -58,10 +72,10 @@ export default named({
 	),
 	whenhover: group(
 		rule(".hovered .when-hover", { display: "none" }),
-		rule(`${root}:not(.nohover) .hovered:hover .when-hover`, {
+		rule(`.hovered:hover .when-hover`, {
 			display: "unset",
 		}),
-		rule(`${root}:not(.nohover) .hovered:hover .when-not-hover`, {
+		rule(`.hovered:hover .when-nohover`, {
 			display: "none",
 		}),
 	),
@@ -69,9 +83,12 @@ export default named({
 		rule(".hover-dx", {
 			transition: `transform ${vars.motion.duration.fast} ${vars.motion.easing.standard}`,
 		}),
-		rule(gated(":not(.nohover)", ".hover-dx:hover", ".hovered:hover .hover-dx"), {
-			transform: `translateX(${vars.motion.shift.hover_dx})`,
-		}),
+		rule(
+			gated(":not(.nohover)", ".hover-dx:hover", ".hovered:hover .hover-dx"),
+			{
+				transform: `translateX(${vars.motion.shift.hover_dx})`,
+			},
+		),
 	),
 	summary: group(
 		rule("details .open-show, details .when-open", { display: "none" }),
@@ -81,9 +98,12 @@ export default named({
 		rule(".open-rotate", {
 			transform: "rotate(0deg)",
 			transform_origin: "center",
+			__motion_rotation: "90deg",
 			transition: `transform ${vars.motion.duration.fast} ${vars.motion.easing.standard}`,
 		}),
-		rule("details:open .open-rotate", { transform: "rotate(90deg)" }),
+		rule("details:open .open-rotate", {
+			transform: `rotate(${vars.motion.rotation})`,
+		}),
 		rule("details::details-content", {
 			transition: `height ${vars.motion.duration.fast} ${vars.motion.easing.standard}, opacity ${vars.motion.duration.fast} ${vars.motion.easing.standard}`,
 			height: "0",
@@ -93,6 +113,10 @@ export default named({
 			height: "auto",
 			opacity: "1",
 		}),
+	),
+	rotation: group(
+		rule(".r-180", { __motion_rotation: "180deg" }),
+		rule(".r-90", { __motion_rotation: "90deg" }),
 	),
 });
 

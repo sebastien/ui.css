@@ -16,13 +16,6 @@ const tl = { ...t, ...l };
 const br = { ...b, ...r };
 
 export default named({
-	align: group(
-		rule(".centered", {
-			display: "flex",
-			justify_content: "center",
-			align_items: "center",
-		}),
-	),
 	box: group(
 		rule(".bbox", { box_sizing: "border-box" }),
 		rule(".cbox", { box_sizing: "content-box" }),
@@ -265,7 +258,7 @@ export default named({
 				rule(".dp", {
 					position: "relative",
 					top: "var(--dy, 0px)",
-					left: "var(--dy, 0px)",
+					left: "var(--dx, 0px)",
 				}),
 				rule(".dm", {
 					margin_top: "var(--dy, 0px)",
@@ -303,6 +296,7 @@ export default named({
 		rule([".circle", ".disc"], {
 			border_radius: "50%",
 		}),
+		rule(".r-1_1", { aspect_ratio: "1/1" }),
 		rule(".r-4_3", { aspect_ratio: "4/3" }),
 		rule(".r-16_9", { aspect_ratio: "16/9" }),
 	),
@@ -314,6 +308,9 @@ export default named({
 		}),
 		rule(".row.stretch", {
 			align_items: "stretch",
+		}),
+		rule(".row.middle", {
+			align_items: "center",
 		}),
 		rule(".row.end", {
 			justify_content: "flex-end",
@@ -360,6 +357,13 @@ export default named({
 		rule(".shrink", {
 			flex_shrink: "1",
 		}),
+		rule(".stack.stretch", {
+			align_items: "stretch",
+		}),
+		rule(".stack.stretch.force > *", {
+			width: "100%",
+			box_sizing: "border-box",
+		}),
 		rule([".stack > .stretch", ".row > .stretch"], {
 			align_self: "stretch",
 		}),
@@ -369,9 +373,18 @@ export default named({
 		rule([".row.top", ".stack.top"], {
 			align_items: "flex-start",
 		}),
-		rule([".row.stretch", ".stack.stretch"], {
-			align_items: "stretch",
-		}),
+		...times(7, (_) =>
+			rule(`.fl-${_}`, {
+				flex: `${_}`,
+			}),
+		),
+		group(
+			rule(".centered", {
+				display: "flex",
+				justify_content: "center",
+				align_items: "center",
+			}),
+		),
 	),
 	grid: group(
 		rule(".grid", {
@@ -413,6 +426,14 @@ export default named({
 				)} `,
 			},
 		),
+		rule(["tr.lined td", "tr.lined th"], {
+			border_right: `${vars.border.width} ${vars.border.style} ${vars.border.color.or(
+				vars.color.neutral,
+			)} `,
+		}),
+		rule(["tr.lined td:last-child", "tr.lined th:last-child"], {
+			border_right_width: "0px",
+		}),
 	),
 	overflow: group(
 		rule(".overflow", {

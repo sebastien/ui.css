@@ -22,21 +22,31 @@ function base(selector, ...rest) {
 			box_sizing: "border-box",
 			padding: vars.control.padding.or("0.5em 1em"),
 			margin: vars.control.margin.or("0em"),
+			white_space: "nowrap",
+			text_overflow: "ellipsis",
 			__control_border_tint: vars.control.color.tint.or(vars.color.paper),
+			__control_border_blend: 0.8,
+			__control_border_opacity: 0.8,
 			// Border
 			border_width: vars.control.border.size.or("1px"),
 			border_color: colors.mixed(
-				vars.control.color.base.or(vars.color.neutral),
+				vars.control.border.base.or(
+					vars.controler.color.base,
+					vars.color.neutral,
+				),
 				vars.control.border.tint,
-				vars.control.color.blend.or(0.8),
-				vars.control.border.opacity.or(0.8),
+				vars.control.border.blend,
+				vars.control.border.opacity,
 			),
 			// Outline
 			outline_width: "0px",
 			outline_color: colors.mixed(
-				vars.control.color.base.or(vars.color.focus, vars.color.neutral),
-				vars.control.color.tint.or(vars.color.paper),
-				vars.control.color.blend.or(0.8),
+				vars.control.outline.color.base.or(
+					vars.color.focus,
+					vars.color.neutral,
+				),
+				vars.control.outline.color.tint.or(vars.color.paper),
+				vars.control.outline.color.blend.or(0.8),
 				vars.control.outline.opacity.or(0.5),
 			),
 			// No user select
@@ -90,16 +100,22 @@ function field(selector, ...rest) {
 			__control_background_base: vars.color.paper,
 			background_color: colors.mixed(
 				vars.control.background.base,
-				vars.control.color.tint.or(vars.color.paper),
-				0.1,
-				0.9,
+				vars.control.background.tint.or(
+					vars.control.color.tint,
+					vars.color.paper,
+				),
+				vars.control.background.blend.or(0.1),
+				vars.control.background.opacity.or(0.9),
 			),
 			// Border blended to paper, fully opaque
 			border_color: colors.mixed(
-				vars.control.color.base.or(vars.color.neutral),
-				vars.control.border.tint,
-				0.5,
-				1.0,
+				vars.control.border.base.or(
+					vars.control.color.base,
+					vars.color.neutral,
+				),
+				vars.control.border.tint.or(vars.color.ink),
+				vars.control.border.blend.or(0.5),
+				vars.control.border.opacity.or(1.0),
 			),
 		}),
 		// Color variants
@@ -116,45 +132,21 @@ function field(selector, ...rest) {
 		}),
 		// Focus state, reinforcing opacity
 		css.rule(css.mods("&", "focus"), {
-			background_color: colors.mixed(
-				vars.control.background.base.or(vars.color.paper),
-				vars.control.color.tint.or(vars.color.paper),
-				0.1,
-				1.0,
-			),
-			// Border focus, less tinted
-			border_color: colors.mixed(
-				vars.control.color.base.or(vars.color.neutral),
-				vars.control.border.tint,
-				0.7,
-				1.0,
-			),
+			// Focused background is fully opaque
+			__control_background_opacity: 1.0,
+			// And border has more of the main color
+			__control_border_blend: 0.7,
 		}),
 		// Hover state, reinforcing opacity
 		css.rule(css.mods("&", "hover"), {
 			// Same as focus
-			background_color: colors.mixed(
-				vars.control.background.base.or(vars.color.paper),
-				vars.control.color.tint.or(vars.color.paper),
-				0.1,
-				1.0,
-			),
-			// But slighly less tinted border
-			border_color: colors.mixed(
-				vars.control.color.base.or(vars.color.neutral),
-				vars.control.border.tint,
-				0.8,
-				1.0,
-			),
+			__control_background_opacity: 1.0,
+			// But even more of the main color
+			__control_border_blend: 0.8,
 		}),
 		// Active state, typically a blend to ink
 		css.rule(css.mods("&", "active"), {
-			border_color: colors.mixed(
-				vars.control.color.base.or(vars.color.neutral),
-				vars.control.border.tint,
-				0.9,
-				1.0,
-			),
+			__control_border_blend: 0.9,
 		}),
 
 		// Disabled variant
@@ -170,20 +162,12 @@ function field(selector, ...rest) {
 				border_color: "transparent",
 				// No outline for ghost
 				outline_width: "0px",
-				background_color: colors.mixed(
-					vars.control.base.or(vars.color.ink),
-					vars.control.color.tint.or(vars.color.paper),
-					0.1,
-					0.0,
-				),
+				// Very faint primary color, transparent by default
+				__background_color_blend: 0.1,
+				__background_color_opacity: 0,
 			},
 			css.rule(css.mods("&", "focus", "active"), {
-				background_color: colors.mixed(
-					vars.control.base.or(vars.color.ink),
-					vars.control.color.tint.or(vars.color.paper),
-					0.1,
-					0.5,
-				),
+				__background_color_opacity: 0.5,
 			}),
 		),
 		// Blank variant
@@ -201,12 +185,9 @@ function field(selector, ...rest) {
 			align_items: "center",
 			padding: "0.15em",
 			height: "2em",
-			background_color: colors.mixed(
-				vars.control.base.or(vars.color.ink),
-				vars.control.color.tint.or(vars.color.paper),
-				0.1,
-				0.0,
-			),
+			// Like ghost
+			__background_color_blend: 0.1,
+			__background_color_opacity: 0.1,
 		}),
 		...rest,
 	);
@@ -264,12 +245,11 @@ function action(selector, ...rest) {
 		css.rule("&", {
 			// Cursor
 			cursor: "pointer",
+			__control_background_base: vars.control.color.base,
+			__control_color_base: vars.background.base.or(vars.color.neutral),
 			// Default syling, background is pure primary color
 			background_color: colors.mixed(
-				vars.control.background.base.or(
-					vars.color.neutral.background,
-					vars.color.neutral,
-				),
+				vars.control.background.base,
 				vars.control.color.ink.or(vars.color.ink),
 				1.0,
 				1.0,
@@ -293,8 +273,8 @@ function action(selector, ...rest) {
 		// Hover state, typically a blent to paper
 		css.rule(css.mods("&", "hover"), {
 			background_color: colors.mixed(
-				vars.control.color.base.or(vars.color.neutral),
-				vars.control.color.tint.or(vars.color.paper),
+				vars.control.background.base.or(vars.color.neutral),
+				vars.control.background.tint.or(vars.color.paper),
 				0.9,
 				1.0,
 			),
@@ -320,12 +300,14 @@ function action(selector, ...rest) {
 			css.mods("&", "outline"),
 			{
 				__control_default_outline_opacity: 0.4,
+				__control_border_width: vars.border.width.or("2px"),
 				color: colors.mixed(
 					vars.control.color.base.or(vars.color.neutral),
 					vars.control.color.tint.or(vars.color.ink),
 					vars.control.color.blend.or(0.5),
 					1.0,
 				),
+				border_width: vars.control.border.width,
 				border_color: colors.mixed(
 					vars.control.color.base.or(vars.color.neutral),
 					vars.control.color.tint.or(vars.color.ink),
@@ -349,8 +331,8 @@ function action(selector, ...rest) {
 			}),
 			css.rule("&:active, &.active", {
 				background_color: colors.mixed(
-					vars.control.color.base.or(vars.color.neutral),
-					vars.control.color.tint.or(vars.color.paper),
+					vars.control.background.color.base,
+					vars.control.backgronud.color.tint.or(vars.color.paper),
 					0.9,
 					0.2,
 				),
@@ -397,7 +379,7 @@ function action(selector, ...rest) {
 
 function checkbox() {
 	return field(
-		["input[type=checkbox]:not(.toggle)", ".checkbox"],
+		["input[type=checkbox]:not(.toggle,.selector)", ".checkbox"],
 		css.rule("&", {
 			appearance: "none",
 			padding: "0em",
@@ -433,28 +415,24 @@ function checkbox() {
 			border_width: "0 0.14em 0.14em 0",
 			transform: "rotate(45deg) scale(0)",
 			transform_origin: "center",
-			color: colors.mixed(
-				vars.control.color.base.or(vars.color.neutral),
-				vars.color.ink,
-				0.3,
-				0.9,
-			),
+			color: `contrast-color(${vars.control.color.base.or(vars.color.neutral)})`,
 		}),
 		css.rule(css.mods("&", "checked"), {
-			// Full color when checked
+			// Use the semantic control color as the checked fill.
 			background_color: colors.mixed(
 				vars.control.color.base.or(vars.color.neutral),
-				vars.control.tint,
-				0.8,
+				vars.control.color.tint.or(vars.color.ink),
+				1.0,
 				1.0,
 			),
-			// Slightly darker border when checked
+			// Keep the border visually aligned with the selected fill.
 			border_color: colors.mixed(
 				vars.control.color.base.or(vars.color.neutral),
-				vars.control.border.tint,
-				0.8,
+				vars.control.border.tint.or(vars.color.ink),
+				0.95,
 				1.0,
 			),
+			color: `contrast-color(${vars.control.color.base.or(vars.color.neutral)})`,
 		}),
 		css.rule("&:checked::before, &.checked::before", {
 			transform: "rotate(45deg) scale(1)",
@@ -462,16 +440,17 @@ function checkbox() {
 		css.rule("&:indeterminate, &.indeterminate", {
 			background_color: colors.mixed(
 				vars.control.color.base.or(vars.color.neutral),
-				vars.control.tint,
-				0.9,
+				vars.control.color.tint.or(vars.color.ink),
+				1.0,
 				1.0,
 			),
 			border_color: colors.mixed(
 				vars.control.color.base.or(vars.color.neutral),
-				vars.control.border.tint,
-				0.9,
+				vars.control.border.tint.or(vars.color.ink),
+				0.95,
 				1.0,
 			),
+			color: `contrast-color(${vars.control.color.base.or(vars.color.neutral)})`,
 		}),
 		css.rule("&:indeterminate::before, &.indeterminate::before", {
 			width: "0.6em",
@@ -488,7 +467,7 @@ function checkbox() {
 
 function radio() {
 	return field(
-		["input[type=radio]", ".radio"],
+		[":not(.selector) input[type=radio]:not(.toggle)", ".radio"],
 		css.rule("&", {
 			appearance: "none",
 			padding: "0em",
@@ -549,7 +528,7 @@ function radio() {
 
 function toggle() {
 	return field(
-		["input[type=checkbox].toggle", ".toggle"],
+		[":not(.selector) input[type=checkbox].toggle", ".toggle"],
 		css.rule("&", {
 			// Box
 			cursor: "pointer",
@@ -841,8 +820,9 @@ function selector() {
 			text_align: "center",
 			gap: "0em",
 		}),
-		css.nesting("& > input", {
+		css.nesting("& > input[type]", {
 			display: "none !important",
+			visibility: "hidden !important",
 		}),
 		// Labels are rendered as buttons, ghost-like by default ,filled in
 		// with a border. The selector may have rounded borders, which is then
@@ -852,6 +832,7 @@ function selector() {
 			{
 				border_radius: "0em",
 				padding: "0.5em 1em",
+				justify_content: "center",
 				cursor: "pointer",
 				color: colors.mixed(
 					vars.control.color.base.or(vars.color.neutral),
@@ -924,6 +905,12 @@ function selector() {
 		css.rule("&.compact > label", {
 			padding: "0.35em 0.5em",
 		}),
+		css.rule("&.stretch", {
+			width: "100%",
+		}),
+		css.rule("&.stretch > label", {
+			flex: "1",
+		}),
 	);
 }
 
@@ -945,6 +932,6 @@ export default css.named({
 	toggle: toggle(),
 	select: select(),
 	selector: selector(),
-	selectabe: selectable(),
+	selectable: selectable(),
 });
 // EOF

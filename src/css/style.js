@@ -132,7 +132,9 @@ export default named({
 		rule(".help", { cursor: "help" }),
 		rule(".grab", { cursor: "grab" }),
 		rule(".grabbing", { cursor: "grabbing" }),
-		rule(".move", { cursor: "move" }),
+		rule(".move", { cursor: "move", user_select: "none" }),
+		rule(".move-v", { cursor: "ns-resize", user_select: "none" }),
+		rule(".move-h", { cursor: "ew-resize", user_select: "none" }),
 		rule(".resize-w", { cursor: "col-resize", user_select: "none" }),
 		rule(".resize-h", { cursor: "row-resize", user_select: "none" }),
 		rule([".resize", ".resize-lr"], {
@@ -192,6 +194,14 @@ export default named({
 	// ----------------------------------------------------------------------------
 
 	rounding: group(
+		rule("tr.rounded > *:first-child", {
+			border_top_left_radius: vars.border.radius,
+			border_bottom_left_radius: vars.border.radius,
+		}),
+		rule("tr.rounded > *:last-child", {
+			border_top_right_radius: vars.border.radius,
+			border_bottom_right_radius: vars.border.radius,
+		}),
 		rule(".rounded", {
 			__border_radius: "0.25lh",
 			border_radius: vars.border.radius,
@@ -204,7 +214,7 @@ export default named({
 			__border_radius: "1.5lh",
 			border_radius: vars.border.radius,
 		}),
-		rule(["squared", ".nord"], { border_radius: "0px" }),
+		rule([".squared", ".nord"], { border_radius: "0px" }),
 		rule(".nord-tl", { border_top_left_radius: "0px" }),
 		rule(".nord-tr", { border_top_right_radius: "0px" }),
 		rule(".nord-br", { border_bottom_right_radius: "0px" }),

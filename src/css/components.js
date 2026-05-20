@@ -11,6 +11,8 @@ function pill(...rest) {
 			display: "inline-flex",
 			padding: vars.pill.padding.or("0.25em 0.75em"),
 			font_size: "inherit",
+			align_items: "center",
+			gap: vars.gap,
 			line_height: vars.pill.font.line.or("1.15em"),
 			// Border
 			border_width: vars.pill.border.size.or("0px"),
@@ -37,6 +39,15 @@ function pill(...rest) {
 				vars.background.color.opacity,
 			),
 			color: `contrast-color(${vars.background.color} max ${vars.color.paper}, ${vars.color.ink})`,
+		}),
+		css.rule("&.dot > *:first-child:before", {
+			display: "inline-block",
+			content: '""',
+			width: "0.65em",
+			height: "0.65em",
+			margin_right: vars.gap,
+			border_radius: "50%",
+			background_color: "currentColor",
 		}),
 		css.rule("&.compact", {
 			padding: vars.pill.padding.compact.or("0.125em 0.5em"),
@@ -255,11 +266,12 @@ function panels() {
 		css.rule(".panels > .horizontal", {
 			position: "relative",
 			display: "grid",
+			grid_template_columns: `repeat(${vars.panels.count}, 1fr)`,
+			align_items: "stretch",
 			left: `calc(-100% * ${vars.panels.current})`,
 			width: `calc(100% * ${vars.panels.count})`,
 			min_width: "100%",
 			height: "100%",
-			grid_template_columns: `repeat(${vars.panels.count}, 1fr)`,
 			transition: "left 0.3s ease-in-out",
 		}),
 
@@ -275,11 +287,11 @@ function panels() {
 		css.rule(".panels > .vertical", {
 			position: "relative",
 			display: "grid",
+			grid_template_rows: `repeat(${vars.panels.count}, 1fr)`,
 			top: `calc(-100% * ${vars.panels.current})`,
 			height: `calc(100% * ${vars.panels.count})`,
 			min_height: "100%",
 			width: "100%",
-			grid_template_rows: `repeat(${vars.panels.count}, 1fr)`,
 			transition: "top 0.3s ease-in-out",
 		}),
 

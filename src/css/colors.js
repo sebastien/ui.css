@@ -193,7 +193,13 @@ function colors(colors = COLORS) {
 			__background_color: backgroundColor,
 			background_color: `${vars.background.color}`,
 		}),
+		rule(".bgc", {
+			__background_color: backgroundColor,
+		}),
 		// .tx - applies the computed text color
+		rule(".txc", {
+			color: `${vars.text.color}`,
+		}),
 		rule(".tx", {
 			__text_color: textColor,
 			color: `${vars.text.color}`,
@@ -207,6 +213,9 @@ function colors(colors = COLORS) {
 			color: contrast(`${vars.background.color}`),
 		}),
 		// .bd - applies the computed border color
+		rule(".bdc", {
+			__border_color: borderColor,
+		}),
 		rule(".bd", {
 			__border_color: borderColor,
 			border_color: `${vars.border.color}`,
@@ -285,7 +294,7 @@ function colors(colors = COLORS) {
 						index / 10,
 				}),
 			),
-			rule(`.${short}-o`, {
+			rule(`.${short}o`, {
 				[`__${shorthands[short].name.replaceAll("-", "_")}_opacity`]: 1.0,
 			}),
 		]),
@@ -304,7 +313,7 @@ function colors(colors = COLORS) {
 			),
 		),
 		Object.keys(shorthands).map((short) =>
-			rule(`.${short}-b`, {
+			rule(`.${short}b`, {
 				[`__${shorthands[short].name.replaceAll("-", "_")}_blend`]: 1.0,
 			}),
 		),

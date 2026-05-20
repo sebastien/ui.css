@@ -647,7 +647,7 @@ const group = (...rules) => new Group(rules);
 // Specialized group that emits its content inside `@layer`.
 class Layer extends Group {
 	*lines(compact = true, depth = 0) {
-		const embed = process?.env?.UICSS_EMBED;
+		const embed = typeof process !== "undefined" && process.env?.UICSS_EMBED
 		const shouldWrap = this.name && !embed;
 		const indent = compact ? "" : "\t".repeat(depth);
 		if (shouldWrap) {
