@@ -12,7 +12,8 @@
     "./css/reset.js": "./css/reset.js",
     "./css/tokens.js": "./css/tokens.js",
     "./css/components.js": "./css/components.js",
-    "./css/behavior.js": "./css/behavior.js"
+    "./css/behavior.js": "./css/behavior.js",
+    "./css/animate.js": "./css/animate.js"
   },
   "dependencies": {
     "wrangler": "^3.78.10"

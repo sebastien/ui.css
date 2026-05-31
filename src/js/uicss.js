@@ -455,6 +455,44 @@ class NestingRule {
 	}
 }
 
+// Class: AtRule
+// Represents a CSS at-rule wrapper such as @media or @keyframes.
+class AtRule {
+	constructor(name, prelude, contents) {
+		this.name = name;
+		this.prelude = prelude;
+		this.contents = contents || [];
+	}
+	*lines(compact, depth = 0) {
+		const indent = compact ? "" : "\t".repeat(depth);
+		const prelude = this.prelude ? ` ${this.prelude}` : "";
+		yield compact
+			? `@${this.name}${prelude}{`
+			: `${indent}@${this.name}${prelude} {`;
+		for (const child of this.contents) {
+			for (const line of child.lines(compact, depth + 1)) {
+				yield line;
+			}
+		}
+		yield `${indent}}`;
+	}
+	*rules() {
+		yield [...this.lines(false)].join("\n");
+	}
+	*docs(path) {
+		yield {
+			type: "AtRule",
+			name: `@${this.name}${this.prelude ? ` ${this.prelude}` : ""}`,
+			path,
+		};
+		for (const child of this.contents) {
+			if (typeof child.docs === "function") {
+				yield* child.docs(path);
+			}
+		}
+	}
+}
+
 // Function: rule
 // Creates a `Rule` from selectors and mixed body inputs.
 function rule(selector, ...body) {
@@ -643,6 +681,19 @@ class Group {
 // Shorthand for creating a `Group` from rule values.
 const group = (...rules) => new Group(rules);
 
+// Function: media
+// Creates an `@media` at-rule containing regular ui.css rules or groups.
+const media = (query, ...contents) => new AtRule("media", query, contents.flat());
+
+// Function: keyframes
+// Creates an `@keyframes` at-rule from a frame-to-properties mapping.
+const keyframes = (name, frames) =>
+	new AtRule(
+		"keyframes",
+		name,
+		Object.entries(frames).map(([selector, props]) => rule(selector, props)),
+	);
+
 // Class: Layer
 // Specialized group that emits its content inside `@layer`.
 class Layer extends Group {
@@ -702,6 +753,25 @@ const tokenlike = (value) =>
 	value instanceof Tokens ||
 	(value instanceof Group && value.contents.every(tokenlike));
 
+const scopedcontent = (value, selector) => {
+	if (value === null || value === undefined) {
+		return [];
+	}
+	if (Array.isArray(value)) {
+		return value.flatMap((_) => scopedcontent(_, selector));
+	}
+	if (value instanceof AtRule) {
+		return [value.name === "media" ? guard(value, selector) : value];
+	}
+	if (value instanceof Group) {
+		return [new Group(value.contents.flatMap((_) => scopedcontent(_, selector)), value.name)];
+	}
+	if (value instanceof NestingRule || value instanceof Rule) {
+		return [nesting(selector, {}, reroot(value))];
+	}
+	return [value];
+};
+
 const rerootselector = (selector) => `${selector}`.replaceAll(root, "&");
 
 const reroot = (value) => {
@@ -717,6 +787,11 @@ const reroot = (value) => {
 			value.properties,
 			value.children.map(reroot),
 		);
+	}
+	if (value instanceof AtRule) {
+		return value.name === "media"
+			? new AtRule(value.name, value.prelude, value.contents.map(reroot))
+			: value;
 	}
 	if (value instanceof Rule) {
 		return new Rule(value.selectors.map(rerootselector), value.properties);
@@ -745,24 +820,29 @@ const guard = (value, selector) => {
 	if (value instanceof Layer) {
 		const contents = tokenlike(value)
 			? value.contents.map((_) => guard(_, selector))
-			: value.contents.map(reroot);
-		const res = tokenlike(value)
-			? new Layer(contents)
-			: new Layer([nesting(selector, {}, ...contents)]);
+			: value.contents.flatMap((_) => scopedcontent(_, selector));
+		const res = new Layer(contents);
 		res.name = value.name;
 		return res;
 	}
 	if (value instanceof Group) {
 		const contents = tokenlike(value)
 			? value.contents.map((_) => guard(_, selector))
-			: value.contents.map(reroot);
-		const res = tokenlike(value)
-			? new Group(contents, value.name)
-			: new Group([nesting(selector, {}, ...contents)], value.name);
+			: value.contents.flatMap((_) => scopedcontent(_, selector));
+		const res = new Group(contents, value.name);
 		return res;
 	}
 	if (value instanceof NestingRule) {
 		return nesting(selector, {}, reroot(value));
+	}
+	if (value instanceof AtRule) {
+		return value.name === "media"
+			? new AtRule(
+					value.name,
+					value.prelude,
+					value.contents.map((_) => guard(_, selector)),
+				)
+			: value;
 	}
 	if (value instanceof Rule) {
 		return nesting(selector, {}, reroot(value));
@@ -985,8 +1065,10 @@ export {
 	docs,
 	group,
 	guard,
+	keyframes,
 	layer,
 	layers,
+	media,
 	mods,
 	named,
 	nesting,
@@ -1013,7 +1095,9 @@ export default Object.assign(css, {
 	nesting,
 	group,
 	guard,
+	keyframes,
 	named,
+	media,
 	percent,
 	layer,
 	root,

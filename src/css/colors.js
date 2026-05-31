@@ -89,6 +89,13 @@ const shorthands = {
 	ol: { name: "outline-color", css: "outline-color" },
 };
 
+const fades = {
+	t: "to top",
+	b: "to bottom",
+	l: "to left",
+	r: "to right",
+};
+
 function colorvar(name) {
 	return {
 		[`__${name}_color`]: colormix(
@@ -193,6 +200,14 @@ function colors(colors = COLORS) {
 			__background_color: backgroundColor,
 			background_color: `${vars.background.color}`,
 		}),
+		Object.entries(fades).map(([short, direction]) =>
+			rule(`.bg-fade-${short}`, {
+				background_color: "transparent",
+				background_image: `linear-gradient(${direction}, ${vars.background.color} 0%, transparent 100%)`,
+				background_repeat: "no-repeat",
+				background_size: "100% 100%",
+			}),
+		),
 		rule(".bgc", {
 			__background_color: backgroundColor,
 		}),

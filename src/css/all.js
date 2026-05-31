@@ -7,6 +7,7 @@ import style from "./style.js";
 import colors, { COLORS } from "./colors.js";
 import controls from "./controls.js";
 import behavior from "./behavior.js";
+import animate from "./animate.js";
 import components from "./components.js";
 
 export default (cols = COLORS, { guard: root } = {}) => {
@@ -16,6 +17,7 @@ export default (cols = COLORS, { guard: root } = {}) => {
 		controls,
 		components,
 		behavior,
+		animate,
 		layout,
 		// NOTE: Style should be the last
 		colors: colors(cols),

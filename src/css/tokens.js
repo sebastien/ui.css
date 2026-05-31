@@ -1,4 +1,4 @@
-import { group, sizes, tokens, vars } from "../js/uicss.js";
+import { group, tokens, vars } from "../js/uicss.js";
 import { colormix } from "./colors";
 
 const REM_PIXELS = 16;
@@ -208,15 +208,57 @@ export default group(
 	tokens({
 		motion: {
 			duration: {
-				fast: "0.1s",
-				normal: "0.2s",
+				instant: "80ms",
+				fast: "120ms",
+				base: "180ms",
+				normal: vars.motion.duration.base,
+				slow: "260ms",
+				slower: "360ms",
 			},
 			easing: {
-				standard: "ease",
+				standard: "cubic-bezier(0.2, 0, 0, 1)",
+				out: "cubic-bezier(0, 0, 0.2, 1)",
+				in: "cubic-bezier(0.4, 0, 1, 1)",
+				soft: "cubic-bezier(0.16, 1, 0.3, 1)",
+				snap: "cubic-bezier(0.34, 1.56, 0.64, 1)",
 				emphasized: "ease-in-out",
 			},
 			shift: {
 				hover_dx: "20%",
+			},
+			move: {
+				xs: "4px",
+				sm: "8px",
+				md: "16px",
+				lg: "24px",
+			},
+			scale: {
+				in: "0.98",
+				out: "0.98",
+				press: "0.985",
+				pop: "1.015",
+			},
+			lift: {
+				y: "-2px",
+				shadow: "0 8px 24px rgb(0 0 0 / 0.10)",
+				shadow_soft: "0 4px 16px rgb(0 0 0 / 0.08)",
+			},
+			backdrop: {
+				opacity: "0.36",
+			},
+			highlight: "rgb(255 220 120 / 0.38)",
+			shimmer: {
+				base: "rgb(0 0 0 / 0.06)",
+				sheen: "rgb(255 255 255 / 0.42)",
+			},
+			animation: {
+				duration: vars.motion.duration.base,
+				ease: vars.motion.easing.standard,
+				delay: "0ms",
+				fill: "both",
+			},
+			stagger: {
+				step: "45ms",
 			},
 		},
 		size: scale(
