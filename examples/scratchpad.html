@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en" class="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UI.css Scratchpad</title>
+    <link rel="stylesheet" href="../dist/ui.css" />
+  </head>
+  <body class="m-0 p-6 bg bg-neutral">
+    <main class="stack g-4 w-content">
+      <section class="panel stack g-3 p-5 bd bd-4o">
+        <h1 class="h3 m-0">Selector hover repro</h1>
+        <p class="m-0 limit-text">Hover the middle item. It should stay readable and sit halfway between inactive and selected.</p>
+
+        <div class="stack g-2">
+          <p class="b m-0">Colored selector</p>
+          <div class="selector regular accent" role="radiogroup" aria-label="Accent selector repro">
+            <input type="radio" id="scratchpad-accent-a" name="scratchpad-accent" checked />
+            <label for="scratchpad-accent-a">Selected</label>
+            <input type="radio" id="scratchpad-accent-b" name="scratchpad-accent" />
+            <label for="scratchpad-accent-b">Hover me</label>
+            <input type="radio" id="scratchpad-accent-c" name="scratchpad-accent" />
+            <label for="scratchpad-accent-c">Inactive</label>
+          </div>
+        </div>
+
+        <div class="stack g-2">
+          <p class="b m-0">Non-colored selector</p>
+          <div class="selector regular" role="radiogroup" aria-label="Neutral selector repro">
+            <input type="radio" id="scratchpad-neutral-a" name="scratchpad-neutral" checked />
+            <label for="scratchpad-neutral-a">Selected</label>
+            <input type="radio" id="scratchpad-neutral-b" name="scratchpad-neutral" />
+            <label for="scratchpad-neutral-b">Hover me</label>
+            <input type="radio" id="scratchpad-neutral-c" name="scratchpad-neutral" />
+            <label for="scratchpad-neutral-c">Inactive</label>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

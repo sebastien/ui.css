@@ -1,5 +1,5 @@
 import { group, tokens, vars } from "../js/uicss.js";
-import { colormix } from "./colors";
+import { colormix } from "./colors.js";
 
 const REM_PIXELS = 16;
 function scaled(unit, px, scale = undefined, base = REM_PIXELS) {
@@ -305,6 +305,7 @@ export default group(
 		heading: {
 			min: `${vars.page.base}`,
 			max: 42,
+			line: vars.font.line,
 			size: [
 				"80%", // 0: xxs
 				"100%", // 1: xs

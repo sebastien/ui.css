@@ -133,8 +133,8 @@ export default named({
 		rule(".grab", { cursor: "grab" }),
 		rule(".grabbing", { cursor: "grabbing" }),
 		rule(".move", { cursor: "move", user_select: "none" }),
-		rule(".move-v", { cursor: "ns-resize", user_select: "none" }),
-		rule(".move-h", { cursor: "ew-resize", user_select: "none" }),
+		rule(".move-h", { cursor: "ns-resize", user_select: "none" }),
+		rule(".move-w", { cursor: "ew-resize", user_select: "none" }),
 		rule(".resize-w", { cursor: "col-resize", user_select: "none" }),
 		rule(".resize-h", { cursor: "row-resize", user_select: "none" }),
 		rule([".resize", ".resize-lr"], {

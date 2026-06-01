@@ -13,12 +13,14 @@ export default named({
 		...sizes.map((k, si) =>
 			rule([times(7, (hi) => `h${hi + 1}.sz-${si}`)], {
 				font_size: `${vars.heading.size[si]}`,
+				line_height: vars.heading.line,
 			}),
 		),
 		// .hX rules do not have padding
 		...times(7, (i) =>
 			rule(`.h${i + 1}`, {
 				font_size: `${vars.heading.size[6 - i]}`,
+				line_height: vars.heading.line,
 				font_weight: "600",
 			}),
 		),
@@ -26,6 +28,7 @@ export default named({
 		...times(7, (i) =>
 			rule([`h${i + 1}.t`, `.t h${i + 1}`], {
 				font_size: `${vars.heading.size[6 - i]}`,
+				line_height: vars.heading.line,
 				font_weight: "600",
 				margin_top: `${vars.margin[2]}`,
 				margin_bottom: `${vars.margin[2]}`,
@@ -149,7 +152,8 @@ export default named({
 	whitespace: group(
 		rule(".nobreak", { white_space: "nobreak" }),
 		rule(".nowrap", { white_space: "nowrap" }),
-		rule(".wrap", { overflow_wrap: "break-word" }),
+		rule(".break", { overflow_wrap: "break-word" }),
+		rule(".wrap", { text_wrap: "wrap" }),
 		rule(".noheading", {
 			__heading_base: 1,
 			__heading_max: 1,

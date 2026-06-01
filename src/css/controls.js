@@ -1,92 +1,105 @@
 import css, { vars } from "../js/uicss.js";
 import colors from "./colors.js";
 
-const controlColorBase = (fallback = vars.color.neutral) =>
-	vars.control.color.base.or(fallback);
-const controlColorTint = (fallback = vars.color.paper) =>
-	vars.control.color.tint.or(fallback);
-const controlColorBlend = (fallback = 1.0) =>
-	vars.control.color.blend.or(fallback);
-const controlColorOpacity = (fallback = 1.0) =>
-	vars.control.color.opacity.or(fallback);
+const control = {
+	color: Object.assign(
+		(blend = 1.0, opacity = 1.0, tint = vars.color.paper) =>
+			colors.mixed(
+				control.color.base(),
+				control.color.tint(tint),
+				control.color.blend(blend),
+				control.color.opacity(opacity),
+			),
+		{
+			base: (fallback = vars.color.neutral) =>
+				vars.control.color.base.or(fallback),
+			tint: (fallback = vars.color.paper) =>
+				vars.control.color.tint.or(fallback),
+			blend: (fallback = 1.0) => vars.control.color.blend.or(fallback),
+			opacity: (fallback = 1.0) => vars.control.color.opacity.or(fallback),
+		},
+	),
+	background: Object.assign(
+		(
+			blend = 1.0,
+			opacity = 1.0,
+			tint = vars.color.paper,
+			base = vars.color.neutral,
+		) =>
+			colors.mixed(
+				control.background.base(base),
+				control.background.tint(tint),
+				control.background.blend(blend),
+				control.background.opacity(opacity),
+			),
+		{
+			base: (fallback = vars.color.neutral) =>
+				vars.control.background.base.or(vars.control.color.base, fallback),
+			tint: (fallback = vars.color.paper) =>
+				vars.control.background.tint.or(vars.control.color.tint, fallback),
+			blend: (fallback = 1.0) => vars.control.background.blend.or(fallback),
+			opacity: (fallback = 1.0) => vars.control.background.opacity.or(fallback),
+		},
+	),
+	border: Object.assign(
+		(blend = 0.8, opacity = 0.8, tint = vars.color.paper) =>
+			colors.mixed(
+				control.border.base(),
+				control.border.tint(tint),
+				control.border.blend(blend),
+				control.border.opacity(opacity),
+			),
+		{
+			base: (fallback = vars.color.neutral) =>
+				vars.control.border.base.or(vars.control.color.base, fallback),
+			tint: (fallback = vars.color.paper) =>
+				vars.control.border.tint.or(vars.control.color.tint, fallback),
+			blend: (fallback = 0.8) => vars.control.border.blend.or(fallback),
+			opacity: (fallback = 0.8) =>
+				vars.control.border.opacity.or(
+					vars.control.color.border.opacity,
+					fallback,
+				),
+		},
+	),
+	outline: Object.assign(
+		(blend = 0.8, opacity = 0.5, tint = vars.color.paper) =>
+			colors.mixed(
+				control.outline.color.base(vars.color.focus.or(vars.color.neutral)),
+				control.outline.color.tint(tint),
+				control.outline.color.blend(blend),
+				control.outline.color.opacity(opacity),
+			),
+		{
+			color: Object.assign(
+				(fallback = vars.color.neutral) =>
+					vars.control.outline.color.base.or(vars.control.color.base, fallback),
+				{
+					base: (fallback = vars.color.neutral) =>
+						vars.control.outline.color.base.or(
+							vars.control.color.base,
+							fallback,
+						),
+					tint: (fallback = vars.color.paper) =>
+						vars.control.outline.color.tint.or(
+							vars.control.color.tint,
+							fallback,
+						),
+					blend: (fallback = 0.8) =>
+						vars.control.outline.color.blend.or(fallback),
+					opacity: (fallback = 0.5) =>
+						vars.control.outline.color.opacity.or(
+							vars.control.outline.opacity,
+							vars.control.color.outline.opacity,
+							fallback,
+						),
+				},
+			),
+		},
+	),
+};
 
-const controlBackgroundBase = (fallback = vars.color.neutral) =>
-	vars.control.background.base.or(vars.control.color.base, fallback);
-const controlBackgroundTint = (fallback = vars.color.paper) =>
-	vars.control.background.tint.or(vars.control.color.tint, fallback);
-const controlBackgroundBlend = (fallback = 1.0) =>
-	vars.control.background.blend.or(fallback);
-const controlBackgroundOpacity = (fallback = 1.0) =>
-	vars.control.background.opacity.or(fallback);
-
-const controlBorderBase = (fallback = vars.color.neutral) =>
-	vars.control.border.base.or(vars.control.color.base, fallback);
-const controlBorderTint = (fallback = vars.color.paper) =>
-	vars.control.border.tint.or(vars.control.color.tint, fallback);
-const controlBorderBlend = (fallback = 0.8) =>
-	vars.control.border.blend.or(fallback);
-const controlBorderOpacity = (fallback = 0.8) =>
-	vars.control.border.opacity.or(vars.control.color.border.opacity, fallback);
-
-const controlOutlineBase = (fallback = vars.color.neutral) =>
-	vars.control.outline.color.base.or(vars.control.color.base, fallback);
-const controlOutlineTint = (fallback = vars.color.paper) =>
-	vars.control.outline.color.tint.or(vars.control.color.tint, fallback);
-const controlOutlineBlend = (fallback = 0.8) =>
-	vars.control.outline.color.blend.or(fallback);
-const controlOutlineOpacity = (fallback = 0.5) =>
-	vars.control.outline.color.opacity.or(
-		vars.control.outline.opacity,
-		vars.control.color.outline.opacity,
-		fallback,
-	);
-
-const controlColor = (
-	blend = 1.0,
-	opacity = 1.0,
-	tint = vars.color.paper,
-) =>
-	colors.mixed(
-		controlColorBase(),
-		controlColorTint(tint),
-		controlColorBlend(blend),
-		controlColorOpacity(opacity),
-	);
-const controlBackground = (
-	blend = 1.0,
-	opacity = 1.0,
-	tint = vars.color.paper,
-	base = vars.color.neutral,
-) =>
-	colors.mixed(
-		controlBackgroundBase(base),
-		controlBackgroundTint(tint),
-		controlBackgroundBlend(blend),
-		controlBackgroundOpacity(opacity),
-	);
-const controlBorder = (
-	blend = 0.8,
-	opacity = 0.8,
-	tint = vars.color.paper,
-) =>
-	colors.mixed(
-		controlBorderBase(),
-		controlBorderTint(tint),
-		controlBorderBlend(blend),
-		controlBorderOpacity(opacity),
-	);
-const controlOutline = (
-	blend = 0.8,
-	opacity = 0.5,
-	tint = vars.color.paper,
-) =>
-	colors.mixed(
-		controlOutlineBase(vars.color.focus.or(vars.color.neutral)),
-		controlOutlineTint(tint),
-		controlOutlineBlend(blend),
-		controlOutlineOpacity(opacity),
-	);
-const controlContrast = () => `contrast-color(${controlColorBase()})`;
+const controlContrast = () => `contrast-color(${control.color.base()})`;
 
 // Base style for all controls, covering font, box, outline and border properties,
 // as well as color variants and focus ring.
@@ -116,10 +129,10 @@ function base(selector, ...rest) {
 			__control_border_opacity: 0.8,
 			// Border
 			border_width: vars.control.border.size.or("1px"),
-			border_color: controlBorder(),
+			border_color: control.border(),
 			// Outline
 			outline_width: "0px",
-			outline_color: controlOutline(),
+			outline_color: control.outline(),
 			// No user select
 			user_select: "none",
 			transition: [
@@ -167,11 +180,12 @@ function field(selector, ...rest) {
 		css.rule("&", {
 			padding: vars.field.padding.or("0.5em 0.75em"),
 			border_radius: vars.field.border.radius.or("0.25em"),
+			field_sizing: "content",
 			// By default, a small tint and a bit of transparency
 			__control_background_base: vars.color.paper,
-			background_color: controlBackground(0.1, 0.9),
+			background_color: control.background(0.1, 0.9),
 			// Border blended to paper, fully opaque
-			border_color: controlBorder(0.5, 1.0, vars.color.ink),
+			border_color: control.border(0.5, 1.0, vars.color.ink),
 		}),
 		// Color variants
 		...colors.names.map((color) =>
@@ -228,7 +242,9 @@ function field(selector, ...rest) {
 		// Blank variant
 		css.rule(css.mods("&", "blank"), {
 			background_color: "transparent !important",
+			border_width: "0px",
 			border_color: "transparent !important",
+			outline_width: "0px",
 			outline_color: "transparent !important",
 			padding: "unset",
 		}),
@@ -260,7 +276,7 @@ function selectable(...rest) {
 				vars.color.neutral,
 			),
 			// Default styling, background is pure primary color
-			background_color: controlBackground(
+			background_color: control.background(
 				0.75,
 				0.0,
 				vars.color.tint,
@@ -305,7 +321,7 @@ function action(selector, ...rest) {
 			__control_background_base: vars.control.color.base,
 			__control_color_base: vars.background.base.or(vars.color.neutral),
 			// Default syling, background is pure primary color
-			background_color: controlBackground(1.0, 1.0, vars.color.ink),
+			background_color: control.background(1.0, 1.0, vars.color.ink),
 			color: controlContrast(),
 			// Border
 			border_width: vars.action.border.width.or("0px"),
@@ -313,7 +329,7 @@ function action(selector, ...rest) {
 		}),
 		css.rule(css.mods("&", "default"), {
 			outline_width: vars.control.outline.width.or("2px"),
-			outline_color: controlOutline(
+			outline_color: control.outline(
 				0.9,
 				vars.control.default.outline.opacity.or(0.8),
 				vars.color.ink,
@@ -321,11 +337,11 @@ function action(selector, ...rest) {
 		}),
 		// Hover state, typically a blent to paper
 		css.rule(css.mods("&", "hover"), {
-			background_color: controlBackground(0.9, 1.0),
+			background_color: control.background(0.9, 1.0),
 		}),
 		// Active state, typically a blend to ink
 		css.rule(css.mods("&", "active"), {
-			background_color: controlColor(0.9, 1.0, vars.color.ink),
+			background_color: control.color(0.9, 1.0, vars.color.ink),
 		}),
 		// Disabled variant
 		css.rule(css.mods("&", "disabled"), {
@@ -340,16 +356,16 @@ function action(selector, ...rest) {
 			{
 				__control_default_outline_opacity: 0.4,
 				__control_border_width: vars.border.width.or("2px"),
-				color: controlColor(0.5, 1.0, vars.color.ink),
+				color: control.color(0.5, 1.0, vars.color.ink),
 				border_width: vars.control.border.width,
-				border_color: controlBorder(0.9, 0.8, vars.color.ink),
-				background_color: controlBackground(0.9, 0.0),
+				border_color: control.border(0.9, 0.8, vars.color.ink),
+				background_color: control.background(0.9, 0.0),
 			},
 			css.rule("&:hover, &.hover", {
-				background_color: controlBackground(0.9, 0.1),
+				background_color: control.background(0.9, 0.1),
 			}),
 			css.rule("&:active, &.active", {
-				background_color: controlBackground(0.9, 0.2),
+				background_color: control.background(0.9, 0.2),
 			}),
 		),
 		// Ghost variant, typically no background, unless on hover
@@ -386,6 +402,8 @@ function action(selector, ...rest) {
 			justify_content: "center",
 			align_items: "center",
 			padding: "0.25em",
+			width: "2em",
+			height: "2em",
 		}),
 		...rest,
 	);
@@ -406,8 +424,8 @@ function checkbox() {
 			__control_border_tint: vars.color.ink,
 			border_radius: vars.checkbox.border.radius.or("0.2em"),
 			cursor: "pointer",
-			border_color: controlBorder(0.9, 1.0, vars.color.ink),
-			color: controlColor(0.0, 1.0, vars.color.ink),
+			border_color: control.border(0.9, 1.0, vars.color.ink),
+			color: control.color(0.0, 1.0, vars.color.ink),
 		}),
 		// Checkbox content is rendered with a pseudo element, which is scaled up when checked or indeterminate.
 		css.rule("&::before", {
@@ -423,17 +441,17 @@ function checkbox() {
 		}),
 		css.rule(css.mods("&", "checked"), {
 			// Use the semantic control color as the checked fill.
-			background_color: controlColor(1.0, 1.0, vars.color.ink),
+			background_color: control.color(1.0, 1.0, vars.color.ink),
 			// Keep the border visually aligned with the selected fill.
-			border_color: controlBorder(0.95, 1.0, vars.color.ink),
+			border_color: control.border(0.95, 1.0, vars.color.ink),
 			color: controlContrast(),
 		}),
 		css.rule("&:checked::before, &.checked::before", {
 			transform: "rotate(45deg) scale(1)",
 		}),
 		css.rule("&:indeterminate, &.indeterminate", {
-			background_color: controlColor(1.0, 1.0, vars.color.ink),
-			border_color: controlBorder(0.95, 1.0, vars.color.ink),
+			background_color: control.color(1.0, 1.0, vars.color.ink),
+			border_color: control.border(0.95, 1.0, vars.color.ink),
 			color: controlContrast(),
 		}),
 		css.rule("&:indeterminate::before, &.indeterminate::before", {
@@ -474,14 +492,16 @@ function radio() {
 			background_color: "currentColor",
 			transform: "scale(0)",
 			transform_origin: "center",
-			color: controlColor(0.3, 0.9, vars.color.ink),
+			color: control.color(0.3, 0.9, vars.color.ink),
 		}),
 		css.rule("&:checked, &.checked", {
-			background_color: controlColor(1.0, 1.0, vars.color.ink),
-			border_color: controlBorder(0.95, 1.0, vars.color.ink),
-			color: controlColor(0.0, 1.0),
+			background_color: control.color(1.0, 1.0, vars.color.ink),
+			border_color: control.border(0.95, 1.0, vars.color.ink),
+			color: vars.color.paper,
 		}),
 		css.rule("&:checked::before, &.checked::before", {
+			color: vars.color.paper,
+			background_color: vars.color.paper,
 			transform: "scale(1)",
 		}),
 		css.rule("&:disabled, &.disabled", {
@@ -505,12 +525,12 @@ function toggle() {
 			width: vars.toggle.width.or("2.5em"),
 			height: vars.toggle.height.or("1.5em"),
 			// Background
-			background_color: controlBackground(0.0, 0.95),
+			background_color: control.background(0.0, 0.95),
 			// Border
 			border_radius: vars.control.border.radius.or("0.25em"),
-			border_color: controlBorder(0.8, 0.9),
+			border_color: control.border(0.8, 0.9),
 			// Outline
-			outline_color: controlOutline(0.8, 0.6),
+			outline_color: control.outline(0.8, 0.6),
 			// Transition
 			transition: "background-color 140ms ease, outline-color 140ms ease",
 		}),
@@ -534,27 +554,27 @@ function toggle() {
 				vars.control.border.width,
 				"1px",
 			),
-			border_color: controlBorder(0.8, 0.6, vars.color.ink),
+			border_color: control.border(0.8, 0.6, vars.color.ink),
 			// Background
-			background_color: controlBackground(0.7, 1.0),
+			background_color: control.background(0.7, 1.0),
 			transition: "all 140ms ease",
 		}),
 
 		css.rule("&:checked, &.checked", {
-			background_color: controlBackground(controlColorBlend(0.9), 0.9),
+			background_color: control.background(control.color.blend(0.9), 0.9),
 		}),
 		css.rule("&:checked::before, &.checked::before", {
 			left: "calc(100% - 2px)",
-			border_color: controlBorder(0.7, 0.8, vars.color.ink),
+			border_color: control.border(0.7, 0.8, vars.color.ink),
 			transform: "translateX(-100%)",
 		}),
 		css.rule("&:active::before, &.active::before", {}),
 		css.rule("&:checked:active::before, &.checked.active::before", {}),
 		css.rule("&:hover, &.hover", {
-			background_color: controlBackground(0.35, 1.0),
+			background_color: control.background(0.35, 1.0),
 		}),
 		css.rule("&:checked:hover, &.checked.hover", {
-			background_color: controlBackground(0.82, 1.0, vars.color.ink),
+			background_color: control.background(0.82, 1.0, vars.color.ink),
 		}),
 		css.rule("&:focus, &:focus-within, &.focus", {
 			outline_width: vars.control.outline.width.or("2px"),
@@ -583,8 +603,8 @@ function range() {
 			border_radius: vars.range.track.radius.or("999px"),
 			border_width: vars.control.border.size.or("1px"),
 			border_style: "solid",
-			border_color: controlBorder(0.6, 1.0),
-			background_color: controlBackground(0.2, 0.95),
+			border_color: control.border(0.6, 1.0),
+			background_color: control.background(0.2, 0.95),
 		}),
 		css.rule("&::-webkit-slider-thumb", {
 			appearance: "none",
@@ -594,21 +614,21 @@ function range() {
 			border_radius: "100%",
 			border_width: vars.control.border.size.or("1px"),
 			border_style: "solid",
-			border_color: controlBorder(0.9, 1.0, vars.color.ink),
-			background_color: controlBackground(1.0, 1.0, vars.color.ink),
+			border_color: control.border(0.9, 1.0, vars.color.ink),
+			background_color: control.background(1.0, 1.0, vars.color.ink),
 		}),
 		css.rule("&::-moz-range-track", {
 			height: vars.range.track.height.or("0.45em"),
 			border_radius: vars.range.track.radius.or("999px"),
 			border_width: vars.control.border.size.or("1px"),
 			border_style: "solid",
-			border_color: controlBorder(0.6, 1.0),
-			background_color: controlBackground(0.2, 0.95),
+			border_color: control.border(0.6, 1.0),
+			background_color: control.background(0.2, 0.95),
 		}),
 		css.rule("&::-moz-range-progress", {
 			height: vars.range.track.height.or("0.45em"),
 			border_radius: vars.range.track.radius.or("999px"),
-			background_color: controlBackground(0.7, 1.0, vars.color.ink),
+			background_color: control.background(0.7, 1.0, vars.color.ink),
 		}),
 		css.rule("&::-moz-range-thumb", {
 			width: vars.range.thumb.size.or("1em"),
@@ -616,19 +636,19 @@ function range() {
 			border_radius: "100%",
 			border_width: vars.control.border.size.or("1px"),
 			border_style: "solid",
-			border_color: controlBorder(0.9, 1.0, vars.color.ink),
-			background_color: controlBackground(1.0, 1.0, vars.color.ink),
+			border_color: control.border(0.9, 1.0, vars.color.ink),
+			background_color: control.background(1.0, 1.0, vars.color.ink),
 		}),
 		css.rule(
 			"&:hover::-webkit-slider-runnable-track, &.hover::-webkit-slider-runnable-track",
 			{
-				border_color: controlBorder(0.8, 1.0),
+				border_color: control.border(0.8, 1.0),
 			},
 		),
 		css.rule(
 			"&:focus::-webkit-slider-runnable-track, &:focus-within::-webkit-slider-runnable-track, &.focus::-webkit-slider-runnable-track",
 			{
-				border_color: controlBorder(0.85, 1.0),
+				border_color: control.border(0.85, 1.0),
 			},
 		),
 		css.rule("&:focus, &:focus-within, &.focus", {
@@ -637,13 +657,13 @@ function range() {
 		css.rule(
 			"&:focus::-webkit-slider-thumb, &:focus-within::-webkit-slider-thumb, &.focus::-webkit-slider-thumb",
 			{
-				box_shadow: `0 0 0 ${vars.control.outline.width.or("2px")} ${controlOutline(0.8, 0.5)}`,
+				box_shadow: `0 0 0 ${vars.control.outline.width.or("2px")} ${control.outline(0.8, 0.5)}`,
 			},
 		),
 		css.rule(
 			"&:focus::-moz-range-thumb, &:focus-within::-moz-range-thumb, &.focus::-moz-range-thumb",
 			{
-				box_shadow: `0 0 0 ${vars.control.outline.width.or("2px")} ${controlOutline(0.8, 0.5)}`,
+				box_shadow: `0 0 0 ${vars.control.outline.width.or("2px")} ${control.outline(0.8, 0.5)}`,
 			},
 		),
 		css.rule("&:active::-webkit-slider-thumb, &.active::-webkit-slider-thumb", {
@@ -691,42 +711,53 @@ function selector() {
 		// Labels are rendered as buttons, ghost-like by default ,filled in
 		// with a border. The selector may have rounded borders, which is then
 		// set at the individual label level.
+		css.nesting("& > label", {
+			border_radius: "0em",
+			padding: "0.5em 1em",
+			justify_content: "center",
+			cursor: "pointer",
+			color: control.color(0.6, 1.0, vars.color.ink),
+			__control_background_opacity: 0,
+			border_width: vars.control.border.size.or("1px"),
+			border_left_width: "0px",
+			border_color: control.border(
+				control.color.blend(0.9),
+				0.8,
+				vars.color.ink,
+			),
+			background_color: control.background(
+				control.color.blend(0.9),
+				0.0,
+				vars.color.paper,
+				vars.color.neutral.background.or(vars.color.neutral),
+			),
+		}),
+		css.rule("& > label:hover, & > label.hover", {
+			__control_background_opacity: 0.45,
+		}),
 		css.nesting(
-			"& > label",
-			{
-				border_radius: "0em",
-				padding: "0.5em 1em",
-				justify_content: "center",
-				cursor: "pointer",
-				color: controlColor(0.6, 1.0, vars.color.ink),
-				border_width: vars.control.border.size.or("1px"),
-				border_left_width: "0px",
-				border_color: controlBorder(controlColorBlend(0.9), 0.8, vars.color.ink),
-				background_color: controlBackground(
-					controlColorBlend(0.9),
-					0.0,
-					vars.color.paper,
-					vars.color.neutral.background.or(vars.color.neutral),
-				),
-			},
-
-			css.rule("&:hover, &.hover", {
-				background_color: controlBackground(
-					0.9,
-					0.1,
-					vars.color.paper,
-					vars.color.neutral.background.or(vars.color.neutral),
-				),
+			`&:not(${colors.names.map((color) => `.${color}`).join("):not(")}):not(.bw)`,
+			{},
+			css.rule("& > label", {
+				__control_background_opacity: 1.0,
 			}),
-			css.rule("&:active, &.active", {
-				background_color: controlBackground(
-					0.9,
-					0.2,
-					vars.color.paper,
-					vars.color.neutral.background.or(vars.color.neutral),
-				),
+			css.rule("& > label:hover, & > label.hover", {
+				__control_background_opacity: 1.0,
 			}),
 		),
+		// css.rule("&:hover, &.hover", {
+		// 	__control_background_blend: 0.9,
+		// 	__control_background_opacity: 0.1,
+		// }),
+		css.rule("&:active, &.active", {
+			__control_background_opacity: 0.2,
+			background_color: control.background(
+				0.9,
+				0.2,
+				vars.color.paper,
+				vars.color.neutral.background.or(vars.color.neutral),
+			),
+		}),
 		css.rule("& > label:last-child", {
 			border_top_right_radius: vars.selector.border.radius.or("0.25em"),
 			border_bottom_right_radius: vars.selector.border.radius.or("0.25em"),
@@ -738,7 +769,8 @@ function selector() {
 		}),
 		css.nesting("& > input:checked + label", {
 			color: controlContrast(),
-			background_color: controlBackground(controlColorBlend(0.9), 0.9),
+			__control_background_opacity: 0.9,
+			background_color: control.background(control.color.blend(0.9), 0.9),
 		}),
 		css.rule("&.compact > label", {
 			padding: "0.35em 0.5em",
@@ -748,6 +780,42 @@ function selector() {
 		}),
 		css.rule("&.stretch > label", {
 			flex: "1",
+		}),
+	);
+}
+
+function tab() {
+	return action(
+		[".tab"],
+		css.rule("&", {
+			__control_background_base: vars.color.paper,
+			__control_background_tint: vars.color.ink,
+			__control_background_blend: 0.8,
+			__control_background_opacity: 0.6,
+
+			// Slighthly taller
+			padding_top: "0.75em",
+			// We need to use the border instead of the outline
+			border_bottom_left_radius: "0",
+			border_bottom_right_radius: "0",
+			border: "1px solid transparent",
+			border_bottom_width: "0px",
+			border_color: colors.mix(vars.control.background),
+			background_color: colors.mix(vars.control.background),
+		}),
+		css.rule(css.mods("&", ["hover"]), {
+			__control_background_opacity: 0.9,
+		}),
+		css.rule(css.mods("&", ["focus"]), {
+			__control_background_opacity: 0.9,
+		}),
+		css.rule(css.mods("&", ["active"]), {
+			__control_background_opacity: 1.0,
+			__control_background_blend: 1.0,
+			background_color: colors.mix(vars.control.background),
+		}),
+		css.rule("&:disabled, &.disabled", {
+			__control_background_opacity: 0.5,
 		}),
 	);
 }
@@ -771,5 +839,6 @@ export default css.named({
 	select: select(),
 	selector: selector(),
 	selectable: selectable(),
+	tab: tab(),
 });
 // EOF

@@ -269,7 +269,7 @@ const result = "fast, consistent styling"</code></pre>
         <h2 class="h3 m-0">Color Tokens</h2>
         <div class="stack g-4">
           <h3 class="h4 m-0">Semantic Palette</h3>
-          <div class="col-3 g-3">
+          <div class="grid col-3 g-3">
             <div class="panel bg-paper bg stack g-2 p-4 rounded small"><span class="b">Base semantic</span><code>no class</code></div>
             <div class="panel bg-neutral bg stack g-2 p-4 rounded small"><span class="b">Neutral</span><code>.neutral</code></div>
             <div class="panel bg-accent bg stack g-2 p-4 rounded small"><span class="b">Accent</span><code>.accent</code></div>
@@ -309,7 +309,7 @@ const result = "fast, consistent styling"</code></pre>
           </div>
           <div class="stack g-3">
             <p class="b m-0">Color variants × States</p>
-            <div class="col-5 g-2">
+            <div class="grid col-5 g-2">
               <button>Neutral</button>
               <button class="focus">Focus</button>
               <button class="hover">Hover</button>
@@ -386,6 +386,53 @@ const result = "fast, consistent styling"</code></pre>
           </div>
         </div>
       </section>
+      <section id="tabs-demo" class="panel stack g-4 p-6 bd bd-4o ">
+        <h2 class="h3 m-0">Tabs</h2>
+        <div class="stack g-5">
+          <div class="stack g-3">
+            <p class="b m-0">Adjacent tabs</p>
+            <div class="stack g-0">
+              <div class="row wrap g-0 end">
+                <button class="tab active">Overview</button>
+                <button class="tab">Activity</button>
+                <button class="tab">History</button>
+                <button class="tab" disabled>Archive</button>
+              </div>
+              <div class="panel p-4 bd bd-4o rounder">
+                <p class="m-0 limit-text">Selected tabs drop their bottom edge and sit in front of the panel to create the classic desktop tab seam.</p>
+              </div>
+            </div>
+          </div>
+          <div class="stack g-3">
+            <p class="b m-0">State helpers</p>
+            <div class="row wrap g-3 end">
+              <button class="tab">Normal</button>
+              <button class="tab hover">Hover</button>
+              <button class="tab focus">Focus</button>
+              <button class="tab active">Active</button>
+              <button class="tab" disabled>Disabled</button>
+            </div>
+          </div>
+          <div class="stack g-3">
+            <p class="b m-0">Color accents</p>
+            <div class="stack g-0">
+              <div class="row wrap g-0 end">
+                <button class="tab active">Neutral</button>
+                <button class="tab accent">Accent</button>
+                <button class="tab primary">Primary</button>
+                <button class="tab secondary">Secondary</button>
+                <button class="tab tertiary">Tertiary</button>
+                <button class="tab success">Success</button>
+                <button class="tab warning">Warning</button>
+                <button class="tab danger">Danger</button>
+              </div>
+              <div class="panel p-4 bd bd-4o rounder">
+                <p class="m-0 limit-text">Semantic tab colors only tint the 2px top border, keeping the body on the current surface color.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
       <section id="selectors-demo" class="panel stack g-4 p-6 bd bd-4o ">
         <h2 class="h3 m-0">Selectors</h2>
         <div class="stack g-5">
@@ -397,7 +444,7 @@ const result = "fast, consistent styling"</code></pre>
         </div>
         <div class="stack g-3">
           <p class="b m-0">Select (Combo)</p>
-          <div class="col-3 g-4">
+          <div class="grid col-3 g-4">
             <label class="stack g-1">
               <span class="b">Default</span>
               <select class="regular" aria-label="Default select">
@@ -507,7 +554,7 @@ const result = "fast, consistent styling"</code></pre>
     <section id="inputs-demo" class="panel stack g-4 p-6 bd bd-4o ">
       <h2 class="h3 m-0">Inputs</h2>
       <div class="stack g-5">
-        <div class="col-3 g-4">
+        <div class="grid col-3 g-4">
           <label class="stack g-1">
             <span class="b">Currency</span>
             <input class="input regular" type="text" placeholder="$ 1,000" />
@@ -521,7 +568,7 @@ const result = "fast, consistent styling"</code></pre>
             <input class="input regular" type="text" placeholder="100 kg" />
           </label>
         </div>
-        <div class="col-2 g-4">
+        <div class="grid col-2 g-4">
           <label class="stack g-1">
             <span class="b">Default</span>
             <input class="input regular" type="text" value="Jane Doe" />
@@ -550,7 +597,7 @@ const result = "fast, consistent styling"</code></pre>
           <div class="stack g-3">
             <div class="stack g-1">
               <span class="small b">Neutral</span>
-              <div class="col-5 g-2">
+              <div class="grid col-5 g-2">
                 <input class="input regular" type="text" value="Normal" />
                 <input class="input regular focus" type="text" value="Focus" />
                 <input class="input regular hover" type="text" value="Hover" />
@@ -560,7 +607,7 @@ const result = "fast, consistent styling"</code></pre>
             </div>
             <div class="stack g-1">
               <span class="small b">Primary</span>
-              <div class="col-5 g-2">
+              <div class="grid col-5 g-2">
                 <input class="input primary regular" type="text" value="Normal" />
                 <input class="input primary regular focus" type="text" value="Focus" />
                 <input class="input primary regular hover" type="text" value="Hover" />
@@ -570,7 +617,7 @@ const result = "fast, consistent styling"</code></pre>
             </div>
             <div class="stack g-1">
               <span class="small b">Secondary</span>
-              <div class="col-5 g-2">
+              <div class="grid col-5 g-2">
                 <input class="input secondary regular" type="text" value="Normal" />
                 <input class="input secondary regular focus" type="text" value="Focus" />
                 <input class="input secondary regular hover" type="text" value="Hover" />
@@ -580,7 +627,7 @@ const result = "fast, consistent styling"</code></pre>
             </div>
             <div class="stack g-1">
               <span class="small b">Tertiary</span>
-              <div class="col-5 g-2">
+              <div class="grid col-5 g-2">
                 <input class="input tertiary regular" type="text" value="Normal" />
                 <input class="input tertiary regular focus" type="text" value="Focus" />
                 <input class="input tertiary regular hover" type="text" value="Hover" />
@@ -590,7 +637,7 @@ const result = "fast, consistent styling"</code></pre>
             </div>
             <div class="stack g-1">
               <span class="small b">Success</span>
-              <div class="col-5 g-2">
+              <div class="grid col-5 g-2">
                 <input class="input success regular" type="text" value="Normal" />
                 <input class="input success regular focus" type="text" value="Focus" />
                 <input class="input success regular hover" type="text" value="Hover" />
@@ -600,7 +647,7 @@ const result = "fast, consistent styling"</code></pre>
             </div>
             <div class="stack g-1">
               <span class="small b">Warning</span>
-              <div class="col-5 g-2">
+              <div class="grid col-5 g-2">
                 <input class="input warning regular" type="text" value="Normal" />
                 <input class="input warning regular focus" type="text" value="Focus" />
                 <input class="input warning regular hover" type="text" value="Hover" />
@@ -610,7 +657,7 @@ const result = "fast, consistent styling"</code></pre>
             </div>
             <div class="stack g-1">
               <span class="small b">Danger</span>
-              <div class="col-5 g-2">
+              <div class="grid col-5 g-2">
                 <input class="input danger regular" type="text" value="Normal" />
                 <input class="input danger regular focus" type="text" value="Focus" />
                 <input class="input danger regular hover" type="text" value="Hover" />
@@ -645,7 +692,7 @@ const result = "fast, consistent styling"</code></pre>
         </label>
         <fieldset class="stack g-3">
           <legend class="b">FieldSet</legend>
-          <div class="col-2 g-2">
+          <div class="grid col-2 g-2">
             <label class="stack g-1"><span>First Name</span><input class="input" type="text" /></label>
             <label class="stack g-1"><span>Last Name</span><input class="input" type="text" /></label>
           </div>
@@ -704,48 +751,73 @@ const result = "fast, consistent styling"</code></pre>
     </section>
     <section id="checks-radios-demo" class="panel stack g-4 p-6 bd bd-4o ">
       <h2 class="h3 m-0">Checkboxes and Radios</h2>
-      <div class="stack g-6">
-        <div class="col-2 g-8">
-          <div class="stack g-3">
-            <p class="b m-0">Checkboxes</p>
-            <label class="row g-3 start"><input type="checkbox" class="checkbox large" /> Unchecked large</label>
-            <label class="row g-3 start"><input type="checkbox" class="checkbox large" checked /> Checked large</label>
-            <label class="row g-3 start"><input type="checkbox" class="checkbox small" /> Unchecked small</label>
-            <label class="row g-3 start"><input type="checkbox" class="checkbox small" checked /> Checked small</label>
-          </div>
-          <div class="stack g-3">
-            <p class="b m-0">Checkboxes - States</p>
-            <div class="col-5 g-2">
-              <label class="row g-2 start"><input type="checkbox" class="checkbox regular" /> Normal</label>
-              <label class="row g-2 start"><input type="checkbox" class="checkbox regular focus" /> Focus</label>
-              <label class="row g-2 start"><input type="checkbox" class="checkbox regular hover" /> Hover</label>
-              <label class="row g-2 start"><input type="checkbox" class="checkbox regular active" /> Active</label>
-              <label class="row g-2 start"><input type="checkbox" class="checkbox regular" disabled /> Disabled</label>
-              <label class="row g-2 start"><input type="checkbox" class="checkbox regular" checked /> Normal</label>
-              <label class="row g-2 start"><input type="checkbox" class="checkbox regular focus" checked /> Focus</label>
-              <label class="row g-2 start"><input type="checkbox" class="checkbox regular hover" checked /> Hover</label>
-              <label class="row g-2 start"><input type="checkbox" class="checkbox regular active" checked /> Active</label>
-              <label class="row g-2 start"><input type="checkbox" class="checkbox regular" checked disabled /> Disabled</label>
+      <div class="grid col-2 g-8">
+        <div class="stack g-4">
+          <p class="b m-0">Checkboxes</p>
+          <div class="stack g-4">
+            <div class="stack g-3">
+              <p class="small b m-0">Sizes</p>
+              <label class="row g-3 start"><input type="checkbox" class="checkbox large" /> Unchecked large</label>
+              <label class="row g-3 start"><input type="checkbox" class="checkbox large" checked /> Checked large</label>
+              <label class="row g-3 start"><input type="checkbox" class="checkbox small" /> Unchecked small</label>
+              <label class="row g-3 start"><input type="checkbox" class="checkbox small" checked /> Checked small</label>
+            </div>
+            <div class="stack g-3">
+              <p class="small b m-0">States</p>
+              <div class="col-5 g-2">
+                <label class="row g-2 start"><input type="checkbox" class="checkbox regular" /> Normal</label>
+                <label class="row g-2 start"><input type="checkbox" class="checkbox regular focus" /> Focus</label>
+                <label class="row g-2 start"><input type="checkbox" class="checkbox regular hover" /> Hover</label>
+                <label class="row g-2 start"><input type="checkbox" class="checkbox regular active" /> Active</label>
+                <label class="row g-2 start"><input type="checkbox" class="checkbox regular" disabled /> Disabled</label>
+                <label class="row g-2 start"><input type="checkbox" class="checkbox regular" checked /> Normal</label>
+                <label class="row g-2 start"><input type="checkbox" class="checkbox regular focus" checked /> Focus</label>
+                <label class="row g-2 start"><input type="checkbox" class="checkbox regular hover" checked /> Hover</label>
+                <label class="row g-2 start"><input type="checkbox" class="checkbox regular active" checked /> Active</label>
+                <label class="row g-2 start"><input type="checkbox" class="checkbox regular" checked disabled /> Disabled</label>
+              </div>
+            </div>
+            <div class="stack g-3">
+              <p class="small b m-0">Colors</p>
+              <div class="col-2 g-2">
+                <label class="row g-2 start"><input type="checkbox" class="checkbox regular primary" checked /> Primary</label>
+                <label class="row g-2 start"><input type="checkbox" class="checkbox regular secondary" checked /> Secondary</label>
+                <label class="row g-2 start"><input type="checkbox" class="checkbox regular accent" checked /> Accent</label>
+                <label class="row g-2 start"><input type="checkbox" class="checkbox regular success" checked /> Success</label>
+                <label class="row g-2 start"><input type="checkbox" class="checkbox regular warning" checked /> Warning</label>
+                <label class="row g-2 start"><input type="checkbox" class="checkbox regular danger" checked /> Danger</label>
+              </div>
             </div>
           </div>
-          <div class="stack g-3">
-            <p class="b m-0">Radios</p>
-            <label class="row g-3 start"><input type="radio" name="radio-states" class="radio regular" /> Unchecked</label>
-            <label class="row g-3 start"><input type="radio" name="radio-states" class="radio regular" checked /> Checked</label>
-          </div>
-          <div class="stack g-3">
-            <p class="b m-0">Radios - States</p>
-            <div class="col-5 g-2">
-              <label class="row g-2 start"><input type="radio" name="radio-s1" class="radio regular" /> Normal</label>
-              <label class="row g-2 start"><input type="radio" name="radio-s2" class="radio regular focus" /> Focus</label>
-              <label class="row g-2 start"><input type="radio" name="radio-s3" class="radio regular hover" /> Hover</label>
-              <label class="row g-2 start"><input type="radio" name="radio-s4" class="radio regular active" /> Active</label>
-              <label class="row g-2 start"><input type="radio" name="radio-s5" class="radio regular" disabled /> Disabled</label>
-              <label class="row g-2 start"><input type="radio" name="radio-c1" class="radio regular" checked /> Normal</label>
-              <label class="row g-2 start"><input type="radio" name="radio-c2" class="radio regular focus" checked /> Focus</label>
-              <label class="row g-2 start"><input type="radio" name="radio-c3" class="radio regular hover" checked /> Hover</label>
-              <label class="row g-2 start"><input type="radio" name="radio-c4" class="radio regular active" checked /> Active</label>
-              <label class="row g-2 start"><input type="radio" name="radio-c5" class="radio regular" checked disabled /> Disabled</label>
+        </div>
+        <div class="stack g-4">
+          <p class="b m-0">Radios</p>
+          <div class="stack g-4">
+            <div class="stack g-3">
+              <p class="small b m-0">States</p>
+              <div class="col-5 g-2">
+                <label class="row g-2 start"><input type="radio" name="radio-s1" class="radio regular" /> Normal</label>
+                <label class="row g-2 start"><input type="radio" name="radio-s2" class="radio regular focus" /> Focus</label>
+                <label class="row g-2 start"><input type="radio" name="radio-s3" class="radio regular hover" /> Hover</label>
+                <label class="row g-2 start"><input type="radio" name="radio-s4" class="radio regular active" /> Active</label>
+                <label class="row g-2 start"><input type="radio" name="radio-s5" class="radio regular" disabled /> Disabled</label>
+                <label class="row g-2 start"><input type="radio" name="radio-c1" class="radio regular" checked /> Normal</label>
+                <label class="row g-2 start"><input type="radio" name="radio-c2" class="radio regular focus" checked /> Focus</label>
+                <label class="row g-2 start"><input type="radio" name="radio-c3" class="radio regular hover" checked /> Hover</label>
+                <label class="row g-2 start"><input type="radio" name="radio-c4" class="radio regular active" checked /> Active</label>
+                <label class="row g-2 start"><input type="radio" name="radio-c5" class="radio regular" checked disabled /> Disabled</label>
+              </div>
+            </div>
+            <div class="stack g-3">
+              <p class="small b m-0">Colors</p>
+              <div class="col-2 g-2">
+                <label class="row g-2 start"><input type="radio" name="radio-color-primary" class="radio regular primary" checked /> Primary</label>
+                <label class="row g-2 start"><input type="radio" name="radio-color-secondary" class="radio regular secondary" checked /> Secondary</label>
+                <label class="row g-2 start"><input type="radio" name="radio-color-accent" class="radio regular accent" checked /> Accent</label>
+                <label class="row g-2 start"><input type="radio" name="radio-color-success" class="radio regular success" checked /> Success</label>
+                <label class="row g-2 start"><input type="radio" name="radio-color-warning" class="radio regular warning" checked /> Warning</label>
+                <label class="row g-2 start"><input type="radio" name="radio-color-danger" class="radio regular danger" checked /> Danger</label>
+              </div>
             </div>
           </div>
         </div>

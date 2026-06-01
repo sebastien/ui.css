@@ -91,18 +91,22 @@ export default named({
 		),
 	),
 	summary: group(
-		rule("details .open-show, details .when-open", { display: "none" }),
-		rule("details:open .open-show, details:open .when-open", {
-			display: "inherit",
+		rule("details", {
+			__details_open_show_display: "none",
+			__details_open_hide_display: "inherit",
+			__details_open_rotate: "0deg",
 		}),
+		rule("details:open", {
+			__details_open_show_display: "inherit",
+			__details_open_hide_display: "none",
+			__details_open_rotate: vars.motion.rotation,
+		}),
+		rule(".open-show, .when-open", { display: "var(--details-open-show-display)" }),
+		rule(".open-hide", { display: "var(--details-open-hide-display)" }),
 		rule(".open-rotate", {
-			transform: "rotate(0deg)",
+			transform: "rotate(var(--details-open-rotate, 0deg))",
 			transform_origin: "center",
-			__motion_rotation: "90deg",
 			transition: `transform ${vars.motion.duration.fast} ${vars.motion.easing.standard}`,
-		}),
-		rule("details:open .open-rotate", {
-			transform: `rotate(${vars.motion.rotation})`,
 		}),
 		rule("details::details-content", {
 			transition: `height ${vars.motion.duration.fast} ${vars.motion.easing.standard}, opacity ${vars.motion.duration.fast} ${vars.motion.easing.standard}`,

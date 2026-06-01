@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 BASE="$(dirname "$(dirname "$(readlink -f "$0")")")"
-RESOLVE="const resolve=(mod)=>typeof mod==='function'?mod():mod;"
-RENDER="const render=(mod,scoped)=>{const guard=process.env.UICSS_GUARD;const res=resolve(mod);return guard?scoped(res,guard):res};"
 GUARD=""
 EMBED=""
 while [ "$#" -gt 0 ]; do
@@ -19,31 +17,54 @@ while [ "$#" -gt 0 ]; do
 		;;
 	esac
 done
+
+run_uicss() {
+	UICSS_BASE="$BASE" UICSS_GUARD="$GUARD" UICSS_EMBED="$EMBED" UICSS_DOC="$1" bun -e '
+const base = process.env.UICSS_BASE;
+const guard = process.env.UICSS_GUARD;
+const resolve = (mod) => typeof mod === "function" ? mod() : mod;
+const render = (mod, scoped) => {
+	const res = resolve(mod);
+	return guard ? scoped(res, guard) : res;
+};
+const { default: css, guard: scoped, layers, docs } = await import(`${base}/src/js/uicss.js`);
+const args = Bun.argv.slice(2);
+if (process.env.UICSS_DOC === "1") {
+	const res = {};
+	for (const arg of args) {
+		const { default: mod } = await import(`./${arg}`);
+		res[arg] = [...docs(resolve(mod))];
+	}
+	console.log(JSON.stringify(res));
+} else if (args.length === 0) {
+	const { default: all } = await import(`${base}/src/css/all.js`);
+	console.log([...css(guard ? all(undefined, { guard }) : all())].join("\n"));
+} else if (args.length === 1) {
+	const { default: mod } = await import(`./${args[0]}`);
+	console.log([...css(render(mod, scoped))].join("\n"));
+} else {
+	const res = {};
+	for (const arg of args) {
+		const { default: mod } = await import(`./${arg}`);
+		res[arg.split(".").at(0)] = render(mod, scoped);
+	}
+	console.log([...css(layers(res))].join("\n"));
+}
+'
+}
+
 case $1 in
 -d | --doc)
 	shift
-	items=()
-	items+=("import {docs} from '$BASE/src/js/uicss.js';$RESOLVE const res={};")
-	for ARG in "$@"; do
-		i="${#items[@]}"
-		items+=("import mod$i from './$ARG';res['$ARG']=[...docs(resolve(mod$i))];")
-	done
-	items="${items[@]}"
-	if ! bun -e "$items;console.log(JSON.stringify(res))"; then
+	if ! run_uicss 1 "$@"; then
 		echo "!!! ERR Could not process: $@"
 	fi
 	;;
 *)
 	if [ -z "$1" ]; then
-		UICSS_GUARD="$GUARD" UICSS_EMBED="$EMBED" bun -e "import all from '$BASE/src/css/all.js';import css from '$BASE/src/js/uicss.js';const guard=process.env.UICSS_GUARD;console.log([...css(guard?all(undefined,{guard}):all())].join('\n'));"
+		run_uicss 0
 	else
-		for ARG in "$@"; do
-			if [ "$#" == "1" ]; then
-				UICSS_GUARD="$GUARD" UICSS_EMBED="$EMBED" bun -e "import mod from './$ARG';import css,{guard as scoped} from '$BASE/src/js/uicss.js';$RESOLVE $RENDER const res=render(mod,scoped);console.log([...css(res)].join('\n'));"
-			else
-				UICSS_GUARD="$GUARD" UICSS_EMBED="$EMBED" bun -e "import mod from './$ARG';import css,{guard as scoped,layers} from '$BASE/src/js/uicss.js';$RESOLVE $RENDER const res=layers({['$ARG'.split('.').at(0)]:render(mod,scoped)});console.log([...css(res)].join('\n'));"
-			fi
-		done
+		run_uicss 0 "$@"
 	fi
 	;;
 esac

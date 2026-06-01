@@ -264,21 +264,21 @@ export default named({
 					margin_top: "var(--dy, 0px)",
 					margin_left: "var(--dy, 0px)",
 				}),
-				...times(5, (_) => rule(`.dr-${_ + 1}`, { __dx: `${_ + 1}px` })),
-				...times(5, (_) => rule(`.dl-${_ + 1}`, { __dx: `-${_ + 1}px` })),
-				...times(5, (_) => rule(`.db-${_ + 1}`, { __dy: `${_ + 1}px` })),
-				...times(5, (_) => rule(`.dt-${_ + 1}`, { __dy: `-${_ + 1}px` })),
-				...times(4, (_) =>
-					rule(`.dr-${(_ + 1) * 25}`, { __dx: `${(_ + 1) * 25}%` }),
+				...times(8, (_) => rule(`.dr-${_ + 1}`, { __dx: `${_ + 1}px` })),
+				...times(8, (_) => rule(`.dl-${_ + 1}`, { __dx: `-${_ + 1}px` })),
+				...times(8, (_) => rule(`.db-${_ + 1}`, { __dy: `${_ + 1}px` })),
+				...times(8, (_) => rule(`.dt-${_ + 1}`, { __dy: `-${_ + 1}px` })),
+				...times(8, (_) =>
+					rule(`.dr-${(_ + 1) * 25}p`, { __dx: `${(_ + 1) * 25}%` }),
 				),
 				...times(4, (_) =>
-					rule(`.dl-${(_ + 1) * 25}`, { __dx: `-${(_ + 1) * 25}%` }),
+					rule(`.dl-${(_ + 1) * 25}p`, { __dx: `-${(_ + 1) * 25}%` }),
 				),
 				...times(4, (_) =>
-					rule(`.db-${(_ + 1) * 25}`, { __dy: `${(_ + 1) * 25}%` }),
+					rule(`.db-${(_ + 1) * 25}p`, { __dy: `${(_ + 1) * 25}%` }),
 				),
 				...times(4, (_) =>
-					rule(`.dt-${(_ + 1) * 25}`, { __dy: `-${(_ + 1) * 25}%` }),
+					rule(`.dt-${(_ + 1) * 25}p`, { __dy: `-${(_ + 1) * 25}%` }),
 				),
 			),
 		}),
@@ -436,10 +436,18 @@ export default named({
 		}),
 	),
 	overflow: group(
-		rule(".overflow", {
+		rule([".overflow", ".overflow-x", ".overflow-y"], {
 			scrollbar_color: `${vars.color.text}`,
 			scrollbar_width: "thin",
+		}),
+		rule(".overflow", {
 			overflow: "auto",
+		}),
+		rule(".overflow-y", {
+			overflow_y: "auto",
+		}),
+		rule(".overflow-x", {
+			overflow_y: "auto",
 		}),
 		rule([".nooverflow", ".noflow"], {
 			overflow: "hidden",

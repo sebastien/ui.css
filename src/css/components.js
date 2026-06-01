@@ -12,6 +12,7 @@ function pill(...rest) {
 			padding: vars.pill.padding.or("0.25em 0.75em"),
 			font_size: "inherit",
 			align_items: "center",
+			white_space: "nowrap",
 			gap: vars.gap,
 			line_height: vars.pill.font.line.or("1.15em"),
 			// Border
