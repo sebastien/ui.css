@@ -282,6 +282,12 @@ export default named({
 		rule(".lh-150", { line_height: "1.5em" }),
 		rule(".lh-175", { line_height: "1.75em" }),
 		rule(".lh-200", { line_height: "2.00em" }),
+		...times(10, (i) =>
+			rule(`.t-${i}`, { font_size: `calc(1em * ${vars.textsize.size[i]})` }),
+		),
+		...times(10, (i) =>
+			rule(`.t-${i}r`, { font_size: `calc(1rem * ${vars.textsize.size[i]})` }),
+		),
 		rule(".mono", { font_family: `${vars.font.mono}` }),
 		rule(".sans", { font_family: `${vars.font.sans}` }),
 		rule(".serif", { font_family: `${vars.font.serif}` }),

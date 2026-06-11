@@ -171,7 +171,7 @@ export default named({
 				...times(10).map((_) => rule(`.w-${_}em`, { width: `${_}em` })),
 				...times(10).map((_) => rule(`.h-${_}em`, { height: `${_}em` })),
 				rule(".w-screen", { width: "100vw" }),
-				rule(".h-screen", { width: "100vh" }),
+				rule(".h-screen", { height: "100vh" }),
 				rule(".w-text", { max_width: `${vars.limit.text}` }),
 				rule(".w-content", { max_width: `${vars.limit.content}` }),
 				rule(".w-page", { max_width: `${vars.limit.page}` }),
@@ -261,8 +261,8 @@ export default named({
 					left: "var(--dx, 0px)",
 				}),
 				rule(".dm", {
-					margin_top: "var(--dy, 0px)",
-					margin_left: "var(--dy, 0px)",
+					margin_bottom: "var(--dx, 0px)",
+					margin_right: "var(--dy, 0px)",
 				}),
 				...times(8, (_) => rule(`.dr-${_ + 1}`, { __dx: `${_ + 1}px` })),
 				...times(8, (_) => rule(`.dl-${_ + 1}`, { __dx: `-${_ + 1}px` })),
@@ -390,7 +390,6 @@ export default named({
 		rule(".grid", {
 			display: "grid",
 			gap: vars.gap,
-			display: "grid",
 		}),
 		rule(".grid.lined > *", {
 			border_right: `${vars.border.width.or("1px")} ${vars.border.style.or("solid")} ${vars.border.color.or(vars.color.neutral)} `,
@@ -399,16 +398,16 @@ export default named({
 		rule(".grid.lined > *:last-child", {
 			border_right_width: "0px",
 		}),
-		...times(5, (_) =>
+		...times(8, (_) =>
 			rule(`.span-${_ + 1}`, {
-				__color: "red",
 				grid_column: `span ${_ + 1}`,
 			}),
 		),
-
-		...times(7, (_) =>
+		...times(8, (_) =>
 			rule(`.col-${_ + 1}`, {
 				grid_template_columns: `repeat(${_ + 1}, 1fr)`,
+				display: "grid",
+				gap: vars.gap,
 			}),
 		),
 	),

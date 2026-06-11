@@ -10,9 +10,14 @@ It documents build, lint, and test commands plus the code conventions already in
 - Main artifact: generated CSS, especially `dist/ui.css`
 - Runtime/tooling: Bun, Biome, mise, shell scripts
 
-## Rule Files
+## Rule Files, Skills, And Docs
 - Follow this file plus inherited SDK guidance in `deps/sdk/AGENTS.md`
 - OpenCode rules exist in `.opencode/rules/` and are loaded by `opencode.jsonc`
+- OpenCode skills in `.opencode/skills/` for repo-specific agent skills (data-modeling, review-cli, review-mk, review-sh, review-ts)
+- Docs skills in `docs/skills/` for the ui-css skill (design guidance on layout, color, components)
+- Spec docs in `docs/spec/` (spec-001-colors, spec-002-component_model)
+- Feature docs in `docs/` (colors, layout, text, reset, style, tokens, controls)
+- Reference docs in `docs/ref-*.md` — usage guides for ui.css classes and patterns
 - Cursor rules: none found in `.cursor/rules/`
 - `.cursorrules`: not present
 - Copilot instructions: none found in `.github/copilot-instructions.md`
@@ -25,6 +30,7 @@ It documents build, lint, and test commands plus the code conventions already in
 - `bin/uicss` - CLI entrypoint that renders CSS with Bun
 - `dist/` - generated outputs
 - `deps/sdk/` - LittleSDK bootstrap and shared rules
+- `docs/` - feature docs, spec docs, and skills
 
 ## Build And Discovery Commands
 - `make` - shows help; default target is not a build

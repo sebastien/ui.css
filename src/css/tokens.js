@@ -197,6 +197,10 @@ export default group(
 				"1.20", // 4: l
 				"1.44", // 5: xl
 				"1.73", // 6: xxl
+				"2.00", // 7: xxxl
+				"2.25", // 8
+				"2.50", // 9
+				"2.75", // 10
 			],
 		},
 	}),
@@ -271,9 +275,9 @@ export default group(
 		gap: scale(pem, vars.scaling.gap, [4, 8, 12, 16, 24, 32, 48, 64, 96, 128]),
 
 		opacity: {
-			dim: 0.65,
-			dimmer: 0.45,
-			dimmest: 0.25,
+			dim: 0.5,
+			dimmer: 0.35,
+			dimmest: 0.15,
 		},
 		shadow: {
 			x: "2px",
