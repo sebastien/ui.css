@@ -152,7 +152,7 @@ function base(selector, ...rest) {
 			padding: vars.control.padding.or("0.35em 0.5em"),
 		}),
 		// Color variants
-		...colors.names.map((color) =>
+		...colors.semantic.map((color) =>
 			css.rule(css.mods("&", color), {
 				__control_color_base: vars.color[color],
 			}),
@@ -167,7 +167,7 @@ function base(selector, ...rest) {
 			__control_color_outline_opacity: 1.0,
 		}),
 		// Focus ring
-		css.rule(css.mods("&", "focus"), {
+		css.rule(css.mods("&:not(.nofocus)", "focus"), {
 			outline_width: vars.control.outline.width.or("2px"),
 		}),
 		...rest,
@@ -188,19 +188,28 @@ function field(selector, ...rest) {
 			border_color: control.border(0.5, 1.0, vars.color.ink),
 		}),
 		// Color variants
-		...colors.names.map((color) =>
+		...colors.semantic.map((color) =>
 			css.rule(css.mods("&", color), {
 				__control_background_base: vars.color[color].background.or(
 					vars.color[color],
 				),
 			}),
 		),
+		// Nested inputs are filled
+		css.rule(["& > input", "& > textarea"], {
+			flex: "1",
+		}),
 		css.rule("&.bw", {
 			__control_background_base: vars.color.paper,
 			outline_style: "groove",
 		}),
+		css.rule("&.white", {
+			__control_background_base: vars.color.white,
+			__control_background_blend: 1.0,
+			__control_background_opacity: 1.0,
+		}),
 		// Focus state, reinforcing opacity
-		css.rule(css.mods("&", "focus"), {
+		css.rule(css.mods("&:not(.nofocus)", "focus"), {
 			// Focused background is fully opaque
 			__control_background_opacity: 1.0,
 			// And border has more of the main color
@@ -235,7 +244,7 @@ function field(selector, ...rest) {
 				__control_background_blend: 0.1,
 				__control_background_opacity: 0,
 			},
-			css.rule(css.mods("&", "focus", "active"), {
+			css.rule(css.mods("&:not(.nofocus)", "focus", "active"), {
 				__control_background_opacity: 0.5,
 			}),
 		),
@@ -284,7 +293,7 @@ function selectable(...rest) {
 			),
 		},
 		// Color variants
-		...colors.names.map((color) =>
+		...colors.semantic.map((color) =>
 			css.rule(css.mods("&", color), {
 				__control_color_base: vars.color[color],
 				__control_background_base: vars.color[color].background.or(
@@ -576,9 +585,12 @@ function toggle() {
 		css.rule("&:checked:hover, &.checked.hover", {
 			background_color: control.background(0.82, 1.0, vars.color.ink),
 		}),
-		css.rule("&:focus, &:focus-within, &.focus", {
-			outline_width: vars.control.outline.width.or("2px"),
-		}),
+		css.rule(
+			"&:focus:not(.nofocus), &:focus-within:not(.nofocus), &.focus:not(.notfocus)",
+			{
+				outline_width: vars.control.outline.width.or("2px"),
+			},
+		),
 		css.rule("&:disabled, &.disabled", {
 			cursor: "not-allowed",
 		}),
@@ -736,7 +748,7 @@ function selector() {
 			__control_background_opacity: 0.45,
 		}),
 		css.nesting(
-			`&:not(${colors.names.map((color) => `.${color}`).join("):not(")}):not(.bw)`,
+			`&:not(${colors.semantic.map((color) => `.${color}`).join("):not(")}):not(.bw)`,
 			{},
 			css.rule("& > label", {
 				__control_background_opacity: 1.0,

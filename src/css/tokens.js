@@ -59,7 +59,7 @@ export default group(
 			},
 		},
 		block: {
-			width: "220px",
+			width: "120px",
 		},
 		column: {
 			width: `${vars.block.width}`,
@@ -85,6 +85,7 @@ export default group(
 			paper: "#FFFFFF",
 			white: "#FFFFFF",
 			black: "#000000",
+			hi: "#FFFF00A0",
 			// Semantic colors (reference palette variables with fallback defaults)
 			neutral: "var(--color-gray-500, #a5a7ab)",
 			neutral_background: "var(--color-gray-200, #e5e7eb)",

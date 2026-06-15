@@ -40,9 +40,16 @@ export default named({
 		),
 	),
 	show: group(
-		rule([".hovered .hover-show", ".hovered:not(:hover) .hover-show"], {
-			visibility: "hidden",
-		}),
+		rule(
+			[
+				".hovered .hover-show",
+				".hovered:not(:hover) .hover-show",
+				".hovered:hover .hover-hide",
+			],
+			{
+				display: "none",
+			},
+		),
 		rule(
 			gated(
 				":not(.nohover)",
@@ -50,23 +57,24 @@ export default named({
 				".hover-show:hover",
 			),
 			{
-				visibility: "visible",
+				display: "revert",
 			},
 		),
 		rule([".focused .focus-show"], {
-			visibility: "hidden",
+			display: "none!important",
 		}),
 		rule(
-			".focused.focus .focus-show",
-			".focused:focus .focus-show",
-			".focused:focus-within .focus-show",
-			".focus-show:focus",
-			".focus-show.focus",
-			".focus-show:focus-within",
-			".focus-show:hover",
-			".focus-show.hover",
+			[
+				".focused.focus .focus-show",
+				".focused:focus-within .focus-show",
+				".focus-show:focus",
+				".focus-show.focus",
+				".focus-show:focus-within",
+				".focus-show:hover",
+				".focus-show.hover",
+			],
 			{
-				visibility: "visible",
+				display: "revert",
 			},
 		),
 	),
@@ -101,7 +109,9 @@ export default named({
 			__details_open_hide_display: "none",
 			__details_open_rotate: vars.motion.rotation,
 		}),
-		rule(".open-show, .when-open", { display: "var(--details-open-show-display)" }),
+		rule(".open-show, .when-open", {
+			display: "var(--details-open-show-display)",
+		}),
 		rule(".open-hide", { display: "var(--details-open-hide-display)" }),
 		rule(".open-rotate", {
 			transform: "rotate(var(--details-open-rotate, 0deg))",

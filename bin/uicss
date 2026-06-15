@@ -19,7 +19,9 @@ while [ "$#" -gt 0 ]; do
 done
 
 run_uicss() {
-	UICSS_BASE="$BASE" UICSS_GUARD="$GUARD" UICSS_EMBED="$EMBED" UICSS_DOC="$1" bun -e '
+	local uicss_doc="$1"
+	shift
+	UICSS_BASE="$BASE" UICSS_GUARD="$GUARD" UICSS_EMBED="$EMBED" UICSS_DOC="$uicss_doc" bun -e '
 const base = process.env.UICSS_BASE;
 const guard = process.env.UICSS_GUARD;
 const resolve = (mod) => typeof mod === "function" ? mod() : mod;
@@ -28,7 +30,7 @@ const render = (mod, scoped) => {
 	return guard ? scoped(res, guard) : res;
 };
 const { default: css, guard: scoped, layers, docs } = await import(`${base}/src/js/uicss.js`);
-const args = Bun.argv.slice(2);
+const args = Bun.argv.slice(1);
 if (process.env.UICSS_DOC === "1") {
 	const res = {};
 	for (const arg of args) {
@@ -50,7 +52,7 @@ if (process.env.UICSS_DOC === "1") {
 	}
 	console.log([...css(layers(res))].join("\n"));
 }
-'
+' "$@"
 }
 
 case $1 in

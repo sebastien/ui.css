@@ -32,6 +32,7 @@ export default named({
 			text_decoration: "none",
 		}),
 		rule(".noresize", { resize: "none" }),
+		rule(".noshrink", { flex_shrink: "0" }),
 		rule(".nolh", { line_height: "0em" }),
 		rule(".noblur", { __shadow_spread: "0" }),
 		rule(".nogap", { gap: "0em" }),
@@ -219,6 +220,22 @@ export default named({
 		rule(".nord-tr", { border_top_right_radius: "0px" }),
 		rule(".nord-br", { border_bottom_right_radius: "0px" }),
 		rule(".nord-bl", { border_bottom_left_radius: "0px" }),
+		rule(".nord-r", {
+			border_top_right_radius: "0px",
+			border_bottom_right_radius: "0px",
+		}),
+		rule(".nord-l", {
+			border_top_left_radius: "0px",
+			border_bottom_left_radius: "0px",
+		}),
+		rule(".nord-t", {
+			border_top_left_radius: "0px",
+			border_top_right_radius: "0px",
+		}),
+		rule(".nord-b", {
+			border_bottom_left_radius: "0px",
+			border_bottom_right_radius: "0px",
+		}),
 	),
 	border: group(
 		rule(".rd", { border_radius: vars.border.radius }),

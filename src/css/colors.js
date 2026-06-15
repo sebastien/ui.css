@@ -394,6 +394,7 @@ export default Object.assign(colors, {
 	mixed: colormix,
 	vars: colorvars,
 	alpha,
-	names: Object.keys(SEMANTIC),
+	names: Object.keys(SEMANTIC), // TODO: deprecate in favor of semantic
+	semantic: Object.keys(SEMANTIC),
 });
 // EOF
