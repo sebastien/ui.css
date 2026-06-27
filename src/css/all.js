@@ -11,18 +11,21 @@ import animate from "./animate.js";
 import components from "./components.js";
 
 export default (cols = COLORS, { guard: root } = {}) => {
+	// Cascade layers, lowest → highest priority:
+	//   tokens/reset → component chrome → utilities → motion/behavior → theme
+	// Utilities (text/layout/colors/style) sit after controls/components so
+	// classes like p-*, m-*, g-*, bg-*, tx-* always override component defaults.
 	const res = layers({
 		tokens,
 		reset,
 		controls,
 		components,
-		behavior,
-		animate,
-		layout,
-		// NOTE: Style should be the last
-		colors: colors(cols),
 		text,
+		layout,
+		colors: colors(cols),
 		style,
+		animate,
+		behavior,
 		theme: group(rule(".theme", {})),
 	});
 	if (!root) {

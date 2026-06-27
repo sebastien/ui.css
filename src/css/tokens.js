@@ -20,14 +20,14 @@ const scale = (fn, scaleVar, steps) => [
 export default group(
 	tokens({
 		font: {
-			mono: "monospace",
-			sans: "sans-serif",
+			mono: "ui-monospace, Consolas, monospace",
+			sans: "system-ui, sans-serif",
 			serif: "serif",
 			cursive: "cursive",
-			base: 14,
+			base: 16,
 			size: `calc(1rem * ${vars.font.base} / ${REM_PIXELS})`,
 			weight: 400,
-			line: "1.25em",
+			line: "1.5em",
 			text: {
 				family: `${vars.font.sans}`,
 			},
@@ -46,7 +46,7 @@ export default group(
 			controls: {
 				family: `${vars.font.sans}`,
 				size: `${vars.font.size}`,
-				line: "1em",
+				line: "1.25em",
 				weight: 500,
 			},
 			family: `${vars.font.text.family}`,
@@ -80,15 +80,14 @@ export default group(
 	// Color scales (0-9) are generated at build time in colors.js
 	tokens({
 		color: {
-			// Scale endpoint colors
-			ink: "var(--color-slate-950, #020617)",
-			paper: "#FFFFFF",
+			// Softer endpoints than pure black/white (still neutral greys)
+			ink: "#1e293b",
+			paper: "#f8fafc",
 			white: "#FFFFFF",
 			black: "#000000",
 			hi: "#FFFF00A0",
-			// Semantic colors (reference palette variables with fallback defaults)
+			// Semantics from the prior default scheme
 			neutral: "var(--color-gray-500, #a5a7ab)",
-			neutral_background: "var(--color-gray-200, #e5e7eb)",
 			primary: "#1400ff",
 			secondary: "#469485",
 			tertiary: "var(--color-teal-500, #14b8a6)",
@@ -128,9 +127,9 @@ export default group(
 				blend: 1.0,
 				opacity: 1.0,
 			},
-			stack: "0.75em",
+			stack: "1em",
 			line: {
-				min_height: "1.5em",
+				height: "1.5em",
 			},
 			list: {
 				unordered: { indent: "1.5em" },
@@ -144,8 +143,8 @@ export default group(
 			},
 			code: {
 				pad: { horizontal: "1em", vertical: "0.75em" },
-				background: "rgba(128, 128, 128, 0.1)",
-				radius: "4px",
+				background: "color-mix(in oklch, var(--color-ink), transparent 94%)",
+				radius: "3px",
 			},
 			dt: {
 				margin: { top: "1.5em", bottom: "0.5em" },
@@ -171,7 +170,7 @@ export default group(
 			width: "1px",
 			style: "solid",
 			radius: [
-				"1px", // 0:xxs
+				"0px", // 0:xxs
 				"2px", // 1:xs
 				"4px", // 2:s
 				"6px", // 3:m
@@ -286,8 +285,8 @@ export default group(
 			spread: "1px",
 			base: vars.color.shadow.or(vars.color.ink),
 			tint: vars.color.paper,
-			blend: 0.25,
-			opacity: 0.15,
+			blend: 0.4,
+			opacity: 0.12,
 			color: colormix(
 				vars.shadow.base,
 				vars.shadow.tint,
@@ -298,8 +297,8 @@ export default group(
 		limit: {
 			text: "80ch",
 			block: ["360px", "720px", "960px"],
-			content: "960px",
-			page: "960px",
+			content: "1080px",
+			page: "1080px",
 		},
 		// The logic here is as follows:
 		// - Page baseline (page.base) defines the value for 1rem/100% at the body level
@@ -314,22 +313,104 @@ export default group(
 			size: [
 				"80%", // 0: xxs
 				"100%", // 1: xs
-				"115%", // 2: s
-				"130%", // 3: m
-				"160%", // 4: l
-				"200%", // 5: xl
-				"240%", // 6: xxl
+				"113%", // 2: s
+				"117%", // 3: m
+				"129%", // 4: l
+				"161%", // 5: xl
+				"193%", // 6: xxl
 			],
 		},
 		control: {
+			font: {
+				family: `${vars.font.controls.family}`,
+				size: `${vars.font.controls.size}`,
+				line: `${vars.font.controls.line}`,
+				weight: `${vars.font.controls.weight}`,
+			},
+			gap: "0.25em",
+				padding: "0.5em 0.8em",
+			margin: "0em",
 			color: {
 				base: vars.color.neutral,
 				tint: vars.color.tint,
 				blend: 1.0,
 				opacity: 1.0,
 			},
+			border: {
+				width: "1px",
+				radius: "0.25em",
+			},
+			outline: {
+				width: "2px",
+			},
 		},
-	}),
+		field: {
+				padding: "0.55em 0.7em",
+			border: {
+				radius: "0.25em",
+			},
+		},
+		action: {
+			border: {
+				width: "0px",
+				radius: "0.25em",
+			},
+			outline: {
+				width: "2px",
+			},
+			default: {
+				outline: {
+					opacity: 0.8,
+				},
+			},
+		},
+		selector: {
+			border: {
+				radius: "0.25em",
+			},
+		},
+		card: {
+				padding: "1.5rem",
+			border: {
+				size: "1px",
+				radius: "0.5em",
+			},
+			color: {
+				base: vars.color.neutral,
+				tint: vars.color.paper,
+				blend: 0,
+				alpha: 1.0,
+			},
+		},
+		checkbox: {
+			size: "1.125em",
+			border: {
+				radius: "0.2em",
+			},
+		},
+			radio: {
+			size: "1.125em",
+			dot: {
+				size: "0.5em",
+			},
+			},
+			alert: {
+				padding: "0.8rem 1rem",
+				border: { radius: "4px" },
+			},
+			avatar: {
+				size: "2.5rem",
+				small: "2rem",
+				large: "3.25rem",
+			},
+			dialog: {
+				width: "32rem",
+				padding: "1.5rem",
+				border: { radius: "8px" },
+			},
+			progress: { height: "0.5rem" },
+			table: { padding: "0.7rem" },
+		}),
 );
 
 // EOF

@@ -51,11 +51,13 @@ export default named({
 			},
 		),
 		rule(
-			gated(
-				":not(.nohover)",
+			// TODO: We need to workout how .nohover works
+			[
 				".hovered:hover .hover-show",
+				".hovered.hover .hover-show",
 				".hover-show:hover",
-			),
+				".hover-show.hover",
+			],
 			{
 				display: "revert",
 			},

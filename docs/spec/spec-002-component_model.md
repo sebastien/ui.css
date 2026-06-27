@@ -18,8 +18,8 @@ outline setup) and derive their colors from the same token variables through
 
 ## Styled Controls
 
-- `button`, `.button`
-- `input`, `.input`, `textarea`, `.textarea`
+- `button`, `.button`, `input[type="submit"]`, `input[type="button"]`, `input[type="reset"]`
+- `input`, `.input`, `textarea`, `.textarea` (excluding the button types above)
 - `select`, `.select`
 - `input[type="checkbox"]`, `.checkbox`
 - `input[type="radio"]`, `.radio`
@@ -39,9 +39,33 @@ as they use `em` units.
 - `checked`/`selected`: `:checked` or `.selected` (toggles and options)
 - `invalid`: `:invalid` or `.invalid` (field-like only)
 
+## Color Variables
+
+Each control computes its colors from four channels, each with
+`base`, `tint`, `blend`, `opacity`:
+
+- `--control-color-*` — the **accent** (semantic color), drives text, border,
+  outline, and accent-filled backgrounds. Inheritable, themeable globally.
+- `--control-background-*` — the **surface**. Element-scoped: every control
+  pins `--control-background-base` on itself, so inherited values never
+  interfere with variants. Only override it via selectors targeting controls.
+- `--control-border-*`, `--control-outline-*` — derived from the accent by
+  default (their `base` falls back to `--control-color-base`).
+
+Pinning rules:
+
+- Actions pin `--control-background-base: var(--control-color-base)` (fill
+  tracks the accent), including checked states of checkbox/radio/toggle and
+  selected options.
+- Fields pin `--control-background-base` and `--control-background-tint` to
+  `var(--color-page, var(--color-paper))` (follows the page surface in both
+  light and dark mode). Field variants use the optional
+  `--color-{semantic}-background` theme hook, falling back to the semantic
+  color itself.
+
 ## Color Variants
 
-Applied as classes on any control — sets `--ctrl-color`:
+Applied as classes on any control — sets `--control-color-base`:
 
 - `neutral` (default)
 - `primary`, `secondary`, `tertiary`, `accent`

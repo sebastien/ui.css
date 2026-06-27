@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="en" class="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ui.css Components</title>
+    <link rel="stylesheet" href="../dist/ui.css" />
+    <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
+  </head>
+  <body class="light">
+    <div class="sidebar-layout">
+      <aside class="sidebar stack g-3">
+        <header class="stack g-1"><strong>ui.css</strong><span class="hint">Components</span></header>
+        <nav class="stack g-1" aria-label="Component sections">
+          <a href="#typography">Typography</a><a href="#accordion">Accordion</a><a href="#alert">Alert</a><a href="#avatar">Avatar</a><a href="#badge">Badge</a><a href="#breadcrumb">Breadcrumb</a><a href="#button">Button</a><a href="#card">Card</a><a href="#dialog">Dialog</a><a href="#dropdown">Dropdown</a><a href="#taginput">TagInput</a><a href="#form">Form elements</a><a href="#upload">Upload</a><a href="#meter">Meter</a><a href="#pagination">Pagination</a><a href="#progress">Progress</a><a href="#spinner">Spinner</a><a href="#skeleton">Skeleton</a><a href="#sidebar">Sidebar</a><a href="#switch">Switch</a><a href="#table">Table</a><a href="#tabs">Tabs</a><a href="#tooltip">Tooltip</a><a href="#toast">Toast</a><a href="#grid">Grid</a><a href="#utilities">Utils and helpers</a>
+        </nav>
+      </aside>
+      <main class="stack g-7">
+        <header class="stack g-3">
+          <h1>Components</h1>
+          <p>ui.css is a token-driven HTML and CSS component library. It has no framework dependency and its core output is generated CSS.</p>
+          <p>Semantic tags and attributes are styled contextually. Components use ui.css classes only where a native element needs a compositional surface or variant.</p>
+          <hr />
+        </header>
+        <section id="typography" class="stack g-3">
+          <h2># Typography</h2>
+          <p>Base text elements are styled automatically. No classes needed.</p>
+          <div class="card stack g-3">
+            <h1>Heading 1</h1>
+            <h2>Heading 2</h2>
+            <h3>Heading 3</h3>
+            <h4>Heading 4</h4>
+            <h5>Heading 5</h5>
+            <h6>Heading 6</h6>
+            <p>This is a paragraph with <strong>bold text</strong>, <em>italic text</em>, and <a class="link" href="#typography">a link</a>.</p>
+            <p>Here's some <code>inline code</code> and a code block:</p>
+            <pre><code>function hello() {
+  console.log("Hello, World!")
+}</code></pre>
+            <blockquote>This is a blockquote. It's styled automatically.</blockquote>
+            <hr />
+            <ul>
+              <li>Unordered list item 1</li>
+              <li>Unordered list item 2</li>
+              <li>Unordered list item 3</li>
+            </ul>
+            <ol>
+              <li>Ordered list item 1</li>
+              <li>Ordered list item 2</li>
+              <li>Ordered list item 3</li>
+            </ol>
+          </div>
+        </section>
+        <section id="accordion" class="stack g-3">
+          <h2># Accordion</h2>
+          <p>Use native <code>&lt;details&gt;</code> and <code>&lt;summary&gt;</code> for collapsible content.</p>
+          <div class="card stack g-0">
+            <details class="accordion" open><summary>What is ui.css</summary>
+              <p>A composable, token-driven CSS utility and component library.</p>
+            </details>
+            <details class="accordion"><summary>How do I use it</summary>
+              <p>Include the stylesheet and write semantic HTML.</p>
+            </details>
+            <details class="accordion"><summary>Is it accessible</summary>
+              <p>Yes. It leans on native elements and ARIA where needed.</p>
+            </details>
+            <details class="accordion"><summary>This is grouped with the next one</summary>
+              <p>Grouped accordions sit close together.</p>
+            </details>
+            <details class="accordion"><summary>This is grouped with the previous one</summary>
+              <p>Grouped accordions sit close together.</p>
+            </details>
+          </div>
+        </section>
+        <section id="alert" class="stack g-3">
+          <h2># Alert</h2>
+          <p>Use <code>role="alert"</code> with ui.css semantic variant classes for success, warning, or error. Add <code>.ghost</code> for an outline-only style.</p>
+          <div class="card stack g-2">
+            <div role="alert" class="success"><strong>Success!</strong> Your changes have been saved.</div>
+            <div role="alert" class="warning"><strong>Warning!</strong> Please review before continuing.</div>
+            <div role="alert"><strong>Info</strong> This is a default alert message.</div>
+            <div role="alert" class="danger"><strong>Error!</strong> Something went wrong.</div>
+            <div role="alert" class="ghost"><strong>Ghost</strong> An outline-only alert.</div>
+            <div role="alert" class="ghost danger"><strong>Ghost error</strong> An outline-only error.</div>
+          </div>
+        </section>
+        <section id="avatar" class="stack g-3">
+          <h2># Avatar</h2>
+          <p>Use <code>&lt;figure class="avatar"&gt;</code> with an image or text initials via <code>&lt;abbr&gt;</code>.</p>
+          <div class="card row g-3">
+            <figure class="avatar small" aria-label="Jane Doe"><abbr title="Jane Doe">JD</abbr></figure>
+            <figure class="avatar" aria-label="Jane Doe"><abbr title="Jane Doe">JD</abbr></figure>
+            <figure class="avatar large" aria-label="Jane Doe"><abbr title="Jane Doe">JD</abbr></figure>
+            <figure class="avatar" aria-label="Oat"><abbr title="Oat">OT</abbr></figure>
+          </div>
+          <h3>Avatar group</h3>
+          <p>Wrap avatars in <code>&lt;div class="avatars" role="group"&gt;</code> for grouped avatars. Add <code>.small</code> or <code>.large</code> to size all avatars in the group.</p>
+          <div class="card stack g-2">
+            <div class="avatars" role="group" aria-label="Team members">
+              <figure class="avatar" aria-label="Jane Doe">JD</figure>
+              <figure class="avatar" aria-label="John Smith">JS</figure>
+              <figure class="avatar" aria-label="Alex Lee">AL</figure>
+            </div>
+            <div class="avatars small" role="group" aria-label="Team members">
+              <figure class="avatar" aria-label="Jane Doe">JD</figure>
+              <figure class="avatar" aria-label="John Smith">JS</figure>
+              <figure class="avatar" aria-label="Alex Lee">AL</figure>
+            </div>
+            <div class="avatars large" role="group" aria-label="Team members">
+              <figure class="avatar" aria-label="Jane Doe">JD</figure>
+              <figure class="avatar" aria-label="John Smith">JS</figure>
+              <figure class="avatar" aria-label="Alex Lee">AL</figure>
+            </div>
+          </div>
+        </section>
+        <section id="badge" class="stack g-3">
+          <h2># Badge</h2>
+          <p>Use <code>.badge</code> with variant classes. <code>.outline</code> is a style modifier.</p>
+          <div class="card row wrap g-2">
+            <span class="badge">Default</span>
+            <span class="badge secondary">Secondary</span>
+            <span class="badge outline">Outline</span>
+            <span class="badge tinted success">Success</span>
+            <span class="badge tinted warning">Warning</span>
+            <span class="badge tinted danger">Danger</span>
+          </div>
+        </section>
+        <section id="breadcrumb" class="stack g-3">
+          <h2># Breadcrumb</h2>
+          <p>Use a semantic breadcrumb <code>&lt;nav&gt;</code> with an ordered list and <code>aria-current="page"</code> for the active item.</p>
+          <div class="card">
+            <nav aria-label="Breadcrumb">
+              <ol class="breadcrumbs">
+                <li><a href="#breadcrumb">Home</a></li>
+                <li><a href="#breadcrumb">Projects</a></li>
+                <li><a href="#breadcrumb">Oat Docs</a></li>
+                <li aria-current="page"><strong>Breadcrumb</strong></li>
+              </ol>
+            </nav>
+          </div>
+        </section>
+        <section id="button" class="stack g-3">
+          <h2># Button</h2>
+          <p>The <code>&lt;button&gt;</code> element is styled by default. Use variant classes for semantic and visual styles.</p>
+          <div class="card stack g-3">
+            <div class="row wrap g-2">
+              <button class="primary">Primary</button><button class="secondary">Secondary</button><button class="danger">Danger</button><button class="outline">Outline</button><button class="danger outline">Danger</button><button class="ghost">Ghost</button><button disabled>Disabled</button><button class="outline" disabled>Disabled</button><button class="ghost" disabled>Disabled</button>
+            </div>
+            <h3>Sizes</h3>
+            <p>Use <code>.small</code> or <code>.large</code> for size variants.</p>
+            <div class="row wrap g-2">
+              <button class="small">Small</button><button>Default</button><button class="large">Large</button><a class="button" href="#button">Hyperlink</a>
+            </div>
+            <h3>Button group</h3>
+            <p>Wrap buttons in <code>&lt;menu class="buttons"&gt;</code> for connected buttons.</p>
+            <menu class="buttons">
+              <li><button>Left</button></li>
+              <li><button>Center</button></li>
+              <li><button>Right</button></li>
+            </menu>
+          </div>
+        </section>
+        <section id="card" class="stack g-3">
+          <h2># Card</h2>
+          <p>Use <code>.card</code> for a visual box-like card look.</p>
+          <article class="card stack g-3">
+            <header class="stack g-1">
+              <h3>Card Title</h3>
+              <p>Card description goes here.</p>
+            </header>
+            <p>This is the card content. It can contain any HTML.</p>
+            <footer class="row end g-2"><button class="outline">Cancel</button><button class="primary">Save</button></footer>
+          </article>
+        </section>
+        <section id="dialog" class="stack g-3">
+          <h2># Dialog</h2>
+          <p>Fully semantic, zero-Javascript dialog with <code>&lt;dialog&gt;</code>. Use <code>commandfor</code> and <code>command="show-modal"</code> on a trigger to open it.</p>
+          <div class="card stack g-3">
+            <div><button commandfor="dialog-demo" command="show-modal">Open dialog</button>
+              <dialog id="dialog-demo">
+                <form method="dialog" class="stack g-3">
+                  <header class="stack g-1">
+                    <h3>Dialog title</h3>
+                    <p class="hint dim">This is a native dialog.</p>
+                  </header>
+                  <p class="hint">Press Escape or choose an action to close.</p>
+                  <footer class="row end g-2"><button class="outline" value="cancel">Cancel</button><button class="primary" value="confirm">Confirm</button></footer>
+                </form>
+              </dialog>
+            </div>
+            <h3>With form fields</h3>
+            <p class="hint">Forms inside dialogs work naturally. Use <code>command="close"</code> on cancel buttons to close.</p>
+            <div><button commandfor="dialog-form" command="show-modal">Open form dialog</button>
+              <dialog id="dialog-form">
+                <form method="dialog" class="stack g-3">
+                  <header class="stack g-1">
+                    <h3>Edit profile</h3>
+                    <p class="hint">Update your account details below.</p>
+                  </header>
+                  <label class="field">Name<input class="fit-w" value="Jane Doe" /></label><label class="field">Email<input class="fit-w" type="email" value="jane@example.com" /></label>
+                  <footer class="row end g-2"><button class="outline" value="cancel">Cancel</button><button class="primary" value="save">Save</button></footer>
+                </form>
+              </dialog>
+            </div>
+          </div>
+        </section>
+        <section id="dropdown" class="stack g-3">
+          <h2># Dropdown</h2>
+          <p>Use the native Popover API for CSS-first menus. Set <code>popovertarget</code> on the trigger and <code>popover</code> on the target.</p>
+          <div class="card stack g-3">
+            <div>
+              <button class="outline" popovertarget="dd-menu">Options <iconify-icon icon="lucide:chevron-down" width="16" height="16"></iconify-icon></button>
+              <menu popover id="dd-menu">
+                <button role="menuitem"><iconify-icon icon="lucide:user" width="16" height="16"></iconify-icon> Profile</button>
+                <button role="menuitem"><iconify-icon icon="lucide:help-circle" width="16" height="16"></iconify-icon> Help</button>
+                <a role="menuitem" href="#dropdown"><iconify-icon icon="lucide:link" width="16" height="16"></iconify-icon> Link</a>
+                <hr />
+                <button role="menuitem"><iconify-icon icon="lucide:log-out" width="16" height="16"></iconify-icon> Logout</button>
+                <button class="danger" role="menuitem"><iconify-icon icon="lucide:trash-2" width="16" height="16"></iconify-icon> Delete</button>
+              </menu>
+            </div>
+            <h3>Popover</h3>
+            <p>A popover can also show arbitrary content like a confirmation card.</p>
+            <div>
+              <button class="outline" popovertarget="dd-pop">Confirm</button>
+              <article class="card" popover id="dd-pop">
+                <header class="stack g-1">
+                  <h4>Are you sure?</h4>
+                  <p class="hint">This action cannot be undone.</p>
+                </header>
+                <footer class="row end g-2"><button class="outline small" popovertarget="dd-pop" popovertargetaction="hide">Cancel</button><button class="danger small" popovertarget="dd-pop" popovertargetaction="hide">Delete</button></footer>
+              </article>
+            </div>
+          </div>
+        </section>
+        <section id="taginput" class="stack g-3">
+          <h2># TagInput</h2>
+          <p>Compose a tag input from chips and a native text field. Type a word and press Enter to add.</p>
+          <div class="card stack g-3">
+            <div class="tags"><span class="tag">apple<button aria-label="Remove apple">×</button></span><span class="tag">mango<button aria-label="Remove mango">×</button></span><input aria-label="Add tags" placeholder="Add tags ..." /></div>
+            <h3>Autocomplete</h3>
+            <p>Give the <code>&lt;input&gt;</code> a <code>list</code> and a <code>&lt;datalist&gt;</code> for suggestions.</p>
+            <input list="fruits" aria-label="Type a fruit name" placeholder="Type a fruit name" />
+            <datalist id="fruits"><option>Apple</option><option>Apricot</option><option>Banana</option><option>Cherry</option><option>Mango</option><option>Melon</option></datalist>
+          </div>
+        </section>
+        <section id="form" class="stack g-3">
+          <h2># Form elements</h2>
+          <p>Form elements are styled automatically. Wrap inputs in <code>&lt;label&gt;</code> for proper association.</p>
+          <div class="card stack g-3">
+            <div class="grid col-2 g-3">
+              <label class="field">Name<input placeholder="Enter your name" /></label>
+              <label class="field">Email<input type="email" placeholder="you@example.com" /></label>
+              <label class="field">Password<input type="password" placeholder="Password" /><small class="hint">This is a small hint</small></label>
+              <label class="field">Select<select><option>Select an option</option><option>Option A</option><option>Option B</option><option>Option C</option><option>Option D</option></select></label>
+              <label class="field span-2">Message
+                <textarea rows="3" placeholder="Your message..."></textarea>
+              </label>
+              <label class="field">Disabled<input disabled placeholder="Disabled" /><small class="hint">This is a hint</small></label>
+              <label class="field">File<input type="file" /></label>
+              <label class="field">Date and time<input type="datetime-local" /></label>
+              <label class="field">Date<input type="date" /></label>
+              <label class="field"><input type="checkbox" /> I agree to the terms<small class="hint">This is a hint</small></label>
+              <fieldset class="field"><legend>Preference</legend><label><input type="radio" name="pref" /> Option A</label><label><input type="radio" name="pref" /> Option B</label><label><input type="radio" name="pref" /> Option C</label></fieldset>
+              <label class="field">Volume<input type="range" value="50" /><small class="hint">This is a hint</small></label>
+              <label class="field">State<input type="checkbox" role="switch" /><small class="hint">This is a hint</small></label>
+            </div>
+            <button class="primary">Submit</button>
+          </div>
+          <h3>Input group</h3>
+          <p>Use <code>.group</code> on a <code>&lt;fieldset&gt;</code> to combine inputs with buttons or labels.</p>
+          <div class="card stack g-2">
+            <fieldset class="group"><strong>https://</strong><input aria-label="subdomain" placeholder="subdomain" /><select aria-label="domain"><option>.example.com</option><option>.example.net</option></select><button class="primary">Go</button></fieldset>
+            <fieldset class="group"><input aria-label="Search" placeholder="Search" /><button class="primary">Go</button></fieldset>
+          </div>
+          <h3>Validation error</h3>
+          <p>Use <code>aria-invalid="true"</code> on fields to reveal and style error messages.</p>
+          <div class="card">
+            <fieldset class="group" aria-invalid="true"><label class="field">Email<input type="email" placeholder="Type invalid email here" /></label><label class="field">Enter secret value<input value="abcdefg" aria-invalid="true" /><small class="hint">The value is incorrect</small></label></fieldset>
+          </div>
+        </section>
+        <section id="upload" class="stack g-3">
+          <h2># Upload</h2>
+          <p>Wrap a native <code>&lt;input type="file"&gt;</code> in a labeled drop-zone card.</p>
+          <label class="card stack g-2 centered p-6" style="border-style: dashed"><strong>Attachments</strong><input type="file" multiple /><small class="hint">Drop files here or click to choose</small></label>
+        </section>
+        <section id="meter" class="stack g-3">
+          <h2># Meter</h2>
+          <p>Use <code>&lt;meter&gt;</code> for values within a known range. The browser colors bars based on low/high/optimum.</p>
+          <div class="card stack g-3">
+            <meter value="0.8" min="0" max="1" low="0.3" high="0.7" optimum="1">0.8</meter>
+            <meter value="0.5" min="0" max="1" low="0.3" high="0.7" optimum="1">0.5</meter>
+            <meter value="0.2" min="0" max="1" low="0.3" high="0.7" optimum="1">0.2</meter>
+          </div>
+        </section>
+        <section id="pagination" class="stack g-3">
+          <h2># Pagination</h2>
+          <p>Pagination reuses connected buttons in a semantic navigation list.</p>
+          <div class="card">
+            <nav aria-label="Pagination">
+              <ol class="buttons">
+                <li><a class="button outline compact" href="#pagination">← Previous</a></li>
+                <li><a class="button outline compact" href="#pagination">1</a></li>
+                <li><a class="button outline compact" href="#pagination">2</a></li>
+                <li><a class="button primary compact" aria-current="page" href="#pagination">3</a></li>
+                <li><a class="button outline compact" href="#pagination">4</a></li>
+                <li><a class="button outline compact" href="#pagination">5</a></li>
+                <li><a class="button outline compact" href="#pagination">Next →</a></li>
+              </ol>
+            </nav>
+          </div>
+        </section>
+        <section id="progress" class="stack g-3">
+          <h2># Progress</h2>
+          <p>Use the native <code>&lt;progress&gt;</code> element.</p>
+          <div class="card stack g-3">
+            <progress value="60" max="100">60%</progress>
+            <progress value="30" max="100">30%</progress>
+            <progress value="90" max="100">90%</progress>
+          </div>
+        </section>
+        <section id="spinner" class="stack g-3">
+          <h2># Spinner</h2>
+          <p>Use <code>.spinner</code> for an inline indicator or <code>.loading</code> for an overlay.</p>
+          <div class="card stack g-3">
+            <div class="row g-4"><span class="spinner" aria-label="Loading"></span><button disabled>Loading</button></div>
+            <h3>Overlay</h3>
+            <p>Add <code>.loading</code> to dim contents of a container and overlay a spinner on top.</p>
+            <article class="card loading" aria-busy="true">
+              <header class="stack g-1">
+                <h3>Card Title</h3>
+                <p>Card description goes here.</p>
+              </header>
+              <p>This is the card content. It can contain any HTML.</p>
+              <footer class="row end g-2"><button class="outline">Cancel</button><button class="primary">Save</button></footer>
+            </article>
+          </div>
+        </section>
+        <section id="skeleton" class="stack g-3">
+          <h2># Skeleton</h2>
+          <p>Use <code>.skeleton</code> with <code>role="status"</code> for loading placeholders. Add <code>.line</code> for text or <code>.box</code> for images.</p>
+          <div class="card stack g-3">
+            <div class="skeleton box" role="status" aria-label="Loading image"></div>
+            <div class="skeleton line" role="status" aria-label="Loading title"></div>
+            <div class="skeleton line" role="status" aria-label="Loading copy"></div>
+          </div>
+          <h3>Skeleton card</h3>
+          <p>Put skeleton loaders inside <code>&lt;article class="card"&gt;</code> for a card layout.</p>
+          <article class="card stack g-3">
+            <div class="skeleton box" role="status" aria-label="Loading image"></div>
+            <div class="stack g-2">
+              <div class="skeleton line" role="status" aria-label="Loading title"></div>
+              <div class="skeleton line" role="status" aria-label="Loading copy"></div>
+            </div>
+          </article>
+        </section>
+        <section id="sidebar" class="stack g-3">
+          <h2># Sidebar</h2>
+          <ul>
+            <li>Use <code>.sidebar-layout</code> with <code>.sidebar</code> for the sidebar and <code>main</code> for content. The sidebar stays sticky while the main content scrolls.</li>
+            <li>Set <code>--sidebar-width</code> to adjust its width globally.</li>
+          </ul>
+          <div class="card" style="padding: 0; overflow: hidden">
+            <div class="sidebar-layout" style="height: 20rem">
+              <aside class="sidebar" style="position: static; height: auto; min-height: auto; overflow-y: auto; display: flex; flex-direction: column">
+                <nav class="stack g-1">
+                  <a href="#sidebar">Home</a>
+                  <a href="#sidebar">Users</a>
+                  <details><summary>Settings</summary><nav class="stack g-1"><a href="#sidebar">General</a><a href="#sidebar">Security</a><a href="#sidebar">Billing</a></nav></details>
+                </nav>
+                <button class="outline" style="margin-top: auto">Logout</button>
+              </aside>
+              <main style="padding: 1.5rem">
+                <p>Main content area. Scrolls with the page body.</p>
+              </main>
+            </div>
+          </div>
+        </section>
+        <section id="switch" class="stack g-3">
+          <h2># Switch</h2>
+          <p>Add <code>role="switch"</code> to a checkbox for toggle switch styling.</p>
+          <div class="card stack g-2">
+            <label class="row g-2"><input type="checkbox" role="switch" /> Notifications</label>
+            <label class="row g-2"><input type="checkbox" role="switch" checked /> Confabulation</label>
+          </div>
+          <h3>Rounded</h3>
+          <p>Add <code>.rounded</code> for an Apple-like pill track and circular knob.</p>
+          <div class="card stack g-2">
+            <label class="row g-2"><input type="checkbox" role="switch" class="rounded" /> Notifications</label>
+            <label class="row g-2"><input type="checkbox" role="switch" class="rounded" checked /> Confabulation</label>
+          </div>
+          <h3>Disabled</h3>
+          <div class="card stack g-2">
+            <label class="row g-2"><input type="checkbox" role="switch" disabled /> Disabled off</label>
+            <label class="row g-2"><input type="checkbox" role="switch" checked disabled /> Disabled on</label>
+            <label class="row g-2"><input type="checkbox" role="switch" class="rounded" disabled /> Rounded off</label>
+            <label class="row g-2"><input type="checkbox" role="switch" class="rounded" checked disabled /> Rounded on</label>
+          </div>
+        </section>
+        <section id="table" class="stack g-3">
+          <h2># Table</h2>
+          <p>Tables are styled by default. Wrap wide tables in <code>.table</code> for horizontal scrolling.</p>
+          <div class="card">
+            <div class="table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Ada Lovelace</td>
+                    <td>ada@example.com</td>
+                    <td>Admin</td>
+                    <td><span class="badge tinted success">Active</span></td>
+                  </tr>
+                  <tr>
+                    <td>Grace Hopper</td>
+                    <td>grace@example.com</td>
+                    <td>Editor</td>
+                    <td><span class="badge tinted warning">Review</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+<section id="tabs" class="stack g-3">
+          <h2># Tabs</h2>
+          <p>Use tab roles and ui.css <code>.tab</code> styling. Selection behavior remains application-owned.</p>
+          <div class="card stack g-3">
+            <div role="tablist" class="bg-neutral rounded"><button class="tab ghost sh-1" role="tab" aria-selected="true">Account</button><button class="tab ghost" role="tab" aria-selected="false">Security</button><button class="tab ghost" role="tab" aria-selected="false">Notifications</button></div>
+            <section role="tabpanel"><h3>Account settings</h3><p>Manage your account information here.</p></section>
+          </div>
+        </section>
+        <section id="tooltip" class="stack g-3">
+          <h2># Tooltip</h2>
+          <p>Add <code>data-tooltip</code> for authored tooltip text.</p>
+          <div class="card row wrap g-3"><button data-tooltip="Save your changes">Save</button><button class="danger" data-tooltip="Delete this item">Delete</button></div>
+        </section>
+        <section id="toast" class="stack g-3">
+          <h2># Toast</h2>
+          <p>Use <code>.toast</code> for the presentation. Queueing and dismissal are application-owned.</p>
+          <div class="card"><output class="toast" role="status"><strong>Changes saved</strong><span>Your document is up to date.</span><button class="outline compact">Okay</button></output></div>
+        </section>
+        <section id="grid" class="stack g-3">
+          <h2># Grid</h2>
+          <p>Use ui.css <code>.grid</code> and <code>.col-*</code> utilities for responsive composition.</p>
+          <div class="grid col-3 g-3">
+            <div class="panel p-3">Column one</div>
+            <div class="panel p-3">Column two</div>
+            <div class="panel p-3">Column three</div>
+          </div>
+        </section>
+        <section id="utilities" class="stack g-3">
+          <h2># Utils and helpers</h2>
+          <p>Use layout, spacing, color, and typography utilities to compose primitives without custom CSS.</p>
+          <div class="card row wrap g-2"><span class="p-2 bg bg-primary bg-to-paper bg-2b tx">Color</span><span class="p-2 bd bd-neutral rounded">Border</span><span class="p-2 sh-2">Depth</span></div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

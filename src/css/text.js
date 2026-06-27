@@ -10,6 +10,13 @@ import {
 
 export default named({
 	headings: group(
+		...times(6, (i) =>
+			rule(`h${i + 1}`, {
+				font_size: `${vars.heading.size[6 - i]}`,
+				line_height: "1.25",
+				font_weight: "600",
+			}),
+		),
 		...sizes.map((k, si) =>
 			rule([times(7, (hi) => `h${hi + 1}.sz-${si}`)], {
 				font_size: `${vars.heading.size[si]}`,
@@ -37,10 +44,14 @@ export default named({
 		),
 	),
 	paragraphs: group(
+		rule("p", { line_height: `${vars.text.line.height}` }),
+		rule("a", { color: vars.color.primary, text_decoration: "none" }),
+		rule(".link", { text_decoration: "underline" }),
+		rule(".link:hover", { text_decoration_thickness: "2px" }),
 		rule(["p.t", ".t p"], {
 			margin_top: `${vars.text.stack}`,
 			margin_bottom: `${vars.text.stack}`,
-			min_height: `${vars.text.line.min_height}`,
+			line_height: `${vars.text.line.height}`,
 		}),
 		rule(["p.t:first-child", ".t p:first-child"], {
 			margin_top: "unset",
@@ -50,8 +61,21 @@ export default named({
 		}),
 	),
 	inline: group(
+		rule(["strong", "b"], {
+			font_weight: "600",
+		}),
+		rule(["em", "i"], {
+			font_style: "italic",
+		}),
 		rule(["code"], {
 			font_family: vars.font.code.family,
+			font_size: "0.875em",
+			padding: "0.1em 0.3em",
+			background_color: vars.text.code.background,
+			border_radius: vars.text.code.radius,
+		}),
+		rule(["small"], {
+			font_size: "0.75em",
 		}),
 		rule([".t em", "em.t"], {
 			font_style: "italic",
@@ -82,6 +106,11 @@ export default named({
 		}),
 	),
 	blockquote: group(
+		rule("blockquote", {
+			border_left: `${vars.text.blockquote.border.width} solid ${vars.color.primary}`,
+			padding_left: `${vars.text.blockquote.pad.horizontal}`,
+			color: `color-mix(in oklch, ${vars.color.ink}, ${vars.color.paper} 28%)`,
+		}),
 		rule([".t blockquote", "blockquote.t"], {
 			border_left: `${vars.text.blockquote.border.width} solid`,
 			border_color: "currentColor",
@@ -96,6 +125,24 @@ export default named({
 		}),
 	),
 	code: group(
+		rule("pre", {
+			font_family: vars.font.code.family,
+			background: `${vars.text.code.background}`,
+			border_radius: `${vars.text.code.radius}`,
+			padding: `${vars.text.code.pad.vertical} ${vars.text.code.pad.horizontal}`,
+			overflow_x: "auto",
+			contain: "paint",
+		}),
+		rule("pre code", {
+			display: "block",
+			max_width: "100%",
+			white_space: "pre-wrap",
+			overflow_wrap: "anywhere",
+			background: "transparent",
+			padding: "0",
+			font_size: "1em",
+			border_radius: "0",
+		}),
 		rule([".t pre", "pre.t"], {
 			font_family: vars.font.code.family,
 			background: `${vars.text.code.background}`,
@@ -182,8 +229,8 @@ export default named({
 	),
 	alignment: group(
 		rule(".center:not(.row), .t-center", { text_align: "center" }),
-		rule(".right, .t-right", { text_align: "start" }),
-		rule(".left, .t-left", { text_align: "end" }),
+		rule(".right, .t-right", { text_align: "end" }),
+		rule(".left, .t-left", { text_align: "start" }),
 		rule(".justify, .t-justify", { text_align: "justify" }),
 		rule(".middle:not(.row), .v-m", { vertical_align: "middle" }),
 		rule(".baseline, .v-bl", { vertical_align: "baseline" }),

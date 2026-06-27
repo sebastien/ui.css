@@ -133,6 +133,7 @@ export default named({
 		rule(".help", { cursor: "help" }),
 		rule(".grab", { cursor: "grab" }),
 		rule(".grabbing", { cursor: "grabbing" }),
+		rule([".cross", ".crosshair"], { cursor: "crosshair" }),
 		rule(".move", { cursor: "move", user_select: "none" }),
 		rule(".move-h", { cursor: "ns-resize", user_select: "none" }),
 		rule(".move-w", { cursor: "ew-resize", user_select: "none" }),
@@ -215,6 +216,18 @@ export default named({
 			__border_radius: "1.5lh",
 			border_radius: vars.border.radius,
 		}),
+		// Switches: .rounded is the Apple-like pill (overrides the utility radius)
+		rule(
+			[
+				"input[type=checkbox][role=switch].rounded",
+				":not(.selector) input[type=checkbox].toggle.rounded",
+				".toggle.rounded",
+			],
+			{
+				__border_radius: "999px",
+				border_radius: "999px",
+			},
+		),
 		rule([".squared", ".nord"], { border_radius: "0px" }),
 		rule(".nord-tl", { border_top_left_radius: "0px" }),
 		rule(".nord-tr", { border_top_right_radius: "0px" }),

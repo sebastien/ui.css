@@ -59,8 +59,8 @@ It documents build, lint, and test commands plus the code conventions already in
 - `make test` - main test entrypoint
 - `make js-test` - run JavaScript and TypeScript tests through `bun test`
 - `make py-test` - run Python tests if any exist
-- There is currently no `tests/` directory and no `*.test.js` / `*.test.ts` files
-- Because of that, `make test` currently succeeds without running repository tests
+- There is a small `tests/` directory; new tests should follow `*.test.js`, `*.test.ts`, `*.test.py`, or `*.test.sh`
+- `tests/controls.test.js` renders the stylesheet in memory and asserts on the control color model
 
 ## Running A Single Test
 - Preferred single JS test: `make js-test TESTS_JS=tests/name.test.js`
@@ -150,7 +150,6 @@ It documents build, lint, and test commands plus the code conventions already in
 
 ## Known Repository Quirks
 - `make check` may report existing warnings; treat them as baseline unless your change affects them
-- `make test` currently reports success even though no repository tests exist yet
 - The root `README.md` is minimal and not a reliable workflow reference
 - Some SDK-managed dotfiles appear only after `make prep` or another make invocation
 

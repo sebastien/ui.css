@@ -283,7 +283,6 @@ export default named({
 			),
 		}),
 	),
-	sticky: group(rule(".sticky", { position: "sticky", top: 0 })),
 	shapes: group(
 		rule([".square", ".disc", ".circle"], {
 			box_sizing: "border-box",
@@ -292,6 +291,8 @@ export default named({
 			justify_content: "center",
 			aspect_ratio: "1/1",
 			line_height: "0em",
+			min_height: "0",
+			min_width: "0",
 		}),
 		rule([".circle", ".disc"], {
 			border_radius: "50%",

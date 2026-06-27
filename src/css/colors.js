@@ -178,7 +178,13 @@ function colors(colors = COLORS) {
 		// ------------------------------------------------------------------------
 		// DARK / LIGHT MODE
 		// ------------------------------------------------------------------------
-		rule([root, `${root}.light`, `${root} .light`], {
+		rule([root], {
+			__color_page: `${vars.color.paper}`,
+			__color_text: `${vars.color.ink}`,
+			color: `${vars.color.ink}`,
+			// NOTE: We don't the bg color then
+		}),
+		rule([`${root}.light`, `${root} .light`], {
 			__color_page: `${vars.color.paper}`,
 			__color_text: `${vars.color.ink}`,
 			// Apply actual properties
@@ -191,6 +197,12 @@ function colors(colors = COLORS) {
 			// Apply actual properties with swapped colors
 			background_color: `${vars.color.ink}`,
 			color: `${vars.color.paper}`,
+		}),
+		rule(`.bg-def`, {
+			background_color: `${vars.color.paper}`,
+		}),
+		rule(`.tx-def`, {
+			color: `${vars.color.ink}`,
 		}),
 		// ------------------------------------------------------------------------
 		// APPLY CLASSES
@@ -236,6 +248,11 @@ function colors(colors = COLORS) {
 			border_color: `${vars.border.color}`,
 			border_width: `${vars.border.width}`,
 			border_style: `${vars.border.style}`,
+		}),
+		// Paints the border as an inset shadow to avoid layout shift when border is applied.
+		rule(".bds", {
+			__border_color: borderColor,
+			box_shadow: `inset calc(-1 * ${vars.border.width}) 0 ${vars.border.color}`,
 		}),
 		...times(7).map((_) =>
 			rule(`.bd-${_}`, {

@@ -46,6 +46,17 @@ export default named({
 			}),
 		),
 		rule(".will-change-transform", { will_change: "transform, opacity" }),
+		// Editor caret pulse (step-end = hard on/off like a native caret).
+		namedAnimation(".caret-blink", "caret-blink", {
+			animation_duration: "1.05s",
+			animation_timing_function: "step-end",
+			animation_iteration_count: "infinite",
+			animation_fill_mode: "none",
+		}),
+		keyframes("caret-blink", {
+			"0%, 100%": { opacity: 1 },
+			"50%": { opacity: 0 },
+		}),
 	),
 	reveal: group(
 		namedAnimation(".fade-in", "fade-in"),
@@ -453,14 +464,14 @@ export default named({
 		}),
 		rule(".accordion", {
 			display: "grid",
-			grid_template_rows: "0fr",
+			grid_template_rows: "auto 0fr",
 			transition: `grid-template-rows ${slow} ${softer}`,
 		}),
-		rule(".accordion > *", {
+		rule(".accordion > :not(summary)", {
 			overflow: "hidden",
 		}),
 		rule([".accordion.is-open", ".accordion[open]"], {
-			grid_template_rows: "1fr",
+			grid_template_rows: "auto 1fr",
 		}),
 		namedAnimation(".details-reveal", "details-reveal", {
 			__motion_animation_duration: vars.motion.duration.base,

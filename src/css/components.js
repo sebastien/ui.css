@@ -1,4 +1,4 @@
-import css, { vars } from "../js/uicss.js";
+import css, { keyframes, media, vars } from "../js/uicss.js";
 import { colormix } from "./colors.js";
 import colors from "./colors.js";
 
@@ -9,37 +9,23 @@ function pill(...rest) {
 		css.rule("&", {
 			// Box
 			display: "inline-flex",
-			padding: vars.pill.padding.or("0.25em 0.75em"),
-			font_size: "inherit",
+			padding: "0.25em 1em",
+			font_size: "0.75em",
+			font_weight: "500",
 			align_items: "center",
 			white_space: "nowrap",
 			gap: vars.gap,
-			line_height: vars.pill.font.line.or("1.15em"),
+			line_height: "1.15em",
 			// Border
-			border_width: vars.pill.border.size.or("0px"),
-			border_radius: vars.pill.border.radius.or("1em"),
-			border_color: colors.mixed(
-				vars.background.color.base,
-				vars.background.color.tint,
-				0.5,
-				vars.background.color.opacity,
-			),
-			__background_color_base: vars.pills.color.base.or(vars.color.neutral),
-			__background_color_opacity: vars.pill.color.opacity.or(1.0),
-			__background_color_tint: vars.pill.color.tint.or(vars.color.paper),
-			__background_color: colors.mixed(
-				vars.background.color.base,
-				vars.background.color.tint,
-				1.0,
-				vars.background.color.opacity,
-			),
-			background_color: colors.mixed(
-				vars.background.color.base,
-				vars.background.color.tint,
-				1.0,
-				vars.background.color.opacity,
-			),
-			color: `contrast-color(${vars.background.color} max ${vars.color.paper}, ${vars.color.ink})`,
+			border_width: "1px",
+			border_style: "solid",
+			border_color: "transparent",
+			border_radius: "9999px",
+			// Pill color drives variants; default neutral
+			__pill_color: vars.color.neutral,
+			// Default: solid neutral bg with light text
+			background_color: vars.color.neutral,
+			color: vars.color.paper,
 		}),
 		css.rule("&.dot > *:first-child:before", {
 			display: "inline-block",
@@ -51,42 +37,51 @@ function pill(...rest) {
 			background_color: "currentColor",
 		}),
 		css.rule("&.compact", {
-			padding: vars.pill.padding.compact.or("0.125em 0.5em"),
+			padding: "0.125em 0.5em",
 		}),
 		css.rule("&.expanded", {
-			padding: vars.pill.padding.expanded.or("0.5em 1.25em"),
+			padding: "0.5em 1.25em",
 		}),
-		// Color variants
+		// Color variants: solid color bg with light text
 		...colors.names.map((color) =>
 			css.rule(css.mods("&", color), {
-				__background_color_base: vars.color[color],
+				__pill_color: vars.color[color],
+				background_color: vars.color[color],
+				color: vars.color.paper,
+				border_color: "transparent",
 			}),
 		),
-		css.rule("&.tinted", {
-			__background_color_opacity: 0.25,
-			__text_color_opacity: 1.0,
-			color: colors.mixed(
-				vars.background.color.base,
-				vars.background.color.tint,
-				1.0,
-				vars.text.color.opacity.or(1.0),
-			),
+		// Secondary: light grey bg with dark text
+		css.rule("&.secondary", {
+			background_color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 90%)`,
+			color: vars.color.ink,
+			border_color: "transparent",
 		}),
+		// Tinted: color @ 10% bg with full color text
+		css.rule("&.tinted", {
+			background_color: `color-mix(in oklch, var(--pill-color), transparent 90%)`,
+			color: `var(--pill-color)`,
+			border_color: "transparent",
+		}),
+		// Outline: transparent bg with color border and darkened text
 		css.rule("&.outline", {
 			background_color: "transparent",
-			border_width: vars.pill.border.size.or("1px"),
-			border_color: colors.mixed(
-				vars.background.color.base,
-				vars.background.color.tint,
-				0.5,
-				vars.background.color.opacity,
-			),
-			color: colors.mixed(
-				vars.background.color.base,
-				vars.background.color.tint,
-				0.8,
-				1.0,
-			),
+			border_color: `color-mix(in oklch, var(--pill-color), ${vars.color.paper} 60%)`,
+			color: `color-mix(in oklch, var(--pill-color), ${vars.color.ink} 40%)`,
+		}),
+		...rest,
+	);
+}
+
+function tooltip(...rest) {
+	return css.nesting(
+		[".tooltip"],
+		{},
+		css.rule("&", {
+			position: "absolute",
+			display: "block",
+			position_anchor: vars.tooltip.anchor.or("top"),
+			position_area: vars.tooltip.area.or("center"),
 		}),
 		...rest,
 	);
@@ -115,7 +110,7 @@ function status(...rest) {
 				vars.color.neutral,
 				vars.color.paper,
 				0.5,
-				0.9,
+				0.3,
 			),
 			color: `contrast-color(${vars.status.color.base.or(vars.color.neutral)})`,
 		}),
@@ -151,20 +146,39 @@ function status(...rest) {
 	);
 }
 
+function popover(...rest) {
+	return css.nesting(
+		[".popover"],
+		{},
+		css.rule("&", {
+			position: "fixed",
+			position_anchor: vars.popover.anchor.or("top"),
+			position_area: vars.popover.area.or("block-end span-inline-end"),
+			position_try_fallbacks: vars.popover.fallbacks.or(
+				"flip-block, flip-inline",
+			),
+		}),
+		// Only show when used as a native popover that is open (or non-popover .popover)
+		css.rule("&:popover-open, &:not([popover])", {
+			display: "block",
+		}),
+		...rest,
+	);
+}
 function card(...rest) {
 	return css.nesting(
 		[".card", ".panel"],
 		{},
 		css.rule("&", {
-			padding: vars.card.padding.or("1.5em"),
+			padding: vars.card.padding.or("0.5em"),
 			// Border
 			border_width: vars.card.border.size.or("1px"),
 			border_radius: vars.card.border.radius.or("0.5em"),
 			border_color: colors.mixed(
 				vars.card.color.base.or(vars.color.neutral),
 				vars.card.color.tint.or(vars.color.paper),
-				vars.card.color.blend.or(0.5),
-				vars.card.color.alpha.or(0.5),
+				0.35,
+				1.0,
 			),
 			// Background
 			background_color: colors.mixed(
@@ -408,13 +422,432 @@ function tree() {
 	);
 }
 
+function alert() {
+	return css.group(
+		css.rule(["[role=alert]", ".alert"], {
+			display: "block",
+			font_size: "0.875em",
+			padding: vars.alert.padding,
+			border_width: "1px",
+			border_style: "solid",
+			border_radius: vars.alert.border.radius,
+			border_color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 80%)`,
+			background_color: vars.color.paper,
+			color: vars.color.ink,
+		}),
+		...[
+			["success", vars.color.success],
+			["warning", vars.color.warning],
+			["danger", vars.color.danger],
+			["error", vars.color.error],
+			["info", vars.color.info],
+		].map(([name, color]) =>
+			css.rule([`[role=alert].${name}`, `.alert.${name}`], {
+				border_width: "0",
+				background_color: `color-mix(in oklch, ${color}, transparent 88%)`,
+				color: `${color}`,
+			}),
+		),
+		...[
+			["success", vars.color.success],
+			["warning", vars.color.warning],
+			["danger", vars.color.danger],
+			["error", vars.color.error],
+			["info", vars.color.info],
+		].map(([name, color]) =>
+			css.rule([`[role=alert].ghost.${name}`, `.alert.ghost.${name}`], {
+				border_width: "1px",
+				background_color: "transparent",
+				border_color: `${color}`,
+				color: `${color}`,
+			}),
+		),
+		css.rule(["[role=alert].ghost", ".alert.ghost"], {
+			border_width: "1px",
+			background_color: "transparent",
+			border_color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 80%)`,
+			color: vars.color.ink,
+		}),
+	);
+}
+
+function avatar() {
+	return css.group(
+		css.rule(["figure.avatar", "figure[data-avatar]"], {
+			display: "inline-grid",
+			place_items: "center",
+			width: vars.avatar.size,
+			height: vars.avatar.size,
+			margin: "0",
+			overflow: "hidden",
+			border_radius: "50%",
+			background_color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 82%)`,
+			color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.ink} 52%)`,
+			font_weight: "600",
+		}),
+		css.rule(["figure.avatar img", "figure[data-avatar] img"], {
+			width: "100%",
+			height: "100%",
+			object_fit: "cover",
+		}),
+		css.rule([".avatar.small", "[data-avatar].small"], {
+			width: vars.avatar.small,
+			height: vars.avatar.small,
+		}),
+		css.rule([".avatar.large", "[data-avatar].large"], {
+			width: vars.avatar.large,
+			height: vars.avatar.large,
+		}),
+		css.rule(".avatars", { display: "flex", padding_left: "0.35rem" }),
+		css.rule(".avatars > :is(.avatar, [data-avatar])", {
+			margin_left: "-0.35rem",
+			border: `2px solid ${vars.color.paper}`,
+		}),
+	);
+}
+
+function native() {
+	return css.group(
+		css.rule("details.accordion", {
+			border: `1px solid color-mix(in oklch, ${vars.color.ink}, ${vars.color.paper} 84%)`,
+			border_radius: vars.border.radius[2],
+			background_color: vars.color.paper,
+		}),
+		css.rule("details.accordion + details.accordion", {
+			margin_top: "-1px",
+			border_top_left_radius: "0",
+			border_top_right_radius: "0",
+		}),
+		css.rule("details.accordion summary", {
+			padding: "0.8rem 1rem",
+			cursor: "pointer",
+			font_weight: "600",
+		}),
+		css.rule("details.accordion > :not(summary)", { padding: "0 1rem 1rem" }),
+		css.rule("dialog", {
+			width: `min(${vars.dialog.width}, calc(100vw - 2rem))`,
+			max_height: "85vh",
+			padding: "0",
+			border: `1px solid color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 80%)`,
+			border_radius: "0.75rem",
+			background_color: vars.color.paper,
+			color: vars.color.ink,
+			box_shadow: "0 20px 48px rgb(9 9 11 / 0.18)",
+		}),
+		css.rule("dialog > *", {
+			padding: "1.5rem",
+		}),
+		css.rule("dialog > footer, dialog > [class*=footer]", {
+			padding_top: "0",
+		}),
+		css.rule("dialog::backdrop", { background_color: "rgb(9 9 11 / 0.42)" }),
+		css.rule("dialog > :is(header, footer)", {
+			display: "flex",
+			align_items: "center",
+			gap: vars.gap[2],
+		}),
+		css.rule("dialog > footer", { justify_content: "flex-end", margin_top: "1.25rem" }),
+		// Never paint closed popovers — author display must not override the UA hide.
+		css.rule("[popover]:not(:popover-open)", {
+			display: "none",
+		}),
+		css.rule("[popover]:popover-open", {
+			padding: "0.25rem",
+			border: `1px solid color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 80%)`,
+			border_radius: "0.375rem",
+			background_color: vars.color.paper,
+			color: vars.color.ink,
+			box_shadow: "0 1px 2px rgb(9 9 11 / 0.05), 0 8px 24px rgb(9 9 11 / 0.08)",
+		}),
+		css.rule("[popover]::backdrop", { background_color: "transparent" }),
+		css.rule(
+			["menu[popover]:popover-open", "[popover]:popover-open menu", "[popover]:popover-open .menu"],
+			{
+				display: "flex",
+				flex_direction: "column",
+				margin: "0",
+				padding: "0.25rem",
+				list_style: "none",
+			},
+		),
+		css.rule(
+			[
+				"menu[popover]:popover-open :is(a, button, [role=menuitem])",
+				"[popover]:popover-open menu :is(a, button, [role=menuitem])",
+			],
+			{
+				display: "flex",
+				align_items: "center",
+				gap: "0.5em",
+				width: "100%",
+				padding: "0.5rem 0.75rem",
+				border_radius: "0.25rem",
+				color: `color-mix(in oklch, ${vars.color.ink}, ${vars.color.paper} 30%)`,
+				background: "transparent",
+				border: "0",
+				font: "inherit",
+				text_align: "left",
+				cursor: "pointer",
+			},
+		),
+		css.rule(
+			[
+				"menu[popover]:popover-open :is(a, button, [role=menuitem]):hover",
+				"[popover]:popover-open menu :is(a, button, [role=menuitem]):hover",
+			],
+			{
+				background_color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 90%)`,
+				color: vars.color.ink,
+			},
+		),
+		css.rule(
+			[
+				"menu[popover]:popover-open :is(.danger, [data-variant=danger])",
+				"[popover]:popover-open menu :is(.danger, [data-variant=danger])",
+			],
+			{
+				color: vars.color.danger,
+			},
+		),
+		css.rule(
+			[
+				"menu[popover]:popover-open :is(.danger, [data-variant=danger]):hover",
+				"[popover]:popover-open menu :is(.danger, [data-variant=danger]):hover",
+			],
+			{
+				background_color: `color-mix(in oklch, ${vars.color.danger}, transparent 90%)`,
+				color: vars.color.danger,
+			},
+		),
+		css.rule(["menu[popover] hr", "[popover] menu hr"], {
+			border: "0",
+			border_top: `1px solid color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 80%)`,
+			margin: "0.25rem 0",
+		}),
+		css.rule("[popover]:popover-open.card, [popover].card:popover-open", {
+			padding: vars.card.padding.or("1.5rem"),
+		}),
+		css.rule("iconify-icon", {
+			display: "inline-block",
+			vertical_align: "-0.125em",
+			line_height: "1",
+		}),
+		css.rule(".tags", {
+			display: "flex",
+			flex_wrap: "wrap",
+			align_items: "center",
+			gap: "0.375rem",
+			padding: "0.5rem 0.75rem",
+			border: `1px solid color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 80%)`,
+			border_radius: "0.375rem",
+			background_color: vars.color.paper,
+		}),
+		css.rule(".tags input", {
+			flex: "1",
+			min_width: "8ch",
+			border: "0",
+			background: "transparent",
+			padding: "0",
+		}),
+		css.rule(".tag", {
+			display: "inline-flex",
+			align_items: "center",
+			gap: "0.25em",
+			font_size: "0.75em",
+			font_weight: "500",
+			padding: "0 0.25em 0 0.625em",
+			border_radius: "9999px",
+			background_color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 88%)`,
+			color: vars.color.ink,
+			white_space: "nowrap",
+		}),
+		css.rule(".tag button", {
+			display: "inline-flex",
+			align_items: "center",
+			justify_content: "center",
+			border: "0",
+			background: "transparent",
+			padding: "0 0.375em",
+			font: "inherit",
+			line_height: "1",
+			color: "inherit",
+			cursor: "pointer",
+			border_radius: "9999px",
+		}),
+		css.rule(".tag button:hover", { opacity: "0.6" }),
+	);
+}
+
+function feedback() {
+	return css.group(
+		css.rule(["progress", "meter"], {
+			display: "block",
+			width: "100%",
+			height: vars.progress.height,
+			border: "0",
+			border_radius: "999px",
+			overflow: "hidden",
+			background_color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 84%)`,
+		}),
+		css.rule("progress::-webkit-progress-bar", {
+			background_color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 84%)`,
+		}),
+		css.rule("progress::-webkit-progress-value", { background_color: vars.color.primary }),
+		css.rule("progress::-moz-progress-bar", { background_color: vars.color.primary }),
+		css.rule("meter::-webkit-meter-bar", {
+			background_color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 84%)`,
+		}),
+		css.rule(".skeleton", {
+			display: "block",
+			border_radius: vars.border.radius[1],
+			background: `linear-gradient(90deg, color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 92%), color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 82%), color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 92%))`,
+			background_size: "200% 100%",
+			animation: "skeleton-shimmer 1.4s linear infinite",
+		}),
+		keyframes("skeleton-shimmer", {
+			from: { background_position: "200% 0" },
+			to: { background_position: "-200% 0" },
+		}),
+		css.rule(".skeleton.line", { width: "100%", height: "1rem" }),
+		css.rule(".row > .skeleton.line", { flex: "1", min_width: "0" }),
+		css.rule(".skeleton.box", { width: "4rem", height: "4rem" }),
+		css.rule("[aria-busy=true].loading", { position: "relative", pointer_events: "none" }),
+		css.rule("[aria-busy=true].loading::after", {
+			content: '""',
+			position: "absolute",
+			inset: "50% auto auto 50%",
+			width: "1.5rem",
+			height: "1.5rem",
+			border: `2px solid ${vars.color.primary}`,
+			border_top_color: "transparent",
+			border_radius: "50%",
+			transform: "translate(-50%, -50%)",
+			animation: "spinner 720ms linear infinite",
+		}),
+	);
+}
+
+function composition() {
+	return css.group(
+		css.rule("[data-tooltip]", { position: "relative" }),
+		css.rule("[data-tooltip]::after", {
+			content: "attr(data-tooltip)",
+			position: "absolute",
+			z_index: "10",
+			bottom: "calc(100% + 0.5rem)",
+			left: "50%",
+			width: "max-content",
+			max_width: "min(20rem, 80vw)",
+			padding: "0.35rem 0.5rem",
+			border_radius: vars.border.radius[1],
+			background_color: vars.color.ink,
+			color: vars.color.paper,
+			font_size: "0.8em",
+			line_height: "1.25",
+			opacity: "0",
+			pointer_events: "none",
+			transform: "translate(-50%, 0.2rem)",
+			transition: "opacity 120ms ease, transform 120ms ease",
+		}),
+		css.rule("[data-tooltip]:is(:hover, :focus-visible)::after", {
+			opacity: "1",
+			transform: "translate(-50%, 0)",
+		}),
+		css.rule(".buttons", {
+			display: "inline-flex",
+			padding: "0",
+			margin: "0",
+			list_style: "none",
+		}),
+		css.rule(".buttons > *", { display: "flex" }),
+		css.rule(".buttons > * > :not(:first-child)", { margin_left: "-1px" }),
+		css.rule(".buttons > *:not(:first-child) > *", {
+			margin_left: "-1px",
+			border_top_left_radius: "0",
+			border_bottom_left_radius: "0",
+		}),
+		css.rule(".buttons > *:not(:last-child) > *", {
+			border_top_right_radius: "0",
+			border_bottom_right_radius: "0",
+		}),
+		css.rule(".table", { width: "100%", overflow_x: "auto" }),
+		css.rule("table", { width: "100%", min_width: "32rem", border_collapse: "collapse" }),
+		css.rule("th", {
+			padding: vars.table.padding,
+			border_bottom: `1px solid color-mix(in oklch, ${vars.color.ink}, ${vars.color.paper} 84%)`,
+			text_align: "left",
+			font_weight: "600",
+			color: `color-mix(in oklch, ${vars.color.ink}, ${vars.color.paper} 36%)`,
+		}),
+		css.rule("td", {
+			padding: vars.table.padding,
+			border_bottom: `1px solid color-mix(in oklch, ${vars.color.ink}, ${vars.color.paper} 90%)`,
+		}),
+		css.rule("tbody tr:hover", { background_color: `color-mix(in oklch, ${vars.color.primary}, ${vars.color.paper} 96%)` }),
+		css.rule(".toast", {
+			display: "grid",
+			gap: "0.35rem",
+			min_width: "18rem",
+			padding: "0.9rem 1rem",
+			border: `1px solid color-mix(in oklch, ${vars.color.ink}, ${vars.color.paper} 82%)`,
+			border_radius: vars.border.radius[2],
+			background_color: vars.color.paper,
+			box_shadow: "0 12px 28px rgb(41 37 34 / 0.14)",
+		}),
+		css.rule(".toasts", {
+			position: "fixed",
+			z_index: "10",
+			top: "1rem",
+			right: "1rem",
+			display: "grid",
+			gap: "0.75rem",
+		}),
+		css.rule(".sidebar-layout", { display: "grid", grid_template_columns: "15rem minmax(0, 1fr)" }),
+		css.rule(".sidebar", {
+			position: "sticky",
+			top: "0",
+			height: "100vh",
+			min_height: "100vh",
+			overflow_y: "auto",
+			padding: "1rem",
+			border_right: `1px solid color-mix(in oklch, ${vars.color.ink}, ${vars.color.paper} 84%)`,
+			background_color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 94%)`,
+		}),
+		css.rule(".sidebar-layout > main", {
+			width: "100%",
+			min_width: "0",
+			box_sizing: "border-box",
+			padding: "1.5rem",
+		}),
+		media(
+			"(max-width: 768px)",
+			css.rule(".sidebar-layout", { grid_template_columns: "1fr" }),
+			css.rule(".sidebar", {
+			position: "static",
+			height: "auto",
+				min_height: "auto",
+				overflow_y: "visible",
+				border_right_width: "0",
+				border_bottom: `1px solid color-mix(in oklch, ${vars.color.ink}, ${vars.color.paper} 84%)`,
+			}),
+		),
+	);
+}
+
 export default css.named({
 	pill: pill(),
 	status: status(),
+	tooltip: tooltip(),
 	card: card(),
 	breadcrumbs: breadcrumbs(),
 	section: section(),
 	panels: panels(),
 	tree: tree(),
+	popover: popover(),
+	alert: alert(),
+	avatar: avatar(),
+	native: native(),
+	feedback: feedback(),
+	composition: composition(),
 });
 // EOF

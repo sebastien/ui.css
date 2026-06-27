@@ -27,6 +27,7 @@ export default layer(
 		font_size: `${vars.font.size}`,
 		font_weight: `${vars.font.weight}`,
 		line_height: `${vars.font.line}`,
+		webkit_font_smoothing: "antialiased",
 		// For "auto" dimensions
 		interpolate_size: "allow-keywords",
 	}),

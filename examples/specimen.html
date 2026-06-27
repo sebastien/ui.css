@@ -72,9 +72,10 @@
         document.head.append(link)
       }
     </script>
+    <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
   </head>
   <body data-theme="default" class="m-0 bg-neutral bg tx centered g-6">
-    <main class="stack g-6 w-content bd bd-3o rounder bg-paper w-content p-8 m-8 bg">
+    <main class="stack g-6 w-content bd bd-3o rounder bg-paper w-content p-8 m-8 bg tx">
       <header class="stack g-3">
         <h1 class="h1 m-0">UI.css Specimen</h1>
         <p class="t limit-text m-0">A broad specimen page aligned with the pure CSS benchmark layout and coverage.</p>
@@ -384,6 +385,21 @@ const result = "fast, consistent styling"</code></pre>
               <button disabled>Disabled</button>
             </div>
           </div>
+          <div class="stack g-3">
+            <p class="b m-0">As link</p>
+            <div class="row wrap g-3">
+              <a class="button" href="#buttons-demo">Hyperlink button</a>
+              <a class="button outline" href="#buttons-demo">Outline link</a>
+            </div>
+          </div>
+          <div class="stack g-3">
+            <p class="b m-0">Button group</p>
+            <menu class="buttons">
+              <li><button>Left</button></li>
+              <li><button>Center</button></li>
+              <li><button>Right</button></li>
+            </menu>
+          </div>
         </div>
       </section>
       <section id="tabs-demo" class="panel stack g-4 p-6 bd bd-4o ">
@@ -431,6 +447,18 @@ const result = "fast, consistent styling"</code></pre>
               </div>
             </div>
           </div>
+          <div class="stack g-3">
+            <p class="b m-0">Role tablist</p>
+            <div role="tablist" class="bg-neutral rounded row g-1 p-1">
+              <button class="tab ghost sh-1" role="tab" aria-selected="true">Account</button>
+              <button class="tab ghost" role="tab" aria-selected="false">Security</button>
+              <button class="tab ghost" role="tab" aria-selected="false">Notifications</button>
+            </div>
+            <section role="tabpanel">
+              <h3 class="h4 m-0">Account settings</h3>
+              <p class="m-0">Manage your account information here.</p>
+            </section>
+          </div>
         </div>
       </section>
       <section id="selectors-demo" class="panel stack g-4 p-6 bd bd-4o ">
@@ -438,8 +466,7 @@ const result = "fast, consistent styling"</code></pre>
         <div class="stack g-5">
           <div class="stack g-2">
             <p class="b m-0">Toggle</p>
-            <input class="toggle" type="checkbox" id="selector-toggle" name="selector-view" checked />
-            <label for="selector-toggle">Selector Toggle</label>
+            <label class="row g-2"><input class="toggle" type="checkbox" name="selector-view" checked /> Selector Toggle</label>
           </div>
         </div>
         <div class="stack g-3">
@@ -447,7 +474,7 @@ const result = "fast, consistent styling"</code></pre>
           <div class="grid col-3 g-4">
             <label class="stack g-1">
               <span class="b">Default</span>
-              <select class="regular" aria-label="Default select">
+              <select class="regular fit-w" aria-label="Default select">
                 <option>List</option>
                 <option>Board</option>
                 <option>Calendar</option>
@@ -455,13 +482,13 @@ const result = "fast, consistent styling"</code></pre>
             </label>
             <label class="stack g-1">
               <span class="b">Disabled</span>
-              <select class="regular" aria-label="Disabled select" disabled>
+              <select class="regular fit-w" aria-label="Disabled select" disabled>
                 <option>Unavailable</option>
               </select>
             </label>
             <label class="stack g-1">
               <span class="b">Outline</span>
-              <select class="regular outline" aria-label="Outline select">
+              <select class="regular outline fit-w" aria-label="Outline select">
                 <option>Low</option>
                 <option selected>Medium</option>
                 <option>High</option>
@@ -557,39 +584,39 @@ const result = "fast, consistent styling"</code></pre>
         <div class="grid col-3 g-4">
           <label class="stack g-1">
             <span class="b">Currency</span>
-            <input class="input regular" type="text" placeholder="$ 1,000" />
+            <input class="input regular fit-w" type="text" placeholder="$ 1,000" />
           </label>
           <label class="stack g-1">
             <span class="b">Percent</span>
-            <input class="input regular" type="text" placeholder="25%" />
+            <input class="input regular fit-w" type="text" placeholder="25%" />
           </label>
           <label class="stack g-1">
             <span class="b">Unit</span>
-            <input class="input regular" type="text" placeholder="100 kg" />
+            <input class="input regular fit-w" type="text" placeholder="100 kg" />
           </label>
         </div>
         <div class="grid col-2 g-4">
           <label class="stack g-1">
             <span class="b">Default</span>
-            <input class="input regular" type="text" value="Jane Doe" />
+            <input class="input regular fit-w" type="text" value="Jane Doe" />
           </label>
           <label class="stack g-1">
             <span class="b">Disabled</span>
-            <input class="input regular" type="text" value="Unavailable" disabled />
+            <input class="input regular fit-w" type="text" value="Unavailable" disabled />
           </label>
         </div>
         <div class="stack g-1">
           <span class="b">Field</span>
-          <input class="input" type="text" placeholder="Enter your legal full name" />
+          <input class="input fit-w" type="text" placeholder="Enter your legal full name" />
           <span class="small">This field is required</span>
         </div>
         <div class="stack g-3">
           <p class="b m-0">Field - Style variants</p>
           <div class="row wrap g-3">
-            <input class="input regular" type="text" value="Regular" />
-            <input class="input outline regular" type="text" value="Outline" />
-            <input class="input ghost regular" type="text" value="Ghost" />
-            <input class="input blank regular" type="text" value="Blank" />
+            <input class="input regular fit-w" type="text" value="Regular" />
+            <input class="input outline regular fit-w" type="text" value="Outline" />
+            <input class="input ghost regular fit-w" type="text" value="Ghost" />
+            <input class="input blank regular fit-w" type="text" value="Blank" />
           </div>
         </div>
         <div class="stack g-3">
@@ -598,71 +625,71 @@ const result = "fast, consistent styling"</code></pre>
             <div class="stack g-1">
               <span class="small b">Neutral</span>
               <div class="grid col-5 g-2">
-                <input class="input regular" type="text" value="Normal" />
-                <input class="input regular focus" type="text" value="Focus" />
-                <input class="input regular hover" type="text" value="Hover" />
-                <input class="input regular active" type="text" value="Active" />
-                <input class="input regular" type="text" value="Disabled" disabled />
+                <input class="input regular fit-w" type="text" value="Normal" />
+                <input class="input regular focus fit-w" type="text" value="Focus" />
+                <input class="input regular hover fit-w" type="text" value="Hover" />
+                <input class="input regular active fit-w" type="text" value="Active" />
+                <input class="input regular fit-w" type="text" value="Disabled" disabled />
               </div>
             </div>
             <div class="stack g-1">
               <span class="small b">Primary</span>
               <div class="grid col-5 g-2">
-                <input class="input primary regular" type="text" value="Normal" />
-                <input class="input primary regular focus" type="text" value="Focus" />
-                <input class="input primary regular hover" type="text" value="Hover" />
-                <input class="input primary regular active" type="text" value="Active" />
-                <input class="input primary regular" type="text" value="Disabled" disabled />
+                <input class="input primary regular fit-w" type="text" value="Normal" />
+                <input class="input primary regular focus fit-w" type="text" value="Focus" />
+                <input class="input primary regular hover fit-w" type="text" value="Hover" />
+                <input class="input primary regular active fit-w" type="text" value="Active" />
+                <input class="input primary regular fit-w" type="text" value="Disabled" disabled />
               </div>
             </div>
             <div class="stack g-1">
               <span class="small b">Secondary</span>
               <div class="grid col-5 g-2">
-                <input class="input secondary regular" type="text" value="Normal" />
-                <input class="input secondary regular focus" type="text" value="Focus" />
-                <input class="input secondary regular hover" type="text" value="Hover" />
-                <input class="input secondary regular active" type="text" value="Active" />
-                <input class="input secondary regular" type="text" value="Disabled" disabled />
+                <input class="input secondary regular fit-w" type="text" value="Normal" />
+                <input class="input secondary regular focus fit-w" type="text" value="Focus" />
+                <input class="input secondary regular hover fit-w" type="text" value="Hover" />
+                <input class="input secondary regular active fit-w" type="text" value="Active" />
+                <input class="input secondary regular fit-w" type="text" value="Disabled" disabled />
               </div>
             </div>
             <div class="stack g-1">
               <span class="small b">Tertiary</span>
               <div class="grid col-5 g-2">
-                <input class="input tertiary regular" type="text" value="Normal" />
-                <input class="input tertiary regular focus" type="text" value="Focus" />
-                <input class="input tertiary regular hover" type="text" value="Hover" />
-                <input class="input tertiary regular active" type="text" value="Active" />
-                <input class="input tertiary regular" type="text" value="Disabled" disabled />
+                <input class="input tertiary regular fit-w" type="text" value="Normal" />
+                <input class="input tertiary regular focus fit-w" type="text" value="Focus" />
+                <input class="input tertiary regular hover fit-w" type="text" value="Hover" />
+                <input class="input tertiary regular active fit-w" type="text" value="Active" />
+                <input class="input tertiary regular fit-w" type="text" value="Disabled" disabled />
               </div>
             </div>
             <div class="stack g-1">
               <span class="small b">Success</span>
               <div class="grid col-5 g-2">
-                <input class="input success regular" type="text" value="Normal" />
-                <input class="input success regular focus" type="text" value="Focus" />
-                <input class="input success regular hover" type="text" value="Hover" />
-                <input class="input success regular active" type="text" value="Active" />
-                <input class="input success regular" type="text" value="Disabled" disabled />
+                <input class="input success regular fit-w" type="text" value="Normal" />
+                <input class="input success regular focus fit-w" type="text" value="Focus" />
+                <input class="input success regular hover fit-w" type="text" value="Hover" />
+                <input class="input success regular active fit-w" type="text" value="Active" />
+                <input class="input success regular fit-w" type="text" value="Disabled" disabled />
               </div>
             </div>
             <div class="stack g-1">
               <span class="small b">Warning</span>
               <div class="grid col-5 g-2">
-                <input class="input warning regular" type="text" value="Normal" />
-                <input class="input warning regular focus" type="text" value="Focus" />
-                <input class="input warning regular hover" type="text" value="Hover" />
-                <input class="input warning regular active" type="text" value="Active" />
-                <input class="input warning regular" type="text" value="Disabled" disabled />
+                <input class="input warning regular fit-w" type="text" value="Normal" />
+                <input class="input warning regular focus fit-w" type="text" value="Focus" />
+                <input class="input warning regular hover fit-w" type="text" value="Hover" />
+                <input class="input warning regular active fit-w" type="text" value="Active" />
+                <input class="input warning regular fit-w" type="text" value="Disabled" disabled />
               </div>
             </div>
             <div class="stack g-1">
               <span class="small b">Danger</span>
               <div class="grid col-5 g-2">
-                <input class="input danger regular" type="text" value="Normal" />
-                <input class="input danger regular focus" type="text" value="Focus" />
-                <input class="input danger regular hover" type="text" value="Hover" />
-                <input class="input danger regular active" type="text" value="Active" />
-                <input class="input danger regular" type="text" value="Disabled" disabled />
+                <input class="input danger regular fit-w" type="text" value="Normal" />
+                <input class="input danger regular focus fit-w" type="text" value="Focus" />
+                <input class="input danger regular hover fit-w" type="text" value="Hover" />
+                <input class="input danger regular active fit-w" type="text" value="Active" />
+                <input class="input danger regular fit-w" type="text" value="Disabled" disabled />
               </div>
             </div>
           </div>
@@ -670,20 +697,20 @@ const result = "fast, consistent styling"</code></pre>
         <div class="stack g-3">
           <p class="b m-0">Field - Sizes</p>
           <div class="row wrap g-3">
-            <input class="input large" type="text" value="Large" />
-            <input class="input regular" type="text" value="Regular" />
-            <input class="input small" type="text" value="Small" />
-            <input class="input smaller" type="text" value="Smaller" />
+            <input class="input large fit-w" type="text" value="Large" />
+            <input class="input regular fit-w" type="text" value="Regular" />
+            <input class="input small fit-w" type="text" value="Small" />
+            <input class="input smaller fit-w" type="text" value="Smaller" />
           </div>
         </div>
         <div class="stack g-3">
           <p class="b m-0">Field - States</p>
           <div class="row wrap g-3">
-            <input class="input regular" type="text" value="Normal" />
-            <input class="input regular focus" type="text" value="Focus" />
-            <input class="input regular hover" type="text" value="Hover" />
-            <input class="input regular active" type="text" value="Active" />
-            <input class="input regular" type="text" value="Disabled" disabled />
+            <input class="input regular fit-w" type="text" value="Normal" />
+            <input class="input regular focus fit-w" type="text" value="Focus" />
+            <input class="input regular hover fit-w" type="text" value="Hover" />
+            <input class="input regular active fit-w" type="text" value="Active" />
+            <input class="input regular fit-w" type="text" value="Disabled" disabled />
           </div>
         </div>
         <label class="stack g-1">
@@ -693,10 +720,36 @@ const result = "fast, consistent styling"</code></pre>
         <fieldset class="stack g-3">
           <legend class="b">FieldSet</legend>
           <div class="grid col-2 g-2">
-            <label class="stack g-1"><span>First Name</span><input class="input" type="text" /></label>
-            <label class="stack g-1"><span>Last Name</span><input class="input" type="text" /></label>
+            <label class="stack g-1"><span>First Name</span><input class="input fit-w" type="text" /></label>
+            <label class="stack g-1"><span>Last Name</span><input class="input fit-w" type="text" /></label>
           </div>
         </fieldset>
+        <div class="stack g-3">
+          <p class="b m-0">Field composition</p>
+          <div class="grid col-2 g-3">
+            <label class="field">Name<input class="fit-w" placeholder="Enter your name" /></label>
+            <label class="field">Email<input class="fit-w" type="email" placeholder="you@example.com" /></label>
+            <label class="field">Password<input class="fit-w" type="password" placeholder="Password" /><small class="hint">This is a small hint</small></label>
+            <label class="field">Select<select class="fit-w"><option>Select an option</option><option>Option A</option><option>Option B</option></select></label>
+            <label class="field span-2">Message<textarea class="fit-w" rows="3" placeholder="Your message..."></textarea></label>
+            <label class="field">File<input type="file" /></label>
+            <label class="field">Date<input class="fit-w" type="date" /></label>
+            <label class="field">Date and time<input class="fit-w" type="datetime-local" /></label>
+            <label class="field">Disabled<input class="fit-w" disabled placeholder="Disabled" /><small class="hint">This is a hint</small></label>
+          </div>
+        </div>
+        <div class="stack g-3">
+          <p class="b m-0">Input group</p>
+          <fieldset class="group"><strong>https://</strong><input aria-label="subdomain" placeholder="subdomain" /><select aria-label="domain"><option>.example.com</option><option>.example.net</option></select><button class="primary">Go</button></fieldset>
+          <fieldset class="group"><input aria-label="Search" placeholder="Search" /><button class="primary">Go</button></fieldset>
+        </div>
+        <div class="stack g-3">
+          <p class="b m-0">Validation error</p>
+          <fieldset class="group" aria-invalid="true">
+            <label class="field">Email<input class="fit-w" type="email" placeholder="Type invalid email here" /></label>
+            <label class="field">Enter secret value<input class="fit-w" value="abcdefg" aria-invalid="true" /><small class="hint">The value is incorrect</small></label>
+          </fieldset>
+        </div>
       </div>
     </section>
     <section id="range-demo" class="panel stack g-4 p-6 bd bd-4o ">
@@ -823,7 +876,333 @@ const result = "fast, consistent styling"</code></pre>
         </div>
       </div>
     </section>
-    <section class="panel stack g-4 p-6 bd bd-4o ">
+    <section id="switch-demo" class="panel stack g-4 p-6 bd bd-4o ">
+      <h2 class="h3 m-0">Switches</h2>
+      <div class="stack g-5">
+        <div class="stack g-3">
+          <p class="b m-0">Default</p>
+          <div class="stack g-2">
+            <label class="row g-2"><input type="checkbox" role="switch" /> Notifications</label>
+            <label class="row g-2"><input type="checkbox" role="switch" checked /> Confabulation</label>
+          </div>
+        </div>
+        <div class="stack g-3">
+          <p class="b m-0">Rounded</p>
+          <div class="stack g-2">
+            <label class="row g-2"><input type="checkbox" role="switch" class="rounded" /> Notifications</label>
+            <label class="row g-2"><input type="checkbox" role="switch" class="rounded" checked /> Confabulation</label>
+          </div>
+        </div>
+        <div class="stack g-3">
+          <p class="b m-0">Disabled</p>
+          <div class="stack g-2">
+            <label class="row g-2"><input type="checkbox" role="switch" disabled /> Disabled off</label>
+            <label class="row g-2"><input type="checkbox" role="switch" checked disabled /> Disabled on</label>
+            <label class="row g-2"><input type="checkbox" role="switch" class="rounded" disabled /> Rounded off</label>
+            <label class="row g-2"><input type="checkbox" role="switch" class="rounded" checked disabled /> Rounded on</label>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="accordion-demo" class="panel stack g-4 p-6 bd bd-4o ">
+      <h2 class="h3 m-0">Accordion</h2>
+      <div class="card stack g-0">
+        <details class="accordion" open><summary>What is ui.css</summary>
+          <p>A composable, token-driven CSS utility and component library.</p>
+        </details>
+        <details class="accordion"><summary>How do I use it</summary>
+          <p>Include the stylesheet and write semantic HTML.</p>
+        </details>
+        <details class="accordion"><summary>Is it accessible</summary>
+          <p>Yes. It leans on native elements and ARIA where needed.</p>
+        </details>
+        <details class="accordion"><summary>This is grouped with the next one</summary>
+          <p>Grouped accordions sit close together.</p>
+        </details>
+        <details class="accordion"><summary>This is grouped with the previous one</summary>
+          <p>Grouped accordions sit close together.</p>
+        </details>
+      </div>
+    </section>
+    <section id="alert-demo" class="panel stack g-4 p-6 bd bd-4o ">
+      <h2 class="h3 m-0">Alert</h2>
+      <div class="stack g-2">
+        <div role="alert" class="success"><strong>Success!</strong> Your changes have been saved.</div>
+        <div role="alert" class="warning"><strong>Warning!</strong> Please review before continuing.</div>
+        <div role="alert"><strong>Info</strong> This is a default alert message.</div>
+        <div role="alert" class="danger"><strong>Error!</strong> Something went wrong.</div>
+        <div role="alert" class="ghost"><strong>Ghost</strong> An outline-only alert.</div>
+        <div role="alert" class="ghost danger"><strong>Ghost error</strong> An outline-only error.</div>
+      </div>
+    </section>
+    <section id="avatar-demo" class="panel stack g-4 p-6 bd bd-4o ">
+      <h2 class="h3 m-0">Avatar</h2>
+      <div class="stack g-5">
+        <div class="stack g-3">
+          <p class="b m-0">Sizes</p>
+          <div class="row g-3">
+            <figure class="avatar small" aria-label="Jane Doe"><abbr title="Jane Doe">JD</abbr></figure>
+            <figure class="avatar" aria-label="Jane Doe"><abbr title="Jane Doe">JD</abbr></figure>
+            <figure class="avatar large" aria-label="Jane Doe"><abbr title="Jane Doe">JD</abbr></figure>
+            <figure class="avatar" aria-label="Oat"><abbr title="Oat">OT</abbr></figure>
+          </div>
+        </div>
+        <div class="stack g-3">
+          <p class="b m-0">Groups</p>
+          <div class="stack g-2">
+            <div class="avatars" role="group" aria-label="Team members">
+              <figure class="avatar" aria-label="Jane Doe">JD</figure>
+              <figure class="avatar" aria-label="John Smith">JS</figure>
+              <figure class="avatar" aria-label="Alex Lee">AL</figure>
+            </div>
+            <div class="avatars small" role="group" aria-label="Team members">
+              <figure class="avatar" aria-label="Jane Doe">JD</figure>
+              <figure class="avatar" aria-label="John Smith">JS</figure>
+              <figure class="avatar" aria-label="Alex Lee">AL</figure>
+            </div>
+            <div class="avatars large" role="group" aria-label="Team members">
+              <figure class="avatar" aria-label="Jane Doe">JD</figure>
+              <figure class="avatar" aria-label="John Smith">JS</figure>
+              <figure class="avatar" aria-label="Alex Lee">AL</figure>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="breadcrumb-demo" class="panel stack g-4 p-6 bd bd-4o ">
+      <h2 class="h3 m-0">Breadcrumb</h2>
+      <nav aria-label="Breadcrumb">
+        <ol class="breadcrumbs">
+          <li><a href="#breadcrumb-demo">Home</a></li>
+          <li><a href="#breadcrumb-demo">Projects</a></li>
+          <li><a href="#breadcrumb-demo">Oat Docs</a></li>
+          <li aria-current="page"><strong>Breadcrumb</strong></li>
+        </ol>
+      </nav>
+    </section>
+    <section id="dialog-demo" class="panel stack g-4 p-6 bd bd-4o ">
+      <h2 class="h3 m-0">Dialog</h2>
+      <div class="stack g-5">
+        <div class="stack g-3">
+          <p class="b m-0">Basic</p>
+          <div>
+            <button commandfor="specimen-dialog" command="show-modal">Open dialog</button>
+            <dialog id="specimen-dialog">
+              <form method="dialog" class="stack g-3">
+                <header class="stack g-1">
+                  <h3 class="m-0">Dialog title</h3>
+                  <p class="hint dim m-0">This is a native dialog.</p>
+                </header>
+                <p class="hint m-0">Press Escape or choose an action to close.</p>
+                <footer class="row end g-2"><button class="outline" value="cancel">Cancel</button><button class="primary" value="confirm">Confirm</button></footer>
+              </form>
+            </dialog>
+          </div>
+        </div>
+        <div class="stack g-3">
+          <p class="b m-0">With form fields</p>
+          <div>
+            <button commandfor="specimen-dialog-form" command="show-modal">Open form dialog</button>
+            <dialog id="specimen-dialog-form">
+              <form method="dialog" class="stack g-3">
+                <header class="stack g-1">
+                  <h3 class="m-0">Edit profile</h3>
+                  <p class="hint m-0">Update your account details below.</p>
+                </header>
+                <label class="field">Name<input class="fit-w" value="Jane Doe" /></label>
+                <label class="field">Email<input class="fit-w" type="email" value="jane@example.com" /></label>
+                <footer class="row end g-2"><button class="outline" value="cancel">Cancel</button><button class="primary" value="save">Save</button></footer>
+              </form>
+            </dialog>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="dropdown-demo" class="panel stack g-4 p-6 bd bd-4o ">
+      <h2 class="h3 m-0">Dropdown and Popover</h2>
+      <div class="stack g-5">
+        <div class="stack g-3">
+          <p class="b m-0">Menu</p>
+          <div>
+            <button class="outline" popovertarget="specimen-dd-menu">Options <iconify-icon icon="lucide:chevron-down" width="16" height="16"></iconify-icon></button>
+            <menu popover id="specimen-dd-menu">
+              <button role="menuitem"><iconify-icon icon="lucide:user" width="16" height="16"></iconify-icon> Profile</button>
+              <button role="menuitem"><iconify-icon icon="lucide:help-circle" width="16" height="16"></iconify-icon> Help</button>
+              <a role="menuitem" href="#dropdown-demo"><iconify-icon icon="lucide:link" width="16" height="16"></iconify-icon> Link</a>
+              <hr />
+              <button role="menuitem"><iconify-icon icon="lucide:log-out" width="16" height="16"></iconify-icon> Logout</button>
+              <button class="danger" role="menuitem"><iconify-icon icon="lucide:trash-2" width="16" height="16"></iconify-icon> Delete</button>
+            </menu>
+          </div>
+        </div>
+        <div class="stack g-3">
+          <p class="b m-0">Popover card</p>
+          <div>
+            <button class="outline" popovertarget="specimen-dd-pop">Confirm</button>
+            <article class="card" popover id="specimen-dd-pop">
+              <header class="stack g-1">
+                <h4 class="m-0">Are you sure?</h4>
+                <p class="hint m-0">This action cannot be undone.</p>
+              </header>
+              <footer class="row end g-2">
+                <button class="outline small" popovertarget="specimen-dd-pop" popovertargetaction="hide">Cancel</button>
+                <button class="danger small" popovertarget="specimen-dd-pop" popovertargetaction="hide">Delete</button>
+              </footer>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="taginput-demo" class="panel stack g-4 p-6 bd bd-4o ">
+      <h2 class="h3 m-0">Tag Input</h2>
+      <div class="stack g-5">
+        <div class="stack g-3">
+          <p class="b m-0">Chips</p>
+          <div class="tags"><span class="tag">apple<button aria-label="Remove apple">×</button></span><span class="tag">mango<button aria-label="Remove mango">×</button></span><input class="fit-w" aria-label="Add tags" placeholder="Add tags ..." /></div>
+        </div>
+        <div class="stack g-3">
+          <p class="b m-0">Autocomplete</p>
+          <input class="fit-w" list="specimen-fruits" aria-label="Type a fruit name" placeholder="Type a fruit name" />
+          <datalist id="specimen-fruits"><option>Apple</option><option>Apricot</option><option>Banana</option><option>Cherry</option><option>Mango</option><option>Melon</option></datalist>
+        </div>
+      </div>
+    </section>
+    <section id="upload-demo" class="panel stack g-4 p-6 bd bd-4o ">
+      <h2 class="h3 m-0">Upload</h2>
+      <label class="card stack g-2 centered p-6" style="border-style: dashed"><strong>Attachments</strong><input type="file" multiple /><small class="hint">Drop files here or click to choose</small></label>
+    </section>
+    <section id="meter-demo" class="panel stack g-4 p-6 bd bd-4o ">
+      <h2 class="h3 m-0">Meter</h2>
+      <div class="stack g-3">
+        <meter value="0.8" min="0" max="1" low="0.3" high="0.7" optimum="1">0.8</meter>
+        <meter value="0.5" min="0" max="1" low="0.3" high="0.7" optimum="1">0.5</meter>
+        <meter value="0.2" min="0" max="1" low="0.3" high="0.7" optimum="1">0.2</meter>
+      </div>
+    </section>
+    <section id="progress-demo" class="panel stack g-4 p-6 bd bd-4o ">
+      <h2 class="h3 m-0">Progress</h2>
+      <div class="stack g-3">
+        <progress value="60" max="100">60%</progress>
+        <progress value="30" max="100">30%</progress>
+        <progress value="90" max="100">90%</progress>
+      </div>
+    </section>
+    <section id="pagination-demo" class="panel stack g-4 p-6 bd bd-4o ">
+      <h2 class="h3 m-0">Pagination</h2>
+      <nav aria-label="Pagination">
+        <ol class="buttons">
+          <li><a class="button outline compact" href="#pagination-demo">← Previous</a></li>
+          <li><a class="button outline compact" href="#pagination-demo">1</a></li>
+          <li><a class="button outline compact" href="#pagination-demo">2</a></li>
+          <li><a class="button primary compact" aria-current="page" href="#pagination-demo">3</a></li>
+          <li><a class="button outline compact" href="#pagination-demo">4</a></li>
+          <li><a class="button outline compact" href="#pagination-demo">5</a></li>
+          <li><a class="button outline compact" href="#pagination-demo">Next →</a></li>
+        </ol>
+      </nav>
+    </section>
+    <section id="spinner-demo" class="panel stack g-4 p-6 bd bd-4o ">
+      <h2 class="h3 m-0">Spinner</h2>
+      <div class="stack g-5">
+        <div class="stack g-3">
+          <p class="b m-0">Inline</p>
+          <div class="row g-4"><span class="spinner" aria-label="Loading"></span><button disabled>Loading</button></div>
+        </div>
+        <div class="stack g-3">
+          <p class="b m-0">Overlay</p>
+          <article class="card loading" aria-busy="true">
+            <header class="stack g-1">
+              <h3 class="m-0">Card Title</h3>
+              <p class="m-0">Card description goes here.</p>
+            </header>
+            <p>This is the card content. It can contain any HTML.</p>
+            <footer class="row end g-2"><button class="outline">Cancel</button><button class="primary">Save</button></footer>
+          </article>
+        </div>
+      </div>
+    </section>
+    <section id="skeleton-demo" class="panel stack g-4 p-6 bd bd-4o ">
+      <h2 class="h3 m-0">Skeleton</h2>
+      <div class="stack g-5">
+        <div class="stack g-3">
+          <p class="b m-0">Primitives</p>
+          <div class="stack g-3">
+            <div class="skeleton box" role="status" aria-label="Loading image"></div>
+            <div class="skeleton line" role="status" aria-label="Loading title"></div>
+            <div class="skeleton line" role="status" aria-label="Loading copy"></div>
+          </div>
+        </div>
+        <div class="stack g-3">
+          <p class="b m-0">Skeleton card</p>
+          <article class="card stack g-3">
+            <div class="skeleton box" role="status" aria-label="Loading image"></div>
+            <div class="stack g-2">
+              <div class="skeleton line" role="status" aria-label="Loading title"></div>
+              <div class="skeleton line" role="status" aria-label="Loading copy"></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+    <section id="sidebar-demo" class="panel stack g-4 p-6 bd bd-4o ">
+      <h2 class="h3 m-0">Sidebar</h2>
+      <div class="card" style="padding: 0; overflow: hidden">
+        <div class="sidebar-layout" style="height: 20rem">
+          <aside class="sidebar" style="position: static; height: auto; min-height: auto; overflow-y: auto; display: flex; flex-direction: column">
+            <nav class="stack g-1">
+              <a href="#sidebar-demo">Home</a>
+              <a href="#sidebar-demo">Users</a>
+              <details><summary>Settings</summary><nav class="stack g-1"><a href="#sidebar-demo">General</a><a href="#sidebar-demo">Security</a><a href="#sidebar-demo">Billing</a></nav></details>
+            </nav>
+            <button class="outline" style="margin-top: auto">Logout</button>
+          </aside>
+          <main style="padding: 1.5rem">
+            <p class="m-0">Main content area. Scrolls with the page body.</p>
+          </main>
+        </div>
+      </div>
+    </section>
+    <section id="table-demo" class="panel stack g-4 p-6 bd bd-4o ">
+      <h2 class="h3 m-0">Table</h2>
+      <div class="table">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Ada Lovelace</td>
+              <td>ada@example.com</td>
+              <td>Admin</td>
+              <td><span class="badge tinted success">Active</span></td>
+            </tr>
+            <tr>
+              <td>Grace Hopper</td>
+              <td>grace@example.com</td>
+              <td>Editor</td>
+              <td><span class="badge tinted warning">Review</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section id="tooltip-demo" class="panel stack g-4 p-6 bd bd-4o ">
+      <h2 class="h3 m-0">Tooltip</h2>
+      <div class="row wrap g-3">
+        <button data-tooltip="Save your changes">Save</button>
+        <button class="danger" data-tooltip="Delete this item">Delete</button>
+      </div>
+    </section>
+    <section id="toast-demo" class="panel stack g-4 p-6 bd bd-4o ">
+      <h2 class="h3 m-0">Toast</h2>
+      <output class="toast" role="status"><strong>Changes saved</strong><span>Your document is up to date.</span><button class="outline compact">Okay</button></output>
+    </section>
+    <section id="cards-demo" class="panel stack g-4 p-6 bd bd-4o ">
       <h2 class="h3 m-0">Cards, Badges, Pills, and Status</h2>
       <div class="stack g-5">
         <div class="col-2 g-4">
@@ -838,6 +1217,28 @@ const result = "fast, consistent styling"</code></pre>
               <div class="stack g-1"><strong>Column 2</strong><span>Larger column with more content space.</span></div>
             </div>
           </article>
+        </div>
+        <div class="stack g-3">
+          <p class="b m-0">Compositional card</p>
+          <article class="card stack g-3">
+            <header class="stack g-1">
+              <h3 class="m-0">Card Title</h3>
+              <p class="m-0">Card description goes here.</p>
+            </header>
+            <p class="m-0">This is the card content. It can contain any HTML.</p>
+            <footer class="row end g-2"><button class="outline">Cancel</button><button class="primary">Save</button></footer>
+          </article>
+        </div>
+        <div class="stack g-3">
+          <p class="b m-0">Badges</p>
+          <div class="row wrap g-2">
+            <span class="badge">Default</span>
+            <span class="badge secondary">Secondary</span>
+            <span class="badge outline">Outline</span>
+            <span class="badge tinted success">Success</span>
+            <span class="badge tinted warning">Warning</span>
+            <span class="badge tinted danger">Danger</span>
+          </div>
         </div>
         <div class="stack g-3">
           <p class="b m-0">Pills - Colors</p>
@@ -904,7 +1305,7 @@ const result = "fast, consistent styling"</code></pre>
         </div>
       </div>
     </section>
-    <section class="panel stack g-4 p-6 bd bd-4o ">
+    <section id="layout-demo" class="panel stack g-4 p-6 bd bd-4o ">
       <h2 class="h3 m-0">Containers, Layout, Utilities</h2>
       <div class="stack g-5">
         <div class="col-3 g-3">
@@ -920,6 +1321,11 @@ const result = "fast, consistent styling"</code></pre>
             <div class="panel bg-neutral bg-5o bg p-2">3</div>
             <div class="panel bg-neutral bg-5o bg p-2">4</div>
           </div>
+          <div class="grid col-3 g-3">
+            <div class="panel p-3">Column one</div>
+            <div class="panel p-3">Column two</div>
+            <div class="panel p-3">Column three</div>
+          </div>
           <div class="row g-2">
             <div class="panel bg-neutral bg-5o bg p-2">Row item 1</div>
             <div class="panel bg-neutral bg-5o bg p-2">Row item 2</div>
@@ -927,6 +1333,14 @@ const result = "fast, consistent styling"</code></pre>
           <div class="stack g-2">
             <div class="panel bg-neutral bg-5o bg p-2">Stack item 1</div>
             <div class="panel bg-neutral bg-5o bg p-2">Stack item 2</div>
+          </div>
+        </div>
+        <div class="stack g-2">
+          <p class="b m-0">Utility chips</p>
+          <div class="row wrap g-2">
+            <span class="p-2 bg bg-primary bg-to-paper bg-2b tx">Color</span>
+            <span class="p-2 bd bd-neutral rounded">Border</span>
+            <span class="p-2 sh-2">Depth</span>
           </div>
         </div>
         <div class="stack g-2">

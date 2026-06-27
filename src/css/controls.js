@@ -124,11 +124,14 @@ function base(selector, ...rest) {
 			margin: vars.control.margin.or("0em"),
 			white_space: "nowrap",
 			text_overflow: "ellipsis",
+			// Don't inherit an ancestor's applied --text-color (e.g. body.tx).
+			// A local .tx re-sets it; otherwise action color falls back to contrast/accent.
+			__text_color: "initial",
 			__control_border_tint: vars.control.color.tint.or(vars.color.paper),
 			__control_border_blend: 0.8,
 			__control_border_opacity: 0.8,
 			// Border
-			border_width: vars.control.border.size.or("1px"),
+			border_width: vars.control.border.width.or("1px"),
 			border_color: control.border(),
 			// Outline
 			outline_width: "0px",
@@ -179,10 +182,14 @@ function field(selector, ...rest) {
 		selector,
 		css.rule("&", {
 			padding: vars.field.padding.or("0.5em 0.75em"),
-			border_radius: vars.field.border.radius.or("0.25em"),
+			border_radius: vars.field.border.radius.or(
+				vars.control.border.radius,
+				"0.25em",
+			),
 			field_sizing: "content",
-			// By default, a small tint and a bit of transparency
-			__control_background_base: vars.color.paper,
+			// Surface follows the page (mode-aware), small tint and transparency
+			__control_background_base: vars.color.page.or(vars.color.paper),
+			__control_background_tint: vars.color.page.or(vars.color.paper),
 			background_color: control.background(0.1, 0.9),
 			// Border blended to paper, fully opaque
 			border_color: control.border(0.5, 1.0, vars.color.ink),
@@ -250,6 +257,7 @@ function field(selector, ...rest) {
 		),
 		// Blank variant
 		css.rule(css.mods("&", "blank"), {
+			background: "none !important",
 			background_color: "transparent !important",
 			border_width: "0px",
 			border_color: "transparent !important",
@@ -289,7 +297,10 @@ function selectable(...rest) {
 				0.75,
 				0.0,
 				vars.color.tint,
-				vars.color.neutral.background.or(vars.color.neutral),
+				vars.selectable.bg.or(
+					vars.color.neutral.background,
+					vars.color.neutral,
+				),
 			),
 		},
 		// Color variants
@@ -311,6 +322,11 @@ function selectable(...rest) {
 			__control_color_opacity: 0.75,
 			__control_background_opacity: 0.75,
 		}),
+		// Active state, typically a blend to ink
+		css.rule(["&.selected"], {
+			__control_color_opacity: 0.95,
+			__control_background_opacity: 0.95,
+		}),
 		// Disabled variant
 		css.rule(css.mods("&", "disabled"), {
 			background_color: "transparent",
@@ -327,20 +343,35 @@ function action(selector, ...rest) {
 		css.rule("&", {
 			// Cursor
 			cursor: "pointer",
+			// Background tracks the accent by default. --control-background-base is
+			// element-scoped: never set it on ancestors, it would defeat variants.
 			__control_background_base: vars.control.color.base,
-			__control_color_base: vars.background.base.or(vars.color.neutral),
 			// Default syling, background is pure primary color
 			background_color: control.background(1.0, 1.0, vars.color.ink),
-			color: controlContrast(),
+			// Prefer --text-color when .tx / .tx-* utilities set it; otherwise
+			// contrast against the accent fill.
+			color: `var(--text-color, ${controlContrast()})`,
 			// Border
-			border_width: vars.action.border.width.or("0px"),
-			border_radius: vars.action.border.radius.or("0.25em"),
+			border_width: vars.action.border.width.or(
+				vars.control.border.width,
+				"0px",
+			),
+			border_radius: vars.action.border.radius.or(
+				vars.control.border.radius,
+				"0.25em",
+			),
 		}),
 		css.rule(css.mods("&", "default"), {
-			outline_width: vars.control.outline.width.or("2px"),
+			outline_width: vars.action.outline.width.or(
+				vars.control.outline.width,
+				"2px",
+			),
 			outline_color: control.outline(
 				0.9,
-				vars.control.default.outline.opacity.or(0.8),
+				vars.action.default.outline.opacity.or(
+					vars.control.default.outline.opacity,
+					0.8,
+				),
 				vars.color.ink,
 			),
 		}),
@@ -350,7 +381,7 @@ function action(selector, ...rest) {
 		}),
 		// Active state, typically a blend to ink
 		css.rule(css.mods("&", "active"), {
-			background_color: control.color(0.9, 1.0, vars.color.ink),
+			background_color: control.background(0.9, 1.0, vars.color.ink),
 		}),
 		// Disabled variant
 		css.rule(css.mods("&", "disabled"), {
@@ -365,7 +396,8 @@ function action(selector, ...rest) {
 			{
 				__control_default_outline_opacity: 0.4,
 				__control_border_width: vars.border.width.or("2px"),
-				color: control.color(0.5, 1.0, vars.color.ink),
+				// Prefer --text-color from .tx utilities over the accent blend
+				color: `var(--text-color, ${control.color(0.5, 1.0, vars.color.ink)})`,
 				border_width: vars.control.border.width,
 				border_color: control.border(0.9, 0.8, vars.color.ink),
 				background_color: control.background(0.9, 0.0),
@@ -381,18 +413,19 @@ function action(selector, ...rest) {
 		css.nesting(
 			css.mods("&", "ghost"),
 			{
-				__control_color_opacity: 0,
 				__control_default_outline_opacity: 0.2,
 				__control_color_border_opacity: 0,
-				background_color: colors.mix(vars.control.color),
+				__control_background_opacity: 0,
+				// Transparent fill: text must be the accent (not contrast-color of
+				// the accent, which yields white and disappears on light surfaces).
+				color: `var(--text-color, ${control.color(1.0, 1.0, vars.color.ink)})`,
+				background_color: control.background(1.0, 0),
 			},
 			css.rule("&:hover, &.hover", {
-				__control_color_opacity: 0.25,
-				background_color: colors.mix(vars.control.color),
+				__control_background_opacity: 0.25,
 			}),
 			css.rule("&:active, &.active", {
-				__control_color_opacity: 0.35,
-				background_color: colors.mix(vars.control.color),
+				__control_background_opacity: 0.35,
 			}),
 		),
 
@@ -419,6 +452,10 @@ function action(selector, ...rest) {
 }
 
 function checkbox() {
+	// Checked background: the accent softened toward the page surface, with a
+	// check mark contrasting against the actual blended background.
+	const checkedBg = control.background(0.5, 1.0, vars.color.page.or(vars.color.paper));
+	const checkedContrast = `contrast-color(${checkedBg})`;
 	return field(
 		["input[type=checkbox]:not(.toggle,.selector)", ".checkbox"],
 		css.rule("&", {
@@ -446,22 +483,23 @@ function checkbox() {
 			border_width: "0 0.14em 0.14em 0",
 			transform: "rotate(45deg) scale(0)",
 			transform_origin: "center",
-			color: controlContrast(),
 		}),
 		css.rule(css.mods("&", "checked"), {
-			// Use the semantic control color as the checked fill.
-			background_color: control.color(1.0, 1.0, vars.color.ink),
+			// Checked fill tracks the accent, blended toward the page surface.
+			__control_background_base: vars.control.color.base,
+			background_color: checkedBg,
 			// Keep the border visually aligned with the selected fill.
 			border_color: control.border(0.95, 1.0, vars.color.ink),
-			color: controlContrast(),
+			color: checkedContrast,
 		}),
 		css.rule("&:checked::before, &.checked::before", {
 			transform: "rotate(45deg) scale(1)",
 		}),
 		css.rule("&:indeterminate, &.indeterminate", {
-			background_color: control.color(1.0, 1.0, vars.color.ink),
+			__control_background_base: vars.control.color.base,
+			background_color: checkedBg,
 			border_color: control.border(0.95, 1.0, vars.color.ink),
-			color: controlContrast(),
+			color: checkedContrast,
 		}),
 		css.rule("&:indeterminate::before, &.indeterminate::before", {
 			width: "0.6em",
@@ -504,13 +542,14 @@ function radio() {
 			color: control.color(0.3, 0.9, vars.color.ink),
 		}),
 		css.rule("&:checked, &.checked", {
-			background_color: control.color(1.0, 1.0, vars.color.ink),
+			// Checked fill tracks the accent, not the field surface.
+			__control_background_base: vars.control.color.base,
+			background_color: control.background(1.0, 1.0, vars.color.ink),
 			border_color: control.border(0.95, 1.0, vars.color.ink),
-			color: vars.color.paper,
+			color: controlContrast(),
 		}),
 		css.rule("&:checked::before, &.checked::before", {
-			color: vars.color.paper,
-			background_color: vars.color.paper,
+			color: controlContrast(),
 			transform: "scale(1)",
 		}),
 		css.rule("&:disabled, &.disabled", {
@@ -520,24 +559,40 @@ function radio() {
 }
 
 function toggle() {
+	// Inset between track padding-edge and knob; shared by off/on positions.
+	const inset = vars.toggle.inset.or("0.125em")
+	const height = vars.toggle.height.or("1.5em")
+	const width = vars.toggle.width.or("2.75em")
 	return field(
-		[":not(.selector) input[type=checkbox].toggle", ".toggle"],
+		[
+			":not(.selector) input[type=checkbox].toggle",
+			"input[type=checkbox][role=switch]",
+			".toggle",
+		],
 		css.rule("&", {
-			// Box
+			// Box — pin size so field-sizing/min-content cannot shrink the track
 			cursor: "pointer",
 			position: "relative",
 			display: "inline-flex",
+			flex_shrink: "0",
 			vertical_align: "middle",
 			appearance: "none",
+			field_sizing: "fixed",
 			padding: "0em",
 			margin: "0em",
-			width: vars.toggle.width.or("2.5em"),
-			height: vars.toggle.height.or("1.5em"),
-			// Background
-			background_color: control.background(0.0, 0.95),
+			width: width,
+			min_width: width,
+			height: height,
+			min_height: height,
+			// Off track is a visible gray — pin base to neutral (field defaults to paper)
+			__control_background_base: vars.control.color.base.or(vars.color.neutral),
+			background_color: control.background(0.45, 1.0),
 			// Border
-			border_radius: vars.control.border.radius.or("0.25em"),
-			border_color: control.border(0.8, 0.9),
+			border_radius: vars.toggle.border.radius.or(
+				vars.control.border.radius,
+				"0.25em",
+			),
+			border_color: control.border(0.7, 0.85),
 			// Outline
 			outline_color: control.outline(0.8, 0.6),
 			// Transition
@@ -546,41 +601,60 @@ function toggle() {
 		css.rule("&::before", {
 			// Content
 			content: '""',
-			// Box
+			// Box — height from padding-box; translateY centers (ignores border asymmetry)
 			display: "block",
 			position: "absolute",
-			top: "2px",
-			bottom: "2px",
-			left: "2px",
+			box_sizing: "border-box",
+			top: "50%",
+			left: inset,
+			height: `calc(100% - 2 * ${inset})`,
 			aspect_ratio: "1/1",
-			// Border
+			width: "auto",
+			transform: "translateY(-50%)",
+			// Border — radius matches the track (squared vs pill)
 			border_style: "solid",
-			border_radius: vars.toggle.knob.border.radius.or(
-				vars.control.border.radius,
-				"0.25em",
-			),
+			border_radius: vars.toggle.knob.border.radius.or("inherit"),
 			border_width: vars.toggle.knob.border.width.or(
 				vars.control.border.width,
 				"1px",
 			),
-			border_color: control.border(0.8, 0.6, vars.color.ink),
-			// Background
-			background_color: control.background(0.7, 1.0),
-			transition: "all 140ms ease",
+			border_color: control.border(0.55, 0.55, vars.color.ink),
+			// Knob is solid paper so it reads on the gray off-track
+			__control_background_base: vars.color.paper,
+			__control_background_tint: vars.color.paper,
+			__control_background_blend: 0,
+			background_color: vars.color.paper,
+			box_shadow: "0 1px 2px oklch(0% 0 0 / 0.16)",
+			transition:
+				"left 140ms ease, transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease, border-radius 140ms ease",
 		}),
 
 		css.rule("&:checked, &.checked", {
-			background_color: control.background(control.color.blend(0.9), 0.9),
+			// Checked track tracks the accent, not the field surface.
+			__control_background_base: vars.control.color.base,
+			background_color: control.background(control.color.blend(0.9), 1.0),
+			border_color: control.border(0.85, 0.9, vars.color.ink),
 		}),
 		css.rule("&:checked::before, &.checked::before", {
-			left: "calc(100% - 2px)",
-			border_color: control.border(0.7, 0.8, vars.color.ink),
-			transform: "translateX(-100%)",
+			left: `calc(100% - ${inset})`,
+			border_color: control.border(0.5, 0.4, vars.color.ink),
+			transform: "translate(-100%, -50%)",
+		}),
+		// Apple-like pill track + floating circular knob
+		css.rule("&.rounded", {
+			__toggle_border_radius: "999px",
+			__border_radius: "999px",
+			border_radius: "999px",
+		}),
+		css.rule("&.rounded::before", {
+			border_width: "0px",
+			box_shadow:
+				"0 1px 3px oklch(0% 0 0 / 0.22), 0 0 0 0.5px oklch(0% 0 0 / 0.06)",
 		}),
 		css.rule("&:active::before, &.active::before", {}),
 		css.rule("&:checked:active::before, &.checked.active::before", {}),
 		css.rule("&:hover, &.hover", {
-			background_color: control.background(0.35, 1.0),
+			background_color: control.background(0.55, 1.0),
 		}),
 		css.rule("&:checked:hover, &.checked.hover", {
 			background_color: control.background(0.82, 1.0, vars.color.ink),
@@ -613,10 +687,17 @@ function range() {
 		css.rule("&::-webkit-slider-runnable-track", {
 			height: vars.range.track.height.or("0.45em"),
 			border_radius: vars.range.track.radius.or("999px"),
-			border_width: vars.control.border.size.or("1px"),
+			border_width: vars.control.border.width.or("1px"),
 			border_style: "solid",
-			border_color: control.border(0.6, 1.0),
-			background_color: control.background(0.2, 0.95),
+			// Track stays neutral; only progress and thumb carry the accent.
+			// NOTE: no --control-* pins here, the thumb inherits from the track.
+			border_color: colors.mixed(vars.color.neutral, vars.color.paper, 0.6, 1.0),
+			background_color: colors.mixed(
+				vars.color.neutral,
+				vars.color.page.or(vars.color.paper),
+				0.2,
+				0.95,
+			),
 		}),
 		css.rule("&::-webkit-slider-thumb", {
 			appearance: "none",
@@ -624,7 +705,7 @@ function range() {
 			width: vars.range.thumb.size.or("1em"),
 			height: vars.range.thumb.size.or("1em"),
 			border_radius: "100%",
-			border_width: vars.control.border.size.or("1px"),
+			border_width: vars.control.border.width.or("1px"),
 			border_style: "solid",
 			border_color: control.border(0.9, 1.0, vars.color.ink),
 			background_color: control.background(1.0, 1.0, vars.color.ink),
@@ -632,10 +713,16 @@ function range() {
 		css.rule("&::-moz-range-track", {
 			height: vars.range.track.height.or("0.45em"),
 			border_radius: vars.range.track.radius.or("999px"),
-			border_width: vars.control.border.size.or("1px"),
+			border_width: vars.control.border.width.or("1px"),
 			border_style: "solid",
-			border_color: control.border(0.6, 1.0),
-			background_color: control.background(0.2, 0.95),
+			// Track stays neutral; only progress and thumb carry the accent
+			border_color: colors.mixed(vars.color.neutral, vars.color.paper, 0.6, 1.0),
+			background_color: colors.mixed(
+				vars.color.neutral,
+				vars.color.page.or(vars.color.paper),
+				0.2,
+				0.95,
+			),
 		}),
 		css.rule("&::-moz-range-progress", {
 			height: vars.range.track.height.or("0.45em"),
@@ -646,7 +733,7 @@ function range() {
 			width: vars.range.thumb.size.or("1em"),
 			height: vars.range.thumb.size.or("1em"),
 			border_radius: "100%",
-			border_width: vars.control.border.size.or("1px"),
+			border_width: vars.control.border.width.or("1px"),
 			border_style: "solid",
 			border_color: control.border(0.9, 1.0, vars.color.ink),
 			background_color: control.background(1.0, 1.0, vars.color.ink),
@@ -654,16 +741,17 @@ function range() {
 		css.rule(
 			"&:hover::-webkit-slider-runnable-track, &.hover::-webkit-slider-runnable-track",
 			{
-				border_color: control.border(0.8, 1.0),
+				border_color: colors.mixed(vars.color.neutral, vars.color.paper, 0.8, 1.0),
 			},
 		),
 		css.rule(
 			"&:focus::-webkit-slider-runnable-track, &:focus-within::-webkit-slider-runnable-track, &.focus::-webkit-slider-runnable-track",
 			{
-				border_color: control.border(0.85, 1.0),
+				border_color: colors.mixed(vars.color.neutral, vars.color.paper, 0.85, 1.0),
 			},
 		),
-		css.rule("&:focus, &:focus-within, &.focus", {
+		// Same selector as the base focus ring so this suppression wins the cascade
+		css.rule(css.mods("&:not(.nofocus)", "focus"), {
 			outline_width: "0px",
 		}),
 		css.rule(
@@ -730,7 +818,7 @@ function selector() {
 			cursor: "pointer",
 			color: control.color(0.6, 1.0, vars.color.ink),
 			__control_background_opacity: 0,
-			border_width: vars.control.border.size.or("1px"),
+			border_width: vars.control.border.width.or("1px"),
 			border_left_width: "0px",
 			border_color: control.border(
 				control.color.blend(0.9),
@@ -741,7 +829,6 @@ function selector() {
 				control.color.blend(0.9),
 				0.0,
 				vars.color.paper,
-				vars.color.neutral.background.or(vars.color.neutral),
 			),
 		}),
 		css.rule("& > label:hover, & > label.hover", {
@@ -763,23 +850,20 @@ function selector() {
 		// }),
 		css.rule("&:active, &.active", {
 			__control_background_opacity: 0.2,
-			background_color: control.background(
-				0.9,
-				0.2,
-				vars.color.paper,
-				vars.color.neutral.background.or(vars.color.neutral),
-			),
+			background_color: control.background(0.9, 0.2, vars.color.paper),
 		}),
 		css.rule("& > label:last-child", {
 			border_top_right_radius: vars.selector.border.radius.or("0.25em"),
 			border_bottom_right_radius: vars.selector.border.radius.or("0.25em"),
 		}),
 		css.rule("& > input:first-child + label", {
-			border_left_width: vars.control.border.size.or("1px"),
+			border_left_width: vars.control.border.width.or("1px"),
 			border_top_left_radius: vars.selector.border.radius.or("0.25em"),
 			border_bottom_left_radius: vars.selector.border.radius.or("0.25em"),
 		}),
 		css.nesting("& > input:checked + label", {
+			// Checked label tracks the accent, not the field surface.
+			__control_background_base: vars.control.color.base,
 			color: controlContrast(),
 			__control_background_opacity: 0.9,
 			background_color: control.background(control.color.blend(0.9), 0.9),
@@ -797,47 +881,61 @@ function selector() {
 }
 
 function tab() {
-	return action(
-		[".tab"],
-		css.rule("&", {
-			__control_background_base: vars.color.paper,
-			__control_background_tint: vars.color.ink,
-			__control_background_blend: 0.8,
-			__control_background_opacity: 0.6,
-
-			// Slighthly taller
-			padding_top: "0.75em",
-			// We need to use the border instead of the outline
-			border_bottom_left_radius: "0",
-			border_bottom_right_radius: "0",
-			border: "1px solid transparent",
-			border_bottom_width: "0px",
-			border_color: colors.mix(vars.control.background),
-			background_color: colors.mix(vars.control.background),
+	return css.group(
+		css.rule([".tab"], {
+			cursor: "pointer",
+			border: "0",
+			border_radius: "0.25rem",
+			padding: "0.5em 0.85em",
+			font: "inherit",
+			color: vars.color.ink,
+			background_color: "transparent",
+			box_shadow: "none",
+			outline: "0",
+			appearance: "none",
 		}),
-		css.rule(css.mods("&", ["hover"]), {
-			__control_background_opacity: 0.9,
+		css.rule(["[role=tablist]"], {
+			display: "inline-flex",
+			gap: "0.15rem",
+			padding: "0.25rem",
+			border_radius: "0.375rem",
 		}),
-		css.rule(css.mods("&", ["focus"]), {
-			__control_background_opacity: 0.9,
+		css.rule([".tab:hover"], {
+			background_color: `color-mix(in oklch, ${vars.color.paper}, transparent 60%)`,
 		}),
-		css.rule(css.mods("&", ["active"]), {
-			__control_background_opacity: 1.0,
-			__control_background_blend: 1.0,
-			background_color: colors.mix(vars.control.background),
+		css.rule([".tab[aria-selected=true]", ".tab.active"], {
+			background_color: vars.color.paper,
+			box_shadow: `var(--shadow-x) var(--shadow-y) var(--shadow-spread) var(--shadow-color)`,
 		}),
-		css.rule("&:disabled, &.disabled", {
-			__control_background_opacity: 0.5,
+		css.rule([".tab:disabled, .tab.disabled"], {
+			opacity: 0.5,
+			pointer_events: "none",
+		}),
+		css.rule([".tab.ghost"], {
+			background_color: "transparent",
+			border: "0",
+		}),
+		css.rule([".tab.ghost:hover"], {
+			background_color: `color-mix(in oklch, ${vars.color.paper}, transparent 60%)`,
+		}),
+		css.rule([".tab.ghost[aria-selected=true]", ".tab.ghost.active"], {
+			background_color: vars.color.paper,
 		}),
 	);
 }
 
 export default css.named({
-	actions: action(["button", ".button"]),
+	actions: action([
+		"button",
+		".button",
+		"input[type=submit]",
+		"input[type=button]",
+		"input[type=reset]",
+	]),
 	fields: field([
 		".input",
-		"input",
-		".input",
+		// :where() keeps element-level specificity so per-component rules win
+		"input:where(:not([type=submit],[type=button],[type=reset],[type=image]):not(.button))",
 		"textarea",
 		".textarea",
 		"select",
@@ -852,5 +950,36 @@ export default css.named({
 	selector: selector(),
 	selectable: selectable(),
 	tab: tab(),
+	form: css.group(
+		css.rule([".field", "[data-field]"], {
+			display: "flex",
+			flex_direction: "column",
+			gap: "0.35rem",
+		}),
+		css.rule([".hint", "[data-hint]"], {
+			font_size: "0.875em",
+			color: `color-mix(in oklch, ${vars.color.ink}, ${vars.color.paper} 42%)`,
+		}),
+		css.rule([".error", "[data-field][aria-invalid=true] .error"], {
+			font_size: "0.875em",
+			color: vars.color.error,
+		}),
+		css.rule(".field:has(:is(input, textarea, select)[aria-invalid=true])", {
+			color: vars.color.error,
+		}),
+		css.rule(".group", {
+			display: "flex",
+			align_items: "stretch",
+		}),
+		css.rule(".group > :not(:first-child)", {
+			border_top_left_radius: "0",
+			border_bottom_left_radius: "0",
+			margin_left: "-1px",
+		}),
+		css.rule(".group > :not(:last-child)", {
+			border_top_right_radius: "0",
+			border_bottom_right_radius: "0",
+		}),
+	),
 });
 // EOF
