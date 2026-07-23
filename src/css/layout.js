@@ -318,7 +318,9 @@ export default named({
 		}),
 
 		rule(".row.lined > *", {
-			border_right: `${vars.border.width.or("1px")} ${vars.border.style.or("solid")} ${vars.border.color.or(vars.color.neutral)} `,
+			border_right_width: vars.border.width.or("1px"),
+			border_right_style: vars.border.style.or("solid"),
+			border_right_color: vars.border.color.or(vars.color.neutral),
 			border_collapse: "collapse",
 		}),
 		rule(".row.lined > *:last-child", {
@@ -341,7 +343,9 @@ export default named({
 			align_self: "flex-end",
 		}),
 		rule(".stack.lined > *", {
-			border_bottom: `${vars.border.width.or("1px")} ${vars.border.style.or("solid")} ${vars.border.color.or(vars.color.neutral)} `,
+			border_bottom_width: vars.border.width.or("1px"),
+			border_bottom_style: vars.border.style.or("solid"),
+			border_bottom_color: vars.border.color.or(vars.color.neutral),
 			border_collapse: "collapse",
 		}),
 		rule(".stack.lined > *:last-child", {
@@ -393,7 +397,9 @@ export default named({
 			gap: vars.gap,
 		}),
 		rule(".grid.lined > *", {
-			border_right: `${vars.border.width.or("1px")} ${vars.border.style.or("solid")} ${vars.border.color.or(vars.color.neutral)} `,
+			border_right_width: vars.border.width.or("1px"),
+			border_right_style: vars.border.style.or("solid"),
+			border_right_color: vars.border.color.or(vars.color.neutral),
 			border_collapse: "collapse",
 		}),
 		rule(".grid.lined > *:last-child", {
@@ -421,15 +427,15 @@ export default named({
 				"table.lined tbody tr th",
 			],
 			{
-				border_bottom: `${vars.border.width} ${vars.border.style} ${vars.border.color.or(
-					vars.color.neutral,
-				)} `,
+				border_bottom_width: vars.border.width,
+				border_bottom_style: vars.border.style,
+				border_bottom_color: vars.border.color.or(vars.color.neutral),
 			},
 		),
 		rule(["tr.lined td", "tr.lined th"], {
-			border_right: `${vars.border.width} ${vars.border.style} ${vars.border.color.or(
-				vars.color.neutral,
-			)} `,
+			border_right_width: vars.border.width,
+			border_right_style: vars.border.style,
+			border_right_color: vars.border.color.or(vars.color.neutral),
 		}),
 		rule(["tr.lined td:last-child", "tr.lined th:last-child"], {
 			border_right_width: "0px",

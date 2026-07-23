@@ -21,10 +21,13 @@ function pill(...rest) {
 			border_style: "solid",
 			border_color: "transparent",
 			border_radius: "9999px",
-			// Pill color drives variants; default neutral
+			// Pill color drives text and border variants; background uses the bg channel.
 			__pill_color: vars.color.neutral,
-			// Default: solid neutral bg with light text
-			background_color: vars.color.neutral,
+			__background_color_base: vars.color.neutral,
+			__background_color_tint: vars.color.paper,
+			__background_color_blend: 1.0,
+			__background_color_opacity: 1.0,
+			background_color: vars.background.color,
 			color: vars.color.paper,
 		}),
 		css.rule("&.dot > *:first-child:before", {
@@ -46,26 +49,35 @@ function pill(...rest) {
 		...colors.names.map((color) =>
 			css.rule(css.mods("&", color), {
 				__pill_color: vars.color[color],
-				background_color: vars.color[color],
+				__background_color_base: vars.color[color],
 				color: vars.color.paper,
 				border_color: "transparent",
 			}),
 		),
 		// Secondary: light grey bg with dark text
 		css.rule("&.secondary", {
-			background_color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 90%)`,
+			__background_color_base: vars.color.neutral,
+			__background_color_tint: vars.color.paper,
+			__background_color_blend: 0.1,
+			__background_color_opacity: 1.0,
 			color: vars.color.ink,
 			border_color: "transparent",
 		}),
 		// Tinted: color @ 10% bg with full color text
 		css.rule("&.tinted", {
-			background_color: `color-mix(in oklch, var(--pill-color), transparent 90%)`,
+			__background_color_base: "var(--pill-color)",
+			__background_color_tint: "transparent",
+			__background_color_blend: 0.1,
+			__background_color_opacity: 1.0,
 			color: `var(--pill-color)`,
 			border_color: "transparent",
 		}),
 		// Outline: transparent bg with color border and darkened text
 		css.rule("&.outline", {
-			background_color: "transparent",
+			__background_color_base: "var(--pill-color)",
+			__background_color_tint: vars.color.paper,
+			__background_color_blend: 1.0,
+			__background_color_opacity: 0,
 			border_color: `color-mix(in oklch, var(--pill-color), ${vars.color.paper} 60%)`,
 			color: `color-mix(in oklch, var(--pill-color), ${vars.color.ink} 40%)`,
 		}),

@@ -220,7 +220,7 @@ function colors(colors = COLORS) {
 				background_size: "100% 100%",
 			}),
 		),
-		rule(".bgc", {
+		rule([".bgc", ".pill", ".badge"], {
 			__background_color: backgroundColor,
 		}),
 		// .tx - applies the computed text color
@@ -239,8 +239,8 @@ function colors(colors = COLORS) {
 		rule(".tx-contrast", {
 			color: contrast(`${vars.background.color}`),
 		}),
-		// .bd - applies the computed border color
-		rule(".bdc", {
+		// .bdc and .lined compute the current border color.
+		rule([".bdc", ".lined"], {
 			__border_color: borderColor,
 		}),
 		rule(".bd", {

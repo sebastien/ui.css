@@ -25,4 +25,12 @@ describe("CSS-first components", () => {
 		expect(output).toContain(".sidebar-layout");
 		expect(output).toContain("[data-tooltip]");
 	});
+
+	test("routes pill and badge fills through the background channel", () => {
+		expect(output).toContain(".bgc, .pill, .badge {");
+		expect(output).toContain("--background-color-base: var(--color-neutral);");
+		expect(output).toContain("background-color: var(--background-color);");
+		expect(output).toContain("--background-color-blend: 0.1;");
+		expect(output).toContain("--background-color-opacity: 0;");
+	});
 });

@@ -12,6 +12,7 @@ application.
 - Alerts: `[role="alert"]` or `.alert`, with `.success`, `.warning`, `.danger`, and `.error` variants.
 - Avatars: `figure.avatar` or `figure[data-avatar]`; use `.avatars` for an overlapping group.
 - Content: `.card`, `.panel`, `.pill`, `.badge`, `.status`.
+- Pills and badges use the background color channel, so `.bg-*` color, tint, blend, and opacity modifiers apply to them.
 - Disclosure: `details.accordion`, `details.section`, `details.tree`.
 - Native surfaces: `dialog` and `[popover]` receive surface and backdrop styling.
 - Feedback: native `progress` and `meter`, `.skeleton.line`, `.skeleton.box`, and `[aria-busy="true"].loading`.
