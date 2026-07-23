@@ -160,13 +160,12 @@ export default named({
 	),
 	sizing: group(
 		named({
-			// TODO: Support min/max width
 			width: group(
 				...sizes.map((k, i) =>
-					rule(`.w-${i}`, { width: `${vars.size[i + 1]}` }),
+					rule(`.w-${i}`, { width: `${vars.size[i]}` }),
 				),
 				...sizes.map((k, i) =>
-					rule(`.h-${i}`, { height: `${vars.size[i + 1]}` }),
+					rule(`.h-${i}`, { height: `${vars.size[i]}` }),
 				),
 				...times(10).map((_) => rule(`.w-${_}em`, { width: `${_}em` })),
 				...times(10).map((_) => rule(`.h-${_}em`, { height: `${_}em` })),
@@ -231,7 +230,7 @@ export default named({
 				),
 				...times(5, (_) =>
 					rule(`.hmx-${_ + 1}bl`, {
-						max_width: `calc(${vars.block.width}*${_ + 1})`,
+						max_height: `calc(${vars.block.width}*${_ + 1})`,
 					}),
 				),
 			),
@@ -261,8 +260,8 @@ export default named({
 					left: "var(--dx, 0px)",
 				}),
 				rule(".dm", {
-					margin_bottom: "var(--dx, 0px)",
-					margin_right: "var(--dy, 0px)",
+					margin_bottom: "var(--dy, 0px)",
+					margin_right: "var(--dx, 0px)",
 				}),
 				...times(8, (_) => rule(`.dr-${_ + 1}`, { __dx: `${_ + 1}px` })),
 				...times(8, (_) => rule(`.dl-${_ + 1}`, { __dx: `-${_ + 1}px` })),
@@ -453,7 +452,7 @@ export default named({
 			overflow_y: "auto",
 		}),
 		rule(".overflow-x", {
-			overflow_y: "auto",
+				overflow_x: "auto",
 		}),
 		rule([".nooverflow", ".noflow"], {
 			overflow: "hidden",

@@ -173,13 +173,13 @@ export default named({
 		// FIXME: Maybe should be deprecated or moved to colors.js
 		// Background opacity variants using new color system
 		rule(".bg-dim", {
-			__background_o: 6,
+			__background_color_opacity: 0.6,
 		}),
 		rule(".bg-dimmer", {
-			__background_o: 4,
+			__background_color_opacity: 0.4,
 		}),
 		rule(".bg-dimmest", {
-			__background_o: 2,
+			__background_color_opacity: 0.2,
 		}),
 	),
 	visibility: group(
@@ -291,7 +291,7 @@ export default named({
 			border_spacing: "0px",
 		}),
 		rule("table.collapse", {
-			borter_collapse: "collapse",
+			border_collapse: "collapse",
 		}),
 		rule(
 			[
@@ -341,6 +341,17 @@ export default named({
 			border_left_color: vars.inset.light,
 			border_bottom_color: vars.inset.shadow,
 			border_right_color: vars.inset.shadow,
+			box_shadow: "0 2px 3px rgb(0 0 0 / 0.12)",
+		}),
+		rule(mods([".embossed"], undefined, "focus", "hover", "active"), {
+			__inset_shadow: `oklch(0 0 0 / 0.1)`,
+			__inset_light: `oklch(1 0 0 / 0.5)`,
+			border_width: "2px",
+			border_top_color: vars.inset.shadow,
+			border_left_color: vars.inset.shadow,
+			border_bottom_color: vars.inset.light,
+			border_right_color: vars.inset.light,
+			box_shadow: "inset 0 1px 2px rgb(0 0 0 / 0.12), inset 0 -1px 1px rgb(255 255 255 / 0.5)",
 		}),
 	),
 });

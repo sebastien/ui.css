@@ -38,11 +38,11 @@ Start with the smallest structural primitive that matches the UI:
 Common layout classes:
 
 - Flow and alignment: `.row`, `.stack`, `.wrap`, `.stretch`, `.top`, `.middle`, `.end`, `.fill`, `.filled`
-- Gap scale: `.g-0` through `.g-9`
-- Grid columns: `.col-1` through `.col-7`
-- Grid span: `.span-1` through `.span-5`
+- Gap scale: `.g-0` through `.g-10`
+- Grid columns: `.col-1` through `.col-8`
+- Grid span: `.span-1` through `.span-8`
 - Positioning: `.rel`, `.abs`, `.fix`, `.sticky`, `.cover`, `.to-t`, `.to-r`, `.to-b`, `.to-l`, `.to-tl`, `.to-br`
-- Fill and fit: `.fit`, `.fit-w`, `.fit-h`, `.fill-w`, `.fill-h`, `.fill-screen`, `.fit-screen`
+- Fill and fit: `.fit`, `.fit-w`, `.fit-h`, `.fit-min`, `.fit-max`, `.fit-content`, `.fit-page`, `.fit-text`, `.fit-screen`, `.expand`, `.expand-w`, `.expand-h`, `.fill-w`, `.fill-h`, `.fill-screen`
 - Width limits: `.limit-text`, `.limit-content`, `.limit-page`
 - Overflow: `.overflow`, `.noflow`
 
@@ -104,7 +104,7 @@ Prefer the built-in primitives before inventing new card, badge, button, or sele
 Controls from `controls.js`:
 
 - Actions: `button`, `.button`
-- Fields: `input`, `.input`, `textarea`, `.textarea`, `select`, `.select`
+- Fields: `input`, `.input`, `textarea`, `.textarea`, `select`, `.select`; use `multiple size="…"` for native multi-select listboxes
 - Stateful inputs: `.checkbox`, `.radio`, `.toggle`, `.range`
 - Composite choice control: `.selector`
 - Selectable container: `.selectable`
@@ -133,7 +133,7 @@ Preferred component recipes:
 - Destructive action: `<button class="danger">Delete</button>`
 - Quiet icon action: `<button class="ghost icon">…</button>`
 - Text field: `<input class="input">` or plain `<input>` with library CSS loaded
-- Segmented control: `.selector` containing hidden inputs and adjacent labels
+- Segmented control: `.selector.horizontal` or `.selector.vertical` containing hidden inputs and adjacent labels
 - Content card: `.card stack g-2`
 - Badge: `.pill compact`
 - Muted outline badge: `.pill outline neutral`

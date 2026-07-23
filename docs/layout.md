@@ -10,41 +10,42 @@ The `layout.js` module provides a comprehensive suite of utilities for controlli
 - `.bbox`, `.cbox`: Sets `box-sizing` to `border-box` or `content-box`.
 - `.bl`, `.il`, `.ibl`: Block, inline, and inline-block display.
 - `.fl`, `.ifl`: Flex and inline-flex display.
-- `.grid`, `.igrid`: Grid and inline-grid display.
+- `.grid`: Grid display.
 
 ### Positioning:
 
 - `.rel`, `.abs`, `.fix`, `.sticky`: Position modes.
 - `.cover`: Absolute positioning covering the entire parent (`0px` on all sides).
-- `.to-tl`, `.to-tr`, `.to-bl`, `.to-br`: Pin to corners.
+- `.to-tl`, `.to-br`: Pin to the implemented top-left and bottom-right corners.
 - `.to-t`, `.to-b`, `.to-l`, `.to-r`: Pin to sides.
-- `.to-hc`, `.to-vc`, `.to-c`: Horizontal, vertical, or full centering using `50%` and `translate`.
+- `.to-s`, `.to-n`, `.to-e`, `.to-w`: Position relative to the corresponding edge.
+- `.to-hc`: Set `left: 50%`; use `.centered` for actual two-axis centering.
 
-### Sizing and Gaps (0-10):
+### Sizing and Gaps:
 
 - `.g-{0-10}`: Grid/Flex gap.
-- `.w-{0-10}`, `.h-{0-10}`: Width and height scale.
-- `.miw-{0-10}`, `.mih-`, `.maw-`, `.mah-`: Min/max width and height.
+- `.w-{0-10}`, `.h-{0-10}`: Width and height token scale.
+- `.w-{n}bl`, `.wmn-{n}bl`, `.wmx-{n}bl`, `.h-{n}bl`, `.hmn-{n}bl`, `.hmx-{n}bl`: Block-based dimensions for `n` from 1 to 5.
 
 ### Flex and Grid:
 
 - `.row`, `.stack`: Flex-direction row and column.
 - `.wrap`, `.nowrap`: Flex wrap control.
-- `.grow`, `.nogrow`: Flex grow control.
+- `.fill`, `.filled > *`: Flex growth control.
 - `.shrink`, `.noshrink`: Flex shrink control.
-- `.fill`: Sets `flex: 1 1 0%` and `min-width: 0px`.
-- `.start`, `.end`, `.center`, `.between`, `.around`, `.stretch`: Content justification and alignment helpers.
+- `.fl-{0-6}`: Explicit flex values.
+- `.top`, `.middle`, `.end`, `.centered`, `.stretch`: Alignment helpers. `.fill` sets `flex-grow: 1`.
 
 ### Using
 
 ```html
-<div class="row g-m items-center">
-    <div class="p-s bg-neutral bg-to-ink bg-2b bg rd">Fixed</div>
-    <div class="fill p-s bg-neutral bg-to-ink bg-1b bg rd">Expands to fill</div>
+<div class="row g-2 middle">
+    <div class="p-2 bg-neutral bg-to-ink bg-2b bg rd">Fixed</div>
+    <div class="fill p-2 bg-neutral bg-to-ink bg-1b bg rd">Expands to fill</div>
 </div>
 
-<div class="abs to-c">
-    I am perfectly centered.
+<div class="centered">
+    I am centered on both axes.
 </div>
 ```
 
@@ -52,6 +53,6 @@ The `layout.js` module provides a comprehensive suite of utilities for controlli
 
 ### The `layout` module:
 
-- `layout()`: Generates the layout utility classes.
+- The default export is a named module object consumed by the CSS renderer; it is not a runtime function.
 - `rule(selector, properties)`: Internal helper used to define the utility rules.
 - `vars.gap`, `vars.size`: Standardized scales used for class generation.

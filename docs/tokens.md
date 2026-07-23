@@ -16,22 +16,15 @@ These properties can be overridden to theme the application.
 - `--font-base`: Base font size in pixels (default: 14).
 - `--font-size`: Calculated base font size.
 - `--font-line`: Base line height.
-- `--font-text-family`, `--font-text-size`, `--font-text-line`: Body text configuration.
-- `--font-heading-family`, `--font-heading-size`, `--font-heading-line`: Heading text configuration.
-- `--font-display-family`, `--font-display-size`, `--font-display-line`: Display text configuration.
-- `--font-script-family`, `--font-script-size`, `--font-script-line`: Script text configuration.
-- `--font-code-family`, `--font-code-size`, `--font-code-line`: Monospace code configuration.
+- `--font-text-family`, `--font-heading-family`, `--font-display-family`, `--font-script-family`, `--font-code-family`: Font family configuration.
 - `--font-controls-family`, `--font-controls-size`, `--font-controls-line`, `--font-controls-weight`: Form controls configuration.
 
 #### Colors
 - `--color-white`, `--color-black`: Basic color constants.
 - `--color-ink`: Primary text color baseline.
 - `--color-paper`: Primary background color baseline.
-- `--color-action`: Default action color.
-- `--color-border`: Default border color.
-- `--color-l-direction`: Luminosity direction (1 for light mode, -1 for dark mode).
 - `--color-neutral`, `--color-primary`, `--color-secondary`, `--color-tertiary`: Semantic color baselines.
-- `--color-success`, `--color-valid`, `--color-info`, `--color-warning`, `--color-issue`, `--color-danger`, `--color-error`: Status color baselines.
+- `--color-success`, `--color-info`, `--color-warning`, `--color-danger`, `--color-error`: Status color baselines.
 - `--color-page`, `--color-text`: Context-dependent aliases for paper/ink.
 
 #### Property Specific Colors (Base, Tint, Blend, Opacity)
@@ -42,8 +35,8 @@ Each of these properties supports `base`, `tint`, `blend`, and `opacity` tokens 
 - `outline`: Outline color and style (`--outline-width`, `--outline-style`).
 
 #### Spacing & Sizing
-- `--pad-0` through `--pad-10`: Padding scale.
-- `--margin-0` through `--margin-10`: Margin scale.
+- `--pad-0` through `--pad-8`: Padding scale.
+- `--margin-0` through `--margin-8`: Margin scale.
 - `--gap-0` through `--gap-10`: Gap scale.
 - `--size-0` through `--size-10`: Dimensional sizing scale.
 - `--scaling-pad`: Scaling factor for padding.
@@ -65,15 +58,15 @@ Each of these properties supports `base`, `tint`, `blend`, and `opacity` tokens 
 - `--heading-size-0` through `--heading-size-6`: Heading size scale (percentage-based).
 
 #### Component Specific (Button, Input, etc.)
-Components like `button`, `selectable`, `input`, `textarea`, `checkbox`, and `radio` have their own token namespaces for:
-- `font`: `family`, `line`, `weight`, `size`.
-- `color`: `base`, `primary`, `secondary`, etc., plus `tint`, `blend`, `opacity`.
-- States: `focus`, `selected`, `hover`, `active` (supporting `tint`, `blend`, `opacity`).
-- `checkbox` & `radio`: `content-checked`, `content-partial`.
+Controls use shared `--control-*` and per-kind `--field-*`/`--action-*` namespaces, with component-specific namespaces for `checkbox`, `radio`, `toggle`, `range`, `select`, and `selector`:
+- `--control-font-*`, `--control-padding`, `--control-gap`.
+- `--control-color-*`, `--control-background-*`, `--control-border-*`, `--control-outline-*`: Each color channel supports `base`, `tint`, `blend`, and `opacity`.
+- `--field-*` and `--action-*`: Geometry and state-specific overrides.
+- Component namespaces provide sizing and geometry tokens such as `--checkbox-size`, `--radio-dot-size`, and `--range-track-height`.
 
-### Scale indices (0-10):
+### Scale indices:
 
-Most scales (padding, margin, gap, size) use an 11-step scale. For example, `pad`:
+Gap and size use an 11-step scale. Padding and margin use a 9-step scale. For example, `pad`:
 
 - `0`: 0em
-- `1` to `10`: Increasingly larger values calculated via `pem()` (Pixel-to-EM) based on the `scaling-pad` and `font-base`.
+- `1` to `8`: Increasingly larger values calculated via `pem()` (Pixel-to-EM) based on the `scaling-pad` and `font-base`.

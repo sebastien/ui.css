@@ -1,4 +1,4 @@
-import css, { keyframes, media, vars } from "../js/uicss.js";
+import css, { keyframes, vars } from "../js/uicss.js";
 import { colormix } from "./colors.js";
 import colors from "./colors.js";
 
@@ -86,14 +86,81 @@ function pill(...rest) {
 }
 
 function tooltip(...rest) {
-	return css.nesting(
-		[".tooltip"],
-		{},
-		css.rule("&", {
+	return css.group(
+		css.rule("[data-tooltip]", { position: "relative" }),
+		css.rule("[data-tooltip]::after", {
+			content: "attr(data-tooltip)",
 			position: "absolute",
-			display: "block",
-			position_anchor: vars.tooltip.anchor.or("top"),
-			position_area: vars.tooltip.area.or("center"),
+			z_index: "10",
+			bottom: "calc(100% + 0.5rem)",
+			left: "50%",
+			width: "max-content",
+			max_width: "min(20rem, 80vw)",
+			padding: "0.35rem 0.5rem",
+			border_radius: vars.border.radius[1],
+			background_color: vars.color.ink,
+			color: vars.color.paper,
+			font_size: "0.8em",
+			line_height: "1.25",
+			opacity: "0",
+			pointer_events: "none",
+			transform: "translate(-50%, 0.2rem)",
+			transition: "opacity 120ms ease, transform 120ms ease",
+		}),
+		css.rule("[data-tooltip]:is(:hover, :focus-visible)::after", {
+			opacity: "1",
+			transform: "translate(-50%, 0)",
+		}),
+		...rest,
+	);
+}
+
+function buttongroup(...rest) {
+	return css.group(
+		css.rule(".buttons", {
+			display: "inline-flex",
+			gap: "1px",
+			padding: "0",
+			margin: "0",
+			list_style: "none",
+		}),
+		css.rule(".buttons > *", { display: "flex" }),
+		css.rule(".buttons > * > :not(:first-child)", { margin_left: "0" }),
+		css.rule(".buttons > *:not(:first-child) > *", {
+			margin_left: "0",
+			border_top_left_radius: "0",
+			border_bottom_left_radius: "0",
+		}),
+		css.rule(".buttons > *:not(:last-child) > *", {
+			border_top_right_radius: "0",
+			border_bottom_right_radius: "0",
+		}),
+		css.rule(".buttons.outline", { gap: "0" }),
+		css.rule(".buttons.outline > * > :not(:first-child)", { margin_left: "-1px" }),
+		css.rule(".buttons.outline > *:not(:first-child) > *", { margin_left: "-1px" }),
+		...rest,
+	);
+}
+
+function toast(...rest) {
+	return css.group(
+		css.rule(".toast", {
+			display: "grid",
+			gap: "0.35rem",
+			min_width: "18rem",
+			padding: "0.9rem 1rem",
+			border: `1px solid color-mix(in oklch, ${vars.color.ink}, ${vars.color.paper} 82%)`,
+			border_radius: vars.border.radius[2],
+			background_color: vars.color.paper,
+			box_shadow: "0 12px 28px rgb(41 37 34 / 0.14)",
+		}),
+		css.rule(".toasts", {
+			position: "fixed",
+			z_index: "10",
+			top: "1rem",
+			right: "1rem",
+			display: "grid",
+			gap: "0.75rem",
 		}),
 		...rest,
 	);
@@ -436,7 +503,7 @@ function tree() {
 
 function alert() {
 	return css.group(
-		css.rule(["[role=alert]", ".alert"], {
+		css.rule(".alert", {
 			display: "block",
 			font_size: "0.875em",
 			padding: vars.alert.padding,
@@ -454,7 +521,7 @@ function alert() {
 			["error", vars.color.error],
 			["info", vars.color.info],
 		].map(([name, color]) =>
-			css.rule([`[role=alert].${name}`, `.alert.${name}`], {
+			css.rule(`.alert.${name}`, {
 				border_width: "0",
 				background_color: `color-mix(in oklch, ${color}, transparent 88%)`,
 				color: `${color}`,
@@ -467,14 +534,14 @@ function alert() {
 			["error", vars.color.error],
 			["info", vars.color.info],
 		].map(([name, color]) =>
-			css.rule([`[role=alert].ghost.${name}`, `.alert.ghost.${name}`], {
+			css.rule(`.alert.ghost.${name}`, {
 				border_width: "1px",
 				background_color: "transparent",
 				border_color: `${color}`,
 				color: `${color}`,
 			}),
 		),
-		css.rule(["[role=alert].ghost", ".alert.ghost"], {
+		css.rule(".alert.ghost", {
 			border_width: "1px",
 			background_color: "transparent",
 			border_color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 80%)`,
@@ -558,7 +625,10 @@ function native() {
 			align_items: "center",
 			gap: vars.gap[2],
 		}),
-		css.rule("dialog > footer", { justify_content: "flex-end", margin_top: "1.25rem" }),
+		css.rule("dialog > footer", {
+			justify_content: "flex-end",
+			margin_top: "1.25rem",
+		}),
 		// Never paint closed popovers — author display must not override the UA hide.
 		css.rule("[popover]:not(:popover-open)", {
 			display: "none",
@@ -573,7 +643,11 @@ function native() {
 		}),
 		css.rule("[popover]::backdrop", { background_color: "transparent" }),
 		css.rule(
-			["menu[popover]:popover-open", "[popover]:popover-open menu", "[popover]:popover-open .menu"],
+			[
+				"menu[popover]:popover-open",
+				"[popover]:popover-open menu",
+				"[popover]:popover-open .menu",
+			],
 			{
 				display: "flex",
 				flex_direction: "column",
@@ -690,25 +764,62 @@ function native() {
 	);
 }
 
-function feedback() {
+function meter() {
+	// Rendered unlayered so browser default meter/progress chrome doesn't win.
+	// WebKit and Gecko use different pseudo-elements, so emit per-engine rules
+	// rather than combining prefixes; a selector list with an alien prefix is
+	// dropped by the other engine. Use the `background` shorthand with
+	// !important because browser UA rules render the value via `background` and
+	// `background-color` alone doesn't override the visual meter/progress bar.
+	const webkitTrack = [
+		"progress::-webkit-progress-bar",
+		"meter::-webkit-meter-bar",
+	];
+	const webkitValue = [
+		"progress::-webkit-progress-value",
+		"meter::-webkit-meter-optimum-value",
+		"meter::-webkit-meter-suboptimum-value",
+		"meter::-webkit-meter-even-less-good-value",
+	];
+	const mozValue = ["progress::-moz-progress-bar", "meter::-moz-meter-bar"];
+	const tinted = (selector) => selector.replace(/^(progress|meter)/, `$1.tinted`);
+	const colored = (selector, name) => [
+		selector.replace(/^(progress|meter)/, `$1.${name}`),
+		selector.replace(/^(progress|meter)/, `$1.${name}.tinted`),
+		selector.replace(/^(progress|meter)/, `$1.tinted.${name}`),
+	];
+	const bg = (color) => ({ background: `${color} !important` });
+	const bgNeutral = () => bg(vars.color.neutral);
+	const bgColor = (name) => bg(vars.color[name]);
+
 	return css.group(
 		css.rule(["progress", "meter"], {
 			display: "block",
 			width: "100%",
 			height: vars.progress.height,
+			appearance: "none",
+			padding: "0",
 			border: "0",
 			border_radius: "999px",
 			overflow: "hidden",
-			background_color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 84%)`,
+			background: "transparent",
 		}),
-		css.rule("progress::-webkit-progress-bar", {
-			background_color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 84%)`,
-		}),
-		css.rule("progress::-webkit-progress-value", { background_color: vars.color.primary }),
-		css.rule("progress::-moz-progress-bar", { background_color: vars.color.primary }),
-		css.rule("meter::-webkit-meter-bar", {
-			background_color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 84%)`,
-		}),
+		css.rule(webkitTrack, { background: "transparent" }),
+		css.rule(webkitValue, bgNeutral()),
+		css.rule(webkitValue.map(tinted), bgNeutral()),
+		...colors.semantic.flatMap((name) => [
+			css.rule(webkitValue.flatMap((selector) => colored(selector, name)), bgColor(name)),
+		]),
+		css.rule(mozValue, bgNeutral()),
+		css.rule(mozValue.map(tinted), bgNeutral()),
+		...colors.semantic.flatMap((name) => [
+			css.rule(mozValue.flatMap((selector) => colored(selector, name)), bgColor(name)),
+		]),
+	);
+}
+
+function feedback() {
+	return css.group(
 		css.rule(".skeleton", {
 			display: "block",
 			border_radius: vars.border.radius[1],
@@ -723,7 +834,10 @@ function feedback() {
 		css.rule(".skeleton.line", { width: "100%", height: "1rem" }),
 		css.rule(".row > .skeleton.line", { flex: "1", min_width: "0" }),
 		css.rule(".skeleton.box", { width: "4rem", height: "4rem" }),
-		css.rule("[aria-busy=true].loading", { position: "relative", pointer_events: "none" }),
+		css.rule("[aria-busy=true].loading", {
+			position: "relative",
+			pointer_events: "none",
+		}),
 		css.rule("[aria-busy=true].loading::after", {
 			content: '""',
 			position: "absolute",
@@ -734,117 +848,63 @@ function feedback() {
 			border_top_color: "transparent",
 			border_radius: "50%",
 			transform: "translate(-50%, -50%)",
-			animation: "spinner 720ms linear infinite",
+			animation: "loading-spinner 720ms linear infinite",
+		}),
+		keyframes("loading-spinner", {
+			from: { transform: "translate(-50%, -50%) rotate(0deg)" },
+			to: { transform: "translate(-50%, -50%) rotate(360deg)" },
 		}),
 	);
 }
 
-function composition() {
+function pagination() {
 	return css.group(
-		css.rule("[data-tooltip]", { position: "relative" }),
-		css.rule("[data-tooltip]::after", {
-			content: "attr(data-tooltip)",
-			position: "absolute",
-			z_index: "10",
-			bottom: "calc(100% + 0.5rem)",
-			left: "50%",
-			width: "max-content",
-			max_width: "min(20rem, 80vw)",
-			padding: "0.35rem 0.5rem",
-			border_radius: vars.border.radius[1],
-			background_color: vars.color.ink,
-			color: vars.color.paper,
-			font_size: "0.8em",
-			line_height: "1.25",
-			opacity: "0",
-			pointer_events: "none",
-			transform: "translate(-50%, 0.2rem)",
-			transition: "opacity 120ms ease, transform 120ms ease",
-		}),
-		css.rule("[data-tooltip]:is(:hover, :focus-visible)::after", {
-			opacity: "1",
-			transform: "translate(-50%, 0)",
-		}),
-		css.rule(".buttons", {
+		css.rule(".pagination", {
 			display: "inline-flex",
 			padding: "0",
 			margin: "0",
 			list_style: "none",
+			__pagination_color: vars.color.neutral,
 		}),
-		css.rule(".buttons > *", { display: "flex" }),
-		css.rule(".buttons > * > :not(:first-child)", { margin_left: "-1px" }),
-		css.rule(".buttons > *:not(:first-child) > *", {
-			margin_left: "-1px",
-			border_top_left_radius: "0",
-			border_bottom_left_radius: "0",
+		css.rule(".pagination > *", { display: "flex" }),
+		css.rule(".pagination > * > :is(a, .button)", {
+			__control_color_base: "var(--pagination-color)",
+			border_radius: "0",
 		}),
-		css.rule(".buttons > *:not(:last-child) > *", {
-			border_top_right_radius: "0",
-			border_bottom_right_radius: "0",
+		...colors.semantic.map((name) =>
+			css.rule(
+				[`.pagination.${name}`, `.pagination > * > :is(a, .button).${name}`],
+				{
+					__pagination_color: vars.color[name],
+					__control_color_base: vars.color[name],
+				},
+			),
+		),
+		css.rule(".pagination > *:first-child > :is(a, .button)", {
+			border_top_left_radius: vars.selector.border.radius.or("0.25em"),
+			border_bottom_left_radius: vars.selector.border.radius.or("0.25em"),
 		}),
-		css.rule(".table", { width: "100%", overflow_x: "auto" }),
-		css.rule("table", { width: "100%", min_width: "32rem", border_collapse: "collapse" }),
-		css.rule("th", {
-			padding: vars.table.padding,
-			border_bottom: `1px solid color-mix(in oklch, ${vars.color.ink}, ${vars.color.paper} 84%)`,
-			text_align: "left",
-			font_weight: "600",
-			color: `color-mix(in oklch, ${vars.color.ink}, ${vars.color.paper} 36%)`,
+		css.rule(".pagination > *:last-child > :is(a, .button)", {
+			border_top_right_radius: vars.selector.border.radius.or("0.25em"),
+			border_bottom_right_radius: vars.selector.border.radius.or("0.25em"),
 		}),
-		css.rule("td", {
-			padding: vars.table.padding,
-			border_bottom: `1px solid color-mix(in oklch, ${vars.color.ink}, ${vars.color.paper} 90%)`,
-		}),
-		css.rule("tbody tr:hover", { background_color: `color-mix(in oklch, ${vars.color.primary}, ${vars.color.paper} 96%)` }),
-		css.rule(".toast", {
-			display: "grid",
-			gap: "0.35rem",
-			min_width: "18rem",
-			padding: "0.9rem 1rem",
-			border: `1px solid color-mix(in oklch, ${vars.color.ink}, ${vars.color.paper} 82%)`,
-			border_radius: vars.border.radius[2],
-			background_color: vars.color.paper,
-			box_shadow: "0 12px 28px rgb(41 37 34 / 0.14)",
-		}),
-		css.rule(".toasts", {
-			position: "fixed",
-			z_index: "10",
-			top: "1rem",
-			right: "1rem",
-			display: "grid",
-			gap: "0.75rem",
-		}),
-		css.rule(".sidebar-layout", { display: "grid", grid_template_columns: "15rem minmax(0, 1fr)" }),
-		css.rule(".sidebar", {
-			position: "sticky",
-			top: "0",
-			height: "100vh",
-			min_height: "100vh",
-			overflow_y: "auto",
-			padding: "1rem",
-			border_right: `1px solid color-mix(in oklch, ${vars.color.ink}, ${vars.color.paper} 84%)`,
-			background_color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 94%)`,
-		}),
-		css.rule(".sidebar-layout > main", {
-			width: "100%",
-			min_width: "0",
-			box_sizing: "border-box",
-			padding: "1.5rem",
-		}),
-		media(
-			"(max-width: 768px)",
-			css.rule(".sidebar-layout", { grid_template_columns: "1fr" }),
-			css.rule(".sidebar", {
-			position: "static",
-			height: "auto",
-				min_height: "auto",
-				overflow_y: "visible",
-				border_right_width: "0",
-				border_bottom: `1px solid color-mix(in oklch, ${vars.color.ink}, ${vars.color.paper} 84%)`,
-			}),
+		css.rule(
+			".pagination > * > :is(a, .button)[aria-current=page], .pagination > * > :is(a, .button).active",
+			{
+				__control_background_base: "var(--pagination-color)",
+				__control_background_tint: vars.color.paper,
+				__control_background_blend: 1.0,
+				__control_background_opacity: 1.0,
+				__control_border_base: "var(--pagination-color)",
+				color: "contrast-color(var(--pagination-color))",
+				border_color: "var(--pagination-color)",
+				background_color: "var(--pagination-color)",
+			},
 		),
 	);
 }
+
+export { meter };
 
 export default css.named({
 	pill: pill(),
@@ -860,6 +920,8 @@ export default css.named({
 	avatar: avatar(),
 	native: native(),
 	feedback: feedback(),
-	composition: composition(),
+	pagination: pagination(),
+	buttongroup: buttongroup(),
+	toast: toast(),
 });
 // EOF

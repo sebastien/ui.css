@@ -25,6 +25,9 @@ The `controls.js` module provides comprehensive styling for interactive elements
 - `.tinted` (fields / `.selector`): Pure accent at low opacity (no paper blend); hover/focus do not force full opacity.
 - Fields: semantic color always drives the border; text stays ink unless `.colored`.
 - `.colored` (fields / `.selector`): Accent text (and stronger border on fields). On `.selector`, unselected labels also get accent text/border; only the checked option is accent-filled by default.
+- `.selector` item colors: Add a semantic color class to an individual label; its checked, active, tinted, and colored states use that item color.
+- `.selector.horizontal`, `.selector.vertical`: Joined horizontal or vertical selector items. Horizontal is the default.
+- `select[multiple]`: Native vertical listbox with selector-like option rows. `select.vertical` opts into the same styling; pair it with `size` to render a listbox and control visible rows.
 
 ### Component States:
 
@@ -55,6 +58,7 @@ each driven by four variables: `base`, `tint`, `blend`, `opacity`.
   `--color-neutral-background` surface; medium `--color-neutral` stays for
   borders and chrome. Checked controls still pin fill to the accent.
 - Fields default to neutral paper at 0.8 opacity.
+- Field borders and focus outlines use the pure semantic accent; interaction emphasis changes opacity rather than mixing the accent with paper.
 - Field/selector `.tinted` applies a soft wash of the main accent
   (`--control-color-base`, primary unless a semantic class is set). Semantic
   classes alone only set the accent (border/focus); they do not recolor the fill.
@@ -72,22 +76,61 @@ each driven by four variables: `base`, `tint`, `blend`, `opacity`.
 
 ```html
 <!-- Semantic buttons -->
-<div class="row g-s">
+<div class="row g-2">
     <button class="primary">Submit</button>
     <button class="outline danger">Delete</button>
     <button class="ghost">Cancel</button>
 </div>
 
 <!-- Form controls -->
-<div class="stack g-m">
+<div class="stack g-2">
     <input type="text" placeholder="Username" class="success">
     <textarea placeholder="Bio"></textarea>
-    <label class="row g-s items-center pointer">
+    <label class="row g-2 middle pointer">
         <input type="checkbox" class="primary">
         <span>Accept terms</span>
     </label>
 </div>
+
+<!-- Per-item selector colors -->
+<div class="selector tinted colored">
+    <input id="normal" type="radio" name="action">
+    <label for="normal">Normal</label>
+    <input id="delete" type="radio" name="action">
+    <label for="delete" class="danger">Delete</label>
+</div>
+
+<!-- Native multi-select listbox -->
+<select name="roles" multiple size="4">
+    <option value="reader">Reader</option>
+    <option value="writer" selected>Writer</option>
+    <option value="editor">Editor</option>
+    <option value="admin">Admin</option>
+</select>
+
+<!-- Styled horizontal single-choice selector -->
+<div class="selector horizontal">
+    <input id="day" type="radio" name="range" checked>
+    <label for="day">Day</label>
+    <input id="week" type="radio" name="range">
+    <label for="week">Week</label>
+</div>
+
+<!-- Styled vertical multi-choice selector -->
+<div class="selector vertical">
+    <input id="email" type="checkbox" name="channels" checked>
+    <label for="email">Email</label>
+    <input id="push" type="checkbox" name="channels">
+    <label for="push">Push</label>
+</div>
 ```
+
+Native `select` options are browser-owned UI, so `select.horizontal` cannot be
+rendered as a selector-style segmented control reliably. Use
+`.selector.horizontal` when that presentation is required.
+
+Browsers may retain platform-specific selection highlights for native listboxes,
+but ui.css supplies the option-row styles wherever the browser permits them.
 
 ### API
 

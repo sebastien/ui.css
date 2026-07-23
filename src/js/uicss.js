@@ -517,8 +517,8 @@ function rule(selector, ...body) {
 				props[k] = v;
 			}
 		}
-		return new Rule(sel, props);
 	}
+	return new Rule(sel, props);
 }
 
 // Function: blockselectors
@@ -638,6 +638,9 @@ class Group {
 			}
 		}
 		this.name = name;
+	}
+	*[Symbol.iterator]() {
+		yield* this.contents;
 	}
 	*rules() {
 		for (const r of this.contents) {

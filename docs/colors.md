@@ -17,11 +17,11 @@ The `colors.js` module implements a sophisticated color system that automaticall
 ### Color and Level Modifiers:
 
 - `.{prop}-{color}`: Sets the base color at level 5 (e.g., `.bg-primary`).
-- `.{prop}-{0-10}o`: Sets the opacity (alpha) from 0 to 1.0 (e.g., `.bg-5o`).
+- `.{prop}-{0-9}o`: Sets opacity from 0.0 through 0.9 (e.g., `.bg-5o`). Unnumbered `.{prop}o` sets full opacity.
 - `.{prop}-to-{color}`: Sets a tint color for blending (e.g., `.bg-to-blue`).
 - `.{prop}-to-{semantic}`: Sets a semantic tint color (e.g., `.bg-to-primary`).
 - `.{prop}-to-white`, `.{prop}-to-black`: Endpoint tint helpers.
-- `.{prop}-{0-10}b`: Blends between base color and tint. `0` is 100% tint, `10` is 100% base.
+- `.{prop}-{0-9}b`: Blends between base color and tint. `0` is 100% tint and `9` is 90% base. Unnumbered `.{prop}b` sets 100% base.
 
 ### Semantic Colors:
 
@@ -39,7 +39,7 @@ The `colors.js` module implements a sophisticated color system that automaticall
 
 ```html
 <!-- Dark background with auto-contrasted light text -->
-<div class="bg-blue bg-to-ink bg-2b bg tx p-m">
+<div class="bg-blue bg-to-ink bg-2b bg tx p-2">
     Blue background blended toward ink with auto light text.
 </div>
 
@@ -60,5 +60,5 @@ The `colors.js` module implements a sophisticated color system that automaticall
 
 - `colors(palette?)`: Generates the color utility classes. Accepts an optional palette override.
 - `colormix(base, tint, blend, opacity)`: Internal helper for generating `color-mix` CSS strings.
-- `COLORS`: Array of available palette color names (red, blue, slate, etc.).
+- `COLORS`: Array of available palette color names, including the special `white` and `black` endpoints.
 - `SEMANTIC`: Mapping of semantic names to palette colors.

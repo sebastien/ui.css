@@ -5,10 +5,19 @@ import all from "../src/css/all.js";
 const output = [...css(all())].join("\n");
 
 describe("CSS-first components", () => {
-	test("styles semantic alerts and native feedback elements", () => {
-		expect(output).toContain("[role=alert], .alert");
+	test("styles explicit alert classes and native feedback elements", () => {
+		expect(output).toContain(".alert {");
+		expect(output).not.toContain("[role=alert]");
+		expect(output).toContain("animation: loading-spinner 720ms linear infinite;");
+		expect(output).toContain("translate(-50%, -50%) rotate(360deg)");
 		expect(output).toContain("progress, meter");
 		expect(output).toContain("progress::-webkit-progress-value");
+		expect(output).toContain("meter::-webkit-meter-optimum-value");
+		expect(output).toContain("progress.success::-webkit-progress-value");
+		expect(output).toContain("meter.success::-webkit-meter-optimum-value");
+		expect(output).toContain("progress.tinted.success::-webkit-progress-value");
+		expect(output).toContain("meter.tinted.danger::-webkit-meter-optimum-value");
+		expect(output).toContain(".pagination");
 	});
 
 	test("includes native dialog, popover, and switch styling", () => {
@@ -21,10 +30,15 @@ describe("CSS-first components", () => {
 
 	test("includes catalog composition primitives", () => {
 		expect(output).toContain(".avatars");
-		expect(output).toContain(".table");
-		expect(output).toContain(".sidebar-layout");
 		expect(output).toContain("[data-tooltip]");
-	});
+		expect(output).toContain(".buttons");
+		expect(output).toContain("gap: 1px;");
+		expect(output).toContain(".buttons.outline");
+		expect(output).toContain(".toast");
+		expect(output).not.toContain(".sidebar-layout");
+		expect(output).not.toContain("min-width: 32rem");
+		expect(output).not.toContain(".table {");
+});
 
 	test("routes pill and badge fills through the background channel", () => {
 		expect(output).toContain(".bgc, .pill, .badge {");

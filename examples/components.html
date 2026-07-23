@@ -8,14 +8,7 @@
     <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
   </head>
   <body class="light">
-    <div class="sidebar-layout">
-      <aside class="sidebar stack g-3">
-        <header class="stack g-1"><strong>ui.css</strong><span class="hint">Components</span></header>
-        <nav class="stack g-1" aria-label="Component sections">
-          <a href="#typography">Typography</a><a href="#accordion">Accordion</a><a href="#alert">Alert</a><a href="#avatar">Avatar</a><a href="#badge">Badge</a><a href="#breadcrumb">Breadcrumb</a><a href="#button">Button</a><a href="#card">Card</a><a href="#dialog">Dialog</a><a href="#dropdown">Dropdown</a><a href="#taginput">TagInput</a><a href="#form">Form elements</a><a href="#upload">Upload</a><a href="#meter">Meter</a><a href="#pagination">Pagination</a><a href="#progress">Progress</a><a href="#spinner">Spinner</a><a href="#skeleton">Skeleton</a><a href="#sidebar">Sidebar</a><a href="#switch">Switch</a><a href="#table">Table</a><a href="#tabs">Tabs</a><a href="#tooltip">Tooltip</a><a href="#toast">Toast</a><a href="#grid">Grid</a><a href="#utilities">Utils and helpers</a>
-        </nav>
-      </aside>
-      <main class="stack g-7">
+    <main class="stack g-7">
         <header class="stack g-3">
           <h1>Components</h1>
           <p>ui.css is a token-driven HTML and CSS component library. It has no framework dependency and its core output is generated CSS.</p>
@@ -74,14 +67,14 @@
         </section>
         <section id="alert" class="stack g-3">
           <h2># Alert</h2>
-          <p>Use <code>role="alert"</code> with ui.css semantic variant classes for success, warning, or error. Add <code>.ghost</code> for an outline-only style.</p>
+          <p>Use <code>class="alert"</code> with <code>role="alert"</code> and ui.css semantic variant classes for success, warning, or error. Add <code>.ghost</code> for an outline-only style.</p>
           <div class="card stack g-2">
-            <div role="alert" class="success"><strong>Success!</strong> Your changes have been saved.</div>
-            <div role="alert" class="warning"><strong>Warning!</strong> Please review before continuing.</div>
-            <div role="alert"><strong>Info</strong> This is a default alert message.</div>
-            <div role="alert" class="danger"><strong>Error!</strong> Something went wrong.</div>
-            <div role="alert" class="ghost"><strong>Ghost</strong> An outline-only alert.</div>
-            <div role="alert" class="ghost danger"><strong>Ghost error</strong> An outline-only error.</div>
+            <div role="alert" class="alert success"><strong>Success!</strong> Your changes have been saved.</div>
+            <div role="alert" class="alert warning"><strong>Warning!</strong> Please review before continuing.</div>
+            <div role="alert" class="alert"><strong>Info</strong> This is a default alert message.</div>
+            <div role="alert" class="alert danger"><strong>Error!</strong> Something went wrong.</div>
+            <div role="alert" class="alert ghost"><strong>Ghost</strong> An outline-only alert.</div>
+            <div role="alert" class="alert ghost danger"><strong>Ghost error</strong> An outline-only error.</div>
           </div>
         </section>
         <section id="avatar" class="stack g-3">
@@ -210,7 +203,7 @@
           <div class="card stack g-3">
             <div>
               <button class="outline" popovertarget="dd-menu">Options <iconify-icon icon="lucide:chevron-down" width="16" height="16"></iconify-icon></button>
-              <menu popover id="dd-menu">
+              <menu class="popover" popover id="dd-menu">
                 <button role="menuitem"><iconify-icon icon="lucide:user" width="16" height="16"></iconify-icon> Profile</button>
                 <button role="menuitem"><iconify-icon icon="lucide:help-circle" width="16" height="16"></iconify-icon> Help</button>
                 <a role="menuitem" href="#dropdown"><iconify-icon icon="lucide:link" width="16" height="16"></iconify-icon> Link</a>
@@ -223,7 +216,7 @@
             <p>A popover can also show arbitrary content like a confirmation card.</p>
             <div>
               <button class="outline" popovertarget="dd-pop">Confirm</button>
-              <article class="card" popover id="dd-pop">
+              <article class="card popover" popover id="dd-pop">
                 <header class="stack g-1">
                   <h4>Are you sure?</h4>
                   <p class="hint">This action cannot be undone.</p>
@@ -286,37 +279,32 @@
         </section>
         <section id="meter" class="stack g-3">
           <h2># Meter</h2>
-          <p>Use <code>&lt;meter&gt;</code> for values within a known range. The browser colors bars based on low/high/optimum.</p>
+          <p>Use <code>&lt;meter&gt;</code> for values within a known range. It is neutral by default; add <code>.tinted</code> with a semantic color class for the value.</p>
           <div class="card stack g-3">
             <meter value="0.8" min="0" max="1" low="0.3" high="0.7" optimum="1">0.8</meter>
             <meter value="0.5" min="0" max="1" low="0.3" high="0.7" optimum="1">0.5</meter>
             <meter value="0.2" min="0" max="1" low="0.3" high="0.7" optimum="1">0.2</meter>
+            <meter value="0.8" min="0" max="1" class="tinted success">80%</meter>
+            <meter value="0.5" min="0" max="1" class="tinted">50%</meter>
+            <progress value="30" max="100" class="tinted warning">30%</progress>
+            <progress value="90" max="100" class="tinted danger">90%</progress>
           </div>
         </section>
         <section id="pagination" class="stack g-3">
           <h2># Pagination</h2>
-          <p>Pagination reuses connected buttons in a semantic navigation list.</p>
+          <p>Pagination uses selector-like connected controls. It is neutral by default; add a semantic color class when needed.</p>
           <div class="card">
             <nav aria-label="Pagination">
-              <ol class="buttons">
+              <ol class="buttons pagination">
                 <li><a class="button outline compact" href="#pagination">← Previous</a></li>
                 <li><a class="button outline compact" href="#pagination">1</a></li>
                 <li><a class="button outline compact" href="#pagination">2</a></li>
-                <li><a class="button primary compact" aria-current="page" href="#pagination">3</a></li>
+                <li><a class="button compact" aria-current="page" href="#pagination">3</a></li>
                 <li><a class="button outline compact" href="#pagination">4</a></li>
                 <li><a class="button outline compact" href="#pagination">5</a></li>
                 <li><a class="button outline compact" href="#pagination">Next →</a></li>
               </ol>
             </nav>
-          </div>
-        </section>
-        <section id="progress" class="stack g-3">
-          <h2># Progress</h2>
-          <p>Use the native <code>&lt;progress&gt;</code> element.</p>
-          <div class="card stack g-3">
-            <progress value="60" max="100">60%</progress>
-            <progress value="30" max="100">30%</progress>
-            <progress value="90" max="100">90%</progress>
           </div>
         </section>
         <section id="spinner" class="stack g-3">
@@ -354,28 +342,6 @@
             </div>
           </article>
         </section>
-        <section id="sidebar" class="stack g-3">
-          <h2># Sidebar</h2>
-          <ul>
-            <li>Use <code>.sidebar-layout</code> with <code>.sidebar</code> for the sidebar and <code>main</code> for content. The sidebar stays sticky while the main content scrolls.</li>
-            <li>Set <code>--sidebar-width</code> to adjust its width globally.</li>
-          </ul>
-          <div class="card" style="padding: 0; overflow: hidden">
-            <div class="sidebar-layout" style="height: 20rem">
-              <aside class="sidebar" style="position: static; height: auto; min-height: auto; overflow-y: auto; display: flex; flex-direction: column">
-                <nav class="stack g-1">
-                  <a href="#sidebar">Home</a>
-                  <a href="#sidebar">Users</a>
-                  <details><summary>Settings</summary><nav class="stack g-1"><a href="#sidebar">General</a><a href="#sidebar">Security</a><a href="#sidebar">Billing</a></nav></details>
-                </nav>
-                <button class="outline" style="margin-top: auto">Logout</button>
-              </aside>
-              <main style="padding: 1.5rem">
-                <p>Main content area. Scrolls with the page body.</p>
-              </main>
-            </div>
-          </div>
-        </section>
         <section id="switch" class="stack g-3">
           <h2># Switch</h2>
           <p>Add <code>role="switch"</code> to a checkbox for toggle switch styling.</p>
@@ -397,43 +363,11 @@
             <label class="row g-2"><input type="checkbox" role="switch" class="rounded" checked disabled /> Rounded on</label>
           </div>
         </section>
-        <section id="table" class="stack g-3">
-          <h2># Table</h2>
-          <p>Tables are styled by default. Wrap wide tables in <code>.table</code> for horizontal scrolling.</p>
-          <div class="card">
-            <div class="table">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Ada Lovelace</td>
-                    <td>ada@example.com</td>
-                    <td>Admin</td>
-                    <td><span class="badge tinted success">Active</span></td>
-                  </tr>
-                  <tr>
-                    <td>Grace Hopper</td>
-                    <td>grace@example.com</td>
-                    <td>Editor</td>
-                    <td><span class="badge tinted warning">Review</span></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-<section id="tabs" class="stack g-3">
+        <section id="tabs" class="stack g-3">
           <h2># Tabs</h2>
-          <p>Use tab roles and ui.css <code>.tab</code> styling. Selection behavior remains application-owned.</p>
+          <p>Use <code>.tabs .tab</code> for button-like tabs. Selection behavior remains application-owned.</p>
           <div class="card stack g-3">
-            <div role="tablist" class="bg-neutral rounded"><button class="tab ghost sh-1" role="tab" aria-selected="true">Account</button><button class="tab ghost" role="tab" aria-selected="false">Security</button><button class="tab ghost" role="tab" aria-selected="false">Notifications</button></div>
+            <div role="tablist" class="tabs bg bg-neutral rounded"><button class="tab ghost sh-1" role="tab" aria-selected="true">Account</button><button class="tab ghost" role="tab" aria-selected="false">Security</button><button class="tab ghost" role="tab" aria-selected="false">Notifications</button></div>
             <section role="tabpanel"><h3>Account settings</h3><p>Manage your account information here.</p></section>
           </div>
         </section>
@@ -461,7 +395,6 @@
           <p>Use layout, spacing, color, and typography utilities to compose primitives without custom CSS.</p>
           <div class="card row wrap g-2"><span class="p-2 bg bg-primary bg-to-paper bg-2b tx">Color</span><span class="p-2 bd bd-neutral rounded">Border</span><span class="p-2 sh-2">Depth</span></div>
         </section>
-      </main>
-    </div>
+    </main>
   </body>
 </html>

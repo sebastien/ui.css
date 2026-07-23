@@ -412,7 +412,6 @@ export default group(
 			border: { radius: "8px" },
 		},
 		progress: { height: "0.5rem" },
-		table: { padding: "0.7rem" },
 	}),
 );
 

@@ -13,7 +13,7 @@ The `text.js` module provides utilities for styling typography, headings, lists,
 
 ### Font Properties:
 
-- `.ltr`, `.lighter`, `.thin`: Weight 100.
+- `.ltr`, `.thinner`: Weight 100.
 - `.lt`, `.light`: Weight 200.
 - `.r`, `.regular`: Weight 400.
 - `.sb`, `.medium`: Weight 500.
@@ -22,7 +22,7 @@ The `text.js` module provides utilities for styling typography, headings, lists,
 - `.bst`, `.boldest`: Weight 800.
 - `.mono`, `.sans`, `.serif`, `.script`, `.display`: Font family selection.
 - `.italic`, `.em`: Italic style.
-- `.ul`, `.ol`, `.striked`: Underline, overline, and strikethrough.
+- `.u`, `.unl`, `.o`, `.ovl`, `.striked`: Underline, overline, and strikethrough.
 - `.tight`, `.tighter`, `.tightest`: Negative letter spacing.
 
 ### Font Sizing:
@@ -62,7 +62,7 @@ The `.t` class creates a prose-optimized container where child elements receive 
     </div>
 </article>
 
-<div class="row g-m items-center">
+<div class="row g-2 middle">
     <span class="fill ellipsis">This is a very long text that will be truncated...</span>
     <span class="nowrap b">Fixed Price</span>
 </div>
@@ -72,6 +72,6 @@ The `.t` class creates a prose-optimized container where child elements receive 
 
 ### The `text` module:
 
-- `text()`: Generates the typography and text utility classes.
+- The default export is a named module object consumed by the CSS renderer; it is not a runtime function.
 - `vars.font`: Internal configuration used for font families and baseline sizes.
 - `vars.font`: Scale and family configuration for text utilities.

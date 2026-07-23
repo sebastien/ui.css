@@ -58,8 +58,6 @@ export const controls = [
 	"label",
 	"fieldset",
 	"legend",
-	"progress",
-	"meter",
 	"output",
 	"details",
 	"summary",
@@ -70,8 +68,6 @@ export const inputs = [
 	"select",
 	"option",
 	"textarea",
-	"progress",
-	"meter",
 ];
 export const media = [
 	"img",

@@ -187,19 +187,27 @@ function field(selector, ...rest) {
 				"0.25em",
 			),
 			field_sizing: "content",
-			// Ink text; border tracks accent (neutral by default via color-base)
+			// Ink text; border and outline use the pure accent at an opacity.
 			color: vars.color.ink,
 			__control_border_base: vars.control.color.base,
-			__control_border_tint: vars.color.paper,
-			__control_border_blend: 0.55,
+			__control_border_tint: vars.control.color.base,
+			__control_border_blend: 1.0,
 			__control_border_opacity: 0.9,
-			border_color: control.border(0.55, 0.9, vars.color.paper),
+			__control_outline_color_base: vars.control.color.base,
+			__control_outline_color_tint: vars.control.color.base,
+			__control_outline_color_blend: 1.0,
+			border_color: control.border(1.0, 0.9, vars.control.color.base),
 			// Neutral surface: paper at 0.8 opacity
 			__control_background_base: vars.color.paper,
 			__control_background_tint: vars.color.paper,
 			__control_background_blend: 1.0,
 			__control_background_opacity: 0.8,
-			background_color: control.background(1.0, 0.8, vars.color.paper, vars.color.paper),
+			background_color: control.background(
+				1.0,
+				0.8,
+				vars.color.paper,
+				vars.color.paper,
+			),
 		}),
 		// Soft wash: pure accent at low opacity (no paper blend)
 		css.rule("&.tinted", {
@@ -212,9 +220,8 @@ function field(selector, ...rest) {
 		// Accent text (border already follows color-base)
 		css.rule("&.colored", {
 			color: control.color(1.0, 1.0, vars.color.ink),
-			__control_border_blend: 0.9,
 			__control_border_opacity: 1.0,
-			border_color: control.border(0.9, 1.0, vars.color.paper),
+			border_color: control.border(1.0, 1.0, vars.control.color.base),
 		}),
 		// Semantic colors set the accent (drives border; bg only with .tinted)
 		...colors.semantic.map((color) =>
@@ -238,21 +245,21 @@ function field(selector, ...rest) {
 		// Focus/hover: solid surface except .tinted (opacity is the wash)
 		css.rule(css.mods("&:not(.nofocus):not(.tinted)", "focus"), {
 			__control_background_opacity: 1.0,
-			__control_border_blend: 0.75,
+			__control_border_opacity: 1.0,
 		}),
 		css.rule(css.mods("&:not(.tinted)", "hover"), {
 			__control_background_opacity: 1.0,
-			__control_border_blend: 0.8,
+			__control_border_opacity: 0.95,
 		}),
 		css.rule(css.mods("&.tinted:not(.nofocus)", "focus"), {
-			__control_border_blend: 0.75,
+			__control_border_opacity: 1.0,
 		}),
 		css.rule(css.mods("&.tinted", "hover"), {
-			__control_border_blend: 0.8,
+			__control_border_opacity: 0.95,
 		}),
 		// Active: strongest border
 		css.rule(css.mods("&", "active"), {
-			__control_border_blend: 0.9,
+			__control_border_opacity: 1.0,
 		}),
 
 		// Disabled variant
@@ -333,9 +340,12 @@ function selectable(...rest) {
 				),
 			}),
 		),
-		// Hover state, typically a blent to paper
+		// Hover stays neutral even when the selectable has a semantic color.
 		css.rule(css.mods("&", "hover"), {
 			__control_color_opacity: 0.5,
+			__control_background_base: vars.color.neutral.background.or(
+				vars.color.neutral,
+			),
 			__control_background_opacity: 0.5,
 		}),
 		// Active state, typically a blend to ink
@@ -869,13 +879,112 @@ function range() {
 function select() {
 	return field(
 		["select", ".select"],
-		css.rule("&", {
+		css.rule("&:not([multiple]):not(.vertical)", {
 			appearance: "none",
 			cursor: "pointer",
 			padding_right: vars.select.icon.gap.or("2.2em"),
 			background_repeat: "no-repeat",
 			background_position: "right 0.75em center",
 			background_size: vars.select.icon.size.or("0.65em 0.45em"),
+		}),
+		// Multi-selects remain native listboxes so their keyboard and assistive
+		// technology behavior is preserved. .vertical makes that intent explicit.
+		css.rule("&[multiple], &.vertical", {
+			appearance: "auto",
+			cursor: "pointer",
+			display: "inline-flex",
+			width: "100%",
+			align_items: "stretch",
+			padding: "0em",
+			border_width: "0px",
+			text_align: "left",
+			background_color: "transparent",
+			scrollbar_width: "none",
+		}),
+		css.rule("&[multiple]::-webkit-scrollbar, &.vertical::-webkit-scrollbar", {
+			display: "none",
+		}),
+		css.rule(
+			"&[multiple]:focus, &[multiple]:focus-within, &.vertical:focus, &.vertical:focus-within",
+			{
+				outline: "none !important",
+			},
+		),
+		css.nesting("&[multiple] > option, &.vertical > option", {
+			display: "block",
+			width: "100%",
+			box_sizing: "border-box",
+			font_family: "inherit",
+			font_size: "inherit",
+			line_height: "inherit",
+			font_weight: "inherit",
+			padding: "0.5em 1em",
+			color: vars.color.ink,
+			text_align: "left",
+			outline: "none !important",
+			box_shadow: "none !important",
+			border_radius: "0em",
+			// Pin border to medium neutral (not the semantic accent).
+			__control_border_base: vars.color.neutral,
+			__control_background_opacity: 0,
+			border_width: vars.control.border.width.or("1px"),
+			border_top_width: "0px",
+			border_color: control.border(0.55, 0.9, vars.color.paper),
+			background_color: control.background(1.0, 0.0, vars.color.paper),
+		}),
+		css.rule("&[multiple] > option:first-child, &.vertical > option:first-child", {
+			border_top_width: vars.control.border.width.or("1px"),
+			border_top_left_radius: vars.selector.border.radius.or("0.25em"),
+			border_top_right_radius: vars.selector.border.radius.or("0.25em"),
+		}),
+		css.rule("&[multiple] > option:last-child, &.vertical > option:last-child", {
+			border_bottom_left_radius: vars.selector.border.radius.or("0.25em"),
+			border_bottom_right_radius: vars.selector.border.radius.or("0.25em"),
+		}),
+		css.rule(
+			[
+				"&[multiple] > option:not(:checked):hover",
+				"&.vertical > option:not(:checked):hover",
+			],
+			{
+				__control_background_opacity: 0.45,
+			},
+		),
+		css.nesting("&[multiple] > option:checked, &.vertical > option:checked", {
+			// Solid accent fill — full opacity, no paper blend or hover wash.
+			__control_background_base: vars.control.color.base,
+			__control_background_tint: vars.control.color.base,
+			__control_background_blend: 1.0,
+			__control_background_opacity: 1.0,
+			__control_border_base: vars.control.color.base,
+			color: controlContrast(),
+			border_color: control.border(1.0, 1.0, vars.color.paper),
+			background_color: control.background(1.0, 1.0),
+			outline: "none !important",
+			box_shadow: "none !important",
+		}),
+		...colors.semantic.map((color) =>
+			css.rule(
+				css.mods(["&[multiple] > option", "&.vertical > option"], color),
+				{
+					__control_color_base: vars.color[color],
+				},
+			),
+		),
+		css.rule("&[multiple].colored > option, &.vertical.colored > option", {
+			color: control.color(1.0, 1.0, vars.color.ink),
+			__control_border_base: vars.control.color.base,
+			border_color: control.border(0.9, 1.0, vars.color.paper),
+		}),
+		css.rule("&[multiple].tinted > option, &.vertical.tinted > option", {
+			__control_background_base: vars.control.color.base,
+			__control_background_tint: vars.control.color.base,
+			__control_background_blend: 1.0,
+			__control_background_opacity: 0.15,
+			background_color: control.background(1.0, 0.15),
+		}),
+		css.rule("&[multiple] > option:checked, &.vertical > option:checked", {
+			color: controlContrast(),
 		}),
 		css.rule("&:disabled, &.disabled", {
 			cursor: "not-allowed",
@@ -886,17 +995,26 @@ function select() {
 function selector() {
 	// Selectors are like a `div` with `input + label`.
 	// Surface/tint come from field() (paper @ 0.8, .tinted = accent wash).
-	return field(
-		".selector",
-		css.rule("&", {
+	return css.group(
+		// Structural reset lives outside the nested field wrapper so shared
+		// field padding cannot win through nesting specificity.
+		css.rule(".selector", {
 			display: "inline-flex",
 			width: "fit-content",
 			align_items: "center",
 			padding: "0em",
+			border: "0",
 			border_width: "0px",
+			background: "transparent",
+			box_shadow: "none",
 			text_align: "center",
 			gap: "0em",
+			__control_gap: "0em",
+			__gap: "0em",
 		}),
+		field(
+			// Keep shared field styling lower specificity than selector-specific rules.
+			":where(.selector)",
 		css.nesting("& > input[type]", {
 			display: "none !important",
 			visibility: "hidden !important",
@@ -945,6 +1063,27 @@ function selector() {
 			border_top_left_radius: vars.selector.border.radius.or("0.25em"),
 			border_bottom_left_radius: vars.selector.border.radius.or("0.25em"),
 		}),
+		css.rule("&.horizontal", {
+			flex_direction: "row",
+		}),
+		css.rule("&.vertical", {
+			flex_direction: "column",
+			align_items: "stretch",
+		}),
+		css.rule("&.vertical > label", {
+			width: "100%",
+			border_left_width: vars.control.border.width.or("1px"),
+			border_top_width: "0px",
+		}),
+		css.rule("&.vertical > input:first-child + label", {
+			border_top_width: vars.control.border.width.or("1px"),
+			border_top_right_radius: vars.selector.border.radius.or("0.25em"),
+			border_bottom_left_radius: "0em",
+		}),
+		css.rule("&.vertical > label:last-child", {
+			border_top_right_radius: "0em",
+			border_bottom_left_radius: vars.selector.border.radius.or("0.25em"),
+		}),
 		css.nesting("& > input:checked + label", {
 			// Solid accent fill — full opacity, no paper blend, no hover wash
 			__control_background_base: vars.control.color.base,
@@ -956,21 +1095,51 @@ function selector() {
 			border_color: control.border(1.0, 1.0, vars.color.paper),
 			background_color: control.background(1.0, 1.0),
 		}),
+		// Item colors are scoped to the rendered label. Checked and tinted
+		// declarations above consume the local accent through CSS variables.
+		...colors.semantic.map((color) =>
+			css.rule(css.mods("& > label", color), {
+				__control_color_base: vars.color[color],
+			}),
+		),
+		css.rule("&.tinted > label", {
+			__control_background_base: vars.control.color.base,
+			__control_background_tint: vars.control.color.base,
+			__control_background_blend: 1.0,
+			__control_background_opacity: 0.15,
+			background_color: control.background(1.0, 0.15),
+		}),
+		css.rule("&.tinted", {
+			padding: "0em",
+			background: "transparent",
+		}),
+		css.rule("& > label:active, & > label.active", {
+			__control_background_opacity: 0.2,
+			background_color: control.background(0.9, 0.2, vars.color.paper),
+		}),
 		css.rule("&.compact > label", {
 			padding: "0.35em 0.5em",
 		}),
 		css.rule("&.stretch", {
 			width: "100%",
 		}),
-		css.rule("&.stretch > label", {
+		css.rule("&.stretch:not(.vertical) > label", {
 			flex: "1",
 		}),
+		),
 	);
 }
 
 function tab() {
 	return css.group(
-		css.rule([".tab"], {
+		css.rule(".tabs", {
+			display: "inline-flex",
+			gap: "0.15rem",
+			padding: "0.35rem",
+			border_radius: "0.375rem",
+			background_color: `color-mix(in oklch, ${vars.color.paper}, transparent 35%)`,
+		}),
+		css.rule(".tabs .tab", {
 			cursor: "pointer",
 			border: "0",
 			border_radius: "0.25rem",
@@ -982,32 +1151,34 @@ function tab() {
 			outline: "0",
 			appearance: "none",
 		}),
-		css.rule(["[role=tablist]"], {
-			display: "inline-flex",
-			gap: "0.15rem",
-			padding: "0.25rem",
-			border_radius: "0.375rem",
-		}),
-		css.rule([".tab:hover"], {
+		css.rule(".tabs .tab:hover", {
 			background_color: `color-mix(in oklch, ${vars.color.paper}, transparent 60%)`,
 		}),
-		css.rule([".tab[aria-selected=true]", ".tab.active"], {
-			background_color: vars.color.paper,
+		css.rule(".tabs .tab[aria-selected=true], .tabs .tab.active", {
+			background_color: "var(--tab-color, var(--color-paper))",
+			color: "contrast-color(var(--tab-color, var(--color-paper)))",
 			box_shadow: `var(--shadow-x) var(--shadow-y) var(--shadow-spread) var(--shadow-color)`,
 		}),
-		css.rule([".tab:disabled, .tab.disabled"], {
+		...colors.semantic.map((name) =>
+			css.rule(`.tabs .tab.${name}`, { __tab_color: vars.color[name] }),
+		),
+		css.rule(".tabs .tab:focus-visible, .tabs .tab.focus", {
+			outline: `2px solid ${vars.color.focus.or(vars.color.neutral)}`,
+			outline_offset: "-2px",
+		}),
+		css.rule(".tabs .tab:disabled, .tabs .tab.disabled", {
 			opacity: 0.5,
 			pointer_events: "none",
 		}),
-		css.rule([".tab.ghost"], {
+		css.rule(".tabs .tab.ghost", {
 			background_color: "transparent",
 			border: "0",
 		}),
-		css.rule([".tab.ghost:hover"], {
+		css.rule(".tabs .tab.ghost:hover", {
 			background_color: `color-mix(in oklch, ${vars.color.paper}, transparent 60%)`,
 		}),
-		css.rule([".tab.ghost[aria-selected=true]", ".tab.ghost.active"], {
-			background_color: vars.color.paper,
+		css.rule(".tabs .tab.ghost[aria-selected=true], .tabs .tab.ghost.active", {
+			background_color: "var(--tab-color, var(--color-paper))",
 		}),
 	);
 }
@@ -1028,7 +1199,7 @@ export default css.named({
 		".textarea",
 		"select",
 		".select",
-		".selector",
+		".group > :not(input, textarea, select, button, .input, .textarea, .select, .button)",
 	]),
 	checkbox: checkbox(),
 	radio: radio(),

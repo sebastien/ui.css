@@ -112,15 +112,15 @@ Side-specific helpers are available for borders:
 
 Opacity helpers:
 
-- `.{bg,tx,bd,ol}-{0..10}o`
+- `.{bg,tx,bd,ol}-{0..9}o`, plus unnumbered `.{bg,tx,bd,ol}o`
 - `0` means fully transparent
-- `10` means fully opaque
+- `9` means 90% opaque; the unnumbered form is fully opaque
 
 Blend helpers:
 
-- `.{bg,tx,bd,ol}-{0..10}b`
+- `.{bg,tx,bd,ol}-{0..9}b`, plus unnumbered `.{bg,tx,bd,ol}b`
 - `0` means 100% tint
-- `10` means 100% base
+- `9` means 90% base; the unnumbered form is 100% base
 
 Tint helpers:
 

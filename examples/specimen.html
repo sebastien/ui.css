@@ -393,72 +393,69 @@ const result = "fast, consistent styling"</code></pre>
               <a class="button outline" href="#buttons-demo">Outline link</a>
             </div>
           </div>
-          <div class="stack g-3">
-            <p class="b m-0">Button group</p>
-            <menu class="buttons">
-              <li><button>Left</button></li>
-              <li><button>Center</button></li>
-              <li><button>Right</button></li>
-            </menu>
-          </div>
+           <div class="stack g-3">
+             <p class="b m-0">Button group</p>
+             <menu class="buttons">
+               <li><button>Left</button></li>
+               <li><button>Center</button></li>
+               <li><button>Right</button></li>
+             </menu>
+             <p class="b m-0">Outline button group</p>
+             <menu class="buttons outline">
+               <li><button class="outline">Left</button></li>
+               <li><button class="outline">Center</button></li>
+               <li><button class="outline">Right</button></li>
+             </menu>
+           </div>
         </div>
       </section>
       <section id="tabs-demo" class="panel stack g-4 p-6 bd bd-4o ">
         <h2 class="h3 m-0">Tabs</h2>
         <div class="stack g-5">
           <div class="stack g-3">
-            <p class="b m-0">Adjacent tabs</p>
-            <div class="stack g-0">
-              <div class="row wrap g-0 end">
-                <button class="tab active">Overview</button>
-                <button class="tab">Activity</button>
-                <button class="tab">History</button>
-                <button class="tab" disabled>Archive</button>
-              </div>
-              <div class="panel p-4 bd bd-4o rounder">
-                <p class="m-0 limit-text">Selected tabs drop their bottom edge and sit in front of the panel to create the classic desktop tab seam.</p>
-              </div>
-            </div>
-          </div>
-          <div class="stack g-3">
-            <p class="b m-0">State helpers</p>
-            <div class="row wrap g-3 end">
-              <button class="tab">Normal</button>
-              <button class="tab hover">Hover</button>
-              <button class="tab focus">Focus</button>
-              <button class="tab active">Active</button>
-              <button class="tab" disabled>Disabled</button>
-            </div>
-          </div>
-          <div class="stack g-3">
             <p class="b m-0">Color accents</p>
-            <div class="stack g-0">
-              <div class="row wrap g-0 end">
-                <button class="tab active">Neutral</button>
-                <button class="tab accent">Accent</button>
-                <button class="tab primary">Primary</button>
-                <button class="tab secondary">Secondary</button>
-                <button class="tab tertiary">Tertiary</button>
-                <button class="tab success">Success</button>
-                <button class="tab warning">Warning</button>
-                <button class="tab danger">Danger</button>
+            <div class="row wrap g-3">
+              <div class="tabs">
+                <button class="tab neutral active" role="tab" aria-selected="true">Overview</button>
+                <button class="tab neutral" role="tab" aria-selected="false">Activity</button>
+                <button class="tab neutral" role="tab" aria-selected="false">Settings</button>
               </div>
-              <div class="panel p-4 bd bd-4o rounder">
-                <p class="m-0 limit-text">Semantic tab colors only tint the 2px top border, keeping the body on the current surface color.</p>
+              <div class="tabs">
+                <button class="tab accent active" role="tab" aria-selected="true">Overview</button>
+                <button class="tab accent" role="tab" aria-selected="false">Activity</button>
+                <button class="tab accent" role="tab" aria-selected="false">Settings</button>
+              </div>
+              <div class="tabs">
+                <button class="tab primary active" role="tab" aria-selected="true">Overview</button>
+                <button class="tab primary" role="tab" aria-selected="false">Activity</button>
+                <button class="tab primary" role="tab" aria-selected="false">Settings</button>
+              </div>
+              <div class="tabs">
+                <button class="tab secondary active" role="tab" aria-selected="true">Overview</button>
+                <button class="tab secondary" role="tab" aria-selected="false">Activity</button>
+                <button class="tab secondary" role="tab" aria-selected="false">Settings</button>
+              </div>
+              <div class="tabs">
+                <button class="tab tertiary active" role="tab" aria-selected="true">Overview</button>
+                <button class="tab tertiary" role="tab" aria-selected="false">Activity</button>
+                <button class="tab tertiary" role="tab" aria-selected="false">Settings</button>
+              </div>
+              <div class="tabs">
+                <button class="tab success active" role="tab" aria-selected="true">Overview</button>
+                <button class="tab success" role="tab" aria-selected="false">Activity</button>
+                <button class="tab success" role="tab" aria-selected="false">Settings</button>
+              </div>
+              <div class="tabs">
+                <button class="tab warning active" role="tab" aria-selected="true">Overview</button>
+                <button class="tab warning" role="tab" aria-selected="false">Activity</button>
+                <button class="tab warning" role="tab" aria-selected="false">Settings</button>
+              </div>
+              <div class="tabs">
+                <button class="tab danger active" role="tab" aria-selected="true">Overview</button>
+                <button class="tab danger" role="tab" aria-selected="false">Activity</button>
+                <button class="tab danger" role="tab" aria-selected="false">Settings</button>
               </div>
             </div>
-          </div>
-          <div class="stack g-3">
-            <p class="b m-0">Role tablist</p>
-            <div role="tablist" class="bg-neutral rounded row g-1 p-1">
-              <button class="tab ghost sh-1" role="tab" aria-selected="true">Account</button>
-              <button class="tab ghost" role="tab" aria-selected="false">Security</button>
-              <button class="tab ghost" role="tab" aria-selected="false">Notifications</button>
-            </div>
-            <section role="tabpanel">
-              <h3 class="h4 m-0">Account settings</h3>
-              <p class="m-0">Manage your account information here.</p>
-            </section>
           </div>
         </div>
       </section>
@@ -487,12 +484,32 @@ const result = "fast, consistent styling"</code></pre>
                 <option>Unavailable</option>
               </select>
             </label>
+           <label class="stack g-1">
+             <span class="b">Outline</span>
+             <select class="regular outline fit-w" aria-label="Outline select">
+               <option>Low</option>
+               <option selected>Medium</option>
+               <option>High</option>
+             </select>
+           </label>
+          </div>
+          <div class="grid col-2 g-4">
             <label class="stack g-1">
-              <span class="b">Outline</span>
-              <select class="regular outline fit-w" aria-label="Outline select">
-                <option>Low</option>
-                <option selected>Medium</option>
-                <option>High</option>
+              <span class="b">Multiple</span>
+              <select class="regular fit-w" aria-label="Multiple select" multiple size="4">
+                <option selected>Reader</option>
+                <option>Writer</option>
+                <option selected>Editor</option>
+                <option>Admin</option>
+              </select>
+            </label>
+            <label class="stack g-1">
+              <span class="b">Vertical</span>
+              <select class="regular vertical fit-w" aria-label="Vertical select" size="4">
+                <option>Backlog</option>
+                <option selected>In progress</option>
+                <option>Review</option>
+                <option>Done</option>
               </select>
             </label>
           </div>
@@ -1049,12 +1066,12 @@ const result = "fast, consistent styling"</code></pre>
     <section id="alert-demo" class="panel stack g-4 p-6 bd bd-4o ">
       <h2 class="h3 m-0">Alert</h2>
       <div class="stack g-2">
-        <div role="alert" class="success"><strong>Success!</strong> Your changes have been saved.</div>
-        <div role="alert" class="warning"><strong>Warning!</strong> Please review before continuing.</div>
-        <div role="alert"><strong>Info</strong> This is a default alert message.</div>
-        <div role="alert" class="danger"><strong>Error!</strong> Something went wrong.</div>
-        <div role="alert" class="ghost"><strong>Ghost</strong> An outline-only alert.</div>
-        <div role="alert" class="ghost danger"><strong>Ghost error</strong> An outline-only error.</div>
+        <div role="alert" class="alert success"><strong>Success!</strong> Your changes have been saved.</div>
+        <div role="alert" class="alert warning"><strong>Warning!</strong> Please review before continuing.</div>
+        <div role="alert" class="alert"><strong>Info</strong> This is a default alert message.</div>
+        <div role="alert" class="alert danger"><strong>Error!</strong> Something went wrong.</div>
+        <div role="alert" class="alert ghost"><strong>Ghost</strong> An outline-only alert.</div>
+        <div role="alert" class="alert ghost danger"><strong>Ghost error</strong> An outline-only error.</div>
       </div>
     </section>
     <section id="avatar-demo" class="panel stack g-4 p-6 bd bd-4o ">
@@ -1147,7 +1164,7 @@ const result = "fast, consistent styling"</code></pre>
           <p class="b m-0">Menu</p>
           <div>
             <button class="outline" popovertarget="specimen-dd-menu">Options <iconify-icon icon="lucide:chevron-down" width="16" height="16"></iconify-icon></button>
-            <menu popover id="specimen-dd-menu">
+            <menu class="popover" popover id="specimen-dd-menu">
               <button role="menuitem"><iconify-icon icon="lucide:user" width="16" height="16"></iconify-icon> Profile</button>
               <button role="menuitem"><iconify-icon icon="lucide:help-circle" width="16" height="16"></iconify-icon> Help</button>
               <a role="menuitem" href="#dropdown-demo"><iconify-icon icon="lucide:link" width="16" height="16"></iconify-icon> Link</a>
@@ -1161,7 +1178,7 @@ const result = "fast, consistent styling"</code></pre>
           <p class="b m-0">Popover card</p>
           <div>
             <button class="outline" popovertarget="specimen-dd-pop">Confirm</button>
-            <article class="card" popover id="specimen-dd-pop">
+            <article class="card popover" popover id="specimen-dd-pop">
               <header class="stack g-1">
                 <h4 class="m-0">Are you sure?</h4>
                 <p class="hint m-0">This action cannot be undone.</p>
@@ -1193,30 +1210,28 @@ const result = "fast, consistent styling"</code></pre>
       <h2 class="h3 m-0">Upload</h2>
       <label class="card stack g-2 centered p-6" style="border-style: dashed"><strong>Attachments</strong><input type="file" multiple /><small class="hint">Drop files here or click to choose</small></label>
     </section>
-    <section id="meter-demo" class="panel stack g-4 p-6 bd bd-4o ">
-      <h2 class="h3 m-0">Meter</h2>
-      <div class="stack g-3">
-        <meter value="0.8" min="0" max="1" low="0.3" high="0.7" optimum="1">0.8</meter>
-        <meter value="0.5" min="0" max="1" low="0.3" high="0.7" optimum="1">0.5</meter>
-        <meter value="0.2" min="0" max="1" low="0.3" high="0.7" optimum="1">0.2</meter>
-      </div>
-    </section>
-    <section id="progress-demo" class="panel stack g-4 p-6 bd bd-4o ">
-      <h2 class="h3 m-0">Progress</h2>
-      <div class="stack g-3">
-        <progress value="60" max="100">60%</progress>
-        <progress value="30" max="100">30%</progress>
-        <progress value="90" max="100">90%</progress>
-      </div>
-    </section>
-    <section id="pagination-demo" class="panel stack g-4 p-6 bd bd-4o ">
-      <h2 class="h3 m-0">Pagination</h2>
-      <nav aria-label="Pagination">
-        <ol class="buttons">
-          <li><a class="button outline compact" href="#pagination-demo">← Previous</a></li>
-          <li><a class="button outline compact" href="#pagination-demo">1</a></li>
-          <li><a class="button outline compact" href="#pagination-demo">2</a></li>
-          <li><a class="button primary compact" aria-current="page" href="#pagination-demo">3</a></li>
+     <section id="meter-demo" class="panel stack g-4 p-6 bd bd-4o ">
+       <h2 class="h3 m-0">Meter</h2>
+       <div class="stack g-3">
+         <p class="b m-0">Default</p>
+         <meter value="0.8" min="0" max="1" low="0.3" high="0.7" optimum="1">0.8</meter>
+         <meter value="0.5" min="0" max="1" low="0.3" high="0.7" optimum="1">0.5</meter>
+         <meter value="0.2" min="0" max="1" low="0.3" high="0.7" optimum="1">0.2</meter>
+         <p class="b m-0">Tinted</p>
+         <meter value="0.8" min="0" max="1" low="0.3" high="0.7" optimum="1" class="tinted success">0.8</meter>
+         <meter value="0.5" min="0" max="1" low="0.3" high="0.7" optimum="1" class="tinted">0.5</meter>
+         <meter value="0.2" min="0" max="1" low="0.3" high="0.7" optimum="1" class="tinted danger">0.2</meter>
+         <progress value="60" max="100" class="tinted warning">60%</progress>
+       </div>
+     </section>
+     <section id="pagination-demo" class="panel stack g-4 p-6 bd bd-4o ">
+       <h2 class="h3 m-0">Pagination</h2>
+       <nav aria-label="Pagination">
+         <ol class="buttons pagination">
+           <li><a class="button outline compact" href="#pagination-demo">← Previous</a></li>
+           <li><a class="button outline compact" href="#pagination-demo">1</a></li>
+           <li><a class="button outline compact" href="#pagination-demo">2</a></li>
+           <li><a class="button compact" aria-current="page" href="#pagination-demo">3</a></li>
           <li><a class="button outline compact" href="#pagination-demo">4</a></li>
           <li><a class="button outline compact" href="#pagination-demo">5</a></li>
           <li><a class="button outline compact" href="#pagination-demo">Next →</a></li>
@@ -1264,53 +1279,6 @@ const result = "fast, consistent styling"</code></pre>
             </div>
           </article>
         </div>
-      </div>
-    </section>
-    <section id="sidebar-demo" class="panel stack g-4 p-6 bd bd-4o ">
-      <h2 class="h3 m-0">Sidebar</h2>
-      <div class="card" style="padding: 0; overflow: hidden">
-        <div class="sidebar-layout" style="height: 20rem">
-          <aside class="sidebar" style="position: static; height: auto; min-height: auto; overflow-y: auto; display: flex; flex-direction: column">
-            <nav class="stack g-1">
-              <a href="#sidebar-demo">Home</a>
-              <a href="#sidebar-demo">Users</a>
-              <details><summary>Settings</summary><nav class="stack g-1"><a href="#sidebar-demo">General</a><a href="#sidebar-demo">Security</a><a href="#sidebar-demo">Billing</a></nav></details>
-            </nav>
-            <button class="outline" style="margin-top: auto">Logout</button>
-          </aside>
-          <main style="padding: 1.5rem">
-            <p class="m-0">Main content area. Scrolls with the page body.</p>
-          </main>
-        </div>
-      </div>
-    </section>
-    <section id="table-demo" class="panel stack g-4 p-6 bd bd-4o ">
-      <h2 class="h3 m-0">Table</h2>
-      <div class="table">
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Ada Lovelace</td>
-              <td>ada@example.com</td>
-              <td>Admin</td>
-              <td><span class="badge tinted success">Active</span></td>
-            </tr>
-            <tr>
-              <td>Grace Hopper</td>
-              <td>grace@example.com</td>
-              <td>Editor</td>
-              <td><span class="badge tinted warning">Review</span></td>
-            </tr>
-          </tbody>
-        </table>
       </div>
     </section>
     <section id="tooltip-demo" class="panel stack g-4 p-6 bd bd-4o ">

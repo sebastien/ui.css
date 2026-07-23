@@ -20,11 +20,11 @@ outline setup) and derive their colors from the same token variables through
 
 - `button`, `.button`, `input[type="submit"]`, `input[type="button"]`, `input[type="reset"]`
 - `input`, `.input`, `textarea`, `.textarea` (excluding the button types above)
-- `select`, `.select`
+- `select`, `.select` (native listbox for `[multiple]`; pair `.vertical` with `size` for explicit single-select listboxes)
 - `input[type="checkbox"]`, `.checkbox`
 - `input[type="radio"]`, `.radio`
-- `input[type="range"]`, `.range`, `.slider`
-- `.selector` (container) + `.selector > .option` (items)
+- `input[type="range"]`, `.range`
+- `.selector` (container) with `input + label` items
 - `.panel`
 
 All controls can be sized using the sizing classes (`smaller`, `larger`, etc.)
@@ -34,10 +34,10 @@ as they use `em` units.
 
 - `hover`: `:hover` or `.hover`
 - `active`: `:active` or `.active`
-- `focus`: `:focus-visible` or `.focus`
+- `focus`: `:focus`, `:focus-within`, or `.focus` (component-specific selectors may vary)
 - `disabled`: `[disabled]` or `.disabled`
 - `checked`/`selected`: `:checked` or `.selected` (toggles and options)
-- `invalid`: `:invalid` or `.invalid` (field-like only)
+- `invalid`: `[aria-invalid=true]` and `.error` field markers (native `:invalid` is not globally styled as a state alias)
 
 ## Color Variables
 
@@ -77,8 +77,11 @@ Applied as classes on any control — sets `--control-color-base`:
 - `outline` — transparent background, visible border
 - `ghost` — transparent background, no border; subtle ink wash on hover
 - `blank` — no visual chrome, inherits text color, no state effects
+- `horizontal` / `vertical` — joined selector-item orientation; horizontal is the default
+
+Native `<select>` options remain browser-owned UI. Use a `.selector` with radio
+or checkbox inputs for selector-style horizontal or vertical choices.
 
 Button-specific:
 
 - `icon` — square aspect ratio, compact padding
-
