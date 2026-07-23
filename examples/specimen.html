@@ -311,11 +311,11 @@ const result = "fast, consistent styling"</code></pre>
           <div class="stack g-3">
             <p class="b m-0">Color variants × States</p>
             <div class="grid col-5 g-2">
-              <button>Neutral</button>
-              <button class="focus">Focus</button>
-              <button class="hover">Hover</button>
-              <button class="active">Active</button>
-              <button disabled>Disabled</button>
+              <button class="neutral">Neutral</button>
+              <button class="neutral focus">Focus</button>
+              <button class="neutral hover">Hover</button>
+              <button class="neutral active">Active</button>
+              <button class="neutral" disabled>Disabled</button>
               <button class="accent">Accent</button>
               <button class="accent focus">Focus</button>
               <button class="accent hover">Hover</button>
@@ -356,7 +356,8 @@ const result = "fast, consistent styling"</code></pre>
           <div class="stack g-3">
             <p class="b m-0">Outline color variants</p>
             <div class="row wrap g-3">
-              <button class="outline">Neutral outline</button>
+              <button class="outline">Ink outline</button>
+              <button class="outline neutral">Neutral outline</button>
               <button class="outline accent">Accent outline</button>
               <button class="outline primary">Primary outline</button>
               <button class="outline secondary">Secondary outline</button>
@@ -531,52 +532,183 @@ const result = "fast, consistent styling"</code></pre>
             <label for="selector-toggle-push">Push</label>
           </div>
         </div>
-        <div class="stack g-3">
+        <div class="stack g-4">
           <p class="b m-0">Color variants</p>
-          <div class="stack g-2">
-            <div class="selector regular" role="radiogroup" aria-label="Neutral selector">
-              <input type="radio" id="sel-neutral-a" name="sel-neutral" checked /><label for="sel-neutral-a">One</label>
-              <input type="radio" id="sel-neutral-b" name="sel-neutral" /><label for="sel-neutral-b">Two</label>
-              <input type="radio" id="sel-neutral-c" name="sel-neutral" /><label for="sel-neutral-c">Three</label>
+          <p class="m-0 dim">Default: only the selected option is colored. <code>.colored</code> tints every label; <code>.tinted</code> washes the track.</p>
+          <div class="grid col-3 g-2 items-end">
+            <span class="dim">default</span>
+            <span class="dim">.colored</span>
+            <span class="dim">.tinted</span>
+          </div>
+          <!-- neutral -->
+          <div class="stack g-1">
+            <span class="b">Neutral</span>
+            <div class="grid col-3 g-3 items-center">
+              <div class="selector regular" role="radiogroup" aria-label="Neutral selector">
+                <input type="radio" id="sel-neutral-a" name="sel-neutral" checked /><label for="sel-neutral-a">One</label>
+                <input type="radio" id="sel-neutral-b" name="sel-neutral" /><label for="sel-neutral-b">Two</label>
+                <input type="radio" id="sel-neutral-c" name="sel-neutral" /><label for="sel-neutral-c">Three</label>
+              </div>
+              <div class="selector regular colored" role="radiogroup" aria-label="Neutral colored selector">
+                <input type="radio" id="sel-neutral-c-a" name="sel-neutral-c" checked /><label for="sel-neutral-c-a">One</label>
+                <input type="radio" id="sel-neutral-c-b" name="sel-neutral-c" /><label for="sel-neutral-c-b">Two</label>
+                <input type="radio" id="sel-neutral-c-c" name="sel-neutral-c" /><label for="sel-neutral-c-c">Three</label>
+              </div>
+              <div class="selector regular neutral tinted" role="radiogroup" aria-label="Neutral tinted selector">
+                <input type="radio" id="sel-neutral-t-a" name="sel-neutral-t" checked /><label for="sel-neutral-t-a">One</label>
+                <input type="radio" id="sel-neutral-t-b" name="sel-neutral-t" /><label for="sel-neutral-t-b">Two</label>
+                <input type="radio" id="sel-neutral-t-c" name="sel-neutral-t" /><label for="sel-neutral-t-c">Three</label>
+              </div>
             </div>
-            <div class="selector regular accent" role="radiogroup" aria-label="Accent selector">
-              <input type="radio" id="sel-accent-a" name="sel-accent" checked /><label for="sel-accent-a">One</label>
-              <input type="radio" id="sel-accent-b" name="sel-accent" /><label for="sel-accent-b">Two</label>
-              <input type="radio" id="sel-accent-c" name="sel-accent" /><label for="sel-accent-c">Three</label>
+          </div>
+          <!-- accent -->
+          <div class="stack g-1">
+            <span class="b">Accent</span>
+            <div class="grid col-3 g-3 items-center">
+              <div class="selector regular accent" role="radiogroup" aria-label="Accent selector">
+                <input type="radio" id="sel-accent-a" name="sel-accent" checked /><label for="sel-accent-a">One</label>
+                <input type="radio" id="sel-accent-b" name="sel-accent" /><label for="sel-accent-b">Two</label>
+                <input type="radio" id="sel-accent-c" name="sel-accent" /><label for="sel-accent-c">Three</label>
+              </div>
+              <div class="selector regular accent colored" role="radiogroup" aria-label="Accent colored selector">
+                <input type="radio" id="sel-accent-c-a" name="sel-accent-c" checked /><label for="sel-accent-c-a">One</label>
+                <input type="radio" id="sel-accent-c-b" name="sel-accent-c" /><label for="sel-accent-c-b">Two</label>
+                <input type="radio" id="sel-accent-c-c" name="sel-accent-c" /><label for="sel-accent-c-c">Three</label>
+              </div>
+              <div class="selector regular accent tinted" role="radiogroup" aria-label="Accent tinted selector">
+                <input type="radio" id="sel-accent-t-a" name="sel-accent-t" checked /><label for="sel-accent-t-a">One</label>
+                <input type="radio" id="sel-accent-t-b" name="sel-accent-t" /><label for="sel-accent-t-b">Two</label>
+                <input type="radio" id="sel-accent-t-c" name="sel-accent-t" /><label for="sel-accent-t-c">Three</label>
+              </div>
             </div>
-            <div class="selector regular primary" role="radiogroup" aria-label="Primary selector">
-              <input type="radio" id="sel-primary-a" name="sel-primary" checked /><label for="sel-primary-a">One</label>
-              <input type="radio" id="sel-primary-b" name="sel-primary" /><label for="sel-primary-b">Two</label>
-              <input type="radio" id="sel-primary-c" name="sel-primary" /><label for="sel-primary-c">Three</label>
+          </div>
+          <!-- primary -->
+          <div class="stack g-1">
+            <span class="b">Primary</span>
+            <div class="grid col-3 g-3 items-center">
+              <div class="selector regular primary" role="radiogroup" aria-label="Primary selector">
+                <input type="radio" id="sel-primary-a" name="sel-primary" checked /><label for="sel-primary-a">One</label>
+                <input type="radio" id="sel-primary-b" name="sel-primary" /><label for="sel-primary-b">Two</label>
+                <input type="radio" id="sel-primary-c" name="sel-primary" /><label for="sel-primary-c">Three</label>
+              </div>
+              <div class="selector regular primary colored" role="radiogroup" aria-label="Primary colored selector">
+                <input type="radio" id="sel-primary-c-a" name="sel-primary-c" checked /><label for="sel-primary-c-a">One</label>
+                <input type="radio" id="sel-primary-c-b" name="sel-primary-c" /><label for="sel-primary-c-b">Two</label>
+                <input type="radio" id="sel-primary-c-c" name="sel-primary-c" /><label for="sel-primary-c-c">Three</label>
+              </div>
+              <div class="selector regular primary tinted" role="radiogroup" aria-label="Primary tinted selector">
+                <input type="radio" id="sel-primary-t-a" name="sel-primary-t" checked /><label for="sel-primary-t-a">One</label>
+                <input type="radio" id="sel-primary-t-b" name="sel-primary-t" /><label for="sel-primary-t-b">Two</label>
+                <input type="radio" id="sel-primary-t-c" name="sel-primary-t" /><label for="sel-primary-t-c">Three</label>
+              </div>
             </div>
-            <div class="selector regular secondary" role="radiogroup" aria-label="Secondary selector">
-              <input type="radio" id="sel-secondary-a" name="sel-secondary" checked /><label for="sel-secondary-a">One</label>
-              <input type="radio" id="sel-secondary-b" name="sel-secondary" /><label for="sel-secondary-b">Two</label>
-              <input type="radio" id="sel-secondary-c" name="sel-secondary" /><label for="sel-secondary-c">Three</label>
+          </div>
+          <!-- secondary -->
+          <div class="stack g-1">
+            <span class="b">Secondary</span>
+            <div class="grid col-3 g-3 items-center">
+              <div class="selector regular secondary" role="radiogroup" aria-label="Secondary selector">
+                <input type="radio" id="sel-secondary-a" name="sel-secondary" checked /><label for="sel-secondary-a">One</label>
+                <input type="radio" id="sel-secondary-b" name="sel-secondary" /><label for="sel-secondary-b">Two</label>
+                <input type="radio" id="sel-secondary-c" name="sel-secondary" /><label for="sel-secondary-c">Three</label>
+              </div>
+              <div class="selector regular secondary colored" role="radiogroup" aria-label="Secondary colored selector">
+                <input type="radio" id="sel-secondary-c-a" name="sel-secondary-c" checked /><label for="sel-secondary-c-a">One</label>
+                <input type="radio" id="sel-secondary-c-b" name="sel-secondary-c" /><label for="sel-secondary-c-b">Two</label>
+                <input type="radio" id="sel-secondary-c-c" name="sel-secondary-c" /><label for="sel-secondary-c-c">Three</label>
+              </div>
+              <div class="selector regular secondary tinted" role="radiogroup" aria-label="Secondary tinted selector">
+                <input type="radio" id="sel-secondary-t-a" name="sel-secondary-t" checked /><label for="sel-secondary-t-a">One</label>
+                <input type="radio" id="sel-secondary-t-b" name="sel-secondary-t" /><label for="sel-secondary-t-b">Two</label>
+                <input type="radio" id="sel-secondary-t-c" name="sel-secondary-t" /><label for="sel-secondary-t-c">Three</label>
+              </div>
             </div>
-            <div class="selector regular tertiary" role="radiogroup" aria-label="Tertiary selector">
-              <input type="radio" id="sel-tertiary-a" name="sel-tertiary" checked /><label for="sel-tertiary-a">One</label>
-              <input type="radio" id="sel-tertiary-b" name="sel-tertiary" /><label for="sel-tertiary-b">Two</label>
-              <input type="radio" id="sel-tertiary-c" name="sel-tertiary" /><label for="sel-tertiary-c">Three</label>
+          </div>
+          <!-- tertiary -->
+          <div class="stack g-1">
+            <span class="b">Tertiary</span>
+            <div class="grid col-3 g-3 items-center">
+              <div class="selector regular tertiary" role="radiogroup" aria-label="Tertiary selector">
+                <input type="radio" id="sel-tertiary-a" name="sel-tertiary" checked /><label for="sel-tertiary-a">One</label>
+                <input type="radio" id="sel-tertiary-b" name="sel-tertiary" /><label for="sel-tertiary-b">Two</label>
+                <input type="radio" id="sel-tertiary-c" name="sel-tertiary" /><label for="sel-tertiary-c">Three</label>
+              </div>
+              <div class="selector regular tertiary colored" role="radiogroup" aria-label="Tertiary colored selector">
+                <input type="radio" id="sel-tertiary-c-a" name="sel-tertiary-c" checked /><label for="sel-tertiary-c-a">One</label>
+                <input type="radio" id="sel-tertiary-c-b" name="sel-tertiary-c" /><label for="sel-tertiary-c-b">Two</label>
+                <input type="radio" id="sel-tertiary-c-c" name="sel-tertiary-c" /><label for="sel-tertiary-c-c">Three</label>
+              </div>
+              <div class="selector regular tertiary tinted" role="radiogroup" aria-label="Tertiary tinted selector">
+                <input type="radio" id="sel-tertiary-t-a" name="sel-tertiary-t" checked /><label for="sel-tertiary-t-a">One</label>
+                <input type="radio" id="sel-tertiary-t-b" name="sel-tertiary-t" /><label for="sel-tertiary-t-b">Two</label>
+                <input type="radio" id="sel-tertiary-t-c" name="sel-tertiary-t" /><label for="sel-tertiary-t-c">Three</label>
+              </div>
             </div>
-            <div class="selector regular success" role="radiogroup" aria-label="Success selector">
-              <input type="radio" id="sel-success-a" name="sel-success" checked /><label for="sel-success-a">One</label>
-              <input type="radio" id="sel-success-b" name="sel-success" /><label for="sel-success-b">Two</label>
-              <input type="radio" id="sel-success-c" name="sel-success" /><label for="sel-success-c">Three</label>
+          </div>
+          <!-- success -->
+          <div class="stack g-1">
+            <span class="b">Success</span>
+            <div class="grid col-3 g-3 items-center">
+              <div class="selector regular success" role="radiogroup" aria-label="Success selector">
+                <input type="radio" id="sel-success-a" name="sel-success" checked /><label for="sel-success-a">One</label>
+                <input type="radio" id="sel-success-b" name="sel-success" /><label for="sel-success-b">Two</label>
+                <input type="radio" id="sel-success-c" name="sel-success" /><label for="sel-success-c">Three</label>
+              </div>
+              <div class="selector regular success colored" role="radiogroup" aria-label="Success colored selector">
+                <input type="radio" id="sel-success-c-a" name="sel-success-c" checked /><label for="sel-success-c-a">One</label>
+                <input type="radio" id="sel-success-c-b" name="sel-success-c" /><label for="sel-success-c-b">Two</label>
+                <input type="radio" id="sel-success-c-c" name="sel-success-c" /><label for="sel-success-c-c">Three</label>
+              </div>
+              <div class="selector regular success tinted" role="radiogroup" aria-label="Success tinted selector">
+                <input type="radio" id="sel-success-t-a" name="sel-success-t" checked /><label for="sel-success-t-a">One</label>
+                <input type="radio" id="sel-success-t-b" name="sel-success-t" /><label for="sel-success-t-b">Two</label>
+                <input type="radio" id="sel-success-t-c" name="sel-success-t" /><label for="sel-success-t-c">Three</label>
+              </div>
             </div>
-            <div class="selector regular warning" role="radiogroup" aria-label="Warning selector">
-              <input type="radio" id="sel-warning-a" name="sel-warning" checked /><label for="sel-warning-a">One</label>
-              <input type="radio" id="sel-warning-b" name="sel-warning" /><label for="sel-warning-b">Two</label>
-              <input type="radio" id="sel-warning-c" name="sel-warning" /><label for="sel-warning-c">Three</label>
+          </div>
+          <!-- warning -->
+          <div class="stack g-1">
+            <span class="b">Warning</span>
+            <div class="grid col-3 g-3 items-center">
+              <div class="selector regular warning" role="radiogroup" aria-label="Warning selector">
+                <input type="radio" id="sel-warning-a" name="sel-warning" checked /><label for="sel-warning-a">One</label>
+                <input type="radio" id="sel-warning-b" name="sel-warning" /><label for="sel-warning-b">Two</label>
+                <input type="radio" id="sel-warning-c" name="sel-warning" /><label for="sel-warning-c">Three</label>
+              </div>
+              <div class="selector regular warning colored" role="radiogroup" aria-label="Warning colored selector">
+                <input type="radio" id="sel-warning-c-a" name="sel-warning-c" checked /><label for="sel-warning-c-a">One</label>
+                <input type="radio" id="sel-warning-c-b" name="sel-warning-c" /><label for="sel-warning-c-b">Two</label>
+                <input type="radio" id="sel-warning-c-c" name="sel-warning-c" /><label for="sel-warning-c-c">Three</label>
+              </div>
+              <div class="selector regular warning tinted" role="radiogroup" aria-label="Warning tinted selector">
+                <input type="radio" id="sel-warning-t-a" name="sel-warning-t" checked /><label for="sel-warning-t-a">One</label>
+                <input type="radio" id="sel-warning-t-b" name="sel-warning-t" /><label for="sel-warning-t-b">Two</label>
+                <input type="radio" id="sel-warning-t-c" name="sel-warning-t" /><label for="sel-warning-t-c">Three</label>
+              </div>
             </div>
-            <div class="selector regular danger" role="radiogroup" aria-label="Danger selector">
-              <input type="radio" id="sel-danger-a" name="sel-danger" checked /><label for="sel-danger-a">One</label>
-              <input type="radio" id="sel-danger-b" name="sel-danger" /><label for="sel-danger-b">Two</label>
-              <input type="radio" id="sel-danger-c" name="sel-danger" /><label for="sel-danger-c">Three</label>
+          </div>
+          <!-- danger -->
+          <div class="stack g-1">
+            <span class="b">Danger</span>
+            <div class="grid col-3 g-3 items-center">
+              <div class="selector regular danger" role="radiogroup" aria-label="Danger selector">
+                <input type="radio" id="sel-danger-a" name="sel-danger" checked /><label for="sel-danger-a">One</label>
+                <input type="radio" id="sel-danger-b" name="sel-danger" /><label for="sel-danger-b">Two</label>
+                <input type="radio" id="sel-danger-c" name="sel-danger" /><label for="sel-danger-c">Three</label>
+              </div>
+              <div class="selector regular danger colored" role="radiogroup" aria-label="Danger colored selector">
+                <input type="radio" id="sel-danger-c-a" name="sel-danger-c" checked /><label for="sel-danger-c-a">One</label>
+                <input type="radio" id="sel-danger-c-b" name="sel-danger-c" /><label for="sel-danger-c-b">Two</label>
+                <input type="radio" id="sel-danger-c-c" name="sel-danger-c" /><label for="sel-danger-c-c">Three</label>
+              </div>
+              <div class="selector regular danger tinted" role="radiogroup" aria-label="Danger tinted selector">
+                <input type="radio" id="sel-danger-t-a" name="sel-danger-t" checked /><label for="sel-danger-t-a">One</label>
+                <input type="radio" id="sel-danger-t-b" name="sel-danger-t" /><label for="sel-danger-t-b">Two</label>
+                <input type="radio" id="sel-danger-t-c" name="sel-danger-t" /><label for="sel-danger-t-c">Three</label>
+              </div>
             </div>
           </div>
         </div>
-      </div>
     </section>
     <section id="inputs-demo" class="panel stack g-4 p-6 bd bd-4o ">
       <h2 class="h3 m-0">Inputs</h2>
@@ -620,77 +752,67 @@ const result = "fast, consistent styling"</code></pre>
           </div>
         </div>
         <div class="stack g-3">
-          <p class="b m-0">Field - Color variants × States</p>
-          <div class="stack g-3">
-            <div class="stack g-1">
-              <span class="small b">Neutral</span>
-              <div class="grid col-5 g-2">
-                <input class="input regular fit-w" type="text" value="Normal" />
-                <input class="input regular focus fit-w" type="text" value="Focus" />
-                <input class="input regular hover fit-w" type="text" value="Hover" />
-                <input class="input regular active fit-w" type="text" value="Active" />
-                <input class="input regular fit-w" type="text" value="Disabled" disabled />
-              </div>
+          <p class="b m-0">Field - Color variants</p>
+          <p class="m-0 dim">Default: ink text + neutral border. <code>.colored</code> accents text/border; <code>.tinted</code> washes the background.</p>
+          <div class="grid col-3 g-2 items-end">
+            <span class="dim">default</span>
+            <span class="dim">.colored</span>
+            <span class="dim">.tinted</span>
+          </div>
+          <div class="stack g-2">
+            <span class="small b">Neutral</span>
+            <div class="grid col-3 g-3">
+              <input class="input regular fit-w" type="text" value="Default" />
+              <input class="input regular colored fit-w" type="text" value="Colored" />
+              <input class="input regular neutral tinted fit-w" type="text" value="Tinted" />
             </div>
-            <div class="stack g-1">
-              <span class="small b">Primary</span>
-              <div class="grid col-5 g-2">
-                <input class="input primary regular fit-w" type="text" value="Normal" />
-                <input class="input primary regular focus fit-w" type="text" value="Focus" />
-                <input class="input primary regular hover fit-w" type="text" value="Hover" />
-                <input class="input primary regular active fit-w" type="text" value="Active" />
-                <input class="input primary regular fit-w" type="text" value="Disabled" disabled />
-              </div>
+          </div>
+          <div class="stack g-2">
+            <span class="small b">Primary</span>
+            <div class="grid col-3 g-3">
+              <input class="input primary regular fit-w" type="text" value="Default" />
+              <input class="input primary regular colored fit-w" type="text" value="Colored" />
+              <input class="input primary regular tinted fit-w" type="text" value="Tinted" />
             </div>
-            <div class="stack g-1">
-              <span class="small b">Secondary</span>
-              <div class="grid col-5 g-2">
-                <input class="input secondary regular fit-w" type="text" value="Normal" />
-                <input class="input secondary regular focus fit-w" type="text" value="Focus" />
-                <input class="input secondary regular hover fit-w" type="text" value="Hover" />
-                <input class="input secondary regular active fit-w" type="text" value="Active" />
-                <input class="input secondary regular fit-w" type="text" value="Disabled" disabled />
-              </div>
+          </div>
+          <div class="stack g-2">
+            <span class="small b">Secondary</span>
+            <div class="grid col-3 g-3">
+              <input class="input secondary regular fit-w" type="text" value="Default" />
+              <input class="input secondary regular colored fit-w" type="text" value="Colored" />
+              <input class="input secondary regular tinted fit-w" type="text" value="Tinted" />
             </div>
-            <div class="stack g-1">
-              <span class="small b">Tertiary</span>
-              <div class="grid col-5 g-2">
-                <input class="input tertiary regular fit-w" type="text" value="Normal" />
-                <input class="input tertiary regular focus fit-w" type="text" value="Focus" />
-                <input class="input tertiary regular hover fit-w" type="text" value="Hover" />
-                <input class="input tertiary regular active fit-w" type="text" value="Active" />
-                <input class="input tertiary regular fit-w" type="text" value="Disabled" disabled />
-              </div>
+          </div>
+          <div class="stack g-2">
+            <span class="small b">Tertiary</span>
+            <div class="grid col-3 g-3">
+              <input class="input tertiary regular fit-w" type="text" value="Default" />
+              <input class="input tertiary regular colored fit-w" type="text" value="Colored" />
+              <input class="input tertiary regular tinted fit-w" type="text" value="Tinted" />
             </div>
-            <div class="stack g-1">
-              <span class="small b">Success</span>
-              <div class="grid col-5 g-2">
-                <input class="input success regular fit-w" type="text" value="Normal" />
-                <input class="input success regular focus fit-w" type="text" value="Focus" />
-                <input class="input success regular hover fit-w" type="text" value="Hover" />
-                <input class="input success regular active fit-w" type="text" value="Active" />
-                <input class="input success regular fit-w" type="text" value="Disabled" disabled />
-              </div>
+          </div>
+          <div class="stack g-2">
+            <span class="small b">Success</span>
+            <div class="grid col-3 g-3">
+              <input class="input success regular fit-w" type="text" value="Default" />
+              <input class="input success regular colored fit-w" type="text" value="Colored" />
+              <input class="input success regular tinted fit-w" type="text" value="Tinted" />
             </div>
-            <div class="stack g-1">
-              <span class="small b">Warning</span>
-              <div class="grid col-5 g-2">
-                <input class="input warning regular fit-w" type="text" value="Normal" />
-                <input class="input warning regular focus fit-w" type="text" value="Focus" />
-                <input class="input warning regular hover fit-w" type="text" value="Hover" />
-                <input class="input warning regular active fit-w" type="text" value="Active" />
-                <input class="input warning regular fit-w" type="text" value="Disabled" disabled />
-              </div>
+          </div>
+          <div class="stack g-2">
+            <span class="small b">Warning</span>
+            <div class="grid col-3 g-3">
+              <input class="input warning regular fit-w" type="text" value="Default" />
+              <input class="input warning regular colored fit-w" type="text" value="Colored" />
+              <input class="input warning regular tinted fit-w" type="text" value="Tinted" />
             </div>
-            <div class="stack g-1">
-              <span class="small b">Danger</span>
-              <div class="grid col-5 g-2">
-                <input class="input danger regular fit-w" type="text" value="Normal" />
-                <input class="input danger regular focus fit-w" type="text" value="Focus" />
-                <input class="input danger regular hover fit-w" type="text" value="Hover" />
-                <input class="input danger regular active fit-w" type="text" value="Active" />
-                <input class="input danger regular fit-w" type="text" value="Disabled" disabled />
-              </div>
+          </div>
+          <div class="stack g-2">
+            <span class="small b">Danger</span>
+            <div class="grid col-3 g-3">
+              <input class="input danger regular fit-w" type="text" value="Default" />
+              <input class="input danger regular colored fit-w" type="text" value="Colored" />
+              <input class="input danger regular tinted fit-w" type="text" value="Tinted" />
             </div>
           </div>
         </div>

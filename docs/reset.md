@@ -20,7 +20,7 @@ The `reset.js` module establishes a consistent cross-browser baseline. It remove
 - `html`, `body`: Applied baseline typography and scroll behavior.
 - `h1-h7`: Unsets font sizes and margins; applies the heading font family.
 - `input`, `select`, `textarea`, `button`: Normalizes appearance (`appearance: none`), display mode (`inline-flex`), and typography using control-specific tokens.
-- `a`: Inherits color and removes text decoration.
+- `a`: Unstyled — inherits color, no decoration, no hover/visited effects; `a[href]` gets `cursor: pointer`.
 - `summary`: Hides the default disclosure marker.
 
 ### Differences with standard CSS resets:

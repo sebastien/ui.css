@@ -26,17 +26,33 @@ describe("controls color model", () => {
 		);
 	});
 
-	test("action pins background-base to the accent", () => {
-		// action base, checkbox checked + indeterminate, radio checked,
-		// toggle checked, selector checked label.
+	test("checked and tinted pins background-base to the accent", () => {
+		// checkbox checked + indeterminate, radio checked, toggle checked,
+		// selector checked label (5), plus .tinted on each field() emission
+		// (fields group, checkbox, radio, toggle, range, select, selector = 7)
+		// → 12. Default actions use --color-neutral-background instead.
 		// Tab no longer uses action() — it has its own standalone style.
-		expect(count(ACCENT_PIN)).toBe(6);
+		expect(count(ACCENT_PIN)).toBe(12);
 	});
 
-	test("field surface is mode-aware via --color-page", () => {
+	test("default action fill uses light neutral background", () => {
 		expect(output).toContain(
-			"--control-background-base: var(--color-page, var(--color-paper))",
+			"--control-background-base: var(--color-neutral-background, var(--color-neutral))",
 		);
+	});
+
+	test("field surface is neutral paper at 0.8 opacity", () => {
+		expect(output).toContain("--control-background-base: var(--color-paper)");
+		expect(output).toContain("--control-background-opacity: 0.8");
+	});
+
+	test("field .tinted washes the main accent via opacity only", () => {
+		expect(output).toContain("&.tinted");
+		expect(output).toContain(
+			"--control-background-base: var(--control-color-base)",
+		);
+		expect(output).toContain("--control-background-blend: 1");
+		expect(output).toContain("--control-background-opacity: 0.15");
 	});
 
 	test("backgrounds are painted from the background channel only", () => {

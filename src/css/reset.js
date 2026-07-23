@@ -58,6 +58,13 @@ export default layer(
 		padding: "unset",
 		font_size: "unset",
 	}),
+	rule(["a", "a:link", "a:visited", "a:hover", "a:active", "a:focus"], {
+		color: "inherit",
+		text_decoration: "none",
+	}),
+	rule("a[href]", {
+		cursor: "pointer",
+	}),
 	rule("summary::-webkit-details-marker", {
 		display: "none",
 	}),

@@ -10,18 +10,17 @@ import {
 
 export default named({
 	headings: group(
-		...times(6, (i) =>
-			rule(`h${i + 1}`, {
-				font_size: `${vars.heading.size[6 - i]}`,
-				line_height: "1.25",
-				font_weight: "600",
-			}),
-		),
 		...sizes.map((k, si) =>
-			rule([times(7, (hi) => `h${hi + 1}.sz-${si}`)], {
-				font_size: `${vars.heading.size[si]}`,
-				line_height: vars.heading.line,
-			}),
+			rule(
+				[
+					...times(7, (hi) => `h${hi + 1}.sz-${si}.t`),
+					...times(7, (hi) => `.t h${hi + 1}.sz-${si}`),
+				],
+				{
+					font_size: `${vars.heading.size[si]}`,
+					line_height: vars.heading.line,
+				},
+			),
 		),
 		// .hX rules do not have padding
 		...times(7, (i) =>
@@ -31,7 +30,7 @@ export default named({
 				font_weight: "600",
 			}),
 		),
-		// hX.t have padding/margin
+		// hX.t / .t hX have padding/margin
 		...times(7, (i) =>
 			rule([`h${i + 1}.t`, `.t h${i + 1}`], {
 				font_size: `${vars.heading.size[6 - i]}`,
@@ -44,10 +43,13 @@ export default named({
 		),
 	),
 	paragraphs: group(
-		rule("p", { line_height: `${vars.text.line.height}` }),
-		rule("a", { color: vars.color.primary, text_decoration: "none" }),
-		rule(".link", { text_decoration: "underline" }),
-		rule(".link:hover", { text_decoration_thickness: "2px" }),
+		rule("a.link", {
+			color: vars.color.primary,
+			text_decoration: "underline",
+		}),
+		rule("a.link:hover", {
+			text_decoration_thickness: "2px",
+		}),
 		rule(["p.t", ".t p"], {
 			margin_top: `${vars.text.stack}`,
 			margin_bottom: `${vars.text.stack}`,
@@ -61,30 +63,24 @@ export default named({
 		}),
 	),
 	inline: group(
-		rule(["strong", "b"], {
-			font_weight: "600",
-		}),
-		rule(["em", "i"], {
+		rule([".t em", "em.t", ".t i", "i.t"], {
 			font_style: "italic",
 		}),
-		rule(["code"], {
+		rule([".t s", "s.t"], {
+			text_decoration: "line-through",
+		}),
+		rule([".t strong", "strong.t", ".t b", "b.t"], {
+			font_weight: "bold",
+		}),
+		rule([".t code", "code.t"], {
 			font_family: vars.font.code.family,
 			font_size: "0.875em",
 			padding: "0.1em 0.3em",
 			background_color: vars.text.code.background,
 			border_radius: vars.text.code.radius,
 		}),
-		rule(["small"], {
+		rule([".t small", "small.t"], {
 			font_size: "0.75em",
-		}),
-		rule([".t em", "em.t"], {
-			font_style: "italic",
-		}),
-		rule([".t s", "s.t"], {
-			text_decoration: "line-through",
-		}),
-		rule([".t strong", "strong.t"], {
-			font_weight: "bold",
 		}),
 		rule([".t a", "a.t"], {
 			color: "inherit",
@@ -106,11 +102,6 @@ export default named({
 		}),
 	),
 	blockquote: group(
-		rule("blockquote", {
-			border_left: `${vars.text.blockquote.border.width} solid ${vars.color.primary}`,
-			padding_left: `${vars.text.blockquote.pad.horizontal}`,
-			color: `color-mix(in oklch, ${vars.color.ink}, ${vars.color.paper} 28%)`,
-		}),
 		rule([".t blockquote", "blockquote.t"], {
 			border_left: `${vars.text.blockquote.border.width} solid`,
 			border_color: "currentColor",
@@ -125,24 +116,6 @@ export default named({
 		}),
 	),
 	code: group(
-		rule("pre", {
-			font_family: vars.font.code.family,
-			background: `${vars.text.code.background}`,
-			border_radius: `${vars.text.code.radius}`,
-			padding: `${vars.text.code.pad.vertical} ${vars.text.code.pad.horizontal}`,
-			overflow_x: "auto",
-			contain: "paint",
-		}),
-		rule("pre code", {
-			display: "block",
-			max_width: "100%",
-			white_space: "pre-wrap",
-			overflow_wrap: "anywhere",
-			background: "transparent",
-			padding: "0",
-			font_size: "1em",
-			border_radius: "0",
-		}),
 		rule([".t pre", "pre.t"], {
 			font_family: vars.font.code.family,
 			background: `${vars.text.code.background}`,
@@ -152,10 +125,17 @@ export default named({
 			padding: `${vars.text.code.pad.vertical} ${vars.text.code.pad.horizontal}`,
 			overflow_x: "auto",
 			white_space: "pre",
+			contain: "paint",
 		}),
 		rule([".t pre code", "pre.t code"], {
+			display: "block",
+			max_width: "100%",
+			white_space: "pre-wrap",
+			overflow_wrap: "anywhere",
 			background: "transparent",
 			padding: "0",
+			font_size: "1em",
+			border_radius: "0",
 		}),
 	),
 	lists: group(
@@ -324,7 +304,7 @@ export default named({
 		rule([".bst", ".boldest", ".bbb"], { font_weight: "800" }),
 		rule(".lh", { line_height: vars.line.height.or("1.25em") }),
 		rule(".lh-0", { line_height: "0em" }),
-		rule(".lh-100", { line_height: "1em" }),
+		rule([".lh-1", ".lh-100"], { line_height: "1em" }),
 		rule(".lh-125", { line_height: "1.25em" }),
 		rule(".lh-150", { line_height: "1.5em" }),
 		rule(".lh-175", { line_height: "1.75em" }),
@@ -355,10 +335,11 @@ export default named({
 			group(
 				rule(`.t-${k}`, {
 					font_size: `calc(1rem * ${vars.textsize.size[i]})`,
+					line_height: vars.line.height.or("1.25em"),
 				}),
 				rule(`.${k}`, {
 					font_size: `calc(1em * ${vars.textsize.size[i]})`,
-					line_height: vars.font.line.or("1.25em"),
+					line_height: vars.line.height.or("1.25em"),
 				}),
 			),
 		),

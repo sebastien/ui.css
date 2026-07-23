@@ -16,12 +16,15 @@ The `controls.js` module provides comprehensive styling for interactive elements
 
 ### Style Variants:
 
-- `.primary`, `.secondary`, `.success`, `.warning`, `.danger`: Semantic color variants.
+- `.neutral`, `.primary`, `.secondary`, `.success`, `.warning`, `.danger`: Semantic color variants. `.neutral` is explicit on filled buttons (light surface) and on `.outline` / `.ghost` (medium chrome); bare `.outline` / `.ghost` default to ink.
 - `.outline`: Transparent background with a visible border of the current color.
 - `.ghost`: Fully transparent background and border; only shows state on interaction.
 - `.blank`: No visual chrome at all (no background, border, outline, or padding).
 - `.icon`: 1:1 aspect ratio button with minimal padding.
 - `.default`: Emphasized button style with a visible outline.
+- `.tinted` (fields / `.selector`): Pure accent at low opacity (no paper blend); hover/focus do not force full opacity.
+- Fields: semantic color always drives the border; text stays ink unless `.colored`.
+- `.colored` (fields / `.selector`): Accent text (and stronger border on fields). On `.selector`, unselected labels also get accent text/border; only the checked option is accent-filled by default.
 
 ### Component States:
 
@@ -47,13 +50,14 @@ each driven by four variables: `base`, `tint`, `blend`, `opacity`.
   (e.g. `input, textarea, select { --control-background-base: … }`), never on
   containers — a container-level value would be inherited by every descendant
   control and silently override their variant colors.
-- Actions (buttons, checked checkboxes/radios/toggles, selected options) pin
-  `--control-background-base: var(--control-color-base)` so their fill tracks
-  the accent; fields pin it to `var(--color-page, var(--color-paper))` so they
-  follow the page surface in light and dark mode.
-- Field variants additionally look up `--color-{semantic}-background`
-  (e.g. `--color-primary-background`): an optional, theme-definable "surface
-  variant" of each semantic color, falling back to the semantic color itself.
+- Actions (buttons) fill from `--color-{semantic}-background` when set, else
+  the solid semantic color. Default/neutral buttons use the light
+  `--color-neutral-background` surface; medium `--color-neutral` stays for
+  borders and chrome. Checked controls still pin fill to the accent.
+- Fields default to neutral paper at 0.8 opacity.
+- Field/selector `.tinted` applies a soft wash of the main accent
+  (`--control-color-base`, primary unless a semantic class is set). Semantic
+  classes alone only set the accent (border/focus); they do not recolor the fill.
 
 ### Difference with utility-only frameworks:
 

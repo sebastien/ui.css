@@ -17,6 +17,7 @@ body[data-theme="material"] {
 	--color-secondary: #ff4081;
 	--color-tertiary: #009688;
 	--color-neutral: #607d8b;
+	--color-neutral-background: #cfd8dc;
 	--color-accent: #ff4081;
 	--color-success: #4caf50;
 	--color-info: #2196f3;

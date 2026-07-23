@@ -87,9 +87,12 @@ export default group(
 			black: "#000000",
 			hi: "#FFFF00A0",
 			// Semantics from the prior default scheme
-			neutral: "var(--color-gray-500, #a5a7ab)",
-			primary: "#1400ff",
-			secondary: "#469485",
+			// Medium neutral: borders, accents, chrome
+			neutral: "var(--color-gray-500, #d5d5d5)",
+			// Light neutral: filled surfaces (default buttons, chips, …)
+			neutral_background: "var(--color-gray-200, #e5e7eb)",
+			primary: "#0c31bf",
+			secondary: "#23d9d9;",
 			tertiary: "var(--color-teal-500, #14b8a6)",
 			success: "var(--color-green-500, #22c55e)",
 			info: "var(--color-cyan-500, #06b6d4)",
@@ -328,7 +331,7 @@ export default group(
 				weight: `${vars.font.controls.weight}`,
 			},
 			gap: "0.25em",
-				padding: "0.5em 0.8em",
+			padding: "0.5em 0.8em",
 			margin: "0em",
 			color: {
 				base: vars.color.neutral,
@@ -345,7 +348,7 @@ export default group(
 			},
 		},
 		field: {
-				padding: "0.55em 0.7em",
+			padding: "0.55em 0.7em",
 			border: {
 				radius: "0.25em",
 			},
@@ -370,7 +373,7 @@ export default group(
 			},
 		},
 		card: {
-				padding: "1.5rem",
+			padding: "1.5rem",
 			border: {
 				size: "1px",
 				radius: "0.5em",
@@ -388,29 +391,29 @@ export default group(
 				radius: "0.2em",
 			},
 		},
-			radio: {
+		radio: {
 			size: "1.125em",
 			dot: {
 				size: "0.5em",
 			},
-			},
-			alert: {
-				padding: "0.8rem 1rem",
-				border: { radius: "4px" },
-			},
-			avatar: {
-				size: "2.5rem",
-				small: "2rem",
-				large: "3.25rem",
-			},
-			dialog: {
-				width: "32rem",
-				padding: "1.5rem",
-				border: { radius: "8px" },
-			},
-			progress: { height: "0.5rem" },
-			table: { padding: "0.7rem" },
-		}),
+		},
+		alert: {
+			padding: "0.8rem 1rem",
+			border: { radius: "4px" },
+		},
+		avatar: {
+			size: "2.5rem",
+			small: "2rem",
+			large: "3.25rem",
+		},
+		dialog: {
+			width: "32rem",
+			padding: "1.5rem",
+			border: { radius: "8px" },
+		},
+		progress: { height: "0.5rem" },
+		table: { padding: "0.7rem" },
+	}),
 );
 
 // EOF

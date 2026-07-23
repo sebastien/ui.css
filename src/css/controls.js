@@ -187,19 +187,39 @@ function field(selector, ...rest) {
 				"0.25em",
 			),
 			field_sizing: "content",
-			// Surface follows the page (mode-aware), small tint and transparency
-			__control_background_base: vars.color.page.or(vars.color.paper),
-			__control_background_tint: vars.color.page.or(vars.color.paper),
-			background_color: control.background(0.1, 0.9),
-			// Border blended to paper, fully opaque
-			border_color: control.border(0.5, 1.0, vars.color.ink),
+			// Ink text; border tracks accent (neutral by default via color-base)
+			color: vars.color.ink,
+			__control_border_base: vars.control.color.base,
+			__control_border_tint: vars.color.paper,
+			__control_border_blend: 0.55,
+			__control_border_opacity: 0.9,
+			border_color: control.border(0.55, 0.9, vars.color.paper),
+			// Neutral surface: paper at 0.8 opacity
+			__control_background_base: vars.color.paper,
+			__control_background_tint: vars.color.paper,
+			__control_background_blend: 1.0,
+			__control_background_opacity: 0.8,
+			background_color: control.background(1.0, 0.8, vars.color.paper, vars.color.paper),
 		}),
-		// Color variants
+		// Soft wash: pure accent at low opacity (no paper blend)
+		css.rule("&.tinted", {
+			__control_background_base: vars.control.color.base,
+			__control_background_tint: vars.control.color.base,
+			__control_background_blend: 1.0,
+			__control_background_opacity: 0.15,
+			background_color: control.background(1.0, 0.15),
+		}),
+		// Accent text (border already follows color-base)
+		css.rule("&.colored", {
+			color: control.color(1.0, 1.0, vars.color.ink),
+			__control_border_blend: 0.9,
+			__control_border_opacity: 1.0,
+			border_color: control.border(0.9, 1.0, vars.color.paper),
+		}),
+		// Semantic colors set the accent (drives border; bg only with .tinted)
 		...colors.semantic.map((color) =>
 			css.rule(css.mods("&", color), {
-				__control_background_base: vars.color[color].background.or(
-					vars.color[color],
-				),
+				__control_color_base: vars.color[color],
 			}),
 		),
 		// Nested inputs are filled
@@ -215,21 +235,22 @@ function field(selector, ...rest) {
 			__control_background_blend: 1.0,
 			__control_background_opacity: 1.0,
 		}),
-		// Focus state, reinforcing opacity
-		css.rule(css.mods("&:not(.nofocus)", "focus"), {
-			// Focused background is fully opaque
+		// Focus/hover: solid surface except .tinted (opacity is the wash)
+		css.rule(css.mods("&:not(.nofocus):not(.tinted)", "focus"), {
 			__control_background_opacity: 1.0,
-			// And border has more of the main color
-			__control_border_blend: 0.7,
+			__control_border_blend: 0.75,
 		}),
-		// Hover state, reinforcing opacity
-		css.rule(css.mods("&", "hover"), {
-			// Same as focus
+		css.rule(css.mods("&:not(.tinted)", "hover"), {
 			__control_background_opacity: 1.0,
-			// But even more of the main color
 			__control_border_blend: 0.8,
 		}),
-		// Active state, typically a blend to ink
+		css.rule(css.mods("&.tinted:not(.nofocus)", "focus"), {
+			__control_border_blend: 0.75,
+		}),
+		css.rule(css.mods("&.tinted", "hover"), {
+			__control_border_blend: 0.8,
+		}),
+		// Active: strongest border
 		css.rule(css.mods("&", "active"), {
 			__control_border_blend: 0.9,
 		}),
@@ -247,7 +268,7 @@ function field(selector, ...rest) {
 				border_color: "transparent",
 				// No outline for ghost
 				outline_width: "0px",
-				// Very faint primary color, transparent by default
+				// Very faint accent, transparent by default
 				__control_background_blend: 0.1,
 				__control_background_opacity: 0,
 			},
@@ -343,10 +364,13 @@ function action(selector, ...rest) {
 		css.rule("&", {
 			// Cursor
 			cursor: "pointer",
-			// Background tracks the accent by default. --control-background-base is
-			// element-scoped: never set it on ancestors, it would defeat variants.
-			__control_background_base: vars.control.color.base,
-			// Default syling, background is pure primary color
+			// Default fill uses the light neutral surface (not medium neutral,
+			// which is reserved for borders/chrome). --control-background-base
+			// is element-scoped: never set it on ancestors.
+			__control_background_base: vars.color.neutral.background.or(
+				vars.color.neutral,
+			),
+			// Default styling, solid fill from background-base
 			background_color: control.background(1.0, 1.0, vars.color.ink),
 			// Prefer --text-color when .tx / .tx-* utilities set it; otherwise
 			// contrast against the accent fill.
@@ -361,6 +385,15 @@ function action(selector, ...rest) {
 				"0.25em",
 			),
 		}),
+		// Semantic fills: prefer --color-{semantic}-background when defined
+		// (neutral → light surface), else the solid semantic color.
+		...colors.semantic.map((color) =>
+			css.rule(css.mods("&", color), {
+				__control_background_base: vars.color[color].background.or(
+					vars.color[color],
+				),
+			}),
+		),
 		css.rule(css.mods("&", "default"), {
 			outline_width: vars.action.outline.width.or(
 				vars.control.outline.width,
@@ -389,34 +422,44 @@ function action(selector, ...rest) {
 			pointer_events: "none",
 			cursor: "not-allowed",
 		}),
-		// Outline variant, typically text and border blend to ink,
-		// with border a bit more transparent thatn text.
+		// Outline variant: ink text + ink border by default. Use .neutral /
+		// .primary / … for an explicit color. Press wash uses the solid
+		// accent (medium neutral / ink / …), not light neutral-background.
 		css.nesting(
 			css.mods("&", "outline"),
 			{
+				__control_color_base: vars.color.ink,
 				__control_default_outline_opacity: 0.4,
 				__control_border_width: vars.border.width.or("2px"),
-				// Prefer --text-color from .tx utilities over the accent blend
-				color: `var(--text-color, ${control.color(0.5, 1.0, vars.color.ink)})`,
+				// Prefer --text-color from .tx utilities over the accent
+				color: `var(--text-color, ${control.color(1.0, 1.0, vars.color.ink)})`,
 				border_width: vars.control.border.width,
-				border_color: control.border(0.9, 0.8, vars.color.ink),
-				background_color: control.background(0.9, 0.0),
+				border_color: control.border(1.0, 1.0, vars.color.paper),
+				// Wash from solid accent at opacity (not light surface token)
+				__control_background_base: vars.control.color.base,
+				__control_background_tint: vars.control.color.base,
+				__control_background_blend: 1.0,
+				__control_background_opacity: 0,
+				background_color: control.background(1.0, 0),
 			},
 			css.rule("&:hover, &.hover", {
-				background_color: control.background(0.9, 0.1),
+				__control_background_opacity: 0.12,
+				background_color: control.background(1.0, 0.12),
 			}),
 			css.rule("&:active, &.active", {
-				background_color: control.background(0.9, 0.2),
+				__control_background_opacity: 0.22,
+				background_color: control.background(1.0, 0.22),
 			}),
 		),
-		// Ghost variant, typically no background, unless on hover
+		// Ghost variant: ink text by default, no chrome until hover.
 		css.nesting(
 			css.mods("&", "ghost"),
 			{
+				__control_color_base: vars.color.ink,
 				__control_default_outline_opacity: 0.2,
 				__control_color_border_opacity: 0,
 				__control_background_opacity: 0,
-				// Transparent fill: text must be the accent (not contrast-color of
+				// Transparent fill: text is the accent (not contrast-color of
 				// the accent, which yields white and disappears on light surfaces).
 				color: `var(--text-color, ${control.color(1.0, 1.0, vars.color.ink)})`,
 				background_color: control.background(1.0, 0),
@@ -428,6 +471,30 @@ function action(selector, ...rest) {
 				__control_background_opacity: 0.35,
 			}),
 		),
+		// Explicit color variants win over outline/ghost ink defaults.
+		// .neutral is first-class (filled → light surface; outline/ghost → medium chrome).
+		...colors.semantic.map((color) =>
+			css.rule(css.mods("&", color), {
+				__control_color_base: vars.color[color],
+			}),
+		),
+		css.rule(css.mods("&", "neutral"), {
+			__control_color_base: vars.color.neutral,
+			__control_background_base: vars.color.neutral.background.or(
+				vars.color.neutral,
+			),
+		}),
+		// Outline neutral: medium neutral is too light for chrome — blend toward ink
+		css.rule("&.outline.neutral", {
+			__control_color_base: vars.color.neutral,
+			__control_color_tint: vars.color.ink,
+			__control_color_blend: 0.3,
+			__control_border_base: vars.color.neutral,
+			__control_border_tint: vars.color.ink,
+			__control_border_blend: 0.3,
+			color: `var(--text-color, ${control.color(0.3, 1.0, vars.color.ink)})`,
+			border_color: control.border(0.3, 1.0, vars.color.ink),
+		}),
 
 		// Blank variant
 		css.rule(css.mods("&", "blank"), {
@@ -454,7 +521,11 @@ function action(selector, ...rest) {
 function checkbox() {
 	// Checked background: the accent softened toward the page surface, with a
 	// check mark contrasting against the actual blended background.
-	const checkedBg = control.background(0.5, 1.0, vars.color.page.or(vars.color.paper));
+	const checkedBg = control.background(
+		0.5,
+		1.0,
+		vars.color.page.or(vars.color.paper),
+	);
 	const checkedContrast = `contrast-color(${checkedBg})`;
 	return field(
 		["input[type=checkbox]:not(.toggle,.selector)", ".checkbox"],
@@ -468,9 +539,10 @@ function checkbox() {
 			display: "inline-grid",
 			vertical_align: "middle",
 			__control_border_tint: vars.color.ink,
-			border_radius: vars.checkbox.border.radius.or("0.2em"),
 			cursor: "pointer",
 			border_color: control.border(0.9, 1.0, vars.color.ink),
+			border_radius: vars.checkbox.border.radius.or("0.2em"),
+			border_width: vars.checkbox.border.width.or("0px"),
 			color: control.color(0.0, 1.0, vars.color.ink),
 		}),
 		// Checkbox content is rendered with a pseudo element, which is scaled up when checked or indeterminate.
@@ -560,9 +632,9 @@ function radio() {
 
 function toggle() {
 	// Inset between track padding-edge and knob; shared by off/on positions.
-	const inset = vars.toggle.inset.or("0.125em")
-	const height = vars.toggle.height.or("1.5em")
-	const width = vars.toggle.width.or("2.75em")
+	const inset = vars.toggle.inset.or("0.125em");
+	const height = vars.toggle.height.or("1.5em");
+	const width = vars.toggle.width.or("2.75em");
 	return field(
 		[
 			":not(.selector) input[type=checkbox].toggle",
@@ -691,7 +763,12 @@ function range() {
 			border_style: "solid",
 			// Track stays neutral; only progress and thumb carry the accent.
 			// NOTE: no --control-* pins here, the thumb inherits from the track.
-			border_color: colors.mixed(vars.color.neutral, vars.color.paper, 0.6, 1.0),
+			border_color: colors.mixed(
+				vars.color.neutral,
+				vars.color.paper,
+				0.6,
+				1.0,
+			),
 			background_color: colors.mixed(
 				vars.color.neutral,
 				vars.color.page.or(vars.color.paper),
@@ -716,7 +793,12 @@ function range() {
 			border_width: vars.control.border.width.or("1px"),
 			border_style: "solid",
 			// Track stays neutral; only progress and thumb carry the accent
-			border_color: colors.mixed(vars.color.neutral, vars.color.paper, 0.6, 1.0),
+			border_color: colors.mixed(
+				vars.color.neutral,
+				vars.color.paper,
+				0.6,
+				1.0,
+			),
 			background_color: colors.mixed(
 				vars.color.neutral,
 				vars.color.page.or(vars.color.paper),
@@ -741,13 +823,23 @@ function range() {
 		css.rule(
 			"&:hover::-webkit-slider-runnable-track, &.hover::-webkit-slider-runnable-track",
 			{
-				border_color: colors.mixed(vars.color.neutral, vars.color.paper, 0.8, 1.0),
+				border_color: colors.mixed(
+					vars.color.neutral,
+					vars.color.paper,
+					0.8,
+					1.0,
+				),
 			},
 		),
 		css.rule(
 			"&:focus::-webkit-slider-runnable-track, &:focus-within::-webkit-slider-runnable-track, &.focus::-webkit-slider-runnable-track",
 			{
-				border_color: colors.mixed(vars.color.neutral, vars.color.paper, 0.85, 1.0),
+				border_color: colors.mixed(
+					vars.color.neutral,
+					vars.color.paper,
+					0.85,
+					1.0,
+				),
 			},
 		),
 		// Same selector as the base focus ring so this suppression wins the cascade
@@ -792,7 +884,8 @@ function select() {
 }
 
 function selector() {
-	// Selectors are like a `div` with `input + label`
+	// Selectors are like a `div` with `input + label`.
+	// Surface/tint come from field() (paper @ 0.8, .tinted = accent wash).
 	return field(
 		".selector",
 		css.rule("&", {
@@ -808,46 +901,37 @@ function selector() {
 			display: "none !important",
 			visibility: "hidden !important",
 		}),
-		// Labels are rendered as buttons, ghost-like by default ,filled in
-		// with a border. The selector may have rounded borders, which is then
-		// set at the individual label level.
+		// Labels: ink text + neutral borders by default. Only the checked
+		// option takes the accent fill. .colored also accents label bd/tx.
 		css.nesting("& > label", {
 			border_radius: "0em",
 			padding: "0.5em 1em",
 			justify_content: "center",
 			cursor: "pointer",
-			color: control.color(0.6, 1.0, vars.color.ink),
+			color: vars.color.ink,
+			// Pin border to medium neutral (not the semantic accent)
+			__control_border_base: vars.color.neutral,
 			__control_background_opacity: 0,
 			border_width: vars.control.border.width.or("1px"),
 			border_left_width: "0px",
-			border_color: control.border(
-				control.color.blend(0.9),
-				0.8,
-				vars.color.ink,
-			),
-			background_color: control.background(
-				control.color.blend(0.9),
-				0.0,
-				vars.color.paper,
-			),
+			border_color: control.border(0.55, 0.9, vars.color.paper),
+			background_color: control.background(1.0, 0.0, vars.color.paper),
 		}),
-		css.rule("& > label:hover, & > label.hover", {
-			__control_background_opacity: 0.45,
+		css.rule("&.colored > label", {
+			color: control.color(1.0, 1.0, vars.color.ink),
+			__control_border_base: vars.control.color.base,
+			border_color: control.border(0.9, 1.0, vars.color.paper),
 		}),
-		css.nesting(
-			`&:not(${colors.semantic.map((color) => `.${color}`).join("):not(")}):not(.bw)`,
-			{},
-			css.rule("& > label", {
-				__control_background_opacity: 1.0,
-			}),
-			css.rule("& > label:hover, & > label.hover", {
-				__control_background_opacity: 1.0,
-			}),
+		// Hover wash only on unselected labels (selected stays solid)
+		css.rule(
+			[
+				"& > input:not(:checked) + label:hover",
+				"& > input:not(:checked) + label.hover",
+			],
+			{
+				__control_background_opacity: 0.45,
+			},
 		),
-		// css.rule("&:hover, &.hover", {
-		// 	__control_background_blend: 0.9,
-		// 	__control_background_opacity: 0.1,
-		// }),
 		css.rule("&:active, &.active", {
 			__control_background_opacity: 0.2,
 			background_color: control.background(0.9, 0.2, vars.color.paper),
@@ -862,11 +946,15 @@ function selector() {
 			border_bottom_left_radius: vars.selector.border.radius.or("0.25em"),
 		}),
 		css.nesting("& > input:checked + label", {
-			// Checked label tracks the accent, not the field surface.
+			// Solid accent fill — full opacity, no paper blend, no hover wash
 			__control_background_base: vars.control.color.base,
+			__control_background_tint: vars.control.color.base,
+			__control_background_blend: 1.0,
+			__control_background_opacity: 1.0,
+			__control_border_base: vars.control.color.base,
 			color: controlContrast(),
-			__control_background_opacity: 0.9,
-			background_color: control.background(control.color.blend(0.9), 0.9),
+			border_color: control.border(1.0, 1.0, vars.color.paper),
+			background_color: control.background(1.0, 1.0),
 		}),
 		css.rule("&.compact > label", {
 			padding: "0.35em 0.5em",

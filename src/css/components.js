@@ -287,7 +287,7 @@ function panels() {
 			width: `calc(100% * ${vars.panels.count})`,
 			min_width: "100%",
 			height: "100%",
-			transition: "left 0.3s ease-in-out",
+			transition: `left ${vars.motion.duration.base} ${vars.motion.easing.soft}`,
 		}),
 
 		css.rule(".panels > .horizontal > *", {
@@ -307,7 +307,7 @@ function panels() {
 			height: `calc(100% * ${vars.panels.count})`,
 			min_height: "100%",
 			width: "100%",
-			transition: "top 0.3s ease-in-out",
+			transition: `top ${vars.motion.duration.base} ${vars.motion.easing.soft}`,
 		}),
 
 		css.rule(".panels > .vertical > *", {
