@@ -47,4 +47,11 @@ describe("CSS-first components", () => {
 		expect(output).toContain("--background-color-blend: 0.1;");
 		expect(output).toContain("--background-color-opacity: 0;");
 	});
+
+	test("interactive menu items expose a compact padding variant", () => {
+		expect(output).toContain(
+			"menu[popover]:popover-open :is(a, button, [role=menuitem]).compact",
+		);
+		expect(output).toContain("padding: 0.35rem 0.5rem;");
+	});
 });

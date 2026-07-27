@@ -71,6 +71,17 @@
         link.setAttribute("href", "../dist/ui.css");
         document.head.append(link)
       }
+
+      document.addEventListener("click", (event) => {
+        const tab = event.target.closest?.(".tabs .tab")
+        if (!tab) return
+        const tabs = tab.closest(".tabs")
+        tabs.querySelectorAll(".tab").forEach((item) => {
+          const selected = item === tab
+          item.classList.toggle("active", selected)
+          item.setAttribute("aria-selected", selected)
+        })
+      })
     </script>
     <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
   </head>
@@ -409,58 +420,58 @@ const result = "fast, consistent styling"</code></pre>
            </div>
         </div>
       </section>
-      <section id="tabs-demo" class="panel stack g-4 p-6 bd bd-4o ">
-        <h2 class="h3 m-0">Tabs</h2>
-        <div class="stack g-5">
-          <div class="stack g-3">
-            <p class="b m-0">Color accents</p>
-            <div class="row wrap g-3">
-              <div class="tabs">
-                <button class="tab neutral active" role="tab" aria-selected="true">Overview</button>
-                <button class="tab neutral" role="tab" aria-selected="false">Activity</button>
-                <button class="tab neutral" role="tab" aria-selected="false">Settings</button>
-              </div>
-              <div class="tabs">
-                <button class="tab accent active" role="tab" aria-selected="true">Overview</button>
-                <button class="tab accent" role="tab" aria-selected="false">Activity</button>
-                <button class="tab accent" role="tab" aria-selected="false">Settings</button>
-              </div>
-              <div class="tabs">
-                <button class="tab primary active" role="tab" aria-selected="true">Overview</button>
-                <button class="tab primary" role="tab" aria-selected="false">Activity</button>
-                <button class="tab primary" role="tab" aria-selected="false">Settings</button>
-              </div>
-              <div class="tabs">
-                <button class="tab secondary active" role="tab" aria-selected="true">Overview</button>
-                <button class="tab secondary" role="tab" aria-selected="false">Activity</button>
-                <button class="tab secondary" role="tab" aria-selected="false">Settings</button>
-              </div>
-              <div class="tabs">
-                <button class="tab tertiary active" role="tab" aria-selected="true">Overview</button>
-                <button class="tab tertiary" role="tab" aria-selected="false">Activity</button>
-                <button class="tab tertiary" role="tab" aria-selected="false">Settings</button>
-              </div>
-              <div class="tabs">
-                <button class="tab success active" role="tab" aria-selected="true">Overview</button>
-                <button class="tab success" role="tab" aria-selected="false">Activity</button>
-                <button class="tab success" role="tab" aria-selected="false">Settings</button>
-              </div>
-              <div class="tabs">
-                <button class="tab warning active" role="tab" aria-selected="true">Overview</button>
-                <button class="tab warning" role="tab" aria-selected="false">Activity</button>
-                <button class="tab warning" role="tab" aria-selected="false">Settings</button>
-              </div>
-              <div class="tabs">
-                <button class="tab danger active" role="tab" aria-selected="true">Overview</button>
-                <button class="tab danger" role="tab" aria-selected="false">Activity</button>
-                <button class="tab danger" role="tab" aria-selected="false">Settings</button>
+      <section id="selectors-demo" class="panel stack g-4 p-6 bd bd-4o ">
+        <h2 class="h3 m-0">Selectors</h2>
+        <section id="tabs-demo" class="stack g-4">
+          <h3 class="h4 m-0">Tabs</h3>
+          <div class="stack g-5">
+            <div class="stack g-3">
+              <p class="b m-0">Color accents</p>
+              <div class="row wrap g-3">
+                <div class="tabs">
+                  <button class="tab active" role="tab" aria-selected="true">Overview</button>
+                  <button class="tab" role="tab" aria-selected="false">Activity</button>
+                  <button class="tab" role="tab" aria-selected="false">Settings</button>
+                </div>
+                <div class="tabs">
+                  <button class="tab accent active" role="tab" aria-selected="true">Overview</button>
+                  <button class="tab accent" role="tab" aria-selected="false">Activity</button>
+                  <button class="tab accent" role="tab" aria-selected="false">Settings</button>
+                </div>
+                <div class="tabs">
+                  <button class="tab primary active" role="tab" aria-selected="true">Overview</button>
+                  <button class="tab primary" role="tab" aria-selected="false">Activity</button>
+                  <button class="tab primary" role="tab" aria-selected="false">Settings</button>
+                </div>
+                <div class="tabs">
+                  <button class="tab secondary active" role="tab" aria-selected="true">Overview</button>
+                  <button class="tab secondary" role="tab" aria-selected="false">Activity</button>
+                  <button class="tab secondary" role="tab" aria-selected="false">Settings</button>
+                </div>
+                <div class="tabs">
+                  <button class="tab tertiary active" role="tab" aria-selected="true">Overview</button>
+                  <button class="tab tertiary" role="tab" aria-selected="false">Activity</button>
+                  <button class="tab tertiary" role="tab" aria-selected="false">Settings</button>
+                </div>
+                <div class="tabs">
+                  <button class="tab success active" role="tab" aria-selected="true">Overview</button>
+                  <button class="tab success" role="tab" aria-selected="false">Activity</button>
+                  <button class="tab success" role="tab" aria-selected="false">Settings</button>
+                </div>
+                <div class="tabs">
+                  <button class="tab warning active" role="tab" aria-selected="true">Overview</button>
+                  <button class="tab warning" role="tab" aria-selected="false">Activity</button>
+                  <button class="tab warning" role="tab" aria-selected="false">Settings</button>
+                </div>
+                <div class="tabs">
+                  <button class="tab danger active" role="tab" aria-selected="true">Overview</button>
+                  <button class="tab danger" role="tab" aria-selected="false">Activity</button>
+                  <button class="tab danger" role="tab" aria-selected="false">Settings</button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
-      <section id="selectors-demo" class="panel stack g-4 p-6 bd bd-4o ">
-        <h2 class="h3 m-0">Selectors</h2>
+        </section>
         <div class="stack g-5">
           <div class="stack g-2">
             <p class="b m-0">Toggle</p>

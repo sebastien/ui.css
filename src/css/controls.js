@@ -209,6 +209,9 @@ function field(selector, ...rest) {
 				vars.color.paper,
 			),
 		}),
+		css.rule("&.compact", {
+			padding: vars.control.padding.or("0.35em 0.5em"),
+		}),
 		// Soft wash: pure accent at low opacity (no paper blend)
 		css.rule("&.tinted", {
 			__control_background_base: vars.control.color.base,
@@ -377,9 +380,11 @@ function action(selector, ...rest) {
 			// Default fill uses the light neutral surface (not medium neutral,
 			// which is reserved for borders/chrome). --control-background-base
 			// is element-scoped: never set it on ancestors.
+			__control_color_opacity: 1.0,
 			__control_background_base: vars.color.neutral.background.or(
 				vars.color.neutral,
 			),
+			__control_background_opacity: 1.0,
 			// Default styling, solid fill from background-base
 			background_color: control.background(1.0, 1.0, vars.color.ink),
 			// Prefer --text-color when .tx / .tx-* utilities set it; otherwise
@@ -593,6 +598,9 @@ function checkbox() {
 		css.rule("&:disabled, &.disabled", {
 			cursor: "not-allowed",
 		}),
+		css.rule("&.compact", {
+			padding: "0em",
+		}),
 	);
 }
 
@@ -636,6 +644,9 @@ function radio() {
 		}),
 		css.rule("&:disabled, &.disabled", {
 			cursor: "not-allowed",
+		}),
+		css.rule("&.compact", {
+			padding: "0em",
 		}),
 	);
 }
@@ -749,6 +760,9 @@ function toggle() {
 		),
 		css.rule("&:disabled, &.disabled", {
 			cursor: "not-allowed",
+		}),
+		css.rule("&.compact", {
+			padding: "0em",
 		}),
 	);
 }
@@ -874,6 +888,9 @@ function range() {
 		css.rule("&:disabled, &.disabled", {
 			cursor: "not-allowed",
 		}),
+		css.rule("&.compact", {
+			padding: "0em",
+		}),
 	);
 }
 function select() {
@@ -932,6 +949,9 @@ function select() {
 			border_color: control.border(0.55, 0.9, vars.color.paper),
 			background_color: control.background(1.0, 0.0, vars.color.paper),
 		}),
+		css.rule("&.compact > option", {
+			padding: "0.35em 0.5em",
+		}),
 		css.rule("&[multiple] > option:first-child, &.vertical > option:first-child", {
 			border_top_width: vars.control.border.width.or("1px"),
 			border_top_left_radius: vars.selector.border.radius.or("0.25em"),
@@ -988,6 +1008,9 @@ function select() {
 		}),
 		css.rule("&:disabled, &.disabled", {
 			cursor: "not-allowed",
+		}),
+		css.rule("&.compact[multiple], &.vertical.compact", {
+			padding: "0em",
 		}),
 	);
 }
@@ -1117,6 +1140,9 @@ function selector() {
 			__control_background_opacity: 0.2,
 			background_color: control.background(0.9, 0.2, vars.color.paper),
 		}),
+		css.rule("&.compact", {
+			padding: "0em",
+		}),
 		css.rule("&.compact > label", {
 			padding: "0.35em 0.5em",
 		}),
@@ -1127,6 +1153,9 @@ function selector() {
 			flex: "1",
 		}),
 		),
+		css.rule(".selector.squared > input, .selector.squared > label", {
+			border_radius: "0em",
+		}),
 	);
 }
 
@@ -1137,7 +1166,7 @@ function tab() {
 			gap: "0.15rem",
 			padding: "0.35rem",
 			border_radius: "0.375rem",
-			background_color: `color-mix(in oklch, ${vars.color.paper}, transparent 35%)`,
+			background_color: `color-mix(in oklch, ${vars.color.neutral}, transparent 80%)`,
 		}),
 		css.rule(".tabs .tab", {
 			cursor: "pointer",
@@ -1150,6 +1179,12 @@ function tab() {
 			box_shadow: "none",
 			outline: "0",
 			appearance: "none",
+		}),
+		css.rule(".tabs.compact", {
+			padding: "0.2rem",
+		}),
+		css.rule(".tabs.compact .tab, .tabs .tab.compact", {
+			padding: "0.35em 0.5em",
 		}),
 		css.rule(".tabs .tab:hover", {
 			background_color: `color-mix(in oklch, ${vars.color.paper}, transparent 60%)`,

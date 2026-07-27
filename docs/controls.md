@@ -21,12 +21,14 @@ The `controls.js` module provides comprehensive styling for interactive elements
 - `.ghost`: Fully transparent background and border; only shows state on interaction.
 - `.blank`: No visual chrome at all (no background, border, outline, or padding).
 - `.icon`: 1:1 aspect ratio button with minimal padding.
+- `.compact`: reduced padding for buttons, fields, selectors, tabs, and listbox options.
 - `.default`: Emphasized button style with a visible outline.
 - `.tinted` (fields / `.selector`): Pure accent at low opacity (no paper blend); hover/focus do not force full opacity.
 - Fields: semantic color always drives the border; text stays ink unless `.colored`.
 - `.colored` (fields / `.selector`): Accent text (and stronger border on fields). On `.selector`, unselected labels also get accent text/border; only the checked option is accent-filled by default.
 - `.selector` item colors: Add a semantic color class to an individual label; its checked, active, tinted, and colored states use that item color.
 - `.selector.horizontal`, `.selector.vertical`: Joined horizontal or vertical selector items. Horizontal is the default.
+- `.tabs.compact` or `.tab.compact`: Reduced padding for tab navigation.
 - `select[multiple]`: Native vertical listbox with selector-like option rows. `select.vertical` opts into the same styling; pair it with `size` to render a listbox and control visible rows.
 
 ### Component States:

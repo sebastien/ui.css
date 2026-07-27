@@ -27,9 +27,16 @@ describe("controls color model", () => {
 		expect(output).toContain(".tabs .tab");
 		expect(output).toContain(".tabs .tab[aria-selected=true]");
 		expect(output).toContain("padding: 0.35rem;");
-		expect(output).toContain("color-mix(in oklch, var(--color-paper), transparent 35%)");
+		expect(output).toContain("color-mix(in oklch, var(--color-neutral), transparent 80%)");
 		expect(output).toContain("--tab-color: var(--color-primary);");
 		expect(output).not.toContain(".tabsbar");
+	});
+
+	test("interactive controls expose compact padding variants", () => {
+		expect(output).toContain("&.compact > option");
+		expect(output).toContain(".tabs.compact");
+		expect(output).toContain(".tabs.compact .tab, .tabs .tab.compact");
+		expect(output).toContain("padding: 0.35em 0.5em;");
 	});
 
 	test("field element selector excludes button-likes and .button", () => {
@@ -62,6 +69,12 @@ describe("controls color model", () => {
 		expect(output).toContain(
 			"--control-background-base: var(--color-neutral-background, var(--color-neutral))",
 		);
+	});
+
+	test("actions reset inherited selectable opacity", () => {
+		const actions = output.slice(output.indexOf("/* @group actions */"));
+		expect(actions).toContain("--control-color-opacity: 1");
+		expect(actions).toContain("--control-background-opacity: 1");
 	});
 
 	test("selectable hover uses the neutral background", () => {
@@ -151,6 +164,12 @@ describe("controls color model", () => {
 		expect(selector).toContain("flex-direction: column");
 		expect(selector).toContain("border-top-width: 0px");
 		expect(selector).toContain("&.stretch:not(.vertical) > label");
+	});
+
+	test("squared selectors remove label corner rounding", () => {
+		const selector = output.slice(output.indexOf("/* @group selector */"));
+		expect(selector).toContain(".selector.squared > input, .selector.squared > label");
+		expect(selector).toContain("border-radius: 0em;");
 	});
 
 	test("--control-border-size is unified into --control-border-width", () => {

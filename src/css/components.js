@@ -678,6 +678,15 @@ function native() {
 		),
 		css.rule(
 			[
+				"menu[popover]:popover-open :is(a, button, [role=menuitem]).compact",
+				"[popover]:popover-open menu.compact :is(a, button, [role=menuitem])",
+			],
+			{
+				padding: "0.35rem 0.5rem",
+			},
+		),
+		css.rule(
+			[
 				"menu[popover]:popover-open :is(a, button, [role=menuitem]):hover",
 				"[popover]:popover-open menu :is(a, button, [role=menuitem]):hover",
 			],
