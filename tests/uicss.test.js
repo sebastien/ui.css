@@ -16,3 +16,15 @@ describe("Group", () => {
 		expect(() => css.mount(...all(), tokens({}))).not.toThrow();
 	});
 });
+
+describe("guard", () => {
+	test("scopes rules without native nesting", () => {
+		const output = [...css(all(undefined, { guard: ".uicss" }))].join("\n");
+
+		expect(output).toContain(".uicss .bg {");
+		expect(output).toContain(".uicss .bg-paper {");
+		expect(output).toContain(".uicss .sh-2 {");
+		expect(output).toContain(".uicss {\n--font-mono:");
+		expect(output).not.toContain("& .bg {");
+	});
+});

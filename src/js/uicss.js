@@ -751,10 +751,16 @@ const named = (mapping) => {
 };
 
 // Function: guard
-// Scopes CSS values under a root selector with native nesting.
+// Scopes CSS values under a root selector with concrete selectors.
 const tokenlike = (value) =>
 	value instanceof Tokens ||
 	(value instanceof Group && value.contents.every(tokenlike));
+
+const scopedselectors = (parents, selectors) =>
+	blockcompose(
+		Array.isArray(parents) ? parents : [parents],
+		(Array.isArray(selectors) ? selectors : [selectors]).map(rerootselector),
+	);
 
 const scopedcontent = (value, selector) => {
 	if (value === null || value === undefined) {
@@ -766,47 +772,32 @@ const scopedcontent = (value, selector) => {
 	if (value instanceof AtRule) {
 		return [value.name === "media" ? guard(value, selector) : value];
 	}
+	if (value instanceof Tokens) {
+		const res = new Tokens(value.contents, selector);
+		res.name = value.name;
+		return [res];
+	}
 	if (value instanceof Group) {
 		return [new Group(value.contents.flatMap((_) => scopedcontent(_, selector)), value.name)];
 	}
-	if (value instanceof NestingRule || value instanceof Rule) {
-		return [nesting(selector, {}, reroot(value))];
+	if (value instanceof NestingRule) {
+		const selectors = scopedselectors(selector, value.selectors);
+		const contents = [];
+		if (Object.keys(value.properties).length > 0) {
+			contents.push(new Rule(selectors, value.properties));
+		}
+		for (const child of value.children) {
+			contents.push(...scopedcontent(child, selectors));
+		}
+		return contents;
+	}
+	if (value instanceof Rule) {
+		return [new Rule(scopedselectors(selector, value.selectors), value.properties)];
 	}
 	return [value];
 };
 
 const rerootselector = (selector) => `${selector}`.replaceAll(root, "&");
-
-const reroot = (value) => {
-	if (value === null || value === undefined) {
-		return value;
-	}
-	if (Array.isArray(value)) {
-		return value.map(reroot);
-	}
-	if (value instanceof NestingRule) {
-		return new NestingRule(
-			value.selectors.map(rerootselector),
-			value.properties,
-			value.children.map(reroot),
-		);
-	}
-	if (value instanceof AtRule) {
-		return value.name === "media"
-			? new AtRule(value.name, value.prelude, value.contents.map(reroot))
-			: value;
-	}
-	if (value instanceof Rule) {
-		return new Rule(value.selectors.map(rerootselector), value.properties);
-	}
-	if (value instanceof Group) {
-		return new Group(value.contents.map(reroot), value.name);
-	}
-	if (value.constructor === Object) {
-		return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, reroot(v)]));
-	}
-	return value;
-};
 
 const guard = (value, selector) => {
 	if (!selector || value === null || value === undefined) {
@@ -836,7 +827,7 @@ const guard = (value, selector) => {
 		return res;
 	}
 	if (value instanceof NestingRule) {
-		return nesting(selector, {}, reroot(value));
+		return new Group(scopedcontent(value, selector));
 	}
 	if (value instanceof AtRule) {
 		return value.name === "media"
@@ -848,7 +839,7 @@ const guard = (value, selector) => {
 			: value;
 	}
 	if (value instanceof Rule) {
-		return nesting(selector, {}, reroot(value));
+		return scopedcontent(value, selector)[0];
 	}
 	if (value.constructor === Object) {
 		return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, guard(v, selector)]));
