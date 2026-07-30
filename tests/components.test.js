@@ -40,6 +40,10 @@ describe("CSS-first components", () => {
 		expect(output).not.toContain(".table {");
 });
 
+	test("clips panel tracks without creating a scroll container", () => {
+		expect(output).toMatch(/\.panels \{[^}]*overflow: clip;/);
+	});
+
 	test("routes pill and badge fills through the background channel", () => {
 		expect(output).toContain(".bgc, .pill, .badge {");
 		expect(output).toContain("--background-color-base: var(--color-neutral);");

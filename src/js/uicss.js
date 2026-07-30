@@ -521,12 +521,30 @@ function rule(selector, ...body) {
 	return new Rule(sel, props);
 }
 
+// Function: splitselectors
+// Splits a selector string on commas that are not inside parentheses.
+// Avoids tearing apart :not(), :is(), :where(), :has(), etc.
+const splitselectors = (str) => {
+	const parts = [];
+	let depth = 0;
+	let start = 0;
+	for (let i = 0; i < str.length; i++) {
+		if (str[i] === "(") depth++;
+		else if (str[i] === ")") depth--;
+		else if (str[i] === "," && depth === 0) {
+			parts.push(str.slice(start, i).trim());
+			start = i + 1;
+		}
+	}
+	parts.push(str.slice(start).trim());
+	return parts.filter(Boolean);
+};
+
 // Function: blockselectors
 // Normalizes a selector value into a flat selector list.
 const blockselectors = (selector) =>
 	(Array.isArray(selector) ? selector : [selector])
-		.flatMap((_) => `${_}`.split(","))
-		.map((_) => _.trim())
+		.flatMap((_) => splitselectors(`${_}`))
 		.filter(Boolean);
 
 // Function: blockcompose

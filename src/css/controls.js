@@ -210,7 +210,10 @@ function field(selector, ...rest) {
 			),
 		}),
 		css.rule("&.compact", {
-			padding: vars.control.padding.or("0.35em 0.5em"),
+			padding: vars.control.padding.compact.or("0.35em 0.5em"),
+		}),
+		css.rule("&.tight", {
+			padding: vars.control.padding.tight.or("0.15em 0.25em"),
 		}),
 		// Soft wash: pure accent at low opacity (no paper blend)
 		css.rule("&.tinted", {
@@ -351,15 +354,18 @@ function selectable(...rest) {
 			),
 			__control_background_opacity: 0.5,
 		}),
-		// Active state, typically a blend to ink
+		// Active/pressed: a step darker than hover.
 		css.rule(css.mods("&", "active"), {
 			__control_color_opacity: 0.75,
 			__control_background_opacity: 0.75,
 		}),
-		// Active state, typically a blend to ink
+		// Selected: same neutral wash as hover, slightly darker so it reads as sticky.
 		css.rule(["&.selected"], {
-			__control_color_opacity: 0.95,
-			__control_background_opacity: 0.95,
+			__control_color_opacity: 0.6,
+			__control_background_base: vars.color.neutral.background.or(
+				vars.color.neutral,
+			),
+			__control_background_opacity: 0.6,
 		}),
 		// Disabled variant
 		css.rule(css.mods("&", "disabled"), {
@@ -543,7 +549,7 @@ function checkbox() {
 	);
 	const checkedContrast = `contrast-color(${checkedBg})`;
 	return field(
-		["input[type=checkbox]:not(.toggle,.selector)", ".checkbox"],
+		["input[type=checkbox]:not(.toggle):not(.selector)", ".checkbox"],
 		css.rule("&", {
 			appearance: "none",
 			padding: "0em",
@@ -899,10 +905,6 @@ function select() {
 		css.rule("&:not([multiple]):not(.vertical)", {
 			appearance: "none",
 			cursor: "pointer",
-			padding_right: vars.select.icon.gap.or("2.2em"),
-			background_repeat: "no-repeat",
-			background_position: "right 0.75em center",
-			background_size: vars.select.icon.size.or("0.65em 0.45em"),
 		}),
 		// Multi-selects remain native listboxes so their keyboard and assistive
 		// technology behavior is preserved. .vertical makes that intent explicit.
@@ -952,15 +954,21 @@ function select() {
 		css.rule("&.compact > option", {
 			padding: "0.35em 0.5em",
 		}),
-		css.rule("&[multiple] > option:first-child, &.vertical > option:first-child", {
-			border_top_width: vars.control.border.width.or("1px"),
-			border_top_left_radius: vars.selector.border.radius.or("0.25em"),
-			border_top_right_radius: vars.selector.border.radius.or("0.25em"),
-		}),
-		css.rule("&[multiple] > option:last-child, &.vertical > option:last-child", {
-			border_bottom_left_radius: vars.selector.border.radius.or("0.25em"),
-			border_bottom_right_radius: vars.selector.border.radius.or("0.25em"),
-		}),
+		css.rule(
+			"&[multiple] > option:first-child, &.vertical > option:first-child",
+			{
+				border_top_width: vars.control.border.width.or("1px"),
+				border_top_left_radius: vars.selector.border.radius.or("0.25em"),
+				border_top_right_radius: vars.selector.border.radius.or("0.25em"),
+			},
+		),
+		css.rule(
+			"&[multiple] > option:last-child, &.vertical > option:last-child",
+			{
+				border_bottom_left_radius: vars.selector.border.radius.or("0.25em"),
+				border_bottom_right_radius: vars.selector.border.radius.or("0.25em"),
+			},
+		),
 		css.rule(
 			[
 				"&[multiple] > option:not(:checked):hover",
@@ -1038,120 +1046,120 @@ function selector() {
 		field(
 			// Keep shared field styling lower specificity than selector-specific rules.
 			":where(.selector)",
-		css.nesting("& > input[type]", {
-			display: "none !important",
-			visibility: "hidden !important",
-		}),
-		// Labels: ink text + neutral borders by default. Only the checked
-		// option takes the accent fill. .colored also accents label bd/tx.
-		css.nesting("& > label", {
-			border_radius: "0em",
-			padding: "0.5em 1em",
-			justify_content: "center",
-			cursor: "pointer",
-			color: vars.color.ink,
-			// Pin border to medium neutral (not the semantic accent)
-			__control_border_base: vars.color.neutral,
-			__control_background_opacity: 0,
-			border_width: vars.control.border.width.or("1px"),
-			border_left_width: "0px",
-			border_color: control.border(0.55, 0.9, vars.color.paper),
-			background_color: control.background(1.0, 0.0, vars.color.paper),
-		}),
-		css.rule("&.colored > label", {
-			color: control.color(1.0, 1.0, vars.color.ink),
-			__control_border_base: vars.control.color.base,
-			border_color: control.border(0.9, 1.0, vars.color.paper),
-		}),
-		// Hover wash only on unselected labels (selected stays solid)
-		css.rule(
-			[
-				"& > input:not(:checked) + label:hover",
-				"& > input:not(:checked) + label.hover",
-			],
-			{
-				__control_background_opacity: 0.45,
-			},
-		),
-		css.rule("&:active, &.active", {
-			__control_background_opacity: 0.2,
-			background_color: control.background(0.9, 0.2, vars.color.paper),
-		}),
-		css.rule("& > label:last-child", {
-			border_top_right_radius: vars.selector.border.radius.or("0.25em"),
-			border_bottom_right_radius: vars.selector.border.radius.or("0.25em"),
-		}),
-		css.rule("& > input:first-child + label", {
-			border_left_width: vars.control.border.width.or("1px"),
-			border_top_left_radius: vars.selector.border.radius.or("0.25em"),
-			border_bottom_left_radius: vars.selector.border.radius.or("0.25em"),
-		}),
-		css.rule("&.horizontal", {
-			flex_direction: "row",
-		}),
-		css.rule("&.vertical", {
-			flex_direction: "column",
-			align_items: "stretch",
-		}),
-		css.rule("&.vertical > label", {
-			width: "100%",
-			border_left_width: vars.control.border.width.or("1px"),
-			border_top_width: "0px",
-		}),
-		css.rule("&.vertical > input:first-child + label", {
-			border_top_width: vars.control.border.width.or("1px"),
-			border_top_right_radius: vars.selector.border.radius.or("0.25em"),
-			border_bottom_left_radius: "0em",
-		}),
-		css.rule("&.vertical > label:last-child", {
-			border_top_right_radius: "0em",
-			border_bottom_left_radius: vars.selector.border.radius.or("0.25em"),
-		}),
-		css.nesting("& > input:checked + label", {
-			// Solid accent fill — full opacity, no paper blend, no hover wash
-			__control_background_base: vars.control.color.base,
-			__control_background_tint: vars.control.color.base,
-			__control_background_blend: 1.0,
-			__control_background_opacity: 1.0,
-			__control_border_base: vars.control.color.base,
-			color: controlContrast(),
-			border_color: control.border(1.0, 1.0, vars.color.paper),
-			background_color: control.background(1.0, 1.0),
-		}),
-		// Item colors are scoped to the rendered label. Checked and tinted
-		// declarations above consume the local accent through CSS variables.
-		...colors.semantic.map((color) =>
-			css.rule(css.mods("& > label", color), {
-				__control_color_base: vars.color[color],
+			css.nesting("& > input[type]", {
+				display: "none !important",
+				visibility: "hidden !important",
 			}),
-		),
-		css.rule("&.tinted > label", {
-			__control_background_base: vars.control.color.base,
-			__control_background_tint: vars.control.color.base,
-			__control_background_blend: 1.0,
-			__control_background_opacity: 0.15,
-			background_color: control.background(1.0, 0.15),
-		}),
-		css.rule("&.tinted", {
-			padding: "0em",
-			background: "transparent",
-		}),
-		css.rule("& > label:active, & > label.active", {
-			__control_background_opacity: 0.2,
-			background_color: control.background(0.9, 0.2, vars.color.paper),
-		}),
-		css.rule("&.compact", {
-			padding: "0em",
-		}),
-		css.rule("&.compact > label", {
-			padding: "0.35em 0.5em",
-		}),
-		css.rule("&.stretch", {
-			width: "100%",
-		}),
-		css.rule("&.stretch:not(.vertical) > label", {
-			flex: "1",
-		}),
+			// Labels: ink text + neutral borders by default. Only the checked
+			// option takes the accent fill. .colored also accents label bd/tx.
+			css.nesting("& > label", {
+				border_radius: "0em",
+				padding: "0.5em 1em",
+				justify_content: "center",
+				cursor: "pointer",
+				color: vars.color.ink,
+				// Pin border to medium neutral (not the semantic accent)
+				__control_border_base: vars.color.neutral,
+				__control_background_opacity: 0,
+				border_width: vars.control.border.width.or("1px"),
+				border_left_width: "0px",
+				border_color: control.border(0.55, 0.9, vars.color.paper),
+				background_color: control.background(1.0, 0.0, vars.color.paper),
+			}),
+			css.rule("&.colored > label", {
+				color: control.color(1.0, 1.0, vars.color.ink),
+				__control_border_base: vars.control.color.base,
+				border_color: control.border(0.9, 1.0, vars.color.paper),
+			}),
+			// Hover wash only on unselected labels (selected stays solid)
+			css.rule(
+				[
+					"& > input:not(:checked) + label:hover",
+					"& > input:not(:checked) + label.hover",
+				],
+				{
+					__control_background_opacity: 0.45,
+				},
+			),
+			css.rule("&:active, &.active", {
+				__control_background_opacity: 0.2,
+				background_color: control.background(0.9, 0.2, vars.color.paper),
+			}),
+			css.rule("& > label:last-child", {
+				border_top_right_radius: vars.selector.border.radius.or("0.25em"),
+				border_bottom_right_radius: vars.selector.border.radius.or("0.25em"),
+			}),
+			css.rule("& > input:first-child + label", {
+				border_left_width: vars.control.border.width.or("1px"),
+				border_top_left_radius: vars.selector.border.radius.or("0.25em"),
+				border_bottom_left_radius: vars.selector.border.radius.or("0.25em"),
+			}),
+			css.rule("&.horizontal", {
+				flex_direction: "row",
+			}),
+			css.rule("&.vertical", {
+				flex_direction: "column",
+				align_items: "stretch",
+			}),
+			css.rule("&.vertical > label", {
+				width: "100%",
+				border_left_width: vars.control.border.width.or("1px"),
+				border_top_width: "0px",
+			}),
+			css.rule("&.vertical > input:first-child + label", {
+				border_top_width: vars.control.border.width.or("1px"),
+				border_top_right_radius: vars.selector.border.radius.or("0.25em"),
+				border_bottom_left_radius: "0em",
+			}),
+			css.rule("&.vertical > label:last-child", {
+				border_top_right_radius: "0em",
+				border_bottom_left_radius: vars.selector.border.radius.or("0.25em"),
+			}),
+			css.nesting("& > input:checked + label", {
+				// Solid accent fill — full opacity, no paper blend, no hover wash
+				__control_background_base: vars.control.color.base,
+				__control_background_tint: vars.control.color.base,
+				__control_background_blend: 1.0,
+				__control_background_opacity: 1.0,
+				__control_border_base: vars.control.color.base,
+				color: controlContrast(),
+				border_color: control.border(1.0, 1.0, vars.color.paper),
+				background_color: control.background(1.0, 1.0),
+			}),
+			// Item colors are scoped to the rendered label. Checked and tinted
+			// declarations above consume the local accent through CSS variables.
+			...colors.semantic.map((color) =>
+				css.rule(css.mods("& > label", color), {
+					__control_color_base: vars.color[color],
+				}),
+			),
+			css.rule("&.tinted > label", {
+				__control_background_base: vars.control.color.base,
+				__control_background_tint: vars.control.color.base,
+				__control_background_blend: 1.0,
+				__control_background_opacity: 0.15,
+				background_color: control.background(1.0, 0.15),
+			}),
+			css.rule("&.tinted", {
+				padding: "0em",
+				background: "transparent",
+			}),
+			css.rule("& > label:active, & > label.active", {
+				__control_background_opacity: 0.2,
+				background_color: control.background(0.9, 0.2, vars.color.paper),
+			}),
+			css.rule("&.compact", {
+				padding: "0em",
+			}),
+			css.rule("&.compact > label", {
+				padding: "0.35em 0.5em",
+			}),
+			css.rule("&.stretch", {
+				width: "100%",
+			}),
+			css.rule("&.stretch:not(.vertical) > label", {
+				flex: "1",
+			}),
 		),
 		css.rule(".selector.squared > input, .selector.squared > label", {
 			border_radius: "0em",

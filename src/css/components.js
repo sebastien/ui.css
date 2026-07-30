@@ -352,7 +352,7 @@ function panels() {
 		css.rule(".panels", {
 			width: "100%",
 			position: "relative",
-			overflow: "hidden",
+			overflow: "clip",
 			__panels_current: "0",
 			__panels_count: "2",
 		}),
