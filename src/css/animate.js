@@ -406,7 +406,7 @@ export default named({
 		}),
 		rule(".shimmer", {
 			position: "relative",
-			overflow: "hidden",
+			overflow: "clip",
 			background: vars.motion.shimmer.base,
 		}),
 		rule(".shimmer::after", {
@@ -427,7 +427,7 @@ export default named({
 		}),
 		rule(".progress-indeterminate", {
 			position: "relative",
-			overflow: "hidden",
+			overflow: "clip",
 		}),
 		rule(".progress-indeterminate::before", {
 			content: "\"\"",
@@ -468,7 +468,7 @@ export default named({
 			transition: `grid-template-rows ${slow} ${softer}`,
 		}),
 		rule(".accordion > :not(summary)", {
-			overflow: "hidden",
+			overflow: "clip",
 		}),
 		rule([".accordion.is-open", ".accordion[open]"], {
 			grid_template_rows: "auto 1fr",

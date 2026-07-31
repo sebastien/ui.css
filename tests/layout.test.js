@@ -31,6 +31,7 @@ describe("layout utility behavior", () => {
 		expect(output).toContain("max-height: calc(var(--block-width)*1);");
 		expect(output).toContain(".overflow-x {");
 		expect(output).toContain("overflow-x: auto;");
+		expect(output).toMatch(/\.nooverflow, \.noflow \{[^}]*overflow: clip;/);
 	});
 
 	test("maps delta margins to their corresponding axes", () => {

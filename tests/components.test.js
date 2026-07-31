@@ -42,6 +42,16 @@ describe("CSS-first components", () => {
 
 	test("clips panel tracks without creating a scroll container", () => {
 		expect(output).toMatch(/\.panels \{[^}]*overflow: clip;/);
+		expect(output).toMatch(/\.panels > \.horizontal > \* \{[^}]*overflow: auto;/);
+		expect(output).toMatch(/\.panels > \.vertical > \* \{[^}]*overflow: auto;/);
+	});
+
+	test("uses clip for non-scrollable visual and animated overflow", () => {
+		expect(output).toMatch(/figure\.avatar, figure\[data-avatar\] \{[^}]*overflow: clip;/);
+		expect(output).toMatch(/progress, meter \{[^}]*overflow: clip;/);
+		expect(output).toMatch(/\.shimmer \{[^}]*overflow: clip;/);
+		expect(output).toMatch(/\.progress-indeterminate \{[^}]*overflow: clip;/);
+		expect(output).toMatch(/\.accordion > :not\(summary\) \{[^}]*overflow: clip;/);
 	});
 
 	test("routes pill and badge fills through the background channel", () => {

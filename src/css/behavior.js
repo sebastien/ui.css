@@ -123,7 +123,7 @@ export default named({
 		rule("details::details-content", {
 			transition: `height ${vars.motion.duration.fast} ${vars.motion.easing.standard}, opacity ${vars.motion.duration.fast} ${vars.motion.easing.standard}`,
 			height: "0",
-			overflow: "hidden",
+			overflow: "clip",
 		}),
 		rule("details[open]::details-content", {
 			height: "auto",

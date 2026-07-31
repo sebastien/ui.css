@@ -200,7 +200,7 @@ export default named({
 		}),
 		rule(".pre", { white_space: "pre" }),
 		rule(".pre-lines", { white_space: "pre-line" }),
-		rule(".ellipsis", { text_overflow: "ellipsis", overflow: "hidden" }),
+		rule(".ellipsis", { text_overflow: "ellipsis", overflow: "clip" }),
 	),
 	transform: group(
 		rule([".caps", ".upper"], { text_transform: "uppercase" }),

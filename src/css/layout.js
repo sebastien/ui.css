@@ -455,7 +455,7 @@ export default named({
 				overflow_x: "auto",
 		}),
 		rule([".nooverflow", ".noflow"], {
-			overflow: "hidden",
+			overflow: "clip",
 		}),
 	),
 	misc: group(
