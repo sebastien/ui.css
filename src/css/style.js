@@ -324,34 +324,51 @@ export default named({
 	),
 	depth: group(
 		...times(10, (i) => rule(`.z-${i}`, { z_index: i * 10 })),
+		rule(".d", { __depth: "0.25px" }),
+		...times(5, (i) => rule(`.d-${i}`, { __depth: `${i / 4}px` })),
 		rule(mods([".inset"], undefined, "focus", "hover", "active"), {
 			__inset_shadow: `oklch(0 0 0 / 0.1)`,
 			__inset_light: `oklch(1 0 0 / 0.5)`,
-			border_width: "2px",
+			border_width: vars.border.width,
 			border_top_color: vars.inset.shadow,
 			border_left_color: vars.inset.shadow,
 			border_bottom_color: vars.inset.light,
 			border_right_color: vars.inset.light,
+			box_shadow:
+				"inset 0 var(--depth, 0.25px) calc(var(--depth, 0.25px) * 2) var(--inset-shadow), inset 0 calc(var(--depth, 0.25px) * -1) var(--depth, 0.25px) var(--inset-light)",
 		}),
-		rule(mods([".raised"], undefined, "focus", "hover", "active"), {
+		rule(mods([".outset", ".raised"], undefined, "focus", "hover", "active"), {
 			__inset_shadow: `oklch(0 0 0 / 0.1)`,
 			__inset_light: `oklch(1 0 0 / 0.5)`,
-			border_width: "2px",
+			border_width: vars.border.width,
 			border_top_color: vars.inset.light,
 			border_left_color: vars.inset.light,
 			border_bottom_color: vars.inset.shadow,
 			border_right_color: vars.inset.shadow,
-			box_shadow: "0 2px 3px rgb(0 0 0 / 0.12)",
+			box_shadow: "0 calc(var(--depth, 0.25px) * 2) calc(var(--depth, 0.25px) * 3) rgb(0 0 0 / 0.12)",
+		}),
+		rule(mods([".t-inset"], undefined, "focus", "hover", "active"), {
+			__inset_shadow: `oklch(0 0 0 / 0.1)`,
+			__inset_light: `oklch(1 0 0 / 0.5)`,
+			text_shadow:
+				"calc(var(--depth, 1px) * -1) calc(var(--depth, 1px) * -1) calc(var(--depth, 1px) * 0.5) var(--inset-shadow), var(--depth, 1px) var(--depth, 1px) calc(var(--depth, 1px) * 0.5) var(--inset-light)",
+		}),
+		rule(mods([".t-outset"], undefined, "focus", "hover", "active"), {
+			__inset_shadow: `oklch(0 0 0 / 0.1)`,
+			__inset_light: `oklch(1 0 0 / 0.5)`,
+			text_shadow:
+				"calc(var(--depth, 1px) * -1) calc(var(--depth, 1px) * -1) calc(var(--depth, 1px) * 0.5) var(--inset-light), var(--depth, 1px) var(--depth, 1px) calc(var(--depth, 1px) * 0.5) var(--inset-shadow)",
 		}),
 		rule(mods([".embossed"], undefined, "focus", "hover", "active"), {
 			__inset_shadow: `oklch(0 0 0 / 0.1)`,
 			__inset_light: `oklch(1 0 0 / 0.5)`,
-			border_width: "2px",
+			border_width: vars.border.width,
 			border_top_color: vars.inset.shadow,
 			border_left_color: vars.inset.shadow,
 			border_bottom_color: vars.inset.light,
 			border_right_color: vars.inset.light,
-			box_shadow: "inset 0 1px 2px rgb(0 0 0 / 0.12), inset 0 -1px 1px rgb(255 255 255 / 0.5)",
+			box_shadow:
+				"inset 0 var(--depth, 0.25px) calc(var(--depth, 0.25px) * 2) rgb(0 0 0 / 0.12), inset 0 calc(var(--depth, 0.25px) * -1) var(--depth, 0.25px) rgb(255 255 255 / 0.5)",
 		}),
 	),
 });

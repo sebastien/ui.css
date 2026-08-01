@@ -35,8 +35,10 @@ The `style.js` module provides miscellaneous styling utilities for spacing, elem
 - `.sh-0` through `.sh-4`: Box shadow levels using standard displacement and spread variables.
 - `.noblur`: Removes shadow spread (sets `--shadow-spread: 0`).
 - `.inset`: Pressed/sunken 3D effect.
-- `.raised`: Elevated/popping 3D effect.
+- `.outset`, `.raised`: Elevated/popping 3D effect (`.raised` is a compatibility alias).
 - `.embossed`: Inset highlight and shadow effect.
+- `.d`, `.d-0` through `.d-4`: Visual depth scale from `0px` to `1px` in `0.25px` steps; `.d` defaults to `.d-1` (`0.25px`).
+- `.t-inset`, `.t-outset`: Inset and outset text-shadow effects.
 - `.z-0` through `.z-10`: Z-index scale (indices 0, 10, 20, ..., 100).
 
 ### Border and Rounding:
@@ -46,6 +48,7 @@ The `style.js` module provides miscellaneous styling utilities for spacing, elem
 - `.nord`, `.nord-tl`, `.nord-tr`, `.nord-bl`, `.nord-br`, `.nord-t`, `.nord-r`, `.nord-b`, `.nord-l`: Removes rounding globally or on a side/corner.
 - `.rounded`, `.rounder`, `.roundest`: Relative rounding based on line-height (`0.25lh`, `0.5lh`, `1.5lh`).
 - `.bdw-0` through `.bdw-4`: Sets the custom border width token.
+- `.inset`, `.outset`, and `.embossed` inherit their border width from the current border width token.
 - `.bd-t`, `.bd-b`, `.bd-l`, `.bd-r`: Applies border width and style to one side; color-side utilities are provided by the colors module.
 - `.dashed`, `.dotted`: Sets `border-style`.
 

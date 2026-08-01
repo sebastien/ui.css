@@ -348,12 +348,18 @@ export default group(
 			},
 		},
 		field: {
+			font: {
+				size: `${vars.control.font.size}`,
+			},
 			padding: "0.55em 0.7em",
 			border: {
 				radius: "0.25em",
 			},
 		},
 		action: {
+			font: {
+				size: `${vars.control.font.size}`,
+			},
 			border: {
 				width: "0px",
 				radius: "0.25em",

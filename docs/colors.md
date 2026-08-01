@@ -12,6 +12,7 @@ The `colors.js` module implements a sophisticated color system that automaticall
 - `.tx-contrast`: Explicit maximum-contrast text color for the current background.
 - `.bd`: Applies the computed border color and default border width/style.
 - `.bd-t`, `.bd-r`, `.bd-b`, `.bd-l`: Applies border color and width to a specific side.
+- `.bd-i`: Inherits the border color from the parent element; useful for controls inside a bordered component.
 - `.ol`: Applies the computed outline color.
 
 ### Color and Level Modifiers:

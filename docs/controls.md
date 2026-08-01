@@ -145,9 +145,10 @@ via fallback chains:
 - `--control-font-*`, `--control-padding`, `--control-gap`,
   `--control-border-width`, `--control-border-radius`,
   `--control-outline-width`: shared geometry.
-- `--field-padding`, `--field-border-radius`, `--action-border-width`,
-  `--action-border-radius`, `--action-outline-width`: per-kind geometry
-  overrides (fields vs actions).
+- `--field-font-size`, `--field-padding`, `--field-border-radius`,
+  `--action-font-size`, `--action-border-width`, `--action-border-radius`,
+  `--action-outline-width`: per-kind geometry and typography overrides
+  (fields vs actions). These fall back to the shared `--control-*` tokens.
 - `--{checkbox,radio,toggle,range,select,selector}-*`: per-component sizing.
 
 Note: `input[type=submit]`, `input[type=button]` and `input[type=reset]` are

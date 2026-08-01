@@ -110,8 +110,7 @@ function base(selector, ...rest) {
 		css.rule("&", {
 			// Font
 			font_family: vars.control.font.family.or(vars.font.controls.family),
-			// We inerit font size
-			font_size: "inherit",
+			font_size: vars.control.font.size.or(vars.font.controls.size),
 			line_height: vars.control.font.line.or(vars.font.controls.line),
 			font_weight: vars.control.font.weight.or(vars.font.controls.weight),
 			// Box
@@ -132,6 +131,7 @@ function base(selector, ...rest) {
 			__control_border_opacity: 0.8,
 			// Border
 			border_width: vars.control.border.width.or("1px"),
+			border_radius: vars.control.border.radius.or("0.25em"),
 			border_color: control.border(),
 			// Outline
 			outline_width: "0px",
@@ -181,6 +181,10 @@ function field(selector, ...rest) {
 	return base(
 		selector,
 		css.rule("&", {
+			font_size: vars.field.font.size.or(
+				vars.control.font.size,
+				vars.font.controls.size,
+			),
 			padding: vars.field.padding.or("0.5em 0.75em"),
 			border_radius: vars.field.border.radius.or(
 				vars.control.border.radius,
@@ -381,6 +385,10 @@ function action(selector, ...rest) {
 	return base(
 		selector,
 		css.rule("&", {
+			font_size: vars.action.font.size.or(
+				vars.control.font.size,
+				vars.font.controls.size,
+			),
 			// Cursor
 			cursor: "pointer",
 			// Default fill uses the light neutral surface (not medium neutral,

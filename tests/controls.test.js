@@ -19,6 +19,12 @@ describe("controls color model", () => {
 		);
 	});
 
+	test("border inherit is available for controls and checkbox variants", () => {
+		expect(output).toContain(".bd-i {");
+		expect(output).toContain("border-color: inherit;");
+		expect(output).toContain("input[type=checkbox]:not(.toggle):not(.selector), .checkbox");
+	});
+
 	test("group prefixes share field styling", () => {
 		expect(output).toContain(".group > :not(input, textarea, select, button, .input, .textarea, .select, .button)");
 	});
@@ -175,5 +181,35 @@ describe("controls color model", () => {
 	test("--control-border-size is unified into --control-border-width", () => {
 		expect(output).not.toContain("--control-border-size");
 		expect(output).toContain("--control-border-width: 1px");
+	});
+
+	test("controls apply shared font size and border radius tokens", () => {
+		expect(output).toContain(
+			"font-size: var(--control-font-size, var(--font-controls-size));",
+		);
+		expect(output).toContain(
+			"border-radius: var(--control-border-radius, 0.25em);",
+		);
+	});
+
+	test("fields and actions expose per-kind font size and radius overrides", () => {
+		const fields = output.slice(output.indexOf("/* @group fields */"));
+		const actions = output.slice(
+			output.indexOf("/* @group actions */"),
+			output.indexOf("/* @end actions */"),
+		);
+
+		expect(fields).toContain(
+			"font-size: var(--field-font-size, var(--control-font-size, var(--font-controls-size)));",
+		);
+		expect(fields).toContain(
+			"border-radius: var(--field-border-radius, var(--control-border-radius, 0.25em));",
+		);
+		expect(actions).toContain(
+			"font-size: var(--action-font-size, var(--control-font-size, var(--font-controls-size)));",
+		);
+		expect(actions).toContain(
+			"border-radius: var(--action-border-radius, var(--control-border-radius, 0.25em));",
+		);
 	});
 });

@@ -59,9 +59,12 @@ Each of these properties supports `base`, `tint`, `blend`, and `opacity` tokens 
 
 #### Component Specific (Button, Input, etc.)
 Controls use shared `--control-*` and per-kind `--field-*`/`--action-*` namespaces, with component-specific namespaces for `checkbox`, `radio`, `toggle`, `range`, `select`, and `selector`:
-- `--control-font-*`, `--control-padding`, `--control-gap`.
+- `--control-font-*`, `--control-padding`, `--control-gap`,
+  `--control-border-radius`.
 - `--control-color-*`, `--control-background-*`, `--control-border-*`, `--control-outline-*`: Each color channel supports `base`, `tint`, `blend`, and `opacity`.
-- `--field-*` and `--action-*`: Geometry and state-specific overrides.
+- `--field-font-size`, `--field-padding`, `--field-border-radius`,
+  `--action-font-size`, `--action-border-width`, `--action-border-radius`,
+  `--action-outline-width`: Per-kind overrides that fall back to shared control tokens.
 - Component namespaces provide sizing and geometry tokens such as `--checkbox-size`, `--radio-dot-size`, and `--range-track-height`.
 
 ### Scale indices:

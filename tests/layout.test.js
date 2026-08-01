@@ -41,6 +41,17 @@ describe("layout utility behavior", () => {
 });
 
 describe("style utility behavior", () => {
+	test("uses the border token and depth scale for tactile effects", () => {
+		expect(output).toContain(".d {");
+		expect(output).toContain("--depth: 0.25px;");
+		expect(output).toContain(".d-4 {");
+		expect(output).toContain("--depth: 1px;");
+		expect(output).toContain("border-width: var(--border-width);");
+		expect(output).toContain(".outset, .raised");
+		expect(output).toContain(".t-inset");
+		expect(output).toContain("text-shadow: calc(var(--depth, 1px) * -1)");
+	});
+
 	test("background dimming controls the background color opacity channel", () => {
 		expect(output).toContain(".bg-dim {");
 		expect(output).toContain("--background-color-opacity: 0.6;");
