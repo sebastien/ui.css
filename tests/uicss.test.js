@@ -9,6 +9,13 @@ describe("rule", () => {
 		expect(output).toContain("color: red;");
 		expect(output).toContain("background-color: blue;");
 	});
+
+	test("renders a compact stylesheet without formatting comments", () => {
+		const output = [...css.compact(rule(".probe", { color: "red" }), tokens({ probe: "1" }))].join("");
+
+		expect(output).toContain(".probe{color:red;}");
+		expect(output).not.toContain("/* @tokens */");
+	});
 });
 
 describe("Group", () => {

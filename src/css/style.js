@@ -127,7 +127,6 @@ export default named({
 	interaction: group(
 		rule(".noev", { pointer_events: "none" }),
 		rule(".ev", { pointer_events: "auto" }),
-		rule(".move", { cursor: "move" }),
 		rule(".pointer", { cursor: "pointer" }),
 		rule(".action", { cursor: "pointer", user_select: "none" }),
 		rule(".help", { cursor: "help" }),

@@ -100,7 +100,7 @@ export const styles = ["style"];
 export const meta = ["meta", "title", "base"];
 export const iframes = ["iframe"];
 export const other = ["br", "hr", "wbr", "template", "slot"];
-export const all = [
+export const all = [...new Set([
 	...structure,
 	...text,
 	...controls,
@@ -115,6 +115,6 @@ export const all = [
 	...meta,
 	...iframes,
 	...other,
-];
+])];
 export default {};
 // EOF

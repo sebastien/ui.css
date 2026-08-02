@@ -2,6 +2,7 @@
 BASE="$(dirname "$(dirname "$(readlink -f "$0")")")"
 GUARD=""
 EMBED=""
+COMPACT=""
 while [ "$#" -gt 0 ]; do
 	case "$1" in
 	--guard)
@@ -10,6 +11,10 @@ while [ "$#" -gt 0 ]; do
 		;;
 	--embed)
 		EMBED="1"
+		shift
+		;;
+	--compact)
+		COMPACT="1"
 		shift
 		;;
 	*)
@@ -21,7 +26,7 @@ done
 run_uicss() {
 	local uicss_doc="$1"
 	shift
-	UICSS_BASE="$BASE" UICSS_GUARD="$GUARD" UICSS_EMBED="$EMBED" UICSS_DOC="$uicss_doc" bun -e '
+	UICSS_BASE="$BASE" UICSS_GUARD="$GUARD" UICSS_EMBED="$EMBED" UICSS_DOC="$uicss_doc" UICSS_COMPACT="$COMPACT" bun -e '
 const base = process.env.UICSS_BASE;
 const guard = process.env.UICSS_GUARD;
 const resolve = (mod) => typeof mod === "function" ? mod() : mod;
@@ -30,6 +35,9 @@ const render = (mod, scoped) => {
 	return guard ? scoped(res, guard) : res;
 };
 const { default: css, guard: scoped, layers, docs } = await import(`${base}/src/js/uicss.js`);
+const compact = process.env.UICSS_COMPACT === "1";
+const rendercss = compact ? css.compact : css;
+const printcss = (value) => console.log([...rendercss(value)].join(compact ? "" : "\n"));
 const args = Bun.argv.slice(1);
 if (process.env.UICSS_DOC === "1") {
 	const res = {};
@@ -40,17 +48,17 @@ if (process.env.UICSS_DOC === "1") {
 	console.log(JSON.stringify(res));
 } else if (args.length === 0) {
 	const { default: all } = await import(`${base}/src/css/all.js`);
-	console.log([...css(guard ? all(undefined, { guard }) : all())].join("\n"));
+	printcss(guard ? all(undefined, { guard }) : all());
 } else if (args.length === 1) {
 	const { default: mod } = await import(`./${args[0]}`);
-	console.log([...css(render(mod, scoped))].join("\n"));
+	printcss(render(mod, scoped));
 } else {
 	const res = {};
 	for (const arg of args) {
 		const { default: mod } = await import(`./${arg}`);
 		res[arg.split(".").at(0)] = render(mod, scoped);
 	}
-	console.log([...css(layers(res))].join("\n"));
+	printcss(layers(res));
 }
 ' "$@"
 }

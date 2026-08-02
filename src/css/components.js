@@ -794,7 +794,6 @@ function meter() {
 	const tinted = (selector) => selector.replace(/^(progress|meter)/, `$1.tinted`);
 	const colored = (selector, name) => [
 		selector.replace(/^(progress|meter)/, `$1.${name}`),
-		selector.replace(/^(progress|meter)/, `$1.${name}.tinted`),
 		selector.replace(/^(progress|meter)/, `$1.tinted.${name}`),
 	];
 	const bg = (color) => ({ background: `${color} !important` });

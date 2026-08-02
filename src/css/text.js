@@ -258,7 +258,6 @@ export default named({
 			{ display: "none" },
 		),
 	),
-	overflow: group(rule(".ellipsis", { text_overflow: "ellipsis" })),
 	decorations: named({
 		parens: group(
 			rule(".parens:before", { content: '"("' }),
@@ -318,7 +317,6 @@ export default named({
 		rule(".mono", { font_family: `${vars.font.mono}` }),
 		rule(".sans", { font_family: `${vars.font.sans}` }),
 		rule(".serif", { font_family: `${vars.font.serif}` }),
-		rule(".script", { font_family: `${vars.font.script.family}` }),
 		rule(".code", { font_family: `${vars.font.code.family}` }),
 		rule(".control", { font_family: `${vars.font.control.family}` }),
 		rule(".heading", { font_family: `${vars.font.heading.family}` }),

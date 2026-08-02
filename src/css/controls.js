@@ -758,8 +758,6 @@ function toggle() {
 			box_shadow:
 				"0 1px 3px oklch(0% 0 0 / 0.22), 0 0 0 0.5px oklch(0% 0 0 / 0.06)",
 		}),
-		css.rule("&:active::before, &.active::before", {}),
-		css.rule("&:checked:active::before, &.checked.active::before", {}),
 		css.rule("&:hover, &.hover", {
 			background_color: control.background(0.55, 1.0),
 		}),

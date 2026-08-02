@@ -8,9 +8,19 @@ dist/ui.css: $(SOURCES_JS) $(SOURCES_CSSJS)
 	./bin/uicss > "$@"
 	$(call rule_post_cmd)
 
+dist/ui.min.css: $(SOURCES_JS) $(SOURCES_CSSJS)
+	@mkdir -p dist
+	./bin/uicss --compact > "$@"
+	$(call rule_post_cmd)
+
 dist/ui.embed.css: $(SOURCES_JS) $(SOURCES_CSSJS)
 	@mkdir -p dist
 	./bin/uicss --embed --guard ".uicss" > "$@"
+	$(call rule_post_cmd)
+
+dist/ui.embed.min.css: $(SOURCES_JS) $(SOURCES_CSSJS)
+	@mkdir -p dist
+	./bin/uicss --compact --embed --guard ".uicss" > "$@"
 	$(call rule_post_cmd)
 
 deploy: $(DIST_ALL)

@@ -17,6 +17,7 @@ describe("CSS-first components", () => {
 		expect(output).toContain("meter.success::-webkit-meter-optimum-value");
 		expect(output).toContain("progress.tinted.success::-webkit-progress-value");
 		expect(output).toContain("meter.tinted.danger::-webkit-meter-optimum-value");
+		expect(output).not.toContain("meter.danger.tinted::-webkit-meter-optimum-value");
 		expect(output).toContain(".pagination");
 	});
 

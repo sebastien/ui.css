@@ -27,7 +27,7 @@ export default (cols = COLORS, { guard: root } = {}) => {
 			style,
 			animate,
 			behavior,
-			theme: group(rule(".theme", {})),
+			theme: group(),
 		}),
 		meter(),
 	);

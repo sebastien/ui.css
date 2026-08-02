@@ -106,7 +106,7 @@ export default named({
 			__details_open_hide_display: "inherit",
 			__details_open_rotate: "0deg",
 		}),
-		rule("details:open", {
+		rule("details[open]", {
 			__details_open_show_display: "inherit",
 			__details_open_hide_display: "none",
 			__details_open_rotate: vars.motion.rotation,
