@@ -562,19 +562,27 @@ function alert() {
 			["error", vars.color.error],
 			["info", vars.color.info],
 		].map(([name, color]) =>
-			css.rule(`.alert.ghost.${name}`, {
+			css.rule([`.alert.ghost.${name}`, `.alert.outline.${name}`], {
+				__accent_color: color,
 				border_width: "1px",
 				background_color: "transparent",
 				border_color: `${color}`,
 				color: `${color}`,
 			}),
 		),
-		css.rule(".alert.ghost", {
+		css.rule([".alert.ghost", ".alert.outline"], {
+			__accent_color: vars.color.neutral,
 			border_width: "1px",
 			background_color: "transparent",
 			border_color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.surface} 80%)`,
 			color: vars.color.surface_text,
 		}),
+		css.rule(
+			":where(.alert.outline) :where(input, textarea, select, .input, .textarea, .select):not(.colored)",
+			{
+			color: "inherit",
+			},
+		),
 	);
 }
 

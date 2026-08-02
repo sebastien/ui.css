@@ -78,6 +78,22 @@ test("neutral outline and ghost actions wash with solid neutral", async ({ page 
 	}
 });
 
+test("outline alerts pass their semantic color to nested controls", async ({ page }) => {
+	await render(
+		page,
+		`<div class="alert outline success"><button id="button">Save</button><input id="field"></div>`,
+	);
+	const alert = await properties(page, ".alert", ["--accent-color"]);
+	const button = await properties(page, "#button", ["--accent-color", "--control-color-base"]);
+	const field = await page.$eval("#field", (element) => getComputedStyle(element).color);
+	const alertColor = await page.$eval(".alert", (element) => getComputedStyle(element).color);
+
+	expect(alert["--accent-color"]).toBe("#22c55e");
+	expect(button["--accent-color"]).toBe("#22c55e");
+	expect(button["--control-color-base"]).toBe("#22c55e");
+	expect(field).toBe(alertColor);
+});
+
 test("theme geometry tokens reach actions and fields", async ({ page }) => {
 	await render(page, `<body data-theme="material"><button id="action">Save</button><input id="field"></body>`, material);
 	const action = await page.$eval("#action", (element) => {

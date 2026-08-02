@@ -333,7 +333,7 @@ export default group(
 		control: {
 			font: {
 				family: `${vars.font.controls.family}`,
-				size: `${vars.font.controls.size}`,
+				size: "1em",
 				line: `${vars.font.controls.line}`,
 				weight: `${vars.font.controls.weight}`,
 			},

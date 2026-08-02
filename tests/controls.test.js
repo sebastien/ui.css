@@ -213,7 +213,7 @@ describe("controls color model", () => {
 
 	test("controls apply shared font size and border radius tokens", () => {
 		expect(output).toContain(
-			"font-size: var(--control-font-size, var(--font-controls-size));",
+			"font-size: var(--control-font-size, 1em);",
 		);
 		expect(output).toContain(
 			"border-radius: var(--control-border-radius, 0.25em);",
@@ -228,13 +228,13 @@ describe("controls color model", () => {
 		);
 
 		expect(fields).toContain(
-			"font-size: var(--field-font-size, var(--control-font-size, var(--font-controls-size)));",
+			"font-size: var(--field-font-size, var(--control-font-size, 1em));",
 		);
 		expect(fields).toContain(
 			"border-radius: var(--field-border-radius, var(--control-border-radius, 0.25em));",
 		);
 		expect(actions).toContain(
-			"font-size: var(--action-font-size, var(--control-font-size, var(--font-controls-size)));",
+			"font-size: var(--action-font-size, var(--control-font-size, 1em));",
 		);
 		expect(actions).toContain(
 			"border-radius: var(--action-border-radius, var(--control-border-radius, 0.25em));",

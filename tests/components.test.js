@@ -24,6 +24,13 @@ describe("CSS-first components", () => {
 	});
 	test("styles explicit alert classes and native feedback elements", () => {
 		expect(output).toContain(".alert {");
+		expect(output).toContain(".alert.outline");
+		expect(output).toContain(".alert.outline.success");
+		expect(output).toContain("--accent-color: var(--color-success);");
+		expect(output).toContain(
+			":where(.alert.outline) :where(input, textarea, select, .input, .textarea, .select):not(.colored)",
+		);
+		expect(output).toContain("background-color: transparent;");
 		expect(output).not.toContain("[role=alert]");
 		expect(output).toContain("animation: loading-spinner 720ms linear infinite;");
 		expect(output).toContain("translate(-50%, -50%) rotate(360deg)");

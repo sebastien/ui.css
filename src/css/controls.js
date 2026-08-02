@@ -139,7 +139,7 @@ function basechrome() {
 	return css.group(
 		css.rule(baseHosts, {
 			font_family: vars.control.font.family.or(vars.font.controls.family),
-			font_size: vars.control.font.size.or(vars.font.controls.size),
+			font_size: vars.control.font.size.or("1em"),
 			line_height: vars.control.font.line.or(vars.font.controls.line),
 			font_weight: vars.control.font.weight.or(vars.font.controls.weight),
 			display: "inline-flex",
@@ -200,7 +200,7 @@ const fieldHosts = [
 
 function fieldchrome() {
 	return css.rule(fieldHosts, {
-		font_size: vars.field.font.size.or(vars.control.font.size, vars.font.controls.size),
+		font_size: vars.field.font.size.or(vars.control.font.size, "1em"),
 		padding: vars.field.padding.or("0.5em 0.75em"),
 		border_radius: vars.field.border.radius.or(vars.control.border.radius, "0.25em"),
 		field_sizing: "content",
@@ -439,7 +439,7 @@ function action(selector, ...rest) {
 		css.rule("&", {
 			font_size: vars.action.font.size.or(
 				vars.control.font.size,
-				vars.font.controls.size,
+				"1em",
 			),
 			padding: vars.action.padding.or(vars.control.padding, "0.5em 1em"),
 			// Cursor
