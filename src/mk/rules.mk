@@ -23,6 +23,13 @@ dist/ui.embed.min.css: $(SOURCES_JS) $(SOURCES_CSSJS)
 	./bin/uicss --compact --embed --guard ".uicss" > "$@"
 	$(call rule_post_cmd)
 
+.PHONY: browser-test browser-install
+browser-test: dist/ui.css ## Runs Chromium computed-style tests
+	bunx playwright test
+
+browser-install: ## Installs the Chromium browser for browser tests
+	bunx playwright install chromium
+
 deploy: $(DIST_ALL)
 	@
 	rsync -rv dist/www/ pgs.sh:/ui.css

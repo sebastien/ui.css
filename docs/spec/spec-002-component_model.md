@@ -41,31 +41,21 @@ as they use `em` units.
 
 ## Color Variables
 
-Each control computes its colors from four channels, each with
-`base`, `tint`, `blend`, `opacity`:
-
-- `--control-color-*` — the **accent** (semantic color), drives text, border,
-  outline, and accent-filled backgrounds. Inheritable, themeable globally.
-- `--control-background-*` — the **surface**. Element-scoped: every control
-  pins `--control-background-base` on itself, so inherited values never
-  interfere with variants. Only override it via selectors targeting controls.
-- `--control-border-*`, `--control-outline-*` — derived from the accent by
-  default (their `base` falls back to `--control-color-base`).
+`--accent-color` is the inheritable semantic identity. Controls retain the
+`--control-*` channels as their default and state inputs. The later `bg`, `tx`,
+`bd`, and `ol` apply utilities provide explicit final property overrides; their
+modifier classes configure the corresponding shared paint recipe.
 
 Pinning rules:
 
-- Actions pin `--control-background-base: var(--control-color-base)` (fill
-  tracks the accent), including checked states of checkbox/radio/toggle and
-  selected options.
-- Fields pin `--control-background-base` and `--control-background-tint` to
-  `var(--color-page, var(--color-paper))` (follows the page surface in both
-  light and dark mode). Field variants use the optional
-  `--color-{semantic}-background` theme hook, falling back to the semantic
-  color itself.
+- Actions and selected states derive their fill from the control accent.
+- Fields establish a local surface and use their accent for border and focus
+  chrome. A local `bg-*`, `bd-*`, or `ol-*` modifier overrides that channel.
 
 ## Color Variants
 
-Applied as classes on any control — sets `--control-color-base`:
+Applied as classes on any control — sets `--accent-color` and the compatible
+`--control-color-base` input:
 
 - `neutral` (default)
 - `primary`, `secondary`, `tertiary`, `accent`

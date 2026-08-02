@@ -2,7 +2,7 @@
 
 ## Core design variables and CSS custom properties
 
-The `tokens.js` module defines the foundational design system variables, including typography scales, spacing, sizing, and the luminosity scale for the OKLCH color system.
+The `tokens.js` module defines the foundational design system variables, including typography scales, spacing, sizing, and semantic color roles.
 
 ### CSS Custom Properties (Configuration Tokens):
 

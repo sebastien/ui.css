@@ -60,7 +60,7 @@ for (const line of stylesheet) {
 - **Functional DSL**: Composable rules using `rule()`, `group()`, and `named()`.
 - **Direction-Aware**: Colors and levels that automatically adapt to light/dark modes.
 - **Smart Contrast**: Progressive automatic contrast for `.bg.tx` and explicit max-contrast via `.tx-contrast`.
-- **Scale-Driven**: Consistent 0-10 scales for spacing, sizing, and luminosity.
+- **Scale-Driven**: Consistent 0-10 scales for spacing and sizing.
 - **No-Build ESM**: Works directly in modern runtimes (Bun/Node) and browsers via ESM.
 
 ### Features

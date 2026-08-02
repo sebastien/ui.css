@@ -1,4 +1,4 @@
-import css, { vars } from "../js/uicss.js";
+import css, { vars, where } from "../js/uicss.js";
 import colors from "./colors.js";
 
 const control = {
@@ -56,64 +56,92 @@ const control = {
 				vars.control.border.tint.or(vars.control.color.tint, fallback),
 			blend: (fallback = 0.8) => vars.control.border.blend.or(fallback),
 			opacity: (fallback = 0.8) =>
-				vars.control.border.opacity.or(
-					vars.control.color.border.opacity,
-					fallback,
-				),
+				vars.control.border.opacity.or(fallback),
 		},
 	),
 	outline: Object.assign(
 		(blend = 0.8, opacity = 0.5, tint = vars.color.paper) =>
 			colors.mixed(
-				control.outline.color.base(vars.color.focus.or(vars.color.neutral)),
-				control.outline.color.tint(tint),
-				control.outline.color.blend(blend),
-				control.outline.color.opacity(opacity),
+				control.outline.base(vars.color.focus.or(vars.color.neutral)),
+				control.outline.tint(tint),
+				control.outline.blend(blend),
+				control.outline.opacity(opacity),
 			),
 		{
-			color: Object.assign(
-				(fallback = vars.color.neutral) =>
-					vars.control.outline.color.base.or(vars.control.color.base, fallback),
-				{
-					base: (fallback = vars.color.neutral) =>
-						vars.control.outline.color.base.or(
-							vars.control.color.base,
-							fallback,
-						),
-					tint: (fallback = vars.color.paper) =>
-						vars.control.outline.color.tint.or(
-							vars.control.color.tint,
-							fallback,
-						),
-					blend: (fallback = 0.8) =>
-						vars.control.outline.color.blend.or(fallback),
-					opacity: (fallback = 0.5) =>
-						vars.control.outline.color.opacity.or(
-							vars.control.outline.opacity,
-							vars.control.color.outline.opacity,
-							fallback,
-						),
-				},
-			),
+			base: (fallback = vars.color.neutral) =>
+				vars.control.outline.base.or(vars.control.color.base, fallback),
+			tint: (fallback = vars.color.paper) =>
+				vars.control.outline.tint.or(vars.control.color.tint, fallback),
+			blend: (fallback = 0.8) => vars.control.outline.blend.or(fallback),
+			opacity: (fallback = 0.5) => vars.control.outline.opacity.or(fallback),
 		},
 	),
 };
 
-const controlContrast = () => `contrast-color(${control.color.base()})`;
+const controlContrast = () => `contrast-color(${control.background()})`;
 
-// Base style for all controls, covering font, box, outline and border properties,
-// as well as color variants and focus ring.
-function base(selector, ...rest) {
+const baseHosts = [
+	"button",
+	".button",
+	"input[type=submit]",
+	"input[type=button]",
+	"input[type=reset]",
+	"input:where(:not([type=submit],[type=button],[type=reset],[type=image]):not(.button))",
+	"textarea",
+	"select",
+	".input",
+	".textarea",
+	".select",
+	".group > :not(input, textarea, select, button, .input, .textarea, .select, .button)",
+	"input[type=checkbox]:not(.toggle):not(.selector)",
+	".checkbox",
+	":not(.selector) input[type=radio]:not(.toggle)",
+	".radio",
+	"input[type=range]",
+	".range",
+	":not(.selector) input[type=checkbox].toggle",
+	"input[type=checkbox][role=switch]",
+	".toggle",
+	":where(.selector)",
+];
+
+function colorvariants() {
 	return css.nesting(
-		selector,
+		where(baseHosts),
 		{},
-		css.rule("&", {
-			// Font
+		...colors.semantic.map((color) =>
+			css.rule(css.mods("&", color), {
+				__control_color_base: vars.color[color],
+				__accent_color: vars.color[color],
+			}),
+		),
+		css.rule("&.bw", {
+			__control_color_base: vars.color.ink,
+			__control_color_tint: vars.color.paper,
+			__control_color_blend: 1.0,
+			__control_color_opacity: 1.0,
+			__control_border_opacity: 1.0,
+			__control_outline_opacity: 1.0,
+		}),
+	);
+}
+
+function basechrome() {
+	const transition = [
+		"opacity",
+		"outline-color",
+		"border-color",
+		"color",
+		"background-color",
+	]
+		.map((_) => `${_} ${vars.motion.duration.normal} ${vars.motion.easing.emphasized}`)
+		.join(", ");
+	return css.group(
+		css.rule(baseHosts, {
 			font_family: vars.control.font.family.or(vars.font.controls.family),
 			font_size: vars.control.font.size.or(vars.font.controls.size),
 			line_height: vars.control.font.line.or(vars.font.controls.line),
 			font_weight: vars.control.font.weight.or(vars.font.controls.weight),
-			// Box
 			display: "inline-flex",
 			align_items: "center",
 			__gap: "0.25em",
@@ -123,198 +151,222 @@ function base(selector, ...rest) {
 			margin: vars.control.margin.or("0em"),
 			white_space: "nowrap",
 			text_overflow: "ellipsis",
-			// Don't inherit an ancestor's applied --text-color (e.g. body.tx).
-			// A local .tx re-sets it; otherwise action color falls back to contrast/accent.
+			// Paint recipes are local: inherited text recipes must not restyle controls.
 			__text_color: "initial",
-			__control_border_tint: vars.control.color.tint.or(vars.color.paper),
+			__control_color_base: vars.accent.color.or(vars.control.color.base),
+			__control_border_tint: vars.control.color.tint.or(vars.color.surface),
 			__control_border_blend: 0.8,
 			__control_border_opacity: 0.8,
-			// Border
 			border_width: vars.control.border.width.or("1px"),
 			border_radius: vars.control.border.radius.or("0.25em"),
 			border_color: control.border(),
-			// Outline
 			outline_width: "0px",
 			outline_color: control.outline(),
-			// No user select
 			user_select: "none",
-			transition: [
-				"opacity",
-				"outline-color",
-				"border-color",
-				"color",
-				"background-color",
-			]
-				.map(
-					(_) =>
-						`${_} ${vars.motion.duration.normal} ${vars.motion.easing.emphasized}`,
-				)
-				.join(", "),
+			transition: transition,
 		}),
-		css.rule("&.compact", {
+		css.rule(baseHosts.map((selector) => `${selector}.compact`), {
 			padding: vars.control.padding.or("0.35em 0.5em"),
 		}),
-		// Color variants
-		...colors.semantic.map((color) =>
-			css.rule(css.mods("&", color), {
-				__control_color_base: vars.color[color],
-			}),
+		css.rule(
+			baseHosts.flatMap((selector) => [
+				`${selector}:focus:not(.nofocus)`,
+				`${selector}.focus:not(.nofocus)`,
+			]),
+			{ outline_width: vars.control.outline.width.or("2px") },
 		),
-		// Color variants
-		css.rule("&.bw", {
-			__control_color_base: vars.color.ink,
-			__control_color_tint: vars.color.paper,
-			__control_color_blend: 1.0,
-			__control_color_opacity: 1.0,
-			__control_color_border_opacity: 1.0,
-			__control_color_outline_opacity: 1.0,
-		}),
-		// Focus ring
-		css.rule(css.mods("&:not(.nofocus)", "focus"), {
-			outline_width: vars.control.outline.width.or("2px"),
-		}),
-		...rest,
 	);
 }
 
-function field(selector, ...rest) {
-	return base(
-		selector,
-		css.rule("&", {
-			font_size: vars.field.font.size.or(
-				vars.control.font.size,
-				vars.font.controls.size,
-			),
-			padding: vars.field.padding.or("0.5em 0.75em"),
-			border_radius: vars.field.border.radius.or(
-				vars.control.border.radius,
-				"0.25em",
-			),
-			field_sizing: "content",
-			// Ink text; border and outline use the pure accent at an opacity.
-			color: vars.color.ink,
-			__control_border_base: vars.control.color.base,
-			__control_border_tint: vars.control.color.base,
-			__control_border_blend: 1.0,
-			__control_border_opacity: 0.9,
-			__control_outline_color_base: vars.control.color.base,
-			__control_outline_color_tint: vars.control.color.base,
-			__control_outline_color_blend: 1.0,
-			border_color: control.border(1.0, 0.9, vars.control.color.base),
-			// Neutral surface: paper at 0.8 opacity
-			__control_background_base: vars.color.paper,
-			__control_background_tint: vars.color.paper,
-			__control_background_blend: 1.0,
-			__control_background_opacity: 0.8,
-			background_color: control.background(
-				1.0,
-				0.8,
-				vars.color.paper,
-				vars.color.paper,
-			),
-		}),
-		css.rule("&.compact", {
+// Component builders only emit their differences from the shared control chrome.
+function base(selector, ...rest) {
+	return css.nesting(selector, {}, ...rest);
+}
+
+const fieldHosts = [
+	".input",
+	"input:where(:not([type=submit],[type=button],[type=reset],[type=image]):not(.button))",
+	"textarea",
+	".textarea",
+	"select",
+	".select",
+	".group > :not(input, textarea, select, button, .input, .textarea, .select, .button)",
+	".checkbox",
+	".radio",
+	".range",
+	".toggle",
+	":where(.selector)",
+];
+
+function fieldchrome() {
+	return css.rule(fieldHosts, {
+		font_size: vars.field.font.size.or(vars.control.font.size, vars.font.controls.size),
+		padding: vars.field.padding.or("0.5em 0.75em"),
+		border_radius: vars.field.border.radius.or(vars.control.border.radius, "0.25em"),
+		field_sizing: "content",
+		color: vars.color.surface_text,
+		__control_border_base: vars.control.color.base,
+		__control_border_tint: vars.control.color.base,
+		__control_border_blend: 1.0,
+		__control_border_opacity: 0.9,
+		__control_outline_base: vars.control.color.base,
+		__control_outline_tint: vars.control.color.base,
+		__control_outline_blend: 1.0,
+		border_color: control.border(1.0, 0.9, vars.control.color.base),
+		__control_background_base: vars.color.surface,
+		__control_background_tint: vars.color.surface,
+		__control_background_blend: 1.0,
+		__control_background_opacity: 0.8,
+		background_color: control.background(1.0, 0.8, vars.color.surface, vars.color.surface),
+	});
+}
+
+function fieldstates() {
+	return css.group(
+		css.rule(fieldHosts.map((s) => `${s}.compact`), {
 			padding: vars.control.padding.compact.or("0.35em 0.5em"),
 		}),
-		css.rule("&.tight", {
+		css.rule(fieldHosts.map((s) => `${s}.tight`), {
 			padding: vars.control.padding.tight.or("0.15em 0.25em"),
 		}),
-		// Soft wash: pure accent at low opacity (no paper blend)
-		css.rule("&.tinted", {
+		css.rule(fieldHosts.map((s) => `${s}.tinted`), {
 			__control_background_base: vars.control.color.base,
 			__control_background_tint: vars.control.color.base,
 			__control_background_blend: 1.0,
 			__control_background_opacity: 0.15,
 			background_color: control.background(1.0, 0.15),
 		}),
-		// Accent text (border already follows color-base)
-		css.rule("&.colored", {
+		css.rule(fieldHosts.map((s) => `${s}.colored`), {
 			color: control.color(1.0, 1.0, vars.color.ink),
 			__control_border_opacity: 1.0,
 			border_color: control.border(1.0, 1.0, vars.control.color.base),
 		}),
-		// Semantic colors set the accent (drives border; bg only with .tinted)
-		...colors.semantic.map((color) =>
-			css.rule(css.mods("&", color), {
-				__control_color_base: vars.color[color],
-			}),
-		),
-		// Nested inputs are filled
-		css.rule(["& > input", "& > textarea"], {
+		css.rule(fieldHosts.map((s) => `${s} > input, ${s} > textarea`), {
 			flex: "1",
 		}),
-		css.rule("&.bw", {
+		css.rule(fieldHosts.map((s) => `${s}.bw`), {
 			__control_background_base: vars.color.paper,
 			outline_style: "groove",
 		}),
-		css.rule("&.white", {
+		css.rule(fieldHosts.map((s) => `${s}.white`), {
 			__control_background_base: vars.color.white,
 			__control_background_blend: 1.0,
 			__control_background_opacity: 1.0,
 		}),
-		// Focus/hover: solid surface except .tinted (opacity is the wash)
-		css.rule(css.mods("&:not(.nofocus):not(.tinted)", "focus"), {
-			__control_background_opacity: 1.0,
-			__control_border_opacity: 1.0,
-		}),
-		css.rule(css.mods("&:not(.tinted)", "hover"), {
-			__control_background_opacity: 1.0,
-			__control_border_opacity: 0.95,
-		}),
-		css.rule(css.mods("&.tinted:not(.nofocus)", "focus"), {
-			__control_border_opacity: 1.0,
-		}),
-		css.rule(css.mods("&.tinted", "hover"), {
-			__control_border_opacity: 0.95,
-		}),
-		// Active: strongest border
-		css.rule(css.mods("&", "active"), {
-			__control_border_opacity: 1.0,
-		}),
-
-		// Disabled variant
-		css.rule(css.mods("&", "disabled"), {
-			opacity: 0.5,
-			pointer_events: "none",
-			cursor: "not-allowed",
-		}),
-		// Ghost variant, typically no background, unless on hover
+		css.rule(
+			fieldHosts.flatMap((s) => [
+				`${s}:not(.nofocus):not(.tinted):focus`,
+				`${s}:not(.nofocus):not(.tinted).focus`,
+			]),
+			{
+				__control_background_opacity: 1.0,
+				__control_border_opacity: 1.0,
+			},
+		),
+		css.rule(
+			fieldHosts.flatMap((s) => [
+				`${s}:not(.tinted):hover`,
+				`${s}:not(.tinted).hover`,
+			]),
+			{
+				__control_background_opacity: 1.0,
+				__control_border_opacity: 0.95,
+			},
+		),
+		css.rule(
+			fieldHosts.flatMap((s) => [
+				`${s}.tinted:not(.nofocus):focus`,
+				`${s}.tinted:not(.nofocus).focus`,
+			]),
+			{
+				__control_border_opacity: 1.0,
+			},
+		),
+		css.rule(
+			fieldHosts.flatMap((s) => [
+				`${s}.tinted:hover`,
+				`${s}.tinted.hover`,
+			]),
+			{
+				__control_border_opacity: 0.95,
+			},
+		),
+		css.rule(
+			fieldHosts.flatMap((s) => [
+				`${s}:active`,
+				`${s}.active`,
+			]),
+			{
+				__control_border_opacity: 1.0,
+			},
+		),
+		css.rule(
+			fieldHosts.flatMap((s) => [
+				`${s}:disabled`,
+				`${s}.disabled`,
+			]),
+			{
+				opacity: vars.control.disabled.opacity.or(0.5),
+				pointer_events: "none",
+				cursor: "not-allowed",
+			},
+		),
 		css.nesting(
-			"&.ghost",
+			fieldHosts.map((s) => `${s}.ghost`),
 			{
 				border_color: "transparent",
-				// No outline for ghost
 				outline_width: "0px",
-				// Very faint accent, transparent by default
 				__control_background_blend: 0.1,
 				__control_background_opacity: 0,
 			},
-			css.rule(css.mods("&:not(.nofocus)", "focus", "active"), {
-				__control_background_opacity: 0.5,
-			}),
+			css.rule(
+				fieldHosts.flatMap((s) => [
+					`&:not(.nofocus):focus`,
+					`&:not(.nofocus).focus`,
+					`&:active`,
+					`&.active`,
+				]),
+				{
+					__control_background_opacity: 0.5,
+				},
+			),
 		),
-		// Blank variant
-		css.rule(css.mods("&", "blank"), {
-			background: "none !important",
-			background_color: "transparent !important",
-			border_width: "0px",
-			border_color: "transparent !important",
-			outline_width: "0px",
-			outline_color: "transparent !important",
-			padding: "unset",
-		}),
-		// Icon variant
-		css.rule(css.mods("&", "icon"), {
-			aspect_ratio: "1/1",
-			box_sizing: "border-box",
-			justify_content: "center",
-			align_items: "center",
-			padding: "0.15em",
-			height: "2em",
-			// Like ghost
-			__control_background_blend: 0.1,
-			__control_background_opacity: 0.1,
-		}),
+		css.rule(
+			fieldHosts.flatMap((s) => [
+				`${s}.blank`,
+			]),
+			{
+				background: "none !important",
+				background_color: "transparent !important",
+				border_width: "0px",
+				border_color: "transparent !important",
+				outline_width: "0px",
+				outline_color: "transparent !important",
+				padding: "unset",
+			},
+		),
+		css.rule(
+			fieldHosts.flatMap((s) => [
+				`${s}.icon`,
+			]),
+			{
+				aspect_ratio: "1/1",
+				box_sizing: "border-box",
+				justify_content: "center",
+				align_items: "center",
+				padding: "0.15em",
+				height: "2em",
+				__control_background_blend: 0.1,
+				__control_background_opacity: 0.1,
+			},
+		),
+	);
+}
+
+
+function field(selector, ...rest) {
+	return base(
+		selector,
 		...rest,
 	);
 }
@@ -389,6 +441,7 @@ function action(selector, ...rest) {
 				vars.control.font.size,
 				vars.font.controls.size,
 			),
+			padding: vars.action.padding.or(vars.control.padding, "0.5em 1em"),
 			// Cursor
 			cursor: "pointer",
 			// Default fill uses the light neutral surface (not medium neutral,
@@ -447,7 +500,7 @@ function action(selector, ...rest) {
 		}),
 		// Disabled variant
 		css.rule(css.mods("&", "disabled"), {
-			opacity: 0.5,
+			opacity: vars.control.disabled.opacity.or(0.5),
 			pointer_events: "none",
 			cursor: "not-allowed",
 		}),
@@ -486,7 +539,7 @@ function action(selector, ...rest) {
 			{
 				__control_color_base: vars.color.ink,
 				__control_default_outline_opacity: 0.2,
-				__control_color_border_opacity: 0,
+				__control_border_opacity: 0,
 				__control_background_opacity: 0,
 				// Transparent fill: text is the accent (not contrast-color of
 				// the accent, which yields white and disappears on light surfaces).
@@ -521,8 +574,16 @@ function action(selector, ...rest) {
 			__control_border_base: vars.color.neutral,
 			__control_border_tint: vars.color.ink,
 			__control_border_blend: 0.3,
+			__control_background_base: vars.color.neutral,
+			__control_background_tint: vars.color.neutral,
+			__control_background_blend: 1.0,
 			color: `var(--text-color, ${control.color(0.3, 1.0, vars.color.ink)})`,
 			border_color: control.border(0.3, 1.0, vars.color.ink),
+		}),
+		css.rule("&.ghost.neutral", {
+			__control_background_base: vars.color.neutral,
+			__control_background_tint: vars.color.neutral,
+			__control_background_blend: 1.0,
 		}),
 
 		// Blank variant
@@ -1204,12 +1265,12 @@ function tab() {
 			background_color: `color-mix(in oklch, ${vars.color.paper}, transparent 60%)`,
 		}),
 		css.rule(".tabs .tab[aria-selected=true], .tabs .tab.active", {
-			background_color: "var(--tab-color, var(--color-paper))",
-			color: "contrast-color(var(--tab-color, var(--color-paper)))",
+			background_color: "var(--accent-color, var(--color-surface))",
+			color: "contrast-color(var(--accent-color, var(--color-surface)))",
 			box_shadow: `var(--shadow-x) var(--shadow-y) var(--shadow-spread) var(--shadow-color)`,
 		}),
 		...colors.semantic.map((name) =>
-			css.rule(`.tabs .tab.${name}`, { __tab_color: vars.color[name] }),
+			css.rule(`.tabs .tab.${name}`, { __accent_color: vars.color[name] }),
 		),
 		css.rule(".tabs .tab:focus-visible, .tabs .tab.focus", {
 			outline: `2px solid ${vars.color.focus.or(vars.color.neutral)}`,
@@ -1227,12 +1288,16 @@ function tab() {
 			background_color: `color-mix(in oklch, ${vars.color.paper}, transparent 60%)`,
 		}),
 		css.rule(".tabs .tab.ghost[aria-selected=true], .tabs .tab.ghost.active", {
-			background_color: "var(--tab-color, var(--color-paper))",
+			background_color: "var(--accent-color, var(--color-surface))",
 		}),
 	);
 }
 
 export default css.named({
+	base: basechrome(),
+	fieldbase: fieldchrome(),
+	fieldstates: fieldstates(),
+	colorvariants: colorvariants(),
 	actions: action([
 		"button",
 		".button",

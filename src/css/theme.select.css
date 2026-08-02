@@ -10,20 +10,29 @@ body[data-theme="select"] {
 	--limit-content: 840px;
 	--limit-text: 66ch;
 
-	--color-primary: var(--color-sky-500);
-	--color-secondary: var(--color-indigo-500);
-	--color-tertiary: var(--color-cyan-500);
-	--color-neutral: var(--color-slate-400);
-	--color-neutral-background: var(--color-slate-200);
-	--color-success: var(--color-emerald-500);
-	--color-warning: var(--color-amber-400);
-	--color-danger: var(--color-rose-500);
+	--color-primary: #0ea5e9;
+	--color-secondary: #6366f1;
+	--color-tertiary: #06b6d4;
+	--color-neutral: #94a3b8;
+	--color-neutral-background: #e2e8f0;
+	--color-success: #10b981;
+	--color-info: #38bdf8;
+	--color-warning: #fbbf24;
+	--color-danger: #f43f5e;
 	--color-error: var(--color-danger);
-
-	--border-color-base: var(--color-slate-300);
+	--color-paper: #ffffff;
+	--color-ink: #1e293b;
+	--color-page: var(--color-paper);
+	--color-text: var(--color-ink);
+	--color-surface: var(--color-page);
+	--color-surface-text: var(--color-text);
+	--color-tint: var(--color-surface);
+	--color-accent: var(--color-primary);
+	--accent-color: var(--color-neutral);
+	--border-color-base: #cbd5e1;
 
 	line-height: 1.6;
-	color: var(--color-slate-800);
+	color: var(--color-text);
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 	font-family: var(--font-sans);
@@ -33,8 +42,17 @@ body[data-theme="select"] {
 	& h3,
 	& h4,
 	& h5 {
-		color: var(--color-slate-900);
+		color: var(--color-text);
 		font-weight: 700;
 		line-height: 1.2;
 	}
+}
+
+body[data-theme="select"].dark {
+	--color-page: var(--color-ink);
+	--color-text: var(--color-paper);
+	--color-surface: var(--color-page);
+	--color-surface-text: var(--color-text);
+	color: var(--color-text);
+	background: var(--color-page);
 }

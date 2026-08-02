@@ -1,10 +1,27 @@
 import { describe, expect, test } from "bun:test";
 import css from "../src/js/uicss.js";
 import all from "../src/css/all.js";
+import { SEMANTIC } from "../src/css/colors.js";
 
 const output = [...css(all())].join("\n");
 
 describe("CSS-first components", () => {
+	test("exports semantic color names as an ordered vocabulary", () => {
+		expect(SEMANTIC).toEqual([
+			"paper",
+			"ink",
+			"neutral",
+			"primary",
+			"secondary",
+			"tertiary",
+			"success",
+			"info",
+			"warning",
+			"danger",
+			"error",
+			"accent",
+		]);
+	});
 	test("styles explicit alert classes and native feedback elements", () => {
 		expect(output).toContain(".alert {");
 		expect(output).not.toContain("[role=alert]");
@@ -13,11 +30,10 @@ describe("CSS-first components", () => {
 		expect(output).toContain("progress, meter");
 		expect(output).toContain("progress::-webkit-progress-value");
 		expect(output).toContain("meter::-webkit-meter-optimum-value");
-		expect(output).toContain("progress.success::-webkit-progress-value");
-		expect(output).toContain("meter.success::-webkit-meter-optimum-value");
-		expect(output).toContain("progress.tinted.success::-webkit-progress-value");
-		expect(output).toContain("meter.tinted.danger::-webkit-meter-optimum-value");
-		expect(output).not.toContain("meter.danger.tinted::-webkit-meter-optimum-value");
+		expect(output).toContain("progress.success, meter.success");
+		expect(output).not.toContain("progress.tinted.success");
+		expect(output).toContain("--meter-color: var(--color-success);");
+		expect(output).toContain("background: var(--meter-color, var(--color-neutral)) !important;");
 		expect(output).toContain(".pagination");
 	});
 
@@ -61,6 +77,21 @@ describe("CSS-first components", () => {
 		expect(output).toContain("background-color: var(--background-color);");
 		expect(output).toContain("--background-color-blend: 0.1;");
 		expect(output).toContain("--background-color-opacity: 0;");
+	});
+
+	test("uses the shared accent role for component identities", () => {
+		expect(output).toContain("--accent-color: var(--color-neutral);");
+		expect(output).toContain("&.soft");
+		expect(output).not.toContain(".pill.secondary {");
+		expect(output).not.toContain("--pill-color");
+		expect(output).not.toContain("--pagination-color");
+	});
+
+	test("routes card variants through shared paint channels", () => {
+		expect(output).toContain("--background-color-base: var(--color-primary);");
+		expect(output).toContain("--border-color-base: var(--color-primary);");
+		expect(output).toContain("background-color: var(--background-color);");
+		expect(output).toContain("border-color: var(--border-color);");
 	});
 
 	test("interactive menu items expose a compact padding variant", () => {

@@ -26,36 +26,24 @@ body[data-theme="material"] {
 	--color-error: #f44336;
 	--color-paper: #fafafa;
 	--color-ink: #212121;
+	--color-page: var(--color-paper);
+	--color-text: var(--color-ink);
+	--color-surface: var(--color-page);
+	--color-surface-text: var(--color-text);
+	--color-tint: var(--color-surface);
+	--color-accent: var(--color-primary);
+	--accent-color: var(--color-neutral);
 
 	--border-color-base: #bdbdbd;
 
 	/* MD v1 control tokens */
-	--control-button-bd-radius: 2px;
-	--control-button-bd-width: 0px;
-	--control-button-bd-opacity: 0%;
-	--control-button-bg-blend: 0%;
-	--control-button-hover-bg-blend: 12%;
-	--control-button-active-bg-blend: 25%;
-
-	--control-field-bd-radius: 0px;
-	--control-field-bd-width: 0 0 1.5px 0;
-	--control-field-bd-blend: 50%;
-	--control-field-bd-opacity: 50%;
-	--control-field-bg-blend: 100%;
-	--control-field-hover-bd-blend: 30%;
-	--control-field-hover-bd-opacity: 70%;
-	--control-field-focus-bd-blend: 0%;
-	--control-field-focus-bd-opacity: 100%;
-
-	--control-focus-ring-width: 0px;
+	--action-border-radius: 2px;
+	--action-border-width: 0px;
+	--action-padding: 0 16px;
+	--field-border-radius: 0px;
+	--field-padding: 0.5em 0;
+	--control-outline-width: 0px;
 	--control-disabled-opacity: 0.26;
-
-	/* MD v1 button overrides */
-	--button-padding: 0 16px;
-	--button-margin: 0px;
-
-	/* MD v1 field overrides — underline style */
-	--input-padding: 0.5em 0;
 
 	/* MD v1 shadows */
 	--shadow-1: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
@@ -156,5 +144,22 @@ body[data-theme="material"] {
 		font-size: 14px;
 		font-weight: 500;
 		letter-spacing: 0.05em;
+	}
+}
+
+body[data-theme="material"].dark {
+	--color-page: var(--color-ink);
+	--color-text: var(--color-paper);
+	--color-surface: var(--color-page);
+	--color-surface-text: var(--color-text);
+	color: var(--color-text);
+	background: var(--color-page);
+
+	& h1,
+	& h2,
+	& h3,
+	& h4,
+	& h5 {
+		color: var(--color-text);
 	}
 }

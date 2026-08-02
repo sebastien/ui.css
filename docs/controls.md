@@ -45,9 +45,9 @@ Controls derive all their colors from `color-mix()` expressions over four
 channels — `color` (accent), `background` (surface), `border`, `outline` —
 each driven by four variables: `base`, `tint`, `blend`, `opacity`.
 
-- `--control-color-*` is the **accent**: the semantic color of the control.
-  Variant classes (`.primary`, `.danger`, …) only set `--control-color-base`.
-  It is inheritable and safe to set globally (e.g. on `:root` or `body`).
+- `--accent-color` is the inheritable semantic identity. Variant classes set it
+  alongside the compatible `--control-color-base` input.
+- `--control-color-*` drives coordinated accent state behavior.
 - `--control-background-*` is the **surface**: the background the control sits
   on. It is **element-scoped by design**: controls pin it on themselves, so an
   inherited value from an ancestor can never defeat the accent variants.
@@ -59,7 +59,7 @@ each driven by four variables: `base`, `tint`, `blend`, `opacity`.
   the solid semantic color. Default/neutral buttons use the light
   `--color-neutral-background` surface; medium `--color-neutral` stays for
   borders and chrome. Checked controls still pin fill to the accent.
-- Fields default to neutral paper at 0.8 opacity.
+- Fields default to the mode-aware surface at 0.8 opacity.
 - Field borders and focus outlines use the pure semantic accent; interaction emphasis changes opacity rather than mixing the accent with paper.
 - Field/selector `.tinted` applies a soft wash of the main accent
   (`--control-color-base`, primary unless a semantic class is set). Semantic
@@ -72,7 +72,7 @@ each driven by four variables: `base`, `tint`, `blend`, `opacity`.
   opacity, so theming a handful of variables restyles every state.
 - States are coordinated across different component types for a consistent feel.
 - Automatic contrast calculation for text inside accent-filled controls
-  (`contrast-color()` against the control color).
+  (`contrast-color()` against the control background).
 
 ### Using
 
@@ -146,11 +146,10 @@ via fallback chains:
   `--control-border-width`, `--control-border-radius`,
   `--control-outline-width`: shared geometry.
 - `--field-font-size`, `--field-padding`, `--field-border-radius`,
-  `--action-font-size`, `--action-border-width`, `--action-border-radius`,
+  `--action-font-size`, `--action-padding`, `--action-border-width`, `--action-border-radius`,
   `--action-outline-width`: per-kind geometry and typography overrides
   (fields vs actions). These fall back to the shared `--control-*` tokens.
 - `--{checkbox,radio,toggle,range,select,selector}-*`: per-component sizing.
 
-Note: `input[type=submit]`, `input[type=button]` and `input[type=reset]` are
-styled as actions, not fields. The `src/css/theme.*.css` files still reference
-the retired `--control-{button,field}-*` variable names and are stale.
+Note: `input[type=submit]`, `input[type=button]`, and `input[type=reset]` are
+styled as actions, not fields.

@@ -1,6 +1,6 @@
 # Colors Module (`colors.js`)
 
-## Direction-aware OKLCH color system and semantic themes
+## Token-driven OKLCH color system
 
 The `colors.js` module implements a sophisticated color system that automatically adapts to light and dark modes. It uses composable base, tint, blend, and opacity controls to derive final colors.
 
@@ -15,9 +15,10 @@ The `colors.js` module implements a sophisticated color system that automaticall
 - `.bd-i`: Inherits the border color from the parent element; useful for controls inside a bordered component.
 - `.ol`: Applies the computed outline color.
 
-### Color and Level Modifiers:
+### Color Modifiers:
 
-- `.{prop}-{color}`: Sets the base color at level 5 (e.g., `.bg-primary`).
+- `.{prop}-{color}`: Sets the base color token (e.g., `.bg-primary`). Raw
+  palette names resolve directly through `--color-{name}`.
 - `.{prop}-{0-9}o`: Sets opacity from 0.0 through 0.9 (e.g., `.bg-5o`). Unnumbered `.{prop}o` sets full opacity.
 - `.{prop}-to-{color}`: Sets a tint color for blending (e.g., `.bg-to-blue`).
 - `.{prop}-to-{semantic}`: Sets a semantic tint color (e.g., `.bg-to-primary`).
@@ -62,4 +63,4 @@ The `colors.js` module implements a sophisticated color system that automaticall
 - `colors(palette?)`: Generates the color utility classes. Accepts an optional palette override.
 - `colormix(base, tint, blend, opacity)`: Internal helper for generating `color-mix` CSS strings.
 - `COLORS`: Array of available palette color names, including the special `white` and `black` endpoints.
-- `SEMANTIC`: Mapping of semantic names to palette colors.
+- `SEMANTIC`: Ordered array of semantic token names.

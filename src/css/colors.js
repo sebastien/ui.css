@@ -14,18 +14,13 @@ import {
 // COLOR SYSTEM
 //
 // ----------------------------------------------------------------------------
-// This module implements a simplified color system with pre-computed scales.
-//
-// Colors use pre-defined CSS variables from palette.css:
-//   --color-{name}-{luminosity} where luminosity is 50, 100, 200, ..., 900, 950
-//
-// In light mode, index 0 maps to 950 (darkest) and index 10 maps to 50 (lightest)
-// In dark mode, index 0 maps to 50 (lightest) and index 10 maps to 950 (darkest)
+// This module composes semantic and palette tokens through color-mix().
+// Palette names resolve directly as --color-{name}.
 
 // ----------------------------------------------------------------------------
 // COLOR DEFINITIONS
 // ----------------------------------------------------------------------------
-// Base palette colors defined in palette.css
+// Base palette colors are provided as --color-{name} tokens by a palette.
 
 const COLORS = [
 	// Primary palette
@@ -59,27 +54,21 @@ const COLORS = [
 	"black",
 ];
 
-// Semantic colors (subsets of palette)
-const SEMANTIC = {
-	paper: "white", // Special: maps to #FFFFFF
-	ink: "black", // Special: maps to #000000
-	neutral: "slate",
-	primary: "blue",
-	secondary: "violet",
-	tertiary: "teal",
-	success: "green",
-	info: "cyan",
-	warning: "amber",
-	danger: "red",
-	error: "red",
-	accent: "blue", // aliased to primary
-};
-
-// Special color values that don't exist in palette
-const SPECIAL_COLORS = {
-	white: "#FFFFFF",
-	black: "#000000",
-};
+// Semantic token names. Their values are defined by tokens.js and themes.
+const SEMANTIC = [
+	"paper",
+	"ink",
+	"neutral",
+	"primary",
+	"secondary",
+	"tertiary",
+	"success",
+	"info",
+	"warning",
+	"danger",
+	"error",
+	"accent",
+];
 
 // Color property shorthands
 const shorthands = {
@@ -181,12 +170,15 @@ function colors(colors = COLORS) {
 		rule([root], {
 			__color_page: `${vars.color.paper}`,
 			__color_text: `${vars.color.ink}`,
+			__color_surface: `${vars.color.paper}`,
+			__color_surface_text: `${vars.color.ink}`,
 			color: `${vars.color.ink}`,
-			// NOTE: We don't the bg color then
 		}),
 		rule([`${root}.light`, `${root} .light`], {
 			__color_page: `${vars.color.paper}`,
 			__color_text: `${vars.color.ink}`,
+			__color_surface: `${vars.color.paper}`,
+			__color_surface_text: `${vars.color.ink}`,
 			// Apply actual properties
 			background_color: `${vars.color.paper}`,
 			color: `${vars.color.ink}`,
@@ -194,15 +186,17 @@ function colors(colors = COLORS) {
 		rule([`${root}.dark`, `${root} .dark`], {
 			__color_page: `${vars.color.ink}`,
 			__color_text: `${vars.color.paper}`,
+			__color_surface: `${vars.color.ink}`,
+			__color_surface_text: `${vars.color.paper}`,
 			// Apply actual properties with swapped colors
 			background_color: `${vars.color.ink}`,
 			color: `${vars.color.paper}`,
 		}),
 		rule(`.bg-def`, {
-			background_color: `${vars.color.paper}`,
+			background_color: `${vars.color.page}`,
 		}),
 		rule(`.tx-def`, {
-			color: `${vars.color.ink}`,
+			color: `${vars.color.text}`,
 		}),
 		// ------------------------------------------------------------------------
 		// APPLY CLASSES
@@ -293,7 +287,7 @@ function colors(colors = COLORS) {
 		// ------------------------------------------------------------------------
 		// Creates .{bg,tx,bd,ol}-{semantic} classes for semantic colors
 		Object.keys(shorthands).flatMap((short) =>
-			Object.keys(SEMANTIC).map((semantic) =>
+			SEMANTIC.map((semantic) =>
 				rule(`.${short}-${semantic}`, {
 					[`__${shorthands[short].name.replaceAll("-", "_")}_base`]:
 						vars.color[semantic],
@@ -354,7 +348,7 @@ function colors(colors = COLORS) {
 		// ------------------------------------------------------------------------
 		// Creates .{bg,tx,bd,ol}-to-{semantic} classes for setting tint
 		Object.keys(shorthands).flatMap((short) =>
-			[...Object.keys(SEMANTIC), ...colors].map((color) =>
+			[...SEMANTIC, ...colors].map((color) =>
 				rule(`.${short}-to-${color}`, {
 					[`__${shorthands[short].name.replaceAll("-", "_")}_tint`]:
 						vars.color[color],
@@ -362,36 +356,22 @@ function colors(colors = COLORS) {
 			),
 		),
 		// Sets all the tints to the given color
-		[...Object.keys(SEMANTIC), ...colors].map((color) =>
+		[...SEMANTIC, ...colors].map((color) =>
 			rule(`.to-${color}`, {
 				__color_tint: vars.color[color],
+				__text_color_tint: vars.color[color],
 				__border_color_tint: vars.color[color],
 				__background_color_tint: vars.color[color],
 				__outline_color_tint: vars.color[color],
 			}),
 		),
 
-		// Special tint classes (no index required)
+		// Transparent is an opacity alias, not a tint value.
 		Object.keys(shorthands).flatMap((short) => [
-			rule(`.${short}-to-white`, {
-				[`__${shorthands[short].name.replaceAll("-", "_")}_tint`]:
-					SPECIAL_COLORS.white,
-			}),
-			rule(`.${short}-to-black`, {
-				[`__${shorthands[short].name.replaceAll("-", "_")}_tint`]:
-					SPECIAL_COLORS.black,
-			}),
-			rule(`.${short}-to-paper`, {
-				[`__${shorthands[short].name.replaceAll("-", "_")}_tint`]: `${vars.color.paper}`,
-			}),
-			rule(`.${short}-to-ink`, {
-				[`__${shorthands[short].name.replaceAll("-", "_")}_tint`]: `${vars.color.ink}`,
-			}),
 			rule(`.${short}-to-transparent`, {
 				[`__${shorthands[short].name.replaceAll("-", "_")}_opacity`]: 0,
 			}),
 		]),
-
 		// ------------------------------------------------------------------------
 		// RESET CLASSES
 		// ------------------------------------------------------------------------
@@ -412,7 +392,6 @@ export default Object.assign(colors, {
 	mixed: colormix,
 	vars: colorvars,
 	alpha,
-	names: Object.keys(SEMANTIC), // TODO: deprecate in favor of semantic
-	semantic: Object.keys(SEMANTIC),
+	semantic: SEMANTIC,
 });
 // EOF

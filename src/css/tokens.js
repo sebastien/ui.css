@@ -88,23 +88,30 @@ export default group(
 			hi: "#FFFF00A0",
 			// Semantics from the prior default scheme
 			// Medium neutral: borders, accents, chrome
-			neutral: "var(--color-gray-500, #d5d5d5)",
+			neutral: "var(--color-gray, #d5d5d5)",
 			// Light neutral: filled surfaces (default buttons, chips, …)
-			neutral_background: "var(--color-gray-200, #e5e7eb)",
+			neutral_background: "#e5e7eb",
 			primary: "#0c31bf",
-			secondary: "#23d9d9;",
-			tertiary: "var(--color-teal-500, #14b8a6)",
-			success: "var(--color-green-500, #22c55e)",
-			info: "var(--color-cyan-500, #06b6d4)",
-			warning: "var(--color-amber-500, #f59e0b)",
-			error: "var(--color-red-500, #ef4444)",
+			secondary: "#23d9d9",
+			tertiary: "var(--color-teal, #14b8a6)",
+			success: "var(--color-green, #22c55e)",
+			info: "var(--color-cyan, #06b6d4)",
+			warning: "var(--color-amber, #f59e0b)",
+			error: "var(--color-red, #ef4444)",
 			danger: vars.color.error,
 			accent: vars.color.primary,
-			// Mode-dependent colors (defaults to light mode, swapped by .dark)
+			// Mode-dependent roles. Components consume these rather than fixed endpoints.
+			page: vars.color.paper,
 			text: vars.color.ink,
+			surface: vars.color.page,
+			surface_text: vars.color.text,
 			// Aliases
 			tint: vars.color.paper,
 		},
+	}),
+	tokens({
+		// Component identity inherits; paint recipes remain local to each element.
+		accent: { color: vars.color.neutral },
 	}),
 
 	// ------------------------------------------------------------------------
@@ -117,16 +124,16 @@ export default group(
 	tokens({
 		background: {
 			color: {
-				base: vars.color.paper,
-				tint: vars.color.tint.or(vars.color.paper),
+				base: vars.color.surface,
+				tint: vars.color.tint.or(vars.color.surface),
 				blend: 1.0,
 				opacity: 1.0,
 			},
 		},
 		text: {
 			color: {
-				base: vars.color.ink,
-				tint: vars.color.tint.or(vars.color.paper),
+				base: vars.color.surface_text,
+				tint: vars.color.tint.or(vars.color.surface),
 				blend: 1.0,
 				opacity: 1.0,
 			},
@@ -163,7 +170,7 @@ export default group(
 		},
 		border: {
 			color: {
-				base: vars.color.ink,
+				base: vars.color.surface_text,
 				tint: vars.color.tint,
 				blend: 0.5,
 				opacity: 0.9,
@@ -184,8 +191,8 @@ export default group(
 		},
 		outline: {
 			color: {
-				base: vars.color.ink,
-				tint: vars.color.tint.or(vars.color.paper),
+				base: vars.color.surface_text,
+				tint: vars.color.tint.or(vars.color.surface),
 				blend: 0.3,
 				opacity: 0.8,
 			},
@@ -346,6 +353,7 @@ export default group(
 			outline: {
 				width: "2px",
 			},
+			disabled: { opacity: 0.5 },
 		},
 		field: {
 			font: {
@@ -360,6 +368,7 @@ export default group(
 			font: {
 				size: `${vars.control.font.size}`,
 			},
+			padding: vars.control.padding,
 			border: {
 				width: "0px",
 				radius: "0.25em",

@@ -58,6 +58,8 @@ It documents build, lint, and test commands plus the code conventions already in
 ## Test Commands
 - `make test` - main test entrypoint
 - `make js-test` - run JavaScript and TypeScript tests through `bun test`
+- `make browser-install` - install Chromium for Playwright tests (one-time setup)
+- `make browser-test` - run Chromium computed-style tests
 - `make py-test` - run Python tests if any exist
 - There is a small `tests/` directory; new tests should follow `*.test.js`, `*.test.ts`, `*.test.py`, or `*.test.sh`
 - `tests/controls.test.js` renders the stylesheet in memory and asserts on the control color model

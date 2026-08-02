@@ -34,7 +34,7 @@ describe("controls color model", () => {
 		expect(output).toContain(".tabs .tab[aria-selected=true]");
 		expect(output).toContain("padding: 0.35rem;");
 		expect(output).toContain("color-mix(in oklch, var(--color-neutral), transparent 80%)");
-		expect(output).toContain("--tab-color: var(--color-primary);");
+		expect(output).toContain("--accent-color: var(--color-primary);");
 		expect(output).not.toContain(".tabsbar");
 	});
 
@@ -65,10 +65,10 @@ describe("controls color model", () => {
 		// checkbox checked + indeterminate, radio checked, toggle checked,
 		// selector checked label (5), plus .tinted on each field() emission
 		// tinted selector labels (1), and selected/tinted native option rows (2)
-		// (fields group, checkbox, radio, toggle, range, select, selector = 7)
-		// → 16. Default actions use --color-neutral-background instead.
+		// (fieldstates emits .tinted once)
+		// → 10. Default actions use --color-neutral-background instead.
 		// Tab no longer uses action() — it has its own standalone style.
-		expect(count(ACCENT_PIN)).toBe(16);
+		expect(count(ACCENT_PIN)).toBe(10);
 	});
 
 	test("default action fill uses light neutral background", () => {
@@ -91,21 +91,21 @@ describe("controls color model", () => {
 		);
 	});
 
-	test("field surface is neutral paper at 0.8 opacity", () => {
-		expect(output).toContain("--control-background-base: var(--color-paper)");
+	test("field surface follows the mode-aware surface role at 0.8 opacity", () => {
+		expect(output).toContain("--control-background-base: var(--color-surface)");
 		expect(output).toContain("--control-background-opacity: 0.8");
 	});
 
 	test("fields use pure accent borders and outlines at an opacity", () => {
 		const fields = output.slice(
-			output.indexOf("/* @group fields */"),
-			output.indexOf("/* @end fields */"),
+			output.indexOf("/* @group fieldbase */"),
+			output.indexOf("/* @end fieldbase */"),
 		);
 		expect(fields).toContain("--control-border-tint: var(--control-color-base)");
 		expect(fields).toContain("--control-border-blend: 1");
-		expect(fields).toContain("--control-outline-color-base: var(--control-color-base)");
-		expect(fields).toContain("--control-outline-color-tint: var(--control-color-base)");
-		expect(fields).toContain("--control-outline-color-blend: 1");
+		expect(fields).toContain("--control-outline-base: var(--control-color-base)");
+		expect(fields).toContain("--control-outline-tint: var(--control-color-base)");
+		expect(fields).toContain("--control-outline-blend: 1");
 	});
 
 	test("multiple selects preserve native listbox appearance", () => {
@@ -146,6 +146,34 @@ describe("controls color model", () => {
 		expect(output).not.toContain(
 			"color-mix(in oklch, var(--control-color-base), var(--control-color-tint)",
 		);
+	});
+
+	test("generic color utilities paint controls from the later colors layer", () => {
+		expect(output).toContain(".bg-primary {");
+		expect(output).toContain(".bg {");
+		expect(output).toContain("background-color: var(--background-color);");
+		expect(output).toContain(".bd {");
+		expect(output).toContain(".ol {");
+	});
+
+	test("default color utilities follow page roles in dark mode", () => {
+		expect(output).toContain(".bg-def {");
+		expect(output).toContain("background-color: var(--color-page);");
+		expect(output).toContain(".tx-def {");
+		expect(output).toContain("color: var(--color-text);");
+		expect(output).toContain("--color-surface: var(--color-ink);");
+		expect(output).toContain("--color-surface-text: var(--color-paper);");
+	});
+
+	test("control semantic variants publish the shared accent role", () => {
+		expect(output).toContain("--control-color-base: var(--accent-color");
+		expect(output).toContain("--accent-color: var(--color-primary);");
+	});
+
+	test("shared chrome and color variants are emitted once", () => {
+		expect(count("font-family: var(--control-font-family, var(--font-controls-family));")).toBe(1);
+		expect(count("/* @group fieldbase */")).toBe(1);
+		expect(count("/* @group colorvariants */")).toBe(1);
 	});
 
 	test("selector items support semantic colors in their states", () => {
@@ -193,7 +221,7 @@ describe("controls color model", () => {
 	});
 
 	test("fields and actions expose per-kind font size and radius overrides", () => {
-		const fields = output.slice(output.indexOf("/* @group fields */"));
+		const fields = output.slice(output.indexOf("/* @group fieldbase */"));
 		const actions = output.slice(
 			output.indexOf("/* @group actions */"),
 			output.indexOf("/* @end actions */"),

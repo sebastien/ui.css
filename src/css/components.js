@@ -21,10 +21,10 @@ function pill(...rest) {
 			border_style: "solid",
 			border_color: "transparent",
 			border_radius: "9999px",
-			// Pill color drives text and border variants; background uses the bg channel.
-			__pill_color: vars.color.neutral,
-			__background_color_base: vars.color.neutral,
-			__background_color_tint: vars.color.paper,
+			// Accent identifies the semantic variant; paint remains in shared channels.
+			__accent_color: vars.color.neutral,
+			__background_color_base: vars.accent.color,
+			__background_color_tint: vars.color.surface,
 			__background_color_blend: 1.0,
 			__background_color_opacity: 1.0,
 			background_color: vars.background.color,
@@ -46,16 +46,13 @@ function pill(...rest) {
 			padding: "0.5em 1.25em",
 		}),
 		// Color variants: solid color bg with light text
-		...colors.names.map((color) =>
+		...colors.semantic.map((color) =>
 			css.rule(css.mods("&", color), {
-				__pill_color: vars.color[color],
-				__background_color_base: vars.color[color],
-				color: vars.color.paper,
-				border_color: "transparent",
+				__accent_color: vars.color[color],
 			}),
 		),
-		// Secondary: light grey bg with dark text
-		css.rule("&.secondary", {
+		// Soft: light neutral background with dark text.
+		css.rule("&.soft", {
 			__background_color_base: vars.color.neutral,
 			__background_color_tint: vars.color.paper,
 			__background_color_blend: 0.1,
@@ -65,21 +62,21 @@ function pill(...rest) {
 		}),
 		// Tinted: color @ 10% bg with full color text
 		css.rule("&.tinted", {
-			__background_color_base: "var(--pill-color)",
+			__background_color_base: "var(--accent-color)",
 			__background_color_tint: "transparent",
 			__background_color_blend: 0.1,
 			__background_color_opacity: 1.0,
-			color: `var(--pill-color)`,
+			color: `var(--accent-color)`,
 			border_color: "transparent",
 		}),
 		// Outline: transparent bg with color border and darkened text
 		css.rule("&.outline", {
-			__background_color_base: "var(--pill-color)",
+			__background_color_base: "var(--accent-color)",
 			__background_color_tint: vars.color.paper,
 			__background_color_blend: 1.0,
 			__background_color_opacity: 0,
-			border_color: `color-mix(in oklch, var(--pill-color), ${vars.color.paper} 60%)`,
-			color: `color-mix(in oklch, var(--pill-color), ${vars.color.ink} 40%)`,
+			border_color: `color-mix(in oklch, var(--accent-color), ${vars.color.surface} 60%)`,
+			color: `color-mix(in oklch, var(--accent-color), ${vars.color.surface_text} 40%)`,
 		}),
 		...rest,
 	);
@@ -98,8 +95,8 @@ function tooltip(...rest) {
 			max_width: "min(20rem, 80vw)",
 			padding: "0.35rem 0.5rem",
 			border_radius: vars.border.radius[1],
-			background_color: vars.color.ink,
-			color: vars.color.paper,
+			background_color: vars.color.surface_text,
+			color: vars.color.surface,
 			font_size: "0.8em",
 			line_height: "1.25",
 			opacity: "0",
@@ -151,7 +148,7 @@ function toast(...rest) {
 			padding: "0.9rem 1rem",
 			border: `1px solid color-mix(in oklch, ${vars.color.ink}, ${vars.color.paper} 82%)`,
 			border_radius: vars.border.radius[2],
-			background_color: vars.color.paper,
+			background_color: vars.color.surface,
 			box_shadow: "0 12px 28px rgb(41 37 34 / 0.14)",
 		}),
 		css.rule(".toasts", {
@@ -179,8 +176,9 @@ function status(...rest) {
 			// Border
 			border_width: vars.status.border.size.or("0px"),
 			border_radius: vars.status.border.radius.or("1em"),
+			__accent_color: vars.status.color.base.or(vars.color.neutral),
 			border_color: colors.mixed(
-				vars.status.color.base.or(vars.color.neutral),
+				vars.accent.color,
 				vars.status.color.tint.or(vars.color.paper),
 				0.5,
 				1.0,
@@ -191,12 +189,12 @@ function status(...rest) {
 				0.5,
 				0.3,
 			),
-			color: `contrast-color(${vars.status.color.base.or(vars.color.neutral)})`,
+			color: `contrast-color(${vars.accent.color})`,
 		}),
 		// Color variants
-		...colors.names.map((color) =>
+		...colors.semantic.map((color) =>
 			css.rule(css.mods(["&", "& > *"], color), {
-				__status_color_base: vars.color[color],
+				__accent_color: vars.color[color],
 			}),
 		),
 		css.rule("& > *", {
@@ -205,7 +203,7 @@ function status(...rest) {
 			width: "2em",
 			height: "0.25em",
 			background_color: colors.mixed(
-				vars.status.color.base.or(vars.color.neutral),
+				vars.accent.color,
 				vars.status.color.tint.or(vars.color.paper),
 				1.0,
 				1.0,
@@ -215,7 +213,7 @@ function status(...rest) {
 			background_color: "transparent",
 			border_width: vars.status.border.size.or("1px"),
 			border_color: colors.mixed(
-				vars.status.color.base.or(vars.color.neutral),
+				vars.accent.color,
 				vars.status.color.tint.or(vars.color.paper),
 				1.0,
 				1.0,
@@ -250,27 +248,38 @@ function card(...rest) {
 		{},
 		css.rule("&", {
 			padding: vars.card.padding.or("0.5em"),
+			__accent_color: vars.card.color.base.or(vars.color.neutral),
+			__border_color_base: vars.accent.color,
+			__border_color_tint: vars.card.color.tint.or(vars.color.surface),
+			__border_color_blend: 0.35,
+			__border_color_opacity: 1.0,
+			__background_color_base: vars.accent.color,
+			__background_color_tint: vars.card.color.tint.or(vars.color.surface),
+			__background_color_blend: vars.card.color.blend.or(0.1),
+			__background_color_opacity: vars.card.color.alpha.or(1.0),
+			__border_color: colormix(
+				vars.border.color.base,
+				vars.border.color.tint,
+				vars.border.color.blend,
+				vars.border.color.opacity,
+			),
+			__background_color: colormix(
+				vars.background.color.base,
+				vars.background.color.tint,
+				vars.background.color.blend,
+				vars.background.color.opacity,
+			),
 			// Border
 			border_width: vars.card.border.size.or("1px"),
 			border_radius: vars.card.border.radius.or("0.5em"),
-			border_color: colors.mixed(
-				vars.card.color.base.or(vars.color.neutral),
-				vars.card.color.tint.or(vars.color.paper),
-				0.35,
-				1.0,
-			),
+			border_color: vars.border.color,
 			// Background
-			background_color: colors.mixed(
-				vars.card.color.base.or(vars.color.neutral),
-				vars.card.color.tint.or(vars.color.paper),
-				vars.card.color.blend.or(0.1),
-				vars.card.color.alpha.or(1.0),
-			),
+			background_color: vars.background.color,
 		}),
 		// Color variants
-		...colors.names.map((color) =>
+		...colors.semantic.map((color) =>
 			css.rule(css.mods("&", color), {
-				__control_color_base: vars.color[color],
+				__accent_color: vars.color[color],
 			}),
 		),
 		...rest,
@@ -303,9 +312,22 @@ function breadcrumbs() {
 }
 
 function section() {
+	const border = colormix(
+		vars.border.color.base,
+		vars.border.color.tint,
+		vars.border.color.blend,
+		vars.border.color.opacity,
+	);
+	const background = (blend) =>
+		colormix(
+			vars.background.color.base,
+			vars.background.color.tint,
+			blend,
+			vars.background.color.opacity,
+		);
 	return css.group(
 		css.rule("details.section", {
-			border: `1px solid oklch(from ${vars.border.base} calc(l + (${vars.border.l} - 5) * 0.1) c h / calc(${vars.border.o} / 9))`,
+			border: `1px solid ${border}`,
 			border_radius: `${vars.border.radius[1]}`,
 			margin_bottom: `${vars.margin[2]}`,
 		}),
@@ -314,14 +336,14 @@ function section() {
 			cursor: "pointer",
 			user_select: "none",
 			padding: `${vars.pad[2]}`,
-			background_color: `oklch(from ${vars.background.base} calc(l + (7 - 5) * 0.1) c h / calc(${vars.background.o} / 9))`,
+			background_color: background(0.7),
 			border_radius: `${vars.border.radius[1]} ${vars.border.radius[1]} 0 0`,
 			font_weight: "600",
 			transition: "background-color 0.2s ease",
 		}),
 
 		css.rule("details.section summary:hover", {
-			background_color: `oklch(from ${vars.background.base} calc(l + (6 - 5) * 0.1) c h / calc(${vars.background.o} / 9))`,
+			background_color: background(0.6),
 		}),
 
 		css.rule("details.section summary:before", {
@@ -338,7 +360,7 @@ function section() {
 
 		css.rule("details.section[open] summary", {
 			border_radius: `${vars.border.radius[1]} ${vars.border.radius[1]} 0 0`,
-			border_bottom: `1px solid oklch(from ${vars.border.base} calc(l + (${vars.border.l} - 5) * 0.1) c h / calc(${vars.border.o} / 9))`,
+			border_bottom: `1px solid ${border}`,
 		}),
 
 		css.rule("details.section > *:not(summary)", {
@@ -445,10 +467,16 @@ function panels() {
 }
 
 function tree() {
+	const border = colormix(
+		vars.border.color.base,
+		vars.border.color.tint,
+		vars.border.color.blend,
+		vars.border.color.opacity,
+	);
 	return css.group(
 		css.rule("details.tree", {
 			__tree_indent: "1em",
-			border_top: `1px solid oklch(from ${vars.border.base} calc(l + (${vars.border.l} - 5) * 0.1) c h / calc(${vars.border.o} / 9))`,
+			border_top: `1px solid ${border}`,
 			border_collapse: "collapse",
 		}),
 		css.rule("details.tree[open]", {}),
@@ -510,9 +538,9 @@ function alert() {
 			border_width: "1px",
 			border_style: "solid",
 			border_radius: vars.alert.border.radius,
-			border_color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 80%)`,
-			background_color: vars.color.paper,
-			color: vars.color.ink,
+			border_color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.surface} 80%)`,
+			background_color: vars.color.surface,
+			color: vars.color.surface_text,
 		}),
 		...[
 			["success", vars.color.success],
@@ -544,8 +572,8 @@ function alert() {
 		css.rule(".alert.ghost", {
 			border_width: "1px",
 			background_color: "transparent",
-			border_color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 80%)`,
-			color: vars.color.ink,
+			border_color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.surface} 80%)`,
+			color: vars.color.surface_text,
 		}),
 	);
 }
@@ -560,8 +588,8 @@ function avatar() {
 			margin: "0",
 			overflow: "clip",
 			border_radius: "50%",
-			background_color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 82%)`,
-			color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.ink} 52%)`,
+			background_color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.surface} 82%)`,
+			color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.surface_text} 52%)`,
 			font_weight: "600",
 		}),
 		css.rule(["figure.avatar img", "figure[data-avatar] img"], {
@@ -580,7 +608,7 @@ function avatar() {
 		css.rule(".avatars", { display: "flex", padding_left: "0.35rem" }),
 		css.rule(".avatars > :is(.avatar, [data-avatar])", {
 			margin_left: "-0.35rem",
-			border: `2px solid ${vars.color.paper}`,
+			border: `2px solid ${vars.color.surface}`,
 		}),
 	);
 }
@@ -588,9 +616,10 @@ function avatar() {
 function native() {
 	return css.group(
 		css.rule("details.accordion", {
-			border: `1px solid color-mix(in oklch, ${vars.color.ink}, ${vars.color.paper} 84%)`,
+			border: `1px solid color-mix(in oklch, ${vars.color.surface_text}, ${vars.color.surface} 84%)`,
 			border_radius: vars.border.radius[2],
-			background_color: vars.color.paper,
+			background_color: vars.color.surface,
+			color: vars.color.surface_text,
 		}),
 		css.rule("details.accordion + details.accordion", {
 			margin_top: "-1px",
@@ -607,10 +636,10 @@ function native() {
 			width: `min(${vars.dialog.width}, calc(100vw - 2rem))`,
 			max_height: "85vh",
 			padding: "0",
-			border: `1px solid color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 80%)`,
+			border: `1px solid color-mix(in oklch, ${vars.color.neutral}, ${vars.color.surface} 80%)`,
 			border_radius: "0.75rem",
-			background_color: vars.color.paper,
-			color: vars.color.ink,
+			background_color: vars.color.surface,
+			color: vars.color.surface_text,
 			box_shadow: "0 20px 48px rgb(9 9 11 / 0.18)",
 		}),
 		css.rule("dialog > *", {
@@ -635,10 +664,10 @@ function native() {
 		}),
 		css.rule("[popover]:popover-open", {
 			padding: "0.25rem",
-			border: `1px solid color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 80%)`,
+			border: `1px solid color-mix(in oklch, ${vars.color.neutral}, ${vars.color.surface} 80%)`,
 			border_radius: "0.375rem",
-			background_color: vars.color.paper,
-			color: vars.color.ink,
+			background_color: vars.color.surface,
+			color: vars.color.surface_text,
 			box_shadow: "0 1px 2px rgb(9 9 11 / 0.05), 0 8px 24px rgb(9 9 11 / 0.08)",
 		}),
 		css.rule("[popover]::backdrop", { background_color: "transparent" }),
@@ -668,7 +697,7 @@ function native() {
 				width: "100%",
 				padding: "0.5rem 0.75rem",
 				border_radius: "0.25rem",
-				color: `color-mix(in oklch, ${vars.color.ink}, ${vars.color.paper} 30%)`,
+				color: `color-mix(in oklch, ${vars.color.surface_text}, ${vars.color.surface} 30%)`,
 				background: "transparent",
 				border: "0",
 				font: "inherit",
@@ -691,8 +720,8 @@ function native() {
 				"[popover]:popover-open menu :is(a, button, [role=menuitem]):hover",
 			],
 			{
-				background_color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 90%)`,
-				color: vars.color.ink,
+				background_color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.surface} 90%)`,
+				color: vars.color.surface_text,
 			},
 		),
 		css.rule(
@@ -716,7 +745,7 @@ function native() {
 		),
 		css.rule(["menu[popover] hr", "[popover] menu hr"], {
 			border: "0",
-			border_top: `1px solid color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 80%)`,
+			border_top: `1px solid color-mix(in oklch, ${vars.color.neutral}, ${vars.color.surface} 80%)`,
 			margin: "0.25rem 0",
 		}),
 		css.rule("[popover]:popover-open.card, [popover].card:popover-open", {
@@ -733,9 +762,9 @@ function native() {
 			align_items: "center",
 			gap: "0.375rem",
 			padding: "0.5rem 0.75rem",
-			border: `1px solid color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 80%)`,
+			border: `1px solid color-mix(in oklch, ${vars.color.neutral}, ${vars.color.surface} 80%)`,
 			border_radius: "0.375rem",
-			background_color: vars.color.paper,
+			background_color: vars.color.surface,
 		}),
 		css.rule(".tags input", {
 			flex: "1",
@@ -752,8 +781,8 @@ function native() {
 			font_weight: "500",
 			padding: "0 0.25em 0 0.625em",
 			border_radius: "9999px",
-			background_color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 88%)`,
-			color: vars.color.ink,
+			background_color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.surface} 88%)`,
+			color: vars.color.surface_text,
 			white_space: "nowrap",
 		}),
 		css.rule(".tag button", {
@@ -791,14 +820,8 @@ function meter() {
 		"meter::-webkit-meter-even-less-good-value",
 	];
 	const mozValue = ["progress::-moz-progress-bar", "meter::-moz-meter-bar"];
-	const tinted = (selector) => selector.replace(/^(progress|meter)/, `$1.tinted`);
-	const colored = (selector, name) => [
-		selector.replace(/^(progress|meter)/, `$1.${name}`),
-		selector.replace(/^(progress|meter)/, `$1.tinted.${name}`),
-	];
 	const bg = (color) => ({ background: `${color} !important` });
-	const bgNeutral = () => bg(vars.color.neutral);
-	const bgColor = (name) => bg(vars.color[name]);
+	const meterColor = "var(--meter-color, var(--color-neutral))";
 
 	return css.group(
 		css.rule(["progress", "meter"], {
@@ -813,16 +836,17 @@ function meter() {
 			background: "transparent",
 		}),
 		css.rule(webkitTrack, { background: "transparent" }),
-		css.rule(webkitValue, bgNeutral()),
-		css.rule(webkitValue.map(tinted), bgNeutral()),
-		...colors.semantic.flatMap((name) => [
-			css.rule(webkitValue.flatMap((selector) => colored(selector, name)), bgColor(name)),
-		]),
-		css.rule(mozValue, bgNeutral()),
-		css.rule(mozValue.map(tinted), bgNeutral()),
-		...colors.semantic.flatMap((name) => [
-			css.rule(mozValue.flatMap((selector) => colored(selector, name)), bgColor(name)),
-		]),
+		css.rule(webkitValue, bg(meterColor)),
+		css.rule(mozValue, bg(meterColor)),
+		...colors.semantic.map((name) =>
+			css.rule(
+				[
+					`progress.${name}`,
+					`meter.${name}`,
+				],
+				{ __meter_color: vars.color[name] },
+			),
+		),
 	);
 }
 
@@ -872,19 +896,18 @@ function pagination() {
 			padding: "0",
 			margin: "0",
 			list_style: "none",
-			__pagination_color: vars.color.neutral,
+			__accent_color: vars.color.neutral,
 		}),
 		css.rule(".pagination > *", { display: "flex" }),
 		css.rule(".pagination > * > :is(a, .button)", {
-			__control_color_base: "var(--pagination-color)",
+			__control_color_base: "var(--accent-color)",
 			border_radius: "0",
 		}),
 		...colors.semantic.map((name) =>
 			css.rule(
 				[`.pagination.${name}`, `.pagination > * > :is(a, .button).${name}`],
 				{
-					__pagination_color: vars.color[name],
-					__control_color_base: vars.color[name],
+					__accent_color: vars.color[name],
 				},
 			),
 		),
@@ -899,14 +922,14 @@ function pagination() {
 		css.rule(
 			".pagination > * > :is(a, .button)[aria-current=page], .pagination > * > :is(a, .button).active",
 			{
-				__control_background_base: "var(--pagination-color)",
+				__control_background_base: "var(--accent-color)",
 				__control_background_tint: vars.color.paper,
 				__control_background_blend: 1.0,
 				__control_background_opacity: 1.0,
-				__control_border_base: "var(--pagination-color)",
-				color: "contrast-color(var(--pagination-color))",
-				border_color: "var(--pagination-color)",
-				background_color: "var(--pagination-color)",
+				__control_border_base: "var(--accent-color)",
+				color: "contrast-color(var(--accent-color))",
+				border_color: "var(--accent-color)",
+				background_color: "var(--accent-color)",
 			},
 		),
 	);

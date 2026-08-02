@@ -14,20 +14,29 @@ body[data-theme="crm"] {
 
 	--color-primary: #b2cfc0;
 	--color-secondary: #445761;
+	--color-tertiary: #14b8a6;
 	--color-neutral: #4f6f84;
 	--color-neutral-background: #d7e2ea;
 	--color-success: #14b8a6;
+	--color-info: #38bdf8;
 	--color-warning: #eab308;
 	--color-danger: #f97316;
 	--color-error: #f97316;
 	--color-paper: #ffffff;
 	--color-ink: #1c2429;
+	--color-page: var(--color-paper);
+	--color-text: var(--color-ink);
+	--color-surface: var(--color-page);
+	--color-surface-text: var(--color-text);
+	--color-tint: var(--color-surface);
+	--color-accent: var(--color-primary);
+	--accent-color: var(--color-neutral);
 
 	--border-color-base: #e0e9ed;
 
 	/* Control token overrides */
-	--control-button-bd-radius: 9999px;
-	--control-field-bd-radius: 0.5rem;
+	--action-border-radius: 9999px;
+	--field-border-radius: 0.5rem;
 
 	line-height: 1.6;
 	color: var(--color-ink);
@@ -47,4 +56,13 @@ body[data-theme="crm"] {
 		font-weight: 700;
 		line-height: 1.2;
 	}
+}
+
+body[data-theme="crm"].dark {
+	--color-page: var(--color-ink);
+	--color-text: var(--color-paper);
+	--color-surface: var(--color-page);
+	--color-surface-text: var(--color-text);
+	color: var(--color-text);
+	background: var(--color-page);
 }

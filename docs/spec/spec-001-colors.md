@@ -1,7 +1,7 @@
 # Colors
 
-ui.css uses a simplified color system based on pre-computed palette scales and
-property-specific color variables.
+ui.css uses semantic and palette color tokens with property-specific paint
+variables.
 
 ## Palette Colors
 
@@ -35,25 +35,14 @@ mist
 olive
 ```
 
-These colors can be overridden/defined. Note that `colors.js` does not define
-values for the colors, these need to be provided as corresponding CSS
-variables, like `--color-{color}-{luminosity}: …`. Each palette color has 11 luminosity steps:
-
-1. `50` (light)
-2. `100`
-3. `200`
-4. `300`
-5. `400`
-6. `500` (mid-point, default).
-7. `600`
-8. `700`
-9. `800`
-10. `900`
-11. `950` (dark)
+These colors can be defined or overridden directly as `--color-{color}`. A
+palette can expose any additional scale tokens it needs, but ui.css utilities
+only depend on the unqualified palette name.
 
 ## Semantic Colors
 
-The semantic color aliases are defined in `src/css/colors.js` as `SEMANTIC`:
+The semantic vocabulary is defined in `src/css/colors.js` as `SEMANTIC`; the
+actual values are root tokens from `src/css/tokens.js` and can be themed:
 
 - `paper` -> `white`
 - `ink` -> `black`
@@ -75,14 +64,23 @@ These aliases are emitted as root CSS variables such as `--color-primary`.
 The color module exposes base classes of the form
 `.{bg,tx,bd,ol}-{color}` and `.{bg,tx,bd,ol}-{semantic}`.
 
-## Color Variables
+## Color Roles And Paint Channels
+
+Global tokens describe semantic intent and inherit through the document:
+
+- `--color-page`, `--color-text` — page roles, swapped by `.light` and `.dark`
+- `--color-surface`, `--color-surface-text` — component surface roles
+- `--accent-color` — the nearest component or container semantic identity
+
+Paint channels are local to a painted element. Components initialize them and
+utilities can override them in the later `colors` cascade layer:
 
 Actual color values are computed colors from these variables:
 
-- `--{background,text,border,outline}-base`
-- `--{background,text,border,outline}-tint`
-- `--{background,text,border,outline}-blend`
-- `--{background,text,border,outline}-opacity`
+- `--{background,text,border,outline}-color-base`
+- `--{background,text,border,outline}-color-tint`
+- `--{background,text,border,outline}-color-blend`
+- `--{background,text,border,outline}-color-opacity`
 
 The computed color is a color-mix of base and tint, then mixed with transparent
 through the corresponding opacity value. The resulting color is stored
@@ -133,8 +131,10 @@ Tint helpers:
 
 `to-transparent` sets opacity to `0`; it does not assign a tint color.
 
-After altering colors you should use the corresponding class `bg`, `bd`, etc to
-apply the changes.
+Add the corresponding apply class (`bg`, `bd`, etc.) to paint a channel. The
+utility layer comes after controls and components, so `bg bg-primary`,
+`bd bd-danger`, and `ol ol-primary` override component chrome without needing
+component-specific color selectors.
 
 ## Contrast Text
 
