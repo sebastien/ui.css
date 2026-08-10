@@ -65,6 +65,7 @@ Applied as classes on any control — sets `--accent-color` and the compatible
 
 - `default` — filled background (buttons) or light paper background (fields)
 - `outline` — transparent background, visible border
+- `onoff` — button-like action with transparent background and no border until `.selected`; selected actions use the semantic fill
 - `ghost` — transparent background, no border; subtle ink wash on hover
 - `blank` — no visual chrome, inherits text color, no state effects
 - `horizontal` / `vertical` — joined selector-item orientation; horizontal is the default
@@ -75,3 +76,12 @@ or checkbox inputs for selector-style horizontal or vertical choices.
 Button-specific:
 
 - `icon` — square aspect ratio, compact padding
+
+Switch-specific:
+
+- `shadow` — adds a shadow to the switch knob; the default knob is flat
+- `outline` — transparent track while off; neutral when checked without a semantic color, or semantic-colored when checked with one
+
+Range-specific:
+
+- `tinted` — renders accent progress over a neutral track; applications should expose the current percentage through `--range-progress` for WebKit browsers

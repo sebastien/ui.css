@@ -180,6 +180,10 @@ Unnumbered `.{prop}o` = full opacity (1.0).
 | `.notx` | `color: inherit` |
 | `.nobd` | `border-color: transparent` |
 | `.nool` | `outline-color: transparent; outline-width: 0` |
+| `.reset-bg` | Resets the background recipe on direct children |
+| `.reset-txt` | Resets the text recipe on direct children |
+| `.reset-bd` | Resets the border recipe and width on direct children |
+| `.reset-ol` | Resets the outline recipe and width on direct children |
 
 ### Dark / Light mode
 
@@ -218,6 +222,7 @@ Unnumbered `.{prop}o` = full opacity (1.0).
 | (none) | Filled, neutral |
 | `.primary`, `.secondary`, etc. | Filled, semantic color |
 | `.outline` | Transparent fill, visible border |
+| `.onoff` | Ghost-like until `.selected`, then filled |
 | `.ghost` | No fill, no border, subtle hover |
 | `.blank` | No visual chrome |
 | `.icon` | 1:1 aspect ratio, compact |
@@ -242,6 +247,10 @@ Unnumbered `.{prop}o` = full opacity (1.0).
 
 <!-- Disabled -->
 <button class="primary" disabled>Disabled</button>
+
+<!-- Toggle-style action -->
+<button class="onoff primary">Off</button>
+<button class="onoff primary selected">On</button>
 ```
 
 ### Input fields
@@ -275,6 +284,14 @@ Unnumbered `.{prop}o` = full opacity (1.0).
 <label><input type="checkbox" class="toggle rounded"> Rounded toggle</label>
 ```
 
+Switches use `role="switch"` on a checkbox. The knob is flat by default; add
+`.shadow` for a knob shadow and `.outline` for a transparent off-state track:
+
+```html
+<input type="checkbox" role="switch" class="shadow">
+<input type="checkbox" role="switch" class="outline primary" checked>
+```
+
 ### Select
 
 ```html
@@ -305,7 +322,11 @@ Unnumbered `.{prop}o` = full opacity (1.0).
 
 ```html
 <input type="range" class="range">
+<input type="range" class="range tinted primary" value="60" style="--range-progress: 60%">
 ```
+
+For `.tinted` ranges, update `--range-progress` from the input value when the
+value changes. It is a percentage such as `60%`.
 
 ### Form helper
 

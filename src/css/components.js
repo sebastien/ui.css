@@ -909,7 +909,19 @@ function pagination() {
 		css.rule(".pagination > *", { display: "flex" }),
 		css.rule(".pagination > * > :is(a, .button)", {
 			__control_color_base: "var(--accent-color)",
+			display: "inline-flex",
+			align_items: "center",
+			justify_content: "center",
+			padding: "0.5em 1em",
+			border_width: vars.control.border.width.or("1px"),
+			border_style: "solid",
+			border_color: `color-mix(in oklch, var(--accent-color), ${vars.color.paper} 45%)`,
+			background_color: "transparent",
+			color: vars.color.ink,
 			border_radius: "0",
+		}),
+		css.rule(".pagination > *:not(:first-child) > :is(a, .button)", {
+			border_left_width: "0",
 		}),
 		...colors.semantic.map((name) =>
 			css.rule(

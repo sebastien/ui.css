@@ -58,6 +58,9 @@ describe("CSS-first components", () => {
 		expect(output).toContain(".buttons");
 		expect(output).toContain("gap: 1px;");
 		expect(output).toContain(".buttons.outline");
+		expect(output).toContain(".pagination > * > :is(a, .button)");
+		expect(output).toContain("padding: 0.5em 1em;");
+		expect(output).toContain("border-style: solid;");
 		expect(output).toContain(".toast");
 		expect(output).not.toContain(".sidebar-layout");
 		expect(output).not.toContain("min-width: 32rem");

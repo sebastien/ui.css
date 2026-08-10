@@ -55,8 +55,7 @@ const control = {
 			tint: (fallback = vars.color.paper) =>
 				vars.control.border.tint.or(vars.control.color.tint, fallback),
 			blend: (fallback = 0.8) => vars.control.border.blend.or(fallback),
-			opacity: (fallback = 0.8) =>
-				vars.control.border.opacity.or(fallback),
+			opacity: (fallback = 0.8) => vars.control.border.opacity.or(fallback),
 		},
 	),
 	outline: Object.assign(
@@ -134,7 +133,10 @@ function basechrome() {
 		"color",
 		"background-color",
 	]
-		.map((_) => `${_} ${vars.motion.duration.normal} ${vars.motion.easing.emphasized}`)
+		.map(
+			(_) =>
+				`${_} ${vars.motion.duration.normal} ${vars.motion.easing.emphasized}`,
+		)
 		.join(", ");
 	return css.group(
 		css.rule(baseHosts, {
@@ -165,9 +167,12 @@ function basechrome() {
 			user_select: "none",
 			transition: transition,
 		}),
-		css.rule(baseHosts.map((selector) => `${selector}.compact`), {
-			padding: vars.control.padding.or("0.35em 0.5em"),
-		}),
+		css.rule(
+			baseHosts.map((selector) => `${selector}.compact`),
+			{
+				padding: vars.control.padding.compact.or("0.15em 0.25em"),
+			},
+		),
 		css.rule(
 			baseHosts.flatMap((selector) => [
 				`${selector}:focus:not(.nofocus)`,
@@ -198,11 +203,24 @@ const fieldHosts = [
 	":where(.selector)",
 ];
 
+const outlineFieldHosts = [
+	".input",
+	"input:where(:not([type=submit],[type=button],[type=reset],[type=image]):not(.button))",
+	"textarea",
+	".textarea",
+	"select",
+	".select",
+	".group > :not(input, textarea, select, button, .input, .textarea, .select, .button)",
+];
+
 function fieldchrome() {
 	return css.rule(fieldHosts, {
 		font_size: vars.field.font.size.or(vars.control.font.size, "1em"),
 		padding: vars.field.padding.or("0.5em 0.75em"),
-		border_radius: vars.field.border.radius.or(vars.control.border.radius, "0.25em"),
+		border_radius: vars.field.border.radius.or(
+			vars.control.border.radius,
+			"0.25em",
+		),
 		field_sizing: "content",
 		color: vars.color.surface_text,
 		__control_border_base: vars.control.color.base,
@@ -217,42 +235,77 @@ function fieldchrome() {
 		__control_background_tint: vars.color.surface,
 		__control_background_blend: 1.0,
 		__control_background_opacity: 0.8,
-		background_color: control.background(1.0, 0.8, vars.color.surface, vars.color.surface),
+		background_color: control.background(
+			1.0,
+			0.8,
+			vars.color.surface,
+			vars.color.surface,
+		),
 	});
 }
 
 function fieldstates() {
 	return css.group(
-		css.rule(fieldHosts.map((s) => `${s}.compact`), {
-			padding: vars.control.padding.compact.or("0.35em 0.5em"),
-		}),
-		css.rule(fieldHosts.map((s) => `${s}.tight`), {
-			padding: vars.control.padding.tight.or("0.15em 0.25em"),
-		}),
-		css.rule(fieldHosts.map((s) => `${s}.tinted`), {
-			__control_background_base: vars.control.color.base,
-			__control_background_tint: vars.control.color.base,
-			__control_background_blend: 1.0,
-			__control_background_opacity: 0.15,
-			background_color: control.background(1.0, 0.15),
-		}),
-		css.rule(fieldHosts.map((s) => `${s}.colored`), {
-			color: control.color(1.0, 1.0, vars.color.ink),
-			__control_border_opacity: 1.0,
-			border_color: control.border(1.0, 1.0, vars.control.color.base),
-		}),
-		css.rule(fieldHosts.map((s) => `${s} > input, ${s} > textarea`), {
-			flex: "1",
-		}),
-		css.rule(fieldHosts.map((s) => `${s}.bw`), {
-			__control_background_base: vars.color.paper,
-			outline_style: "groove",
-		}),
-		css.rule(fieldHosts.map((s) => `${s}.white`), {
-			__control_background_base: vars.color.white,
-			__control_background_blend: 1.0,
-			__control_background_opacity: 1.0,
-		}),
+		css.rule(
+			fieldHosts.map((s) => `${s}.compact`),
+			{
+				padding: vars.control.padding.compact.or("0.35em 0.5em"),
+			},
+		),
+		css.rule(
+			fieldHosts.map((s) => `${s}.tight`),
+			{
+				padding: vars.control.padding.tight.or("0.15em 0.25em"),
+			},
+		),
+		css.rule(
+			fieldHosts.map((s) => `${s}.tinted`),
+			{
+				__control_background_base: vars.control.color.base,
+				__control_background_tint: vars.control.color.base,
+				__control_background_blend: 1.0,
+				__control_background_opacity: 0.15,
+				background_color: control.background(1.0, 0.15),
+			},
+		),
+		css.rule(
+			outlineFieldHosts.map((s) => `${s}.outline`),
+			{
+				__control_background_opacity: 0,
+				__control_border_opacity: 1.0,
+				background_color: "transparent",
+				border_color: control.border(1.0, 1.0, vars.control.color.base),
+			},
+		),
+		css.rule(
+			fieldHosts.map((s) => `${s}.colored`),
+			{
+				color: control.color(1.0, 1.0, vars.color.ink),
+				__control_border_opacity: 1.0,
+				border_color: control.border(1.0, 1.0, vars.control.color.base),
+			},
+		),
+		css.rule(
+			fieldHosts.map((s) => `${s} > input, ${s} > textarea`),
+			{
+				flex: "1",
+			},
+		),
+		css.rule(
+			fieldHosts.map((s) => `${s}.bw`),
+			{
+				__control_background_base: vars.color.paper,
+				outline_style: "groove",
+			},
+		),
+		css.rule(
+			fieldHosts.map((s) => `${s}.white`),
+			{
+				__control_background_base: vars.color.white,
+				__control_background_blend: 1.0,
+				__control_background_opacity: 1.0,
+			},
+		),
 		css.rule(
 			fieldHosts.flatMap((s) => [
 				`${s}:not(.nofocus):not(.tinted):focus`,
@@ -283,28 +336,19 @@ function fieldstates() {
 			},
 		),
 		css.rule(
-			fieldHosts.flatMap((s) => [
-				`${s}.tinted:hover`,
-				`${s}.tinted.hover`,
-			]),
+			fieldHosts.flatMap((s) => [`${s}.tinted:hover`, `${s}.tinted.hover`]),
 			{
 				__control_border_opacity: 0.95,
 			},
 		),
 		css.rule(
-			fieldHosts.flatMap((s) => [
-				`${s}:active`,
-				`${s}.active`,
-			]),
+			fieldHosts.flatMap((s) => [`${s}:active`, `${s}.active`]),
 			{
 				__control_border_opacity: 1.0,
 			},
 		),
 		css.rule(
-			fieldHosts.flatMap((s) => [
-				`${s}:disabled`,
-				`${s}.disabled`,
-			]),
+			fieldHosts.flatMap((s) => [`${s}:disabled`, `${s}.disabled`]),
 			{
 				opacity: vars.control.disabled.opacity.or(0.5),
 				pointer_events: "none",
@@ -332,9 +376,7 @@ function fieldstates() {
 			),
 		),
 		css.rule(
-			fieldHosts.flatMap((s) => [
-				`${s}.blank`,
-			]),
+			fieldHosts.flatMap((s) => [`${s}.blank`]),
 			{
 				background: "none !important",
 				background_color: "transparent !important",
@@ -346,9 +388,7 @@ function fieldstates() {
 			},
 		),
 		css.rule(
-			fieldHosts.flatMap((s) => [
-				`${s}.icon`,
-			]),
+			fieldHosts.flatMap((s) => [`${s}.icon`]),
 			{
 				aspect_ratio: "1/1",
 				box_sizing: "border-box",
@@ -363,12 +403,8 @@ function fieldstates() {
 	);
 }
 
-
 function field(selector, ...rest) {
-	return base(
-		selector,
-		...rest,
-	);
+	return base(selector, ...rest);
 }
 // Base style for all action controls (button-like)
 function selectable(...rest) {
@@ -437,10 +473,7 @@ function action(selector, ...rest) {
 	return base(
 		selector,
 		css.rule("&", {
-			font_size: vars.action.font.size.or(
-				vars.control.font.size,
-				"1em",
-			),
+			font_size: vars.action.font.size.or(vars.control.font.size, "1em"),
 			padding: vars.action.padding.or(vars.control.padding, "0.5em 1em"),
 			// Cursor
 			cursor: "pointer",
@@ -451,6 +484,7 @@ function action(selector, ...rest) {
 			__control_background_base: vars.color.neutral.background.or(
 				vars.color.neutral,
 			),
+			__control_background_blend: 1.0,
 			__control_background_opacity: 1.0,
 			// Default styling, solid fill from background-base
 			background_color: control.background(1.0, 1.0, vars.color.ink),
@@ -553,6 +587,33 @@ function action(selector, ...rest) {
 				__control_background_opacity: 0.35,
 			}),
 		),
+		// On/off buttons are ghost-like until selected, then use the regular fill.
+		css.nesting(
+			css.mods("&", "onoff"),
+			{
+				__control_color_base: vars.color.ink,
+				__control_border_opacity: 0,
+				__control_background_opacity: 0,
+				color: `var(--text-color, ${control.color(1.0, 1.0, vars.color.ink)})`,
+				background_color: control.background(1.0, 0),
+			},
+			css.rule("&:hover, &.hover", {
+				__control_background_opacity: 0.25,
+			}),
+			css.rule("&:active, &.active", {
+				__control_background_opacity: 0.35,
+			}),
+			css.rule("&.selected", {
+				__control_background_base: vars.control.color.base,
+				__control_background_tint: vars.control.color.base,
+				__control_background_blend: 1.0,
+				__control_border_base: vars.control.color.base,
+				__control_border_opacity: 0.8,
+				__control_background_opacity: 1.0,
+				background_color: control.background(1.0, 1.0, vars.color.ink),
+				color: `var(--text-color, ${controlContrast()})`,
+			}),
+		),
 		// Explicit color variants win over outline/ghost ink defaults.
 		// .neutral is first-class (filled → light surface; outline/ghost → medium chrome).
 		...colors.semantic.map((color) =>
@@ -585,7 +646,6 @@ function action(selector, ...rest) {
 			__control_background_tint: vars.color.neutral,
 			__control_background_blend: 1.0,
 		}),
-
 		// Blank variant
 		css.rule(css.mods("&", "blank"), {
 			background_color: "transparent !important",
@@ -632,7 +692,7 @@ function checkbox() {
 			cursor: "pointer",
 			border_color: control.border(0.9, 1.0, vars.color.ink),
 			border_radius: vars.checkbox.border.radius.or("0.2em"),
-			border_width: vars.checkbox.border.width.or("0px"),
+			border_width: vars.checkbox.border.width.or("1px"),
 			color: control.color(0.0, 1.0, vars.color.ink),
 		}),
 		// Checkbox content is rendered with a pseudo element, which is scaled up when checked or indeterminate.
@@ -792,9 +852,12 @@ function toggle() {
 			__control_background_tint: vars.color.paper,
 			__control_background_blend: 0,
 			background_color: vars.color.paper,
-			box_shadow: "0 1px 2px oklch(0% 0 0 / 0.16)",
+			box_shadow: "none",
 			transition:
 				"left 140ms ease, transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease, border-radius 140ms ease",
+		}),
+		css.rule("&.shadow::before", {
+			box_shadow: "0 1px 2px oklch(0% 0 0 / 0.16)",
 		}),
 
 		css.rule("&:checked, &.checked", {
@@ -808,6 +871,25 @@ function toggle() {
 			border_color: control.border(0.5, 0.4, vars.color.ink),
 			transform: "translate(-100%, -50%)",
 		}),
+		// Outline switches are transparent while off and use their semantic
+		// color as a solid track when on. Bare .outline defaults to neutral.
+		css.rule("&.outline", {
+			__control_background_base: vars.control.color.base.or(vars.color.neutral),
+			__control_background_opacity: 0,
+			background_color: "transparent",
+			border_color: control.border(1.0, 1.0),
+		}),
+		css.rule("&.outline:checked, &.outline.checked", {
+			__control_background_opacity: 1.0,
+			background_color: control.background(1.0, 1.0),
+			border_color: control.border(0.85, 1.0),
+		}),
+		css.rule("&.outline:hover, &.outline.hover", {
+			background_color: "transparent",
+		}),
+		css.rule("&.outline:checked:hover, &.outline.checked.hover", {
+			background_color: control.background(0.82, 1.0),
+		}),
 		// Apple-like pill track + floating circular knob
 		css.rule("&.rounded", {
 			__toggle_border_radius: "999px",
@@ -816,6 +898,9 @@ function toggle() {
 		}),
 		css.rule("&.rounded::before", {
 			border_width: "0px",
+			box_shadow: "none",
+		}),
+		css.rule("&.rounded.shadow::before", {
 			box_shadow:
 				"0 1px 3px oklch(0% 0 0 / 0.22), 0 0 0 0.5px oklch(0% 0 0 / 0.06)",
 		}),
@@ -853,19 +938,22 @@ function range() {
 			min_height: vars.range.height.or("1.5em"),
 			cursor: "pointer",
 		}),
+		css.rule("&.tinted", {
+			background_color: "transparent !important",
+		}),
 		css.rule("&::-webkit-slider-runnable-track", {
+			box_sizing: "border-box",
 			height: vars.range.track.height.or("0.45em"),
 			border_radius: vars.range.track.radius.or("999px"),
-			border_width: vars.control.border.width.or("1px"),
-			border_style: "solid",
+			border: "0",
 			// Track stays neutral; only progress and thumb carry the accent.
 			// NOTE: no --control-* pins here, the thumb inherits from the track.
-			border_color: colors.mixed(
+			box_shadow: `inset 0 0 0 ${vars.control.border.width.or("1px")} ${colors.mixed(
 				vars.color.neutral,
 				vars.color.paper,
 				0.6,
 				1.0,
-			),
+			)}`,
 			background_color: colors.mixed(
 				vars.color.neutral,
 				vars.color.page.or(vars.color.paper),
@@ -882,20 +970,24 @@ function range() {
 			border_width: vars.control.border.width.or("1px"),
 			border_style: "solid",
 			border_color: control.border(0.9, 1.0, vars.color.ink),
-			background_color: control.background(1.0, 1.0, vars.color.ink),
+			__control_background_base: vars.color.paper,
+			__control_background_tint: vars.color.paper,
+			__control_background_blend: 0,
+			__control_background_opacity: 1.0,
+			background_color: vars.color.paper,
 		}),
 		css.rule("&::-moz-range-track", {
+			box_sizing: "border-box",
 			height: vars.range.track.height.or("0.45em"),
 			border_radius: vars.range.track.radius.or("999px"),
-			border_width: vars.control.border.width.or("1px"),
-			border_style: "solid",
+			border: "0",
 			// Track stays neutral; only progress and thumb carry the accent
-			border_color: colors.mixed(
+			box_shadow: `inset 0 0 0 ${vars.control.border.width.or("1px")} ${colors.mixed(
 				vars.color.neutral,
 				vars.color.paper,
 				0.6,
 				1.0,
-			),
+			)}`,
 			background_color: colors.mixed(
 				vars.color.neutral,
 				vars.color.page.or(vars.color.paper),
@@ -906,7 +998,18 @@ function range() {
 		css.rule("&::-moz-range-progress", {
 			height: vars.range.track.height.or("0.45em"),
 			border_radius: vars.range.track.radius.or("999px"),
-			background_color: control.background(0.7, 1.0, vars.color.ink),
+			background_color: control.color(1.0, 1.0, vars.color.ink),
+		}),
+		css.rule("&.tinted::-webkit-slider-runnable-track", {
+			background: `linear-gradient(to right, ${control.color(1.0, 1.0, vars.color.ink)} 0 var(--range-progress, 50%), ${colors.mixed(
+				vars.color.neutral,
+				vars.color.page.or(vars.color.paper),
+				0.2,
+				0.95,
+			)} var(--range-progress, 50%) 100%)`,
+		}),
+		css.rule("&.tinted::-moz-range-progress", {
+			background_color: control.color(1.0, 1.0, vars.color.ink),
 		}),
 		css.rule("&::-moz-range-thumb", {
 			width: vars.range.thumb.size.or("1em"),
@@ -915,7 +1018,11 @@ function range() {
 			border_width: vars.control.border.width.or("1px"),
 			border_style: "solid",
 			border_color: control.border(0.9, 1.0, vars.color.ink),
-			background_color: control.background(1.0, 1.0, vars.color.ink),
+			__control_background_base: vars.color.paper,
+			__control_background_tint: vars.color.paper,
+			__control_background_blend: 0,
+			__control_background_opacity: 1.0,
+			background_color: vars.color.paper,
 		}),
 		css.rule(
 			"&:hover::-webkit-slider-runnable-track, &.hover::-webkit-slider-runnable-track",

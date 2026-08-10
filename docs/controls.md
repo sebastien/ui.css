@@ -13,17 +13,22 @@ The `controls.js` module provides comprehensive styling for interactive elements
 - `input[type="checkbox"]`, `.checkbox`: Custom styled checkboxes with `:checked` markers.
 - `input[type="radio"]`, `.radio`: Custom styled radio buttons.
 - `.toggle`: Switch/toggle control (often used with a hidden checkbox).
+- `input[type=checkbox][role=switch]`: Switch control. The knob is flat by default; add `.shadow` for a knob shadow.
 
 ### Style Variants:
 
 - `.neutral`, `.primary`, `.secondary`, `.success`, `.warning`, `.danger`: Semantic color variants. `.neutral` is explicit on filled buttons (light surface) and on `.outline` / `.ghost` (medium chrome); bare `.outline` / `.ghost` default to ink.
 - `.outline`: Transparent background with a visible border of the current color.
+- `.onoff`: Ghost-like button with no border by default; add `.selected` to show the filled semantic state.
 - `.ghost`: Fully transparent background and border; only shows state on interaction.
 - `.blank`: No visual chrome at all (no background, border, outline, or padding).
 - `.icon`: 1:1 aspect ratio button with minimal padding.
 - `.compact`: reduced padding for buttons, fields, selectors, tabs, and listbox options.
 - `.default`: Emphasized button style with a visible outline.
 - `.tinted` (fields / `.selector`): Pure accent at low opacity (no paper blend); hover/focus do not force full opacity.
+- `.tinted` (range): Accent progress track; set `--range-progress` to the current percentage for the WebKit gradient implementation.
+- `.shadow` on switches: Adds a shadow to the knob; switches are flat by default.
+- `.outline` on switches: Transparent track when off, neutral when checked without a semantic class, and semantic-colored when checked with a color class.
 - Fields: semantic color always drives the border; text stays ink unless `.colored`.
 - `.colored` (fields / `.selector`): Accent text (and stronger border on fields). On `.selector`, unselected labels also get accent text/border; only the checked option is accent-filled by default.
 - `.selector` item colors: Add a semantic color class to an individual label; its checked, active, tinted, and colored states use that item color.
@@ -84,6 +89,12 @@ each driven by four variables: `base`, `tint`, `blend`, `opacity`.
     <button class="ghost">Cancel</button>
 </div>
 
+<!-- Toggle-style actions -->
+<div class="row g-2">
+    <button class="onoff primary">Off</button>
+    <button class="onoff primary selected">On</button>
+</div>
+
 <!-- Form controls -->
 <div class="stack g-2">
     <input type="text" placeholder="Username" class="success">
@@ -125,6 +136,11 @@ each driven by four variables: `base`, `tint`, `blend`, `opacity`.
     <input id="push" type="checkbox" name="channels">
     <label for="push">Push</label>
 </div>
+
+<!-- Range progress and switches -->
+<input class="range tinted primary" type="range" min="0" max="100" value="60" style="--range-progress: 60%">
+<input type="checkbox" role="switch" class="shadow">
+<input type="checkbox" role="switch" class="outline primary" checked>
 ```
 
 Native `select` options are browser-owned UI, so `select.horizontal` cannot be

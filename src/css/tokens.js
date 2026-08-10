@@ -172,8 +172,8 @@ export default group(
 			color: {
 				base: vars.color.surface_text,
 				tint: vars.color.tint,
-				blend: 0.5,
-				opacity: 0.9,
+				blend: 1.0,
+				opacity: 0.5,
 			},
 			l: 5,
 			o: 9,

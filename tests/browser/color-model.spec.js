@@ -67,6 +67,166 @@ test("dark mode overrides a themed surface", async ({ page }) => {
 	expect(await page.$eval("body", (element) => getComputedStyle(element).color)).toBe("rgb(250, 250, 250)");
 });
 
+test("color reset wrappers restore channel defaults while child utilities win", async ({ page }) => {
+	await render(
+		page,
+		`<div class="bg-3o tx-3o bd-3o ol-3o reset-bg reset-txt reset-bd reset-ol">
+			<div id="default">Default</div>
+			<div id="custom" class="bg-8o tx-8o bd-8o ol-8o">Custom</div>
+		</div>`,
+	);
+	const values = await page.$$eval("#default, #custom", (elements) =>
+		elements.map((element) => {
+			const style = getComputedStyle(element);
+			return [
+				style.getPropertyValue("--background-color-opacity").trim(),
+				style.getPropertyValue("--text-color-opacity").trim(),
+				style.getPropertyValue("--border-color-opacity").trim(),
+				style.getPropertyValue("--outline-color-opacity").trim(),
+			];
+		}),
+	);
+	expect(values[0]).toEqual(["1", "1", "0.5", "0.8"]);
+	expect(values[1]).toEqual(["0.8", "0.8", "0.8", "0.8"]);
+});
+
+test("color reset wrappers clear border and outline widths", async ({ page }) => {
+	await render(
+		page,
+		`<div class="reset-bd reset-ol"><div id="reset" class="bd-3 ol-3">Reset</div></div>`,
+	);
+	const values = await page.$eval("#reset", (element) => {
+		const style = getComputedStyle(element);
+		return [style.borderTopWidth, style.outlineWidth];
+	});
+	expect(values).toEqual(["0px", "0px"]);
+});
+
+test("switch shadow is optional and outline switches fill when checked", async ({ page }) => {
+	await render(
+		page,
+		`<input id="flat" type="checkbox" role="switch">
+		<input id="shadow" class="shadow" type="checkbox" role="switch">
+		<input id="outline-off" class="outline" type="checkbox" role="switch">
+		<input id="outline-on" class="outline" type="checkbox" role="switch" checked>
+		<input id="outline-primary" class="outline primary" type="checkbox" role="switch" checked>`,
+	);
+	const switches = await page.$$eval("input", (elements) =>
+		elements.map((element) => {
+			const style = getComputedStyle(element);
+			const knob = getComputedStyle(element, "::before");
+			return {
+				background: style.backgroundColor,
+				border: style.borderColor,
+				shadow: knob.boxShadow,
+			};
+		}),
+	);
+	expect(switches[0].shadow).toBe("none");
+	expect(switches[1].shadow).not.toBe("none");
+	expect(switches[2].background).toMatch(/rgba\(0, 0, 0, 0\)|\/ 0\)$/);
+	expect(switches[3].background).not.toMatch(/rgba\(0, 0, 0, 0\)|\/ 0\)$/);
+	expect(switches[4].background).not.toMatch(/rgba\(0, 0, 0, 0\)|\/ 0\)$/);
+	expect(switches[2].border).not.toMatch(/rgba\(0, 0, 0, 0\)|\/ 0\)$/);
+});
+
+test("unchecked checkboxes retain a visible border", async ({ page }) => {
+	for (const mode of ["", "dark"]) {
+		await render(page, `<body class="${mode}"><input id="checkbox" type="checkbox"></body>`);
+		const checkbox = await page.$eval("#checkbox", (element) => {
+			const style = getComputedStyle(element);
+			return {
+				borderColor: style.borderColor,
+				borderStyle: style.borderStyle,
+				borderWidth: style.borderWidth,
+			};
+		});
+		expect(checkbox.borderWidth).toBe("1px");
+		expect(checkbox.borderStyle).toBe("solid");
+		expect(checkbox.borderColor).not.toBe("rgba(0, 0, 0, 0)");
+	}
+});
+
+test("outline fields have transparent backgrounds and visible borders", async ({ page }) => {
+	await render(page, `<input id="field" class="outline primary">`);
+	const field = await page.$eval("#field", (element) => {
+		const style = getComputedStyle(element);
+		return {
+			backgroundColor: style.backgroundColor,
+			borderColor: style.borderColor,
+			borderStyle: style.borderStyle,
+			borderWidth: style.borderWidth,
+		};
+	});
+
+	expect(field.backgroundColor).toBe("rgba(0, 0, 0, 0)");
+	expect(field.borderWidth).toBe("1px");
+	expect(field.borderStyle).toBe("solid");
+	expect(field.borderColor).not.toBe("rgba(0, 0, 0, 0)");
+});
+
+test("onoff buttons switch from ghost to filled when selected", async ({ page }) => {
+	await render(
+		page,
+		`<button id="off" class="onoff">Off</button><button id="on" class="onoff selected">On</button>`,
+	);
+	const buttons = await page.$$eval("button", (elements) =>
+		elements.map((element) => {
+			const style = getComputedStyle(element);
+			return { backgroundColor: style.backgroundColor, borderColor: style.borderColor };
+		}),
+	);
+
+	expect(buttons[0].backgroundColor).toMatch(/\/ 0\)$/);
+	expect(buttons[0].borderColor).toMatch(/\/ 0\)$/);
+	expect(buttons[1].backgroundColor).not.toMatch(/\/ 0\)$/);
+	expect(buttons[1].borderColor).not.toMatch(/\/ 0\)$/);
+});
+
+test("onoff selected buttons use their semantic accent", async ({ page }) => {
+	await render(
+		page,
+		`<button id="primary" class="onoff primary selected">Primary</button><button id="danger" class="onoff danger selected">Danger</button>`,
+	);
+	const backgrounds = await page.$$eval("button", (elements) =>
+		elements.map((element) => getComputedStyle(element).backgroundColor),
+	);
+
+	expect(backgrounds[0]).not.toBe(backgrounds[1]);
+});
+
+test("tinted ranges keep the input background transparent", async ({ page }) => {
+	await render(page, `<input id="range" class="range primary tinted" type="range" value="50">`);
+	const background = await page.$eval("#range", (element) => getComputedStyle(element).backgroundColor);
+
+	expect(background).toMatch(/rgba\(0, 0, 0, 0\)|\/ 0\)$/);
+});
+
+test("pagination uses selector-like spacing and current-page fill", async ({ page }) => {
+	await render(
+		page,
+		`<ol class="pagination"><li><a href="#">1</a></li><li><a aria-current="page" href="#">2</a></li><li><a href="#">3</a></li></ol>`,
+	);
+	const pages = await page.$$eval(".pagination a", (elements) =>
+		elements.map((element) => {
+			const style = getComputedStyle(element);
+			return {
+				padding: style.padding,
+				borderStyle: style.borderStyle,
+				borderLeftWidth: style.borderLeftWidth,
+				backgroundColor: style.backgroundColor,
+			};
+		}),
+	);
+
+	expect(pages[0].padding).toBe("8px 16px");
+	expect(pages[0].borderStyle).toBe("solid");
+	expect(pages[0].borderLeftWidth).toBe("1px");
+	expect(pages[1].borderLeftWidth).toBe("0px");
+	expect(pages[0].backgroundColor).toMatch(/rgba\(0, 0, 0, 0\)|\/ 0\)$/);
+	expect(pages[1].backgroundColor).not.toMatch(/rgba\(0, 0, 0, 0\)|\/ 0\)$/);
+});
+
 test("neutral outline and ghost actions wash with solid neutral", async ({ page }) => {
 	await render(
 		page,

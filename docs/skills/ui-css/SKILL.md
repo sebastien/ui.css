@@ -106,15 +106,17 @@ Controls from `controls.js`:
 - Actions: `button`, `.button`
 - Fields: `input`, `.input`, `textarea`, `.textarea`, `select`, `.select`; use `multiple size="…"` for native multi-select listboxes
 - Stateful inputs: `.checkbox`, `.radio`, `.toggle`, `.range`
+- Switch input: `input[type=checkbox][role=switch]`; flat by default, with optional `.shadow` and `.outline` variants
 - Composite choice control: `.selector`
 - Selectable container: `.selectable`
 
 Common control variants:
 
 - Semantic variants: `.primary`, `.secondary`, `.success`, `.warning`, `.danger`, `.neutral`
-- Presentation variants: `.outline`, `.ghost`, `.blank`, `.icon`, `.compact`
+- Presentation variants: `.outline`, `.ghost`, `.blank`, `.icon`, `.compact`, `.onoff`
 - State helpers when markup needs explicit state: `.hover`, `.active`, `.focus`, `.disabled`
 - Emphasis: `.default`
+- Range progress: `.tinted` with an application-updated `--range-progress` percentage
 
 Component primitives from `components.js`:
 
@@ -132,11 +134,14 @@ Preferred component recipes:
 - Secondary action: `<button class="outline neutral">Cancel</button>`
 - Destructive action: `<button class="danger">Delete</button>`
 - Quiet icon action: `<button class="ghost icon">…</button>`
+- Toggle-style action: `<button class="onoff primary selected">Enabled</button>`
 - Text field: `<input class="input">` or plain `<input>` with library CSS loaded
+- Outline field: `<input class="input outline primary">`
 - Segmented control: `.selector.horizontal` or `.selector.vertical` containing hidden inputs and adjacent labels
 - Content card: `.card stack g-2`
 - Badge: `.pill compact`
 - Muted outline badge: `.pill outline neutral`
+- Color reset wrapper: `<section class="reset-bd">…</section>` resets inherited border recipes on direct children
 
 Component composition rules:
 

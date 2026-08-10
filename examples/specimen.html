@@ -82,6 +82,19 @@
           item.setAttribute("aria-selected", selected)
         })
       })
+
+      document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll("input[type=range].tinted").forEach((range) => {
+          const updateProgress = () => {
+            const value = Number(range.value)
+            const min = Number(range.min || 0)
+            const max = Number(range.max || 100)
+            range.style.setProperty("--range-progress", `${((value - min) / (max - min)) * 100}%`)
+          }
+          range.addEventListener("input", updateProgress)
+          updateProgress()
+        })
+      })
     </script>
     <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
   </head>
@@ -91,7 +104,7 @@
         <h1 class="h1 m-0">UI.css Specimen</h1>
         <p class="t limit-text m-0">A broad specimen page aligned with the pure CSS benchmark layout and coverage.</p>
       </header>
-      <section class="panel stack g-4 p-6 bd bd-4o ">
+      <section class="panel stack g-4 p-6 bd bd-4o reset-bd">
         <h2 class="h3 m-0">Typography</h2>
         <div class="stack g-6">
           <div class="stack g-3">
@@ -277,7 +290,7 @@ const result = "fast, consistent styling"</code></pre>
           </div>
         </div>
       </section>
-      <section class="panel stack g-4 p-6 bd bd-4o ">
+      <section class="panel stack g-4 p-6 bd bd-4o reset-bd">
         <h2 class="h3 m-0">Color Tokens</h2>
         <div class="stack g-4">
           <h3 class="h4 m-0">Semantic Palette</h3>
@@ -296,7 +309,7 @@ const result = "fast, consistent styling"</code></pre>
           </div>
         </div>
       </section>
-      <section id="buttons-demo" class="panel stack g-4 p-6 bd bd-4o ">
+      <section id="buttons-demo" class="panel stack g-4 p-6 bd bd-4o reset-bd">
         <h2 class="h3 m-0">Buttons</h2>
         <div class="stack g-5">
           <div class="stack g-3">
@@ -379,6 +392,17 @@ const result = "fast, consistent styling"</code></pre>
             </div>
           </div>
           <div class="stack g-3">
+            <p class="b m-0">On/off buttons</p>
+            <div class="row wrap g-3">
+              <button class="onoff primary">Primary off</button>
+              <button class="onoff primary selected">Primary on</button>
+              <button class="onoff success">Success off</button>
+              <button class="onoff success selected">Success on</button>
+              <button class="onoff danger">Danger off</button>
+              <button class="onoff danger selected">Danger on</button>
+            </div>
+          </div>
+          <div class="stack g-3">
             <p class="b m-0">Sizes</p>
             <div class="row wrap g-3">
               <button class="large">Large</button>
@@ -420,7 +444,7 @@ const result = "fast, consistent styling"</code></pre>
            </div>
         </div>
       </section>
-      <section id="selectors-demo" class="panel stack g-4 p-6 bd bd-4o ">
+      <section id="selectors-demo" class="panel stack g-4 p-6 bd bd-4o reset-bd">
         <h2 class="h3 m-0">Selectors</h2>
         <section id="tabs-demo" class="stack g-4">
           <h3 class="h4 m-0">Tabs</h3>
@@ -738,7 +762,7 @@ const result = "fast, consistent styling"</code></pre>
           </div>
         </div>
     </section>
-    <section id="inputs-demo" class="panel stack g-4 p-6 bd bd-4o ">
+    <section id="inputs-demo" class="panel stack g-4 p-6 bd bd-4o reset-bd">
       <h2 class="h3 m-0">Inputs</h2>
       <div class="stack g-5">
         <div class="grid col-3 g-4">
@@ -777,6 +801,15 @@ const result = "fast, consistent styling"</code></pre>
             <input class="input outline regular fit-w" type="text" value="Outline" />
             <input class="input ghost regular fit-w" type="text" value="Ghost" />
             <input class="input blank regular fit-w" type="text" value="Blank" />
+          </div>
+        </div>
+        <div class="stack g-3">
+          <p class="b m-0">Field - Outline colors</p>
+          <div class="row wrap g-3">
+            <input class="input outline regular fit-w" type="text" value="Ink outline" />
+            <input class="input outline primary regular fit-w" type="text" value="Primary outline" />
+            <input class="input outline success regular fit-w" type="text" value="Success outline" />
+            <input class="input outline danger regular fit-w" type="text" value="Danger outline" />
           </div>
         </div>
         <div class="stack g-3">
@@ -902,7 +935,7 @@ const result = "fast, consistent styling"</code></pre>
         </div>
       </div>
     </section>
-    <section id="range-demo" class="panel stack g-4 p-6 bd bd-4o ">
+    <section id="range-demo" class="panel stack g-4 p-6 bd bd-4o reset-bd">
       <h2 class="h3 m-0">Range Inputs</h2>
       <div class="stack g-5">
         <div class="stack g-3">
@@ -938,6 +971,23 @@ const result = "fast, consistent styling"</code></pre>
           </div>
         </div>
         <div class="stack g-3">
+          <p class="b m-0">Tinted progress</p>
+          <div class="stack g-2">
+            <label class="stack g-1">
+              <span class="small">Primary</span>
+              <input class="range primary tinted fit-w" type="range" min="0" max="100" value="35" style="--range-progress: 35%" />
+            </label>
+            <label class="stack g-1">
+              <span class="small">Success</span>
+              <input class="range success tinted fit-w" type="range" min="0" max="100" value="65" style="--range-progress: 65%" />
+            </label>
+            <label class="stack g-1">
+              <span class="small">Danger</span>
+              <input class="range danger tinted fit-w" type="range" min="0" max="100" value="80" style="--range-progress: 80%" />
+            </label>
+          </div>
+        </div>
+        <div class="stack g-3">
           <p class="b m-0">Disabled</p>
           <div class="stack g-2">
             <label class="stack g-1">
@@ -952,7 +1002,7 @@ const result = "fast, consistent styling"</code></pre>
         </div>
       </div>
     </section>
-    <section id="checks-radios-demo" class="panel stack g-4 p-6 bd bd-4o ">
+    <section id="checks-radios-demo" class="panel stack g-4 p-6 bd bd-4o reset-bd">
       <h2 class="h3 m-0">Checkboxes and Radios</h2>
       <div class="grid col-2 g-8">
         <div class="stack g-4">
@@ -1026,23 +1076,41 @@ const result = "fast, consistent styling"</code></pre>
         </div>
       </div>
     </section>
-    <section id="switch-demo" class="panel stack g-4 p-6 bd bd-4o ">
+    <section id="switch-demo" class="panel stack g-4 p-6 bd bd-4o reset-bd">
       <h2 class="h3 m-0">Switches</h2>
-      <div class="stack g-5">
-        <div class="stack g-3">
-          <p class="b m-0">Default</p>
-          <div class="stack g-2">
-            <label class="row g-2"><input type="checkbox" role="switch" /> Notifications</label>
-            <label class="row g-2"><input type="checkbox" role="switch" checked /> Confabulation</label>
+        <div class="stack g-5">
+          <div class="stack g-3">
+            <p class="b m-0">Default (flat)</p>
+            <div class="stack g-2">
+              <label class="row g-2"><input type="checkbox" role="switch" /> Notifications</label>
+              <label class="row g-2"><input type="checkbox" role="switch" checked /> Confabulation</label>
+            </div>
           </div>
-        </div>
-        <div class="stack g-3">
-          <p class="b m-0">Rounded</p>
-          <div class="stack g-2">
-            <label class="row g-2"><input type="checkbox" role="switch" class="rounded" /> Notifications</label>
-            <label class="row g-2"><input type="checkbox" role="switch" class="rounded" checked /> Confabulation</label>
+          <div class="stack g-3">
+            <p class="b m-0">Optional shadow</p>
+            <div class="stack g-2">
+              <label class="row g-2"><input type="checkbox" role="switch" class="shadow" /> Notifications</label>
+              <label class="row g-2"><input type="checkbox" role="switch" class="shadow" checked /> Confabulation</label>
+            </div>
           </div>
-        </div>
+          <div class="stack g-3">
+            <p class="b m-0">Outline</p>
+            <div class="stack g-2">
+              <label class="row g-2"><input type="checkbox" role="switch" class="outline" /> Neutral off</label>
+              <label class="row g-2"><input type="checkbox" role="switch" class="outline" checked /> Neutral on</label>
+              <label class="row g-2"><input type="checkbox" role="switch" class="outline primary" /> Primary off</label>
+              <label class="row g-2"><input type="checkbox" role="switch" class="outline primary" checked /> Primary on</label>
+              <label class="row g-2"><input type="checkbox" role="switch" class="outline success" checked /> Success on</label>
+              <label class="row g-2"><input type="checkbox" role="switch" class="outline danger" checked /> Danger on</label>
+            </div>
+          </div>
+          <div class="stack g-3">
+            <p class="b m-0">Rounded outline</p>
+            <div class="stack g-2">
+              <label class="row g-2"><input type="checkbox" role="switch" class="rounded outline shadow" /> Notifications</label>
+              <label class="row g-2"><input type="checkbox" role="switch" class="rounded outline shadow primary" checked /> Confabulation</label>
+            </div>
+          </div>
         <div class="stack g-3">
           <p class="b m-0">Disabled</p>
           <div class="stack g-2">
@@ -1054,7 +1122,7 @@ const result = "fast, consistent styling"</code></pre>
         </div>
       </div>
     </section>
-    <section id="accordion-demo" class="panel stack g-4 p-6 bd bd-4o ">
+    <section id="accordion-demo" class="panel stack g-4 p-6 bd bd-4o reset-bd">
       <h2 class="h3 m-0">Accordion</h2>
       <div class="card stack g-0">
         <details class="accordion" open><summary>What is ui.css</summary>
@@ -1074,7 +1142,7 @@ const result = "fast, consistent styling"</code></pre>
         </details>
       </div>
     </section>
-    <section id="alert-demo" class="panel stack g-4 p-6 bd bd-4o ">
+    <section id="alert-demo" class="panel stack g-4 p-6 bd bd-4o reset-bd">
       <h2 class="h3 m-0">Alert</h2>
       <div class="stack g-2">
         <div role="alert" class="alert success"><strong>Success!</strong> Your changes have been saved.</div>
@@ -1085,7 +1153,7 @@ const result = "fast, consistent styling"</code></pre>
         <div role="alert" class="alert ghost danger"><strong>Ghost error</strong> An outline-only error.</div>
       </div>
     </section>
-    <section id="avatar-demo" class="panel stack g-4 p-6 bd bd-4o ">
+    <section id="avatar-demo" class="panel stack g-4 p-6 bd bd-4o reset-bd">
       <h2 class="h3 m-0">Avatar</h2>
       <div class="stack g-5">
         <div class="stack g-3">
@@ -1119,7 +1187,7 @@ const result = "fast, consistent styling"</code></pre>
         </div>
       </div>
     </section>
-    <section id="breadcrumb-demo" class="panel stack g-4 p-6 bd bd-4o ">
+    <section id="breadcrumb-demo" class="panel stack g-4 p-6 bd bd-4o reset-bd">
       <h2 class="h3 m-0">Breadcrumb</h2>
       <nav aria-label="Breadcrumb">
         <ol class="breadcrumbs">
@@ -1130,7 +1198,7 @@ const result = "fast, consistent styling"</code></pre>
         </ol>
       </nav>
     </section>
-    <section id="dialog-demo" class="panel stack g-4 p-6 bd bd-4o ">
+    <section id="dialog-demo" class="panel stack g-4 p-6 bd bd-4o reset-bd">
       <h2 class="h3 m-0">Dialog</h2>
       <div class="stack g-5">
         <div class="stack g-3">
@@ -1168,7 +1236,7 @@ const result = "fast, consistent styling"</code></pre>
         </div>
       </div>
     </section>
-    <section id="dropdown-demo" class="panel stack g-4 p-6 bd bd-4o ">
+    <section id="dropdown-demo" class="panel stack g-4 p-6 bd bd-4o reset-bd">
       <h2 class="h3 m-0">Dropdown and Popover</h2>
       <div class="stack g-5">
         <div class="stack g-3">
@@ -1203,7 +1271,7 @@ const result = "fast, consistent styling"</code></pre>
         </div>
       </div>
     </section>
-    <section id="taginput-demo" class="panel stack g-4 p-6 bd bd-4o ">
+    <section id="taginput-demo" class="panel stack g-4 p-6 bd bd-4o reset-bd">
       <h2 class="h3 m-0">Tag Input</h2>
       <div class="stack g-5">
         <div class="stack g-3">
@@ -1217,11 +1285,11 @@ const result = "fast, consistent styling"</code></pre>
         </div>
       </div>
     </section>
-    <section id="upload-demo" class="panel stack g-4 p-6 bd bd-4o ">
+    <section id="upload-demo" class="panel stack g-4 p-6 bd bd-4o reset-bd">
       <h2 class="h3 m-0">Upload</h2>
       <label class="card stack g-2 centered p-6" style="border-style: dashed"><strong>Attachments</strong><input type="file" multiple /><small class="hint">Drop files here or click to choose</small></label>
     </section>
-     <section id="meter-demo" class="panel stack g-4 p-6 bd bd-4o ">
+     <section id="meter-demo" class="panel stack g-4 p-6 bd bd-4o reset-bd">
        <h2 class="h3 m-0">Meter</h2>
        <div class="stack g-3">
          <p class="b m-0">Default</p>
@@ -1235,21 +1303,21 @@ const result = "fast, consistent styling"</code></pre>
          <progress value="60" max="100" class="tinted warning">60%</progress>
        </div>
      </section>
-     <section id="pagination-demo" class="panel stack g-4 p-6 bd bd-4o ">
+     <section id="pagination-demo" class="panel stack g-4 p-6 bd bd-4o reset-bd">
        <h2 class="h3 m-0">Pagination</h2>
-       <nav aria-label="Pagination">
-         <ol class="buttons pagination">
-           <li><a class="button outline compact" href="#pagination-demo">← Previous</a></li>
-           <li><a class="button outline compact" href="#pagination-demo">1</a></li>
-           <li><a class="button outline compact" href="#pagination-demo">2</a></li>
-           <li><a class="button compact" aria-current="page" href="#pagination-demo">3</a></li>
-          <li><a class="button outline compact" href="#pagination-demo">4</a></li>
-          <li><a class="button outline compact" href="#pagination-demo">5</a></li>
-          <li><a class="button outline compact" href="#pagination-demo">Next →</a></li>
-        </ol>
-      </nav>
+         <nav aria-label="Pagination">
+           <ol class="pagination">
+             <li><a href="#pagination-demo">← Previous</a></li>
+             <li><a href="#pagination-demo">1</a></li>
+             <li><a href="#pagination-demo">2</a></li>
+             <li><a aria-current="page" href="#pagination-demo">3</a></li>
+             <li><a href="#pagination-demo">4</a></li>
+             <li><a href="#pagination-demo">5</a></li>
+             <li><a href="#pagination-demo">Next →</a></li>
+           </ol>
+         </nav>
     </section>
-    <section id="spinner-demo" class="panel stack g-4 p-6 bd bd-4o ">
+     <section id="spinner-demo" class="panel stack g-4 p-6 bd bd-4o reset-bd">
       <h2 class="h3 m-0">Spinner</h2>
       <div class="stack g-5">
         <div class="stack g-3">
@@ -1269,7 +1337,7 @@ const result = "fast, consistent styling"</code></pre>
         </div>
       </div>
     </section>
-    <section id="skeleton-demo" class="panel stack g-4 p-6 bd bd-4o ">
+     <section id="skeleton-demo" class="panel stack g-4 p-6 bd bd-4o reset-bd">
       <h2 class="h3 m-0">Skeleton</h2>
       <div class="stack g-5">
         <div class="stack g-3">
@@ -1292,18 +1360,18 @@ const result = "fast, consistent styling"</code></pre>
         </div>
       </div>
     </section>
-    <section id="tooltip-demo" class="panel stack g-4 p-6 bd bd-4o ">
+     <section id="tooltip-demo" class="panel stack g-4 p-6 bd bd-4o reset-bd">
       <h2 class="h3 m-0">Tooltip</h2>
       <div class="row wrap g-3">
         <button data-tooltip="Save your changes">Save</button>
         <button class="danger" data-tooltip="Delete this item">Delete</button>
       </div>
     </section>
-    <section id="toast-demo" class="panel stack g-4 p-6 bd bd-4o ">
+     <section id="toast-demo" class="panel stack g-4 p-6 bd bd-4o reset-bd">
       <h2 class="h3 m-0">Toast</h2>
       <output class="toast" role="status"><strong>Changes saved</strong><span>Your document is up to date.</span><button class="outline compact">Okay</button></output>
     </section>
-    <section id="cards-demo" class="panel stack g-4 p-6 bd bd-4o ">
+     <section id="cards-demo" class="panel stack g-4 p-6 bd bd-4o reset-bd">
       <h2 class="h3 m-0">Cards, Badges, Pills, and Status</h2>
       <div class="stack g-5">
         <div class="col-2 g-4">
@@ -1406,7 +1474,7 @@ const result = "fast, consistent styling"</code></pre>
         </div>
       </div>
     </section>
-    <section id="layout-demo" class="panel stack g-4 p-6 bd bd-4o ">
+     <section id="layout-demo" class="panel stack g-4 p-6 bd bd-4o reset-bd">
       <h2 class="h3 m-0">Containers, Layout, Utilities</h2>
       <div class="stack g-5">
         <div class="col-3 g-3">

@@ -17,6 +17,7 @@ application.
 - Native surfaces: `dialog` and `[popover]` receive surface and backdrop styling.
 - Feedback: native `meter` (and `progress`), `.skeleton.line`, `.skeleton.box`, and `[aria-busy="true"].loading`; add semantic color classes to value bars.
 - Composition: `.buttons`, `.pagination`, `.toast`, and `.toasts`.
+- Pagination: apply `.pagination` to a `nav` or list. Links and buttons are styled as joined items; use `aria-current="page"` for the current page.
 - Tabs: use `.tabs .tab` for button-like tabs; add `.compact` to the tab bar or an individual tab for reduced padding. Add a semantic color class to the selected tab when needed. Retain `role="tablist"` and `role="tab"` for semantics.
 - Popover menu items: add `.compact` to an action item or its `menu` to reduce menu-row padding.
 - Tooltip: add authored text with `data-tooltip`; unlike Oat, ui.css does not transform `title` attributes with JavaScript.

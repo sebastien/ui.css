@@ -25,6 +25,10 @@ describe("controls color model", () => {
 		expect(output).toContain("input[type=checkbox]:not(.toggle):not(.selector), .checkbox");
 	});
 
+	test("unchecked checkboxes have a visible border", () => {
+		expect(output).toContain("border-width: var(--checkbox-border-width, 1px);");
+	});
+
 	test("group prefixes share field styling", () => {
 		expect(output).toContain(".group > :not(input, textarea, select, button, .input, .textarea, .select, .button)");
 	});
@@ -66,9 +70,9 @@ describe("controls color model", () => {
 		// selector checked label (5), plus .tinted on each field() emission
 		// tinted selector labels (1), and selected/tinted native option rows (2)
 		// (fieldstates emits .tinted once)
-		// → 10. Default actions use --color-neutral-background instead.
+		// → 11. Default actions use --color-neutral-background instead.
 		// Tab no longer uses action() — it has its own standalone style.
-		expect(count(ACCENT_PIN)).toBe(10);
+		expect(count(ACCENT_PIN)).toBe(11);
 	});
 
 	test("default action fill uses light neutral background", () => {
@@ -138,6 +142,34 @@ describe("controls color model", () => {
 		expect(output).toContain("--control-background-opacity: 0.15");
 	});
 
+	test("text fields support transparent outline variants", () => {
+		expect(output).toContain(".input.outline");
+		expect(output).toContain("background-color: transparent;");
+		expect(output).toContain("--control-border-opacity: 1;");
+	});
+
+	test("onoff actions are ghost by default and filled when selected", () => {
+		expect(output).toContain("&.onoff");
+		expect(output).toContain("&.selected");
+		expect(output).toContain("--control-background-opacity: 0;");
+		expect(output).toContain("--control-background-opacity: 1;");
+	});
+
+	test("actions pin their background blend against inherited field variants", () => {
+		const actions = output.slice(output.indexOf("/* @group actions */"));
+		expect(actions).toContain("--control-background-blend: 1;");
+	});
+
+	test("range tracks expose tinted progress styling", () => {
+		expect(output).toContain("::-webkit-slider-runnable-track");
+		expect(output).toContain(".tinted::-webkit-slider-runnable-track");
+		expect(output).toContain("--range-progress");
+		expect(output).toContain("::-moz-range-progress");
+		expect(output).not.toContain("accent-color: var(--control-color-base);");
+		expect(output).toContain("background-color: var(--color-paper);");
+		expect(output).toContain("background-color: transparent !important;");
+	});
+
 	test("backgrounds are painted from the background channel only", () => {
 		// Ghost states now drive --control-background-opacity…
 		expect(output).toContain("--control-background-opacity: 0.25");
@@ -154,6 +186,21 @@ describe("controls color model", () => {
 		expect(output).toContain("background-color: var(--background-color);");
 		expect(output).toContain(".bd {");
 		expect(output).toContain(".ol {");
+	});
+
+	test("switches expose optional shadow and outline variants", () => {
+		expect(output).toContain("&.shadow::before");
+		expect(output).toContain("&.outline:checked, &.outline.checked");
+		expect(output).toContain("background-color: transparent;");
+	});
+
+	test("color reset wrappers clear inherited recipes", () => {
+		expect(output).toContain(":where(.reset-bg > *) {");
+		expect(output).toContain(":where(.reset-txt > *) {");
+		expect(output).toContain(":where(.reset-bd > *) {");
+		expect(output).toContain(":where(.reset-ol > *) {");
+		expect(output).toContain("border-width: 0px;");
+		expect(output).toContain("outline-width: 0px;");
 	});
 
 	test("default color utilities follow page roles in dark mode", () => {

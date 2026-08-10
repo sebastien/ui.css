@@ -25,6 +25,10 @@ The `colors.js` module implements a sophisticated color system that automaticall
 - `.{prop}-to-white`, `.{prop}-to-black`: Endpoint tint helpers.
 - `.{prop}-{0-9}b`: Blends between base color and tint. `0` is 100% tint and `9` is 90% base. Unnumbered `.{prop}b` sets 100% base.
 
+### Child Resets:
+
+- `.reset-bg`, `.reset-txt`, `.reset-bd`, `.reset-ol`: Reset the corresponding color recipe on direct children. This prevents inherited color modifiers such as `.bd-3o` from affecting content wrappers. Explicit color utilities on a child override the reset.
+
 ### Semantic Colors:
 
 - `primary`, `secondary`, `tertiary`: Main brand colors.

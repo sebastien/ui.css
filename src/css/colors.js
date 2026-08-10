@@ -375,6 +375,34 @@ function colors(colors = COLORS) {
 		// ------------------------------------------------------------------------
 		// RESET CLASSES
 		// ------------------------------------------------------------------------
+		// Reset inherited color recipes on direct content children. :where() keeps
+		// these wrappers weaker than any explicit color utility on the child.
+		rule(":where(.reset-bg > *)", {
+			__background_color_base: vars.color.surface,
+			__background_color_tint: vars.color.tint.or(vars.color.surface),
+			__background_color_blend: 1.0,
+			__background_color_opacity: 1.0,
+		}),
+		rule(":where(.reset-txt > *)", {
+			__text_color_base: vars.color.surface_text,
+			__text_color_tint: vars.color.tint.or(vars.color.surface),
+			__text_color_blend: 1.0,
+			__text_color_opacity: 1.0,
+		}),
+		rule(":where(.reset-bd > *)", {
+			__border_color_base: vars.color.surface_text,
+			__border_color_tint: vars.color.tint,
+			__border_color_blend: 1.0,
+			__border_color_opacity: 0.5,
+			border_width: "0px",
+		}),
+		rule(":where(.reset-ol > *)", {
+			__outline_color_base: vars.color.surface_text,
+			__outline_color_tint: vars.color.tint.or(vars.color.surface),
+			__outline_color_blend: 0.3,
+			__outline_color_opacity: 0.8,
+			outline_width: "0px",
+		}),
 		rule(".nobg", { background_color: "transparent" }),
 		rule(".notx", { color: "inherit" }),
 		rule(".nobd", { border_color: "transparent" }),
