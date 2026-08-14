@@ -1,4 +1,4 @@
-import { layers, group, guard, rule } from "../js/uicss.js";
+import { layers, group, guard } from "../js/uicss.js";
 import tokens from "./tokens.js";
 import reset from "./reset.js";
 import layout from "./layout.js";

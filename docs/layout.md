@@ -11,15 +11,17 @@ The `layout.js` module provides a comprehensive suite of utilities for controlli
 - `.bl`, `.il`, `.ibl`: Block, inline, and inline-block display.
 - `.fl`, `.ifl`: Flex and inline-flex display.
 - `.grid`: Grid display.
+- `.grid-items`: Responsive grid with automatic columns sized from `--item-min`; direct children are capped by `--item-max`.
 
 ### Positioning:
 
 - `.rel`, `.abs`, `.fix`, `.sticky`: Position modes.
 - `.cover`: Absolute positioning covering the entire parent (`0px` on all sides).
-- `.to-tl`, `.to-br`: Pin to the implemented top-left and bottom-right corners.
+- `.to-tl`, `.to-tr`, `.to-br`, `.to-bl`: Pin to a corner.
 - `.to-t`, `.to-b`, `.to-l`, `.to-r`: Pin to sides.
 - `.to-s`, `.to-n`, `.to-e`, `.to-w`: Position relative to the corresponding edge.
-- `.to-hc`: Set `left: 50%`; use `.centered` for actual two-axis centering.
+- `.to-hc`, `.to-wc`: Set the corresponding axis to `50%`.
+- `.to-c`: Set both axes to `50%`; it does not apply a centering transform.
 
 ### Sizing and Gaps:
 
@@ -47,6 +49,11 @@ The `layout.js` module provides a comprehensive suite of utilities for controlli
 <div class="centered">
     I am centered on both axes.
 </div>
+
+<section class="grid-items g-3" style="--item-min: 160px; --item-max: 500px">
+  <article class="card">A responsive item</article>
+  <article class="card">Another responsive item</article>
+</section>
 ```
 
 ### API
@@ -56,3 +63,5 @@ The `layout.js` module provides a comprehensive suite of utilities for controlli
 - The default export is a named module object consumed by the CSS renderer; it is not a runtime function.
 - `rule(selector, properties)`: Internal helper used to define the utility rules.
 - `vars.gap`, `vars.size`: Standardized scales used for class generation.
+
+`.grid-items` uses CSS Grid's `auto-fit` behavior and does not require container queries. Set `--item-min` and optionally `--item-max` inline or in a custom rule. The maximum applies to direct children only, not to the grid tracks.

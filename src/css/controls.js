@@ -174,6 +174,12 @@ function basechrome() {
 			},
 		),
 		css.rule(
+			baseHosts.map((selector) => `${selector}.compacted`),
+			{
+				padding: vars.control.padding.compacted.or("0.1em 0.15em"),
+			},
+		),
+		css.rule(
 			baseHosts.flatMap((selector) => [
 				`${selector}:focus:not(.nofocus)`,
 				`${selector}.focus:not(.nofocus)`,
@@ -364,14 +370,27 @@ function fieldstates() {
 				__control_background_opacity: 0,
 			},
 			css.rule(
-				fieldHosts.flatMap((s) => [
+				[
 					`&:not(.nofocus):focus`,
 					`&:not(.nofocus).focus`,
 					`&:active`,
 					`&.active`,
-				]),
+				],
 				{
 					__control_background_opacity: 0.5,
+				},
+			),
+		),
+		...["white", ...colors.semantic].map((color) =>
+			css.rule(
+				fieldHosts.map((s) => `${s}.ghost.${color}`),
+				{
+					__control_background_base: vars.color[color].background.or(
+						vars.color[color],
+					),
+					__control_background_blend: 1.0,
+					__control_background_opacity: 1.0,
+					background_color: control.background(1.0, 1.0),
 				},
 			),
 		),
@@ -473,8 +492,10 @@ function action(selector, ...rest) {
 	return base(
 		selector,
 		css.rule("&", {
-			font_size: vars.action.font.size.or(vars.control.font.size, "1em"),
 			padding: vars.action.padding.or(vars.control.padding, "0.5em 1em"),
+		}),
+		css.rule("&", {
+			font_size: vars.action.font.size.or(vars.control.font.size, "1em"),
 			// Cursor
 			cursor: "pointer",
 			// Default fill uses the light neutral surface (not medium neutral,
@@ -500,6 +521,12 @@ function action(selector, ...rest) {
 				vars.control.border.radius,
 				"0.25em",
 			),
+		}),
+		css.rule("&.compact", {
+			padding: vars.control.padding.compact.or("0.15em 0.25em"),
+		}),
+		css.rule("&.compacted", {
+			padding: vars.control.padding.compacted.or("0.1em 0.15em"),
 		}),
 		// Semantic fills: prefer --color-{semantic}-background when defined
 		// (neutral → light surface), else the solid semantic color.
@@ -603,7 +630,7 @@ function action(selector, ...rest) {
 			css.rule("&:active, &.active", {
 				__control_background_opacity: 0.35,
 			}),
-			css.rule("&.selected", {
+			css.rule("&.on, &.selected", {
 				__control_background_base: vars.control.color.base,
 				__control_background_tint: vars.control.color.base,
 				__control_background_blend: 1.0,
@@ -1143,6 +1170,23 @@ function select() {
 				border_bottom_right_radius: vars.selector.border.radius.or("0.25em"),
 			},
 		),
+		css.rule("&.selector[multiple] > option, &.selector.vertical > option", {
+			// Selector listboxes use row separators, not a second outer border.
+			border_left_width: "0px",
+			border_right_width: "0px",
+		}),
+		css.rule(
+			"&.selector[multiple] > option:first-child, &.selector.vertical > option:first-child",
+			{
+				border_top_width: "0px",
+			},
+		),
+		css.rule(
+			"&.selector[multiple] > option:last-child, &.selector.vertical > option:last-child",
+			{
+				border_bottom_width: "0px",
+			},
+		),
 		css.rule(
 			[
 				"&[multiple] > option:not(:checked):hover",
@@ -1165,6 +1209,22 @@ function select() {
 			outline: "none !important",
 			box_shadow: "none !important",
 		}),
+		css.rule("&.selector:disabled, &.selector.disabled", {
+			// Disabled selectors dim their content channels, not their border.
+			opacity: 1,
+			__control_color_opacity: 0.5,
+			__control_background_opacity: 0,
+			color: `color-mix(in oklch, ${vars.color.surface_text}, transparent 50%)`,
+			background_color: control.background(1.0, 0.0),
+		}),
+		css.rule(
+			"&.selector:disabled > option:checked, &.selector.disabled > option:checked",
+			{
+				__control_background_opacity: 0.15,
+				color: `color-mix(in oklch, ${controlContrast()}, transparent 50%)`,
+				background_color: control.background(1.0, 0.15),
+			},
+		),
 		...colors.semantic.map((color) =>
 			css.rule(
 				css.mods(["&[multiple] > option", "&.vertical > option"], color),
@@ -1234,11 +1294,22 @@ function selector() {
 				color: vars.color.ink,
 				// Pin border to medium neutral (not the semantic accent)
 				__control_border_base: vars.color.neutral,
-				__control_background_opacity: 0,
+				__control_background_opacity: 0.8,
 				border_width: vars.control.border.width.or("1px"),
 				border_left_width: "0px",
 				border_color: control.border(0.55, 0.9, vars.color.paper),
-				background_color: control.background(1.0, 0.0, vars.color.paper),
+				background_color: control.background(
+					1.0,
+					0.8,
+					vars.color.surface,
+					vars.color.surface,
+				),
+			}),
+			css.rule("&.white > label", {
+				__control_background_base: vars.color.white,
+				__control_background_blend: 1.0,
+				__control_background_opacity: 1.0,
+				background_color: control.background(1.0, 1.0),
 			}),
 			css.rule("&.colored > label", {
 				color: control.color(1.0, 1.0, vars.color.ink),
@@ -1341,14 +1412,32 @@ function selector() {
 	);
 }
 
+function tabBackground() {
+	return {
+		__background_color: colors.mixed(
+			vars.background.color.base,
+			vars.background.color.tint,
+			vars.background.color.blend,
+			vars.background.color.opacity,
+		),
+		background_color: vars.background.color,
+	};
+}
+
 function tab() {
 	return css.group(
 		css.rule(".tabs", {
 			display: "inline-flex",
+			flex_wrap: "wrap",
+			max_width: "100%",
 			gap: "0.15rem",
 			padding: "0.35rem",
 			border_radius: "0.375rem",
-			background_color: `color-mix(in oklch, ${vars.color.neutral}, transparent 80%)`,
+			__background_color_base: vars.color.neutral,
+			__background_color_tint: vars.color.paper,
+			__background_color_blend: 1.0,
+			__background_color_opacity: 0.2,
+			...tabBackground(),
 		}),
 		css.rule(".tabs .tab", {
 			cursor: "pointer",
@@ -1357,10 +1446,14 @@ function tab() {
 			padding: "0.5em 0.85em",
 			font: "inherit",
 			color: vars.color.ink,
-			background_color: "transparent",
 			box_shadow: "none",
 			outline: "0",
 			appearance: "none",
+			__background_color_base: vars.accent.color.or(vars.color.surface),
+			__background_color_tint: vars.color.paper,
+			__background_color_blend: 1.0,
+			__background_color_opacity: 0,
+			...tabBackground(),
 		}),
 		css.rule(".tabs.compact", {
 			padding: "0.2rem",
@@ -1368,17 +1461,31 @@ function tab() {
 		css.rule(".tabs.compact .tab, .tabs .tab.compact", {
 			padding: "0.35em 0.5em",
 		}),
-		css.rule(".tabs .tab:hover", {
-			background_color: `color-mix(in oklch, ${vars.color.paper}, transparent 60%)`,
+		css.rule(".tabs.compacted", {
+			display: "flex",
+			width: "100%",
 		}),
-		css.rule(".tabs .tab[aria-selected=true], .tabs .tab.active", {
-			background_color: "var(--accent-color, var(--color-surface))",
-			color: "contrast-color(var(--accent-color, var(--color-surface)))",
-			box_shadow: `var(--shadow-x) var(--shadow-y) var(--shadow-spread) var(--shadow-color)`,
+		css.rule(".tabs.compacted .tab", {
+			width: "min-content",
+			flex: "0 0 min-content",
 		}),
 		...colors.semantic.map((name) =>
-			css.rule(`.tabs .tab.${name}`, { __accent_color: vars.color[name] }),
+			css.rule(`.tabs .tab.${name}`, {
+				__accent_color: vars.color[name],
+				__control_color_base: vars.color[name],
+				__background_color_base: vars.color[name],
+			}),
 		),
+		css.rule(".tabs .tab:hover", {
+			__background_color_base: vars.color.paper,
+			__background_color_opacity: 0.4,
+		}),
+		css.rule(".tabs .tab[aria-selected=true], .tabs .tab.active", {
+			__background_color_base: vars.accent.color.or(vars.color.surface),
+			__background_color_opacity: 1.0,
+			color: `contrast-color(${vars.background.color})`,
+			box_shadow: `var(--shadow-x) var(--shadow-y) var(--shadow-spread) var(--shadow-color)`,
+		}),
 		css.rule(".tabs .tab:focus-visible, .tabs .tab.focus", {
 			outline: `2px solid ${vars.color.focus.or(vars.color.neutral)}`,
 			outline_offset: "-2px",
@@ -1388,14 +1495,16 @@ function tab() {
 			pointer_events: "none",
 		}),
 		css.rule(".tabs .tab.ghost", {
-			background_color: "transparent",
+			__background_color_opacity: 0,
 			border: "0",
 		}),
 		css.rule(".tabs .tab.ghost:hover", {
-			background_color: `color-mix(in oklch, ${vars.color.paper}, transparent 60%)`,
+			__background_color_base: vars.color.paper,
+			__background_color_opacity: 0.4,
 		}),
 		css.rule(".tabs .tab.ghost[aria-selected=true], .tabs .tab.ghost.active", {
-			background_color: "var(--accent-color, var(--color-surface))",
+			__background_color_base: vars.accent.color.or(vars.color.surface),
+			__background_color_opacity: 1.0,
 		}),
 	);
 }

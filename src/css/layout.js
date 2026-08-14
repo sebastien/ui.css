@@ -13,7 +13,9 @@ const b = { bottom: "0px" };
 const l = { left: "0px" };
 const r = { right: "0px" };
 const tl = { ...t, ...l };
+const tr = { ...t, ...r };
 const br = { ...b, ...r };
+const bl = { ...b, ...l };
 
 export default named({
 	box: group(
@@ -39,22 +41,27 @@ export default named({
 		rule(".rel", { position: "relative" }),
 		rule(".abs", { position: "absolute" }),
 		rule(".fix", { position: "fixed" }),
+		rule(".sta", { position: "static" }),
 		rule(".to-tl", tl),
+		rule(".to-tr", tr),
 		rule(".to-br", br),
+		rule(".to-bl", bl),
 		rule(".to-l", l),
 		rule(".to-r", r),
 		rule(".to-t", t),
 		rule(".to-b", b),
-		rule(".to-s", { top: "100%" }),
+		rule(".to-s", { bottom: "0%" }),
 		rule(".to-n", { top: "0%" }),
-		rule(".to-e", { left: "0%" }),
+		rule(".to-e", { right: "0%" }),
 		rule(".to-w", { left: "100%" }),
 		rule(".to-hc", { left: "50%" }),
+		rule(".to-wc", { top: "50%" }),
+		rule(".to-c", { top: "50%", left: "50%" }),
 		rule(".rl-90", { transform: "rotate(-90deg)" }),
 		rule(".rr-90", { transform: "rotate(90deg)" }),
 	),
 	gap: group(
-		sizes.map((k, i) =>
+		sizes.map((_, i) =>
 			rule(`.g-${i}`, {
 				gap: `${vars.gap[i]}`,
 				__gap: `${vars.gap[i]}`,
@@ -88,6 +95,14 @@ export default named({
 		box_sizing: "border-box",
 	}),
 	fit: group(
+		rule(".min-fit", {
+			min_width: "100%",
+			min_height: "100%",
+		}),
+		rule(".max-fit", {
+			max_width: "100%",
+			max_height: "100%",
+		}),
 		rule(".fit", {
 			box_sizing: "border-box",
 			width: "100%",
@@ -100,14 +115,25 @@ export default named({
 		rule(".fit-w", {
 			box_sizing: "border-box",
 			width: "100%",
-			// NOTE: Note sure this is necessary
 			// min_width: "100%",
+			max_width: "100%",
+		}),
+		rule(".min-fit-w", {
+			min_width: "100%",
+		}),
+		rule(".max-fit-w", {
 			max_width: "100%",
 		}),
 		rule(".fit-h", {
 			box_sizing: "border-box",
 			height: "100%",
+			// min_height: "100%",
+			max_height: "100%",
+		}),
+		rule(".min-fit-h", {
 			min_height: "100%",
+		}),
+		rule(".max-fit-h", {
 			max_height: "100%",
 		}),
 		rule(".fit-min", {
@@ -161,12 +187,8 @@ export default named({
 	sizing: group(
 		named({
 			width: group(
-				...sizes.map((k, i) =>
-					rule(`.w-${i}`, { width: `${vars.size[i]}` }),
-				),
-				...sizes.map((k, i) =>
-					rule(`.h-${i}`, { height: `${vars.size[i]}` }),
-				),
+				...sizes.map((_, i) => rule(`.w-${i}`, { width: `${vars.size[i]}` })),
+				...sizes.map((_, i) => rule(`.h-${i}`, { height: `${vars.size[i]}` })),
 				...times(10).map((_) => rule(`.w-${_}em`, { width: `${_}em` })),
 				...times(10).map((_) => rule(`.h-${_}em`, { height: `${_}em` })),
 				rule(".w-screen", { width: "100vw" }),
@@ -188,7 +210,7 @@ export default named({
 				}),
 			),
 			chars: group(
-				...times(5, (_) =>
+				...times(10, (_) =>
 					rule(`.w-${_ + 1}ch`, {
 						width: `${Math.round(1.25 * (_ + 1))}ch`,
 					}),
@@ -395,6 +417,15 @@ export default named({
 			display: "grid",
 			gap: vars.gap,
 		}),
+		rule(".grid-items", {
+			display: "grid",
+			gap: vars.gap,
+			grid_template_columns:
+				"repeat(auto-fit, minmax(min(100%, var(--item-min, 16rem)), 1fr))",
+		}),
+		rule(".grid-items > *", {
+			max_width: "var(--item-max, none)",
+		}),
 		rule(".grid.lined > *", {
 			border_right_width: vars.border.width.or("1px"),
 			border_right_style: vars.border.style.or("solid"),
@@ -452,7 +483,7 @@ export default named({
 			overflow_y: "auto",
 		}),
 		rule(".overflow-x", {
-				overflow_x: "auto",
+			overflow_x: "auto",
 		}),
 		rule([".nooverflow", ".noflow"], {
 			overflow: "clip",

@@ -37,9 +37,22 @@ describe("controls color model", () => {
 		expect(output).toContain(".tabs .tab");
 		expect(output).toContain(".tabs .tab[aria-selected=true]");
 		expect(output).toContain("padding: 0.35rem;");
-		expect(output).toContain("color-mix(in oklch, var(--color-neutral), transparent 80%)");
+		expect(output).toContain("flex-wrap: wrap;");
 		expect(output).toContain("--accent-color: var(--color-primary);");
 		expect(output).not.toContain(".tabsbar");
+	});
+
+	test("tabs paint through the background color channel", () => {
+		const tabs = output.slice(output.indexOf("/* @group tab */"));
+		expect(tabs).toContain("--background-color-base: var(--color-neutral);");
+		expect(tabs).toContain("--background-color-opacity: 0.2;");
+		expect(tabs).toContain("--background-color-opacity: 0;");
+		expect(tabs).toContain("--background-color-opacity: 1;");
+		expect(tabs).toContain("--background-color-base: var(--accent-color, var(--color-surface));");
+		expect(tabs).toContain("background-color: var(--background-color);");
+		expect(tabs).toContain("contrast-color(var(--background-color))");
+		expect(tabs).toContain("--control-color-base: var(--color-primary);");
+		expect(tabs).toContain("--background-color-base: var(--color-primary);");
 	});
 
 	test("interactive controls expose compact padding variants", () => {
@@ -47,6 +60,9 @@ describe("controls color model", () => {
 		expect(output).toContain(".tabs.compact");
 		expect(output).toContain(".tabs.compact .tab, .tabs .tab.compact");
 		expect(output).toContain("padding: 0.35em 0.5em;");
+		expect(output).toContain(".tabs.compacted");
+		expect(output).toContain(".tabs.compacted .tab");
+		expect(output).toContain("flex: 0 0 min-content;");
 	});
 
 	test("field element selector excludes button-likes and .button", () => {
@@ -180,6 +196,21 @@ describe("controls color model", () => {
 		);
 	});
 
+	test("colored ghost fields have a visible background", () => {
+		expect(output).toContain(".input.ghost.white");
+		expect(output).toContain(".input.ghost.error");
+		expect(output).toContain(
+		"--control-background-base: var(--color-error-background, var(--color-error));",
+	);
+		expect(output).toContain("--control-background-blend: 1;");
+		expect(output).toContain("--control-background-opacity: 1;");
+	});
+
+	test("success uses the generated green color token", () => {
+		expect(output).toContain("--color-success: var(--color-green);");
+		expect(output).not.toContain("--color-success: var(--colog-green);");
+	});
+
 	test("generic color utilities paint controls from the later colors layer", () => {
 		expect(output).toContain(".bg-primary {");
 		expect(output).toContain(".bg {");
@@ -226,6 +257,7 @@ describe("controls color model", () => {
 	test("selector items support semantic colors in their states", () => {
 		expect(output).toContain("& > label.danger");
 		expect(output).toContain("& > label.error");
+		expect(output).toContain("&.white > label");
 		expect(output).toContain("&.tinted > label");
 		expect(output).toContain("& > label:active, & > label.active");
 	});

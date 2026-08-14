@@ -10,7 +10,7 @@ application.
 ## Components
 
 - Alerts: add `.alert` for styling and `role="alert"` for assistive technology, with `.success`, `.warning`, `.danger`, and `.error` variants.
-- Avatars: `figure.avatar` or `figure[data-avatar]`; use `.avatars` for an overlapping group.
+- Avatars: add `.avatar`; use `.avatars` for an overlapping group.
 - Content: `.card`, `.panel`, `.pill`, `.badge`, `.status`.
 - Pills and badges use the background color channel, so `.bg-*` color, tint, blend, and opacity modifiers apply to them.
 - Disclosure: `details.accordion`, `details.section`, `details.tree`.
@@ -18,7 +18,7 @@ application.
 - Feedback: native `meter` (and `progress`), `.skeleton.line`, `.skeleton.box`, and `[aria-busy="true"].loading`; add semantic color classes to value bars.
 - Composition: `.buttons`, `.pagination`, `.toast`, and `.toasts`.
 - Pagination: apply `.pagination` to a `nav` or list. Links and buttons are styled as joined items; use `aria-current="page"` for the current page.
-- Tabs: use `.tabs .tab` for button-like tabs; add `.compact` to the tab bar or an individual tab for reduced padding. Add a semantic color class to the selected tab when needed. Retain `role="tablist"` and `role="tab"` for semantics.
+- Tabs: use `.tabs .tab` for button-like tabs; they wrap when they exceed the parent width. Add `.compact` to the tab bar or an individual tab for reduced padding, or `.tabs.compacted` for a full-width bar whose tabs stay min-content. Add a semantic color class to the selected tab when needed. Tabs use the background color channel, so `.bg-*` modifiers apply. Retain `role="tablist"` and `role="tab"` for semantics.
 - Popover menu items: add `.compact` to an action item or its `menu` to reduce menu-row padding.
 - Tooltip: add authored text with `data-tooltip`; unlike Oat, ui.css does not transform `title` attributes with JavaScript.
 

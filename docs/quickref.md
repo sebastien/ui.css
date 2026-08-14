@@ -18,6 +18,7 @@ Compose interfaces in layers. Before writing custom CSS, reach for these classes
 | `.row` | Horizontal flex, `align-items: center`, applies `gap` |
 | `.stack` | Vertical flex, applies `gap` |
 | `.grid` | CSS grid, applies `gap` |
+| `.grid-items` | Responsive CSS grid; use `--item-min` and `--item-max` to size direct items |
 | `.col-{1-8}` | `grid-template-columns: repeat(n, 1fr)` + grid + gap |
 | `.centered` | Flex, both axes centered |
 
@@ -67,8 +68,7 @@ Compose interfaces in layers. Before writing custom CSS, reach for these classes
 
 | Class | Pins to |
 |-------|---------|
-| `.to-tl` | Top-left corner |
-| `.to-br` | Bottom-right corner |
+| `.to-tl` / `.to-tr` / `.to-br` / `.to-bl` | Corner |
 | `.to-t` / `.to-b` / `.to-l` / `.to-r` | Edge |
 
 ### Sizing shortcuts
@@ -712,7 +712,7 @@ The `.t` class auto-styles child elements as prose: paragraphs get margins, head
 ### Card grid
 
 ```html
-<section class="grid col-3 g-3 limit-page">
+<section class="grid-items g-3 limit-page" style="--item-min: 160px; --item-max: 500px">
     <article class="card stack g-2 sh-1">
         <div class="row middle g-2">
             <span class="pill compact success">Active</span>

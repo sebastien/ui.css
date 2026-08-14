@@ -284,6 +284,21 @@ test("color apply utilities override control paint", async ({ page }) => {
 	expect(button["--outline-color-base"]).toBe("#0c31bf");
 });
 
+test("tab background modifiers adjust the shared paint channel", async ({ page }) => {
+	await render(
+		page,
+		`<div class="tabs"><button id="tab" class="tab primary active bg-2o">Overview</button></div>`,
+	);
+	const tab = await properties(page, "#tab", [
+		"--accent-color",
+		"--background-color-base",
+		"--background-color-opacity",
+	]);
+	expect(tab["--accent-color"]).toBe("#0c31bf");
+	expect(tab["--background-color-base"]).toBe("#0c31bf");
+	expect(tab["--background-color-opacity"]).toBe("0.2");
+});
+
 test("semantic pills and cards derive paint channels from their accent", async ({ page }) => {
 	await render(page, `<span id="pill" class="pill success">Ready</span><article id="card" class="card danger">Danger</article>`);
 	for (const [selector, color] of [["#pill", "#22c55e"], ["#card", "#ef4444"]]) {

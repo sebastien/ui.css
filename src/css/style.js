@@ -1,5 +1,4 @@
 import { group, mods, named, rule, sides, times, vars } from "../js/uicss.js";
-import colors from "./colors.js";
 
 // Module: style
 // Visual styling utilities for spacing, typography, borders, shadows, depth,
@@ -37,6 +36,8 @@ export default named({
 		rule(".noblur", { __shadow_spread: "0" }),
 		rule(".nogap", { gap: "0em" }),
 		rule(".nosel", { user_select: "none" }),
+		rule(".nosh", { box_shadow: "0px 0px 0px transparent" }),
+		rule(".sel", { user_select: "text" }),
 		rule(".ma", { margin: "auto" }),
 		spacingSizes.map((i) =>
 			rule(`.m-${i}`, {
@@ -126,6 +127,7 @@ export default named({
 
 	interaction: group(
 		rule(".noev", { pointer_events: "none" }),
+		rule(".notouch", { touch_action: "none" }),
 		rule(".ev", { pointer_events: "auto" }),
 		rule(".pointer", { cursor: "pointer" }),
 		rule(".action", { cursor: "pointer", user_select: "none" }),
@@ -276,6 +278,21 @@ export default named({
 				box_shadow: `calc(${vars.shadow.x}*${i}) calc(${vars.shadow.y}*${i}) calc(${vars.shadow.spread}*${i}) ${vars.shadow.color}`,
 			}),
 		),
+		...times(5, (i) =>
+			rule(`.sh-x${i}`, {
+				__shadow_x: `${i}px`,
+			}),
+		),
+		...times(5, (i) =>
+			rule(`.sh-y${i}`, {
+				__shadow_y: `${i}px`,
+			}),
+		),
+		...times(5, (i) =>
+			rule(`.sh-b${i}`, {
+				__shadow_spread: `${i}px`,
+			}),
+		),
 	),
 
 	// ----------------------------------------------------------------------------
@@ -344,7 +361,8 @@ export default named({
 			border_left_color: vars.inset.light,
 			border_bottom_color: vars.inset.shadow,
 			border_right_color: vars.inset.shadow,
-			box_shadow: "0 calc(var(--depth, 0.25px) * 2) calc(var(--depth, 0.25px) * 3) rgb(0 0 0 / 0.12)",
+			box_shadow:
+				"0 calc(var(--depth, 0.25px) * 2) calc(var(--depth, 0.25px) * 3) rgb(0 0 0 / 0.12)",
 		}),
 		rule(mods([".t-inset"], undefined, "focus", "hover", "active"), {
 			__inset_shadow: `oklch(0 0 0 / 0.1)`,

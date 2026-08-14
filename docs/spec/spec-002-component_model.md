@@ -25,6 +25,7 @@ outline setup) and derive their colors from the same token variables through
 - `input[type="radio"]`, `.radio`
 - `input[type="range"]`, `.range`
 - `.selector` (container) with `input + label` items
+- `.tabs` / `.tab`
 - `.panel`
 
 All controls can be sized using the sizing classes (`smaller`, `larger`, etc.)
@@ -51,6 +52,8 @@ Pinning rules:
 - Actions and selected states derive their fill from the control accent.
 - Fields establish a local surface and use their accent for border and focus
   chrome. A local `bg-*`, `bd-*`, or `ol-*` modifier overrides that channel.
+- Tabs paint through the shared `--background-color-*` channel, so `.bg-*`
+  modifiers tweak bar and tab fills (including selected opacity).
 
 ## Color Variants
 

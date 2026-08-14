@@ -38,6 +38,30 @@ describe("layout utility behavior", () => {
 		expect(output).toContain("margin-bottom: var(--dy, 0px);");
 		expect(output).toContain("margin-right: var(--dx, 0px);");
 	});
+
+	test("keeps position and fit utility declarations valid", () => {
+		expect(output).toMatch(/\.to-tr \{[^}]*top: 0px;[^}]*right: 0px;/);
+		expect(output).toMatch(/\.to-bl \{[^}]*bottom: 0px;[^}]*left: 0px;/);
+		expect(output).toMatch(/\.to-s \{[^}]*bottom: 0%;/);
+		expect(output).toMatch(/\.to-e \{[^}]*right: 0%;/);
+		expect(output).toMatch(/\.to-w \{[^}]*left: 100%;/);
+		expect(output).toMatch(/\.to-wc \{[^}]*top: 50%;/);
+		expect(output).toMatch(/\.to-c \{[^}]*top: 50%;[^}]*left: 50%;/);
+		expect(output).toContain(".max-fit-w {");
+		expect(output).toMatch(/\.max-fit-w \{[^}]*max-width: 100%;/);
+		expect(output).toContain(".max-fit-h {");
+		expect(output).toMatch(/\.max-fit-h \{[^}]*max-height: 100%;/);
+		expect(output).not.toContain("left: %;");
+	});
+
+	test("supports responsive grid items with item-only maximum widths", () => {
+		expect(output).toContain(".grid-items {");
+		expect(output).toContain(
+			"grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--item-min, 16rem)), 1fr));",
+		);
+		expect(output).toContain(".grid-items > * {");
+		expect(output).toContain("max-width: var(--item-max, none);");
+	});
 });
 
 describe("style utility behavior", () => {

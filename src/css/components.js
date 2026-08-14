@@ -588,9 +588,10 @@ function alert() {
 
 function avatar() {
 	return css.group(
-		css.rule(["figure.avatar", "figure[data-avatar]"], {
+		css.rule([".avatar", "figure[data-avatar]"], {
 			display: "inline-grid",
 			place_items: "center",
+			aspect_ratio: 1,
 			width: vars.avatar.size,
 			height: vars.avatar.size,
 			margin: "0",
@@ -600,21 +601,21 @@ function avatar() {
 			color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.surface_text} 52%)`,
 			font_weight: "600",
 		}),
-		css.rule(["figure.avatar img", "figure[data-avatar] img"], {
+		css.rule([".avatar img", "figure[data-avatar] img"], {
 			width: "100%",
 			height: "100%",
 			object_fit: "cover",
 		}),
-		css.rule([".avatar.small", "[data-avatar].small"], {
+		css.rule([".avatar.small", "figure[data-avatar].small"], {
 			width: vars.avatar.small,
 			height: vars.avatar.small,
 		}),
-		css.rule([".avatar.large", "[data-avatar].large"], {
+		css.rule([".avatar.large", "figure[data-avatar].large"], {
 			width: vars.avatar.large,
 			height: vars.avatar.large,
 		}),
 		css.rule(".avatars", { display: "flex", padding_left: "0.35rem" }),
-		css.rule(".avatars > :is(.avatar, [data-avatar])", {
+		css.rule(".avatars > :is(.avatar, figure[data-avatar])", {
 			margin_left: "-0.35rem",
 			border: `2px solid ${vars.color.surface}`,
 		}),

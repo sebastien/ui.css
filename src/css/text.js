@@ -10,7 +10,7 @@ import {
 
 export default named({
 	headings: group(
-		...sizes.map((k, si) =>
+		...sizes.map((_, si) =>
 			rule(
 				[
 					...times(7, (hi) => `h${hi + 1}.sz-${si}.t`),
@@ -51,8 +51,8 @@ export default named({
 			text_decoration_thickness: "2px",
 		}),
 		rule(["p.t", ".t p"], {
-			margin_top: `${vars.text.stack}`,
-			margin_bottom: `${vars.text.stack}`,
+			margin_top: `${vars.text.gap}`,
+			margin_bottom: `${vars.text.gap}`,
 			line_height: `${vars.text.line.height}`,
 		}),
 		rule(["p.t:first-child", ".t p:first-child"], {
@@ -107,8 +107,8 @@ export default named({
 			border_color: "currentColor",
 			margin_left: "0",
 			margin_right: "0",
-			margin_top: `${vars.text.stack}`,
-			margin_bottom: `${vars.text.stack}`,
+			margin_top: `${vars.text.gap}`,
+			margin_bottom: `${vars.text.gap}`,
 			padding_left: `${vars.text.blockquote.pad.horizontal}`,
 			padding_top: `${vars.text.blockquote.pad.vertical}`,
 			padding_bottom: `${vars.text.blockquote.pad.vertical}`,
@@ -120,8 +120,8 @@ export default named({
 			font_family: vars.font.code.family,
 			background: `${vars.text.code.background}`,
 			border_radius: `${vars.text.code.radius}`,
-			margin_top: `${vars.text.stack}`,
-			margin_bottom: `${vars.text.stack}`,
+			margin_top: `${vars.text.gap}`,
+			margin_bottom: `${vars.text.gap}`,
 			padding: `${vars.text.code.pad.vertical} ${vars.text.code.pad.horizontal}`,
 			overflow_x: "auto",
 			white_space: "pre",
@@ -140,7 +140,7 @@ export default named({
 	),
 	lists: group(
 		rule(["ul.t", "ol.t", "dl.t", ".t ul", ".t ol", ".t dl"], {
-			margin_top: `${vars.text.stack}`,
+			margin_top: `${vars.text.gap}`,
 			margin_bottom: `${vars.text.dd.margin.bottom}`,
 			padding_left: `${vars.text.list.unordered.indent}`,
 		}),
@@ -200,7 +200,7 @@ export default named({
 		}),
 		rule(".pre", { white_space: "pre" }),
 		rule(".pre-lines", { white_space: "pre-line" }),
-		rule(".ellipsis", { text_overflow: "ellipsis", overflow: "clip" }),
+		rule(".ellipsis", { text_overflow: "ellipsis", overflow: "hidden" }),
 	),
 	transform: group(
 		rule([".caps", ".upper"], { text_transform: "uppercase" }),
