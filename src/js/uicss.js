@@ -162,34 +162,6 @@ const percentages = [5, 10, 15, 20, 25, 33, 50, 66, 75, 80, 90, 100];
 
 // ----------------------------------------------------------------------------
 //
-// META
-//
-// ----------------------------------------------------------------------------
-
-// Class: Meta
-// Base wrapper for values that carry non-rule metadata.
-class Meta {
-	constructor(value) {
-		this.value = value;
-	}
-}
-
-// ----------------------------------------------------------------------------
-//
-// DOCUMENTATION
-//
-// ----------------------------------------------------------------------------
-
-// Class: Documentation
-// Metadata node used to attach documentation payloads.
-class Documentation extends Meta {}
-
-// Function: doc
-// Creates a documentation metadata wrapper.
-const doc = (value) => new Documentation(value);
-
-// ----------------------------------------------------------------------------
-//
 // SCOPE
 //
 // ----------------------------------------------------------------------------
@@ -390,9 +362,6 @@ class Rule {
 		yield `${indent}}`;
 	}
 
-	*rules() {
-		yield [...this.lines(false)].join("\n");
-	}
 	*docs(path) {
 		for (const name of this.selectors) {
 			yield {
@@ -435,9 +404,6 @@ class NestingRule {
 		}
 		yield `${indent}}`;
 	}
-	*rules() {
-		yield [...this.lines(false)].join("\n");
-	}
 	*docs(path) {
 		for (const name of this.selectors) {
 			yield {
@@ -478,9 +444,6 @@ class AtRule {
 			}
 		}
 		yield `${indent}}`;
-	}
-	*rules() {
-		yield [...this.lines(false)].join("\n");
 	}
 	*docs(path) {
 		yield {
@@ -663,20 +626,6 @@ class Group {
 	*[Symbol.iterator]() {
 		yield* this.contents;
 	}
-	*rules() {
-		for (const r of this.contents) {
-			if (r instanceof Meta) {
-				// pass
-			} else if (r instanceof Group) {
-				for (const _ of r.rules()) {
-					yield _;
-				}
-			} else {
-				yield r;
-			}
-		}
-	}
-
 	*docs(path = undefined) {
 		path = this.name ? (path ? [...path, this.name] : [this.name]) : null;
 		for (const r of this.contents) {
@@ -885,7 +834,6 @@ class Token {
 	*lines() {
 		yield `${this.ref}: ${this.value};`;
 	}
-	*rules() {}
 	*docs(path) {
 		yield {
 			type: "Token",
@@ -957,11 +905,6 @@ class Tokens extends Group {
 			}
 		}
 		yield `${indent}}`;
-	}
-	*rules() {
-		const lines = [...this.lines(false)];
-		lines.splice(0, 1);
-		yield lines.join("\n");
 	}
 }
 
@@ -1044,12 +987,6 @@ css.mount = (...values) => {
 			throw new Error(`Unsupported type: ${v}`);
 		}
 		for (const s of styles) {
-			// NOTE: Leaving this here for now, that's for wev components
-			// const style = new CSSStyleSheet();
-			// for (const r of s.rules()) {
-			// 	style.insertRule(r, style.cssRules.length);
-			// }
-			// res.push(style);
 			if (globalThis.document) {
 				const style = globalThis.document.createElement("style");
 				if (s.name) {
@@ -1090,7 +1027,6 @@ export {
 	contrast,
 	cross,
 	css,
-	doc,
 	docs,
 	group,
 	guard,
@@ -1116,7 +1052,6 @@ export {
 };
 export default Object.assign(css, {
 	css,
-	doc,
 	rule,
 	mods,
 	block,

@@ -86,7 +86,7 @@ test("color reset wrappers restore channel defaults while child utilities win", 
 			];
 		}),
 	);
-	expect(values[0]).toEqual(["1", "1", "0.5", "0.8"]);
+	expect(values[0]).toEqual(["1", "1", "0.35", "0.8"]);
 	expect(values[1]).toEqual(["0.8", "0.8", "0.8", "0.8"]);
 });
 
@@ -287,7 +287,7 @@ test("color apply utilities override control paint", async ({ page }) => {
 test("tab background modifiers adjust the shared paint channel", async ({ page }) => {
 	await render(
 		page,
-		`<div class="tabs"><button id="tab" class="tab primary active bg-2o">Overview</button></div>`,
+		`<div class="tabs group"><button id="tab" class="tab primary active bg-2o">Overview</button></div>`,
 	);
 	const tab = await properties(page, "#tab", [
 		"--accent-color",

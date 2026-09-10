@@ -50,12 +50,12 @@ const control = {
 				control.border.opacity(opacity),
 			),
 		{
-			base: (fallback = vars.color.neutral) =>
+			base: (fallback = vars.color.surface_text) =>
 				vars.control.border.base.or(vars.control.color.base, fallback),
-			tint: (fallback = vars.color.paper) =>
+			tint: (fallback = vars.color.tint) =>
 				vars.control.border.tint.or(vars.control.color.tint, fallback),
-			blend: (fallback = 0.8) => vars.control.border.blend.or(fallback),
-			opacity: (fallback = 0.8) => vars.control.border.opacity.or(fallback),
+			blend: (fallback = 1.0) => vars.control.border.blend.or(fallback),
+			opacity: (fallback = 0.75) => vars.control.border.opacity.or(fallback),
 		},
 	),
 	outline: Object.assign(
@@ -100,7 +100,7 @@ const baseHosts = [
 	".range",
 	":not(.selector) input[type=checkbox].toggle",
 	"input[type=checkbox][role=switch]",
-	".toggle",
+	".toggle:not(.selector)",
 	":where(.selector)",
 ];
 
@@ -111,6 +111,8 @@ function colorvariants() {
 		...colors.semantic.map((color) =>
 			css.rule(css.mods("&", color), {
 				__control_color_base: vars.color[color],
+				__control_border_base: vars.color[color],
+				__control_border_opacity: 1.0,
 				__accent_color: vars.color[color],
 			}),
 		),
@@ -156,9 +158,6 @@ function basechrome() {
 			// Paint recipes are local: inherited text recipes must not restyle controls.
 			__text_color: "initial",
 			__control_color_base: vars.accent.color.or(vars.control.color.base),
-			__control_border_tint: vars.control.color.tint.or(vars.color.surface),
-			__control_border_blend: 0.8,
-			__control_border_opacity: 0.8,
 			border_width: vars.control.border.width.or("1px"),
 			border_radius: vars.control.border.radius.or("0.25em"),
 			border_color: control.border(),
@@ -205,7 +204,7 @@ const fieldHosts = [
 	".checkbox",
 	".radio",
 	".range",
-	".toggle",
+	".toggle:not(.selector)",
 	":where(.selector)",
 ];
 
@@ -229,14 +228,15 @@ function fieldchrome() {
 		),
 		field_sizing: "content",
 		color: vars.color.surface_text,
-		__control_border_base: vars.control.color.base,
-		__control_border_tint: vars.control.color.base,
-		__control_border_blend: 1.0,
-		__control_border_opacity: 0.9,
 		__control_outline_base: vars.control.color.base,
 		__control_outline_tint: vars.control.color.base,
 		__control_outline_blend: 1.0,
-		border_color: control.border(1.0, 0.9, vars.control.color.base),
+		border_color: colors.mixed(
+			vars.field.border.base.or(vars.control.border.base),
+			vars.field.border.tint.or(vars.control.border.tint),
+			vars.field.border.blend.or(vars.control.border.blend),
+			vars.field.border.opacity.or(vars.control.border.opacity),
+		),
 		__control_background_base: vars.color.surface,
 		__control_background_tint: vars.color.surface,
 		__control_background_blend: 1.0,
@@ -705,16 +705,18 @@ function checkbox() {
 	);
 	const checkedContrast = `contrast-color(${checkedBg})`;
 	return field(
-		["input[type=checkbox]:not(.toggle):not(.selector)", ".checkbox"],
+		["input[type=checkbox]:not(.toggle):not(.selector):not([role=switch])", ".checkbox"],
 		css.rule("&", {
 			appearance: "none",
 			padding: "0em",
 			margin: "0em",
-			aspect_ratio: "1/1",
+			aspect_ratio: "1",
 			width: vars.checkbox.size.or("1.125em"),
-			place_content: "center",
+			line_height: "0",
+			place_items: "center",
 			display: "inline-grid",
 			vertical_align: "middle",
+			flex_shrink: "0",
 			__control_border_tint: vars.color.ink,
 			cursor: "pointer",
 			border_color: control.border(0.9, 1.0, vars.color.ink),
@@ -742,7 +744,7 @@ function checkbox() {
 			color: checkedContrast,
 		}),
 		css.rule("&:checked::before, &.checked::before", {
-			transform: "rotate(45deg) scale(1)",
+			transform: "translate(-0.02em, -0.06em) rotate(45deg) scale(1)",
 		}),
 		css.rule("&:indeterminate, &.indeterminate", {
 			__control_background_base: vars.control.color.base,
@@ -773,21 +775,28 @@ function radio() {
 			appearance: "none",
 			padding: "0em",
 			margin: "0em",
+			aspect_ratio: "1",
 			width: vars.radio.size.or("1.125em"),
-			height: vars.radio.size.or("1.125em"),
+			height: "auto",
 			min_width: vars.radio.size.or("1.125em"),
-			min_height: vars.radio.size.or("1.125em"),
-			place_content: "center",
+			min_height: "0",
+			line_height: "0",
+			place_items: "center",
 			display: "inline-grid",
 			vertical_align: "middle",
-			border_radius: "100%",
+			flex_shrink: "0",
+			border_radius: "50%",
+			overflow: "clip",
 			cursor: "pointer",
 		}),
 		css.rule("&::before", {
 			content: '""',
-			width: vars.radio.dot.size.or("0.5em"),
-			height: vars.radio.dot.size.or("0.5em"),
-			border_radius: "100%",
+			aspect_ratio: "1",
+			width: "0.45em",
+			height: "auto",
+			border_radius: "50%",
+			justify_self: "center",
+			align_self: "center",
 			background_color: "currentColor",
 			transform: "scale(0)",
 			transform_origin: "center",
@@ -822,7 +831,7 @@ function toggle() {
 		[
 			":not(.selector) input[type=checkbox].toggle",
 			"input[type=checkbox][role=switch]",
-			".toggle",
+			".toggle:not(.selector)",
 		],
 		css.rule("&", {
 			// Box — pin size so field-sizing/min-content cannot shrink the track
@@ -847,7 +856,8 @@ function toggle() {
 				vars.control.border.radius,
 				"0.25em",
 			),
-			border_color: control.border(0.7, 0.85),
+			border_width: vars.control.border.width.or("1px"),
+			border_color: "transparent",
 			// Outline
 			outline_color: control.outline(0.8, 0.6),
 			// Transition
@@ -869,11 +879,8 @@ function toggle() {
 			// Border — radius matches the track (squared vs pill)
 			border_style: "solid",
 			border_radius: vars.toggle.knob.border.radius.or("inherit"),
-			border_width: vars.toggle.knob.border.width.or(
-				vars.control.border.width,
-				"1px",
-			),
-			border_color: control.border(0.55, 0.55, vars.color.ink),
+			border_width: "0px",
+			border_color: "transparent",
 			// Knob is solid paper so it reads on the gray off-track
 			__control_background_base: vars.color.paper,
 			__control_background_tint: vars.color.paper,
@@ -891,11 +898,9 @@ function toggle() {
 			// Checked track tracks the accent, not the field surface.
 			__control_background_base: vars.control.color.base,
 			background_color: control.background(control.color.blend(0.9), 1.0),
-			border_color: control.border(0.85, 0.9, vars.color.ink),
 		}),
 		css.rule("&:checked::before, &.checked::before", {
 			left: `calc(100% - ${inset})`,
-			border_color: control.border(0.5, 0.4, vars.color.ink),
 			transform: "translate(-100%, -50%)",
 		}),
 		// Outline switches are transparent while off and use their semantic
@@ -904,7 +909,18 @@ function toggle() {
 			__control_background_base: vars.control.color.base.or(vars.color.neutral),
 			__control_background_opacity: 0,
 			background_color: "transparent",
+			border_width: vars.control.border.width.or("1px"),
 			border_color: control.border(1.0, 1.0),
+		}),
+		css.rule("&.outline::before", {
+			border_width: vars.toggle.knob.border.width.or(
+				vars.control.border.width,
+				"1px",
+			),
+			border_color: control.border(0.55, 0.55, vars.color.ink),
+		}),
+		css.rule("&.outline:checked::before, &.outline.checked::before", {
+			border_color: control.border(0.5, 0.4, vars.color.ink),
 		}),
 		css.rule("&.outline:checked, &.outline.checked", {
 			__control_background_opacity: 1.0,
@@ -924,7 +940,6 @@ function toggle() {
 			border_radius: "999px",
 		}),
 		css.rule("&.rounded::before", {
-			border_width: "0px",
 			box_shadow: "none",
 		}),
 		css.rule("&.rounded.shadow::before", {
@@ -1144,8 +1159,8 @@ function select() {
 			outline: "none !important",
 			box_shadow: "none !important",
 			border_radius: "0em",
-			// Pin border to medium neutral (not the semantic accent).
-			__control_border_base: vars.color.neutral,
+			// Pin border to the shared structural color (not the semantic accent).
+			__control_border_base: vars.border.color.base,
 			__control_background_opacity: 0,
 			border_width: vars.control.border.width.or("1px"),
 			border_top_width: "0px",
@@ -1292,8 +1307,8 @@ function selector() {
 				justify_content: "center",
 				cursor: "pointer",
 				color: vars.color.ink,
-				// Pin border to medium neutral (not the semantic accent)
-				__control_border_base: vars.color.neutral,
+				// Pin border to the shared structural color (not the semantic accent)
+				__control_border_base: vars.border.color.base,
 				__control_background_opacity: 0.8,
 				border_width: vars.control.border.width.or("1px"),
 				border_left_width: "0px",
@@ -1406,6 +1421,58 @@ function selector() {
 				flex: "1",
 			}),
 		),
+		// Segmented button group: a pill track of toggle buttons. Buttons are
+		// selected with [aria-pressed=true] or .selected. The presentation
+		// matches .toggle's pill chrome, not its binary switch behavior.
+		css.rule(".selector.toggle", {
+			display: "inline-flex",
+			align_items: "center",
+			width: "fit-content",
+			padding: "0.125em",
+			gap: "0.125em",
+			border_style: "solid",
+			border_width: vars.control.border.width.or("1px"),
+			border_color: control.border(0.55, 0.9, vars.color.paper),
+			border_radius: "999px",
+			background_color: control.background(1.0, 0.2),
+			__control_background_base: vars.color.neutral,
+			__control_background_tint: vars.color.paper,
+			__control_background_blend: 1.0,
+			__control_background_opacity: 0.2,
+			__control_gap: "0.125em",
+			__gap: "0.125em",
+		}),
+		css.rule(".selector.toggle > button", {
+			appearance: "none",
+			padding: "0.3em 0.75em",
+			border: "0",
+			border_radius: "999px",
+			background_color: "transparent",
+			color: vars.color.neutral,
+			box_shadow: "none",
+			transition:
+				"background-color 140ms ease, color 140ms ease, box-shadow 140ms ease",
+		}),
+		css.rule(".selector.toggle > button:hover, .selector.toggle > button.hover", {
+			background_color: control.background(0.5, 0.35),
+		}),
+		css.rule(
+			".selector.toggle > button[aria-pressed=true], .selector.toggle > button.selected",
+			{
+				background_color: control.background(
+					1.0,
+					1.0,
+					vars.color.surface,
+					vars.color.surface,
+				),
+				__control_background_base: vars.color.surface,
+				__control_background_tint: vars.color.surface,
+				__control_background_blend: 1.0,
+				__control_background_opacity: 1.0,
+				color: vars.color.ink,
+				box_shadow: "0 1px 2px oklch(0% 0 0 / 0.12)",
+			},
+		),
 		css.rule(".selector.squared > input, .selector.squared > label", {
 			border_radius: "0em",
 		}),
@@ -1425,14 +1492,45 @@ function tabBackground() {
 }
 
 function tab() {
+	const tabBorder = colors.mixed(
+		vars.border.color.base,
+		vars.border.color.tint,
+		vars.border.color.blend,
+		vars.border.color.opacity,
+	);
 	return css.group(
 		css.rule(".tabs", {
+			display: "inline-flex",
+			position: "relative",
+			bottom: "-1px",
+			z_index: 1,
+			max_width: "100%",
+			overflow: "hidden",
+			border: `1px solid ${tabBorder}`,
+			border_bottom: "0",
+			border_radius: "0.375rem 0.375rem 0 0",
+			background_color: "transparent",
+			gap: "0",
+		}),
+		css.rule(".tabs:not(.group):not(.bar) .tab", {
+			border_bottom: `1px solid ${tabBorder}`,
+			border_left: `1px solid ${tabBorder}`,
+			border_radius: "0",
+			padding: "0.5em 1em",
+			color: vars.color.neutral,
+			background_color: "transparent",
+		}),
+		css.rule(".tabs:not(.group):not(.bar) .tab:first-child", {
+			border_left: "0",
+		}),
+		css.rule(".tabs.group", {
 			display: "inline-flex",
 			flex_wrap: "wrap",
 			max_width: "100%",
 			gap: "0.15rem",
 			padding: "0.35rem",
 			border_radius: "0.375rem",
+			border: "0",
 			__background_color_base: vars.color.neutral,
 			__background_color_tint: vars.color.paper,
 			__background_color_blend: 1.0,
@@ -1469,6 +1567,44 @@ function tab() {
 			width: "min-content",
 			flex: "0 0 min-content",
 		}),
+		css.rule(".tabs.bar", {
+			display: "flex",
+			width: "100%",
+			overflow: "visible",
+			padding: "0",
+			bottom: "0",
+			border: "0",
+			border_radius: "0",
+			border_bottom: `${vars.border.width} solid ${tabBorder}`,
+			background_color: "transparent",
+			gap: "0",
+		}),
+		css.rule(".tabs.bar.top", {
+			border_bottom: "0",
+			border_top: `${vars.border.width} solid ${tabBorder}`,
+		}),
+		css.rule(".tabs.bar.bottom", {
+			border_top: "0",
+			border_bottom: `${vars.border.width} solid ${tabBorder}`,
+		}),
+		css.rule(".tabs.vertical", {
+			flex_direction: "column",
+			align_items: "stretch",
+		}),
+		css.rule(".tabs.bar.vertical", {
+			width: "max-content",
+			max_width: "100%",
+			border_bottom: "0",
+			border_right: `${vars.border.width} solid ${tabBorder}`,
+		}),
+		css.rule(".tabs.bar .tab", {
+			position: "relative",
+			top: "0",
+			border: "0",
+			border_radius: "0",
+			color: vars.color.neutral,
+			white_space: "nowrap",
+		}),
 		...colors.semantic.map((name) =>
 			css.rule(`.tabs .tab.${name}`, {
 				__accent_color: vars.color[name],
@@ -1476,15 +1612,105 @@ function tab() {
 				__background_color_base: vars.color[name],
 			}),
 		),
-		css.rule(".tabs .tab:hover", {
+		css.rule(".tabs.group .tab:hover", {
 			__background_color_base: vars.color.paper,
 			__background_color_opacity: 0.4,
 		}),
-		css.rule(".tabs .tab[aria-selected=true], .tabs .tab.active", {
+		css.rule(".tabs.group .tab[aria-selected=true], .tabs.group .tab.active", {
 			__background_color_base: vars.accent.color.or(vars.color.surface),
 			__background_color_opacity: 1.0,
 			color: `contrast-color(${vars.background.color})`,
 			box_shadow: `var(--shadow-x) var(--shadow-y) var(--shadow-spread) var(--shadow-color)`,
+		}),
+		css.rule(".tabs:not(.group):not(.bar) .tab:hover", {
+			__background_color_base: vars.color.neutral,
+			__background_color_opacity: 0.35,
+		}),
+		css.rule(".tabs:not(.group):not(.bar) .tab[aria-selected=true], .tabs:not(.group):not(.bar) .tab.active", {
+			__background_color_base: vars.color.surface,
+			__background_color_opacity: 1.0,
+			border_bottom_color: vars.color.surface,
+			color: vars.color.ink,
+			box_shadow: "none",
+		}),
+		...colors.semantic.flatMap((name) => [
+			css.rule(`.tabs:not(.group):not(.bar).${name} .tab:not([aria-selected=true]):not(.active), .tabs.bar.${name} .tab:not([aria-selected=true]):not(.active)`, {
+				color: vars.color.ink,
+			}),
+			css.rule(`.tabs:not(.group):not(.bar).${name} .tab[aria-selected=true], .tabs:not(.group):not(.bar).${name} .tab.active, .tabs.bar.${name} .tab[aria-selected=true], .tabs.bar.${name} .tab.active`, {
+				color: vars.color[name],
+			}),
+		]),
+		css.rule(".tabs.bar .tab[aria-selected=true], .tabs.bar .tab.active", {
+			color: vars.color.ink,
+			background_color: "transparent",
+			box_shadow: "none",
+			z_index: 1,
+			margin_bottom: `calc(-1 * ${vars.border.width})`,
+		}),
+		css.rule(".tabs.bar .tab::after", {
+			content: '""',
+			position: "absolute",
+			bottom: "0",
+			left: "0",
+			right: "0",
+			height: vars.border.width,
+			background_color: "currentColor",
+			visibility: "hidden",
+		}),
+		css.rule(".tabs.bar .tab[aria-selected=true]::after, .tabs.bar .tab.active::after", {
+			visibility: "visible",
+		}),
+		css.rule(".tabs.bar.vertical .tab", {
+			top: "0",
+			text_align: "start",
+		}),
+		css.rule(".tabs.bar.vertical .tab[aria-selected=true], .tabs.bar.vertical .tab.active", {
+			margin_bottom: "0",
+			margin_right: `calc(-1 * ${vars.border.width})`,
+		}),
+		css.rule(".tabs.bar.vertical .tab::after", {
+			top: "0",
+			right: "0",
+			bottom: "0",
+			left: "auto",
+			width: vars.border.width,
+			height: "auto",
+		}),
+		css.rule(".tabs.bar.top .tab[aria-selected=true], .tabs.bar.top .tab.active", {
+			margin_bottom: "0",
+			margin_top: `calc(-1 * ${vars.border.width})`,
+		}),
+		css.rule(".tabs.bar.top .tab::after", {
+			top: "0",
+			bottom: "auto",
+		}),
+		css.rule(".tabs.bar.vertical.left", {
+			border_right: "0",
+			border_left: `${vars.border.width} solid ${tabBorder}`,
+		}),
+		css.rule(".tabs.bar.vertical.left .tab[aria-selected=true], .tabs.bar.vertical.left .tab.active", {
+			margin_right: "0",
+			margin_left: `calc(-1 * ${vars.border.width})`,
+		}),
+		css.rule(".tabs.bar.vertical.left .tab::after", {
+			right: "auto",
+			left: "0",
+		}),
+		css.rule(".tabs.bar.vertical.right", {
+			border_left: "0",
+			border_right: `${vars.border.width} solid ${tabBorder}`,
+		}),
+		...colors.semantic.map((name) =>
+			css.rule(`.tabs.bar .tab.${name}[aria-selected=true], .tabs.bar .tab.${name}.active`, {
+				color: vars.color[name],
+			}),
+		),
+		css.rule(".tabs.bar .tab:hover", {
+			background_color: "transparent",
+		}),
+		css.rule(".tabs.bar .tab:not([aria-selected=true]):not(.active):hover", {
+			color: vars.color.text,
 		}),
 		css.rule(".tabs .tab:focus-visible, .tabs .tab.focus", {
 			outline: `2px solid ${vars.color.focus.or(vars.color.neutral)}`,
@@ -1494,15 +1720,15 @@ function tab() {
 			opacity: 0.5,
 			pointer_events: "none",
 		}),
-		css.rule(".tabs .tab.ghost", {
+		css.rule(".tabs.group .tab.ghost", {
 			__background_color_opacity: 0,
 			border: "0",
 		}),
-		css.rule(".tabs .tab.ghost:hover", {
+		css.rule(".tabs.group .tab.ghost:hover", {
 			__background_color_base: vars.color.paper,
 			__background_color_opacity: 0.4,
 		}),
-		css.rule(".tabs .tab.ghost[aria-selected=true], .tabs .tab.ghost.active", {
+		css.rule(".tabs.group .tab.ghost[aria-selected=true], .tabs.group .tab.ghost.active", {
 			__background_color_base: vars.accent.color.or(vars.color.surface),
 			__background_color_opacity: 1.0,
 		}),

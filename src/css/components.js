@@ -2,6 +2,15 @@ import css, { keyframes, vars } from "../js/uicss.js";
 import { colormix } from "./colors.js";
 import colors from "./colors.js";
 
+// Structural border recipe, resolved at the painted element so local
+// --border-color-* overrides (.bd-3o, semantic variants) take effect.
+const bd = colormix(
+	vars.border.color.base,
+	vars.border.color.tint,
+	vars.border.color.blend,
+	vars.border.color.opacity,
+);
+
 function pill(...rest) {
 	return css.nesting(
 		[".pill", ".badge"],
@@ -146,7 +155,7 @@ function toast(...rest) {
 			gap: "0.35rem",
 			min_width: "18rem",
 			padding: "0.9rem 1rem",
-			border: `1px solid color-mix(in oklch, ${vars.color.ink}, ${vars.color.paper} 82%)`,
+			border: `1px solid ${bd}`,
 			border_radius: vars.border.radius[2],
 			background_color: vars.color.surface,
 			box_shadow: "0 12px 28px rgb(41 37 34 / 0.14)",
@@ -249,20 +258,10 @@ function card(...rest) {
 		css.rule("&", {
 			padding: vars.card.padding.or("0.5em"),
 			__accent_color: vars.card.color.base.or(vars.color.neutral),
-			__border_color_base: vars.accent.color,
-			__border_color_tint: vars.card.color.tint.or(vars.color.surface),
-			__border_color_blend: 0.35,
-			__border_color_opacity: 1.0,
 			__background_color_base: vars.accent.color,
 			__background_color_tint: vars.card.color.tint.or(vars.color.surface),
 			__background_color_blend: vars.card.color.blend.or(0.1),
 			__background_color_opacity: vars.card.color.alpha.or(1.0),
-			__border_color: colormix(
-				vars.border.color.base,
-				vars.border.color.tint,
-				vars.border.color.blend,
-				vars.border.color.opacity,
-			),
 			__background_color: colormix(
 				vars.background.color.base,
 				vars.background.color.tint,
@@ -272,14 +271,18 @@ function card(...rest) {
 			// Border
 			border_width: vars.card.border.size.or("1px"),
 			border_radius: vars.card.border.radius.or("0.5em"),
-			border_color: vars.border.color,
+			border_color: bd,
 			// Background
 			background_color: vars.background.color,
 		}),
-		// Color variants
+		// Color variants: identity tints the surface and edge from the accent.
 		...colors.semantic.map((color) =>
 			css.rule(css.mods("&", color), {
 				__accent_color: vars.color[color],
+				__border_color_base: vars.color[color],
+				__border_color_tint: vars.card.color.tint.or(vars.color.surface),
+				__border_color_blend: 0.35,
+				__border_color_opacity: 1.0,
 			}),
 		),
 		...rest,
@@ -312,12 +315,7 @@ function breadcrumbs() {
 }
 
 function section() {
-	const border = colormix(
-		vars.border.color.base,
-		vars.border.color.tint,
-		vars.border.color.blend,
-		vars.border.color.opacity,
-	);
+	const border = bd;
 	const background = (blend) =>
 		colormix(
 			vars.background.color.base,
@@ -467,12 +465,7 @@ function panels() {
 }
 
 function tree() {
-	const border = colormix(
-		vars.border.color.base,
-		vars.border.color.tint,
-		vars.border.color.blend,
-		vars.border.color.opacity,
-	);
+	const border = bd;
 	return css.group(
 		css.rule("details.tree", {
 			__tree_indent: "1em",
@@ -538,7 +531,7 @@ function alert() {
 			border_width: "1px",
 			border_style: "solid",
 			border_radius: vars.alert.border.radius,
-			border_color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.surface} 80%)`,
+			border_color: bd,
 			background_color: vars.color.surface,
 			color: vars.color.surface_text,
 		}),
@@ -574,7 +567,7 @@ function alert() {
 			__accent_color: vars.color.neutral,
 			border_width: "1px",
 			background_color: "transparent",
-			border_color: `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.surface} 80%)`,
+			border_color: bd,
 			color: vars.color.surface_text,
 		}),
 		css.rule(
@@ -625,15 +618,21 @@ function avatar() {
 function native() {
 	return css.group(
 		css.rule("details.accordion", {
-			border: `1px solid color-mix(in oklch, ${vars.color.surface_text}, ${vars.color.surface} 84%)`,
-			border_radius: vars.border.radius[2],
+			border: `1px solid ${bd}`,
+			border_radius: "0",
 			background_color: vars.color.surface,
 			color: vars.color.surface_text,
 		}),
+		css.rule("details.accordion:first-of-type", {
+			border_top_left_radius: vars.border.radius[2],
+			border_top_right_radius: vars.border.radius[2],
+		}),
+		css.rule("details.accordion:last-of-type", {
+			border_bottom_left_radius: vars.border.radius[2],
+			border_bottom_right_radius: vars.border.radius[2],
+		}),
 		css.rule("details.accordion + details.accordion", {
 			margin_top: "-1px",
-			border_top_left_radius: "0",
-			border_top_right_radius: "0",
 		}),
 		css.rule("details.accordion summary", {
 			padding: "0.8rem 1rem",
@@ -645,7 +644,7 @@ function native() {
 			width: `min(${vars.dialog.width}, calc(100vw - 2rem))`,
 			max_height: "85vh",
 			padding: "0",
-			border: `1px solid color-mix(in oklch, ${vars.color.neutral}, ${vars.color.surface} 80%)`,
+			border: `1px solid ${bd}`,
 			border_radius: "0.75rem",
 			background_color: vars.color.surface,
 			color: vars.color.surface_text,
@@ -673,7 +672,7 @@ function native() {
 		}),
 		css.rule("[popover]:popover-open", {
 			padding: "0.25rem",
-			border: `1px solid color-mix(in oklch, ${vars.color.neutral}, ${vars.color.surface} 80%)`,
+			border: `1px solid ${bd}`,
 			border_radius: "0.375rem",
 			background_color: vars.color.surface,
 			color: vars.color.surface_text,
@@ -754,7 +753,7 @@ function native() {
 		),
 		css.rule(["menu[popover] hr", "[popover] menu hr"], {
 			border: "0",
-			border_top: `1px solid color-mix(in oklch, ${vars.color.neutral}, ${vars.color.surface} 80%)`,
+			border_top: `1px solid ${bd}`,
 			margin: "0.25rem 0",
 		}),
 		css.rule("[popover]:popover-open.card, [popover].card:popover-open", {
@@ -771,7 +770,7 @@ function native() {
 			align_items: "center",
 			gap: "0.375rem",
 			padding: "0.5rem 0.75rem",
-			border: `1px solid color-mix(in oklch, ${vars.color.neutral}, ${vars.color.surface} 80%)`,
+			border: `1px solid ${bd}`,
 			border_radius: "0.375rem",
 			background_color: vars.color.surface,
 		}),
@@ -916,7 +915,7 @@ function pagination() {
 			padding: "0.5em 1em",
 			border_width: vars.control.border.width.or("1px"),
 			border_style: "solid",
-			border_color: `color-mix(in oklch, var(--accent-color), ${vars.color.paper} 45%)`,
+			border_color: bd,
 			background_color: "transparent",
 			color: vars.color.ink,
 			border_radius: "0",

@@ -50,8 +50,11 @@ modifier classes configure the corresponding shared paint recipe.
 Pinning rules:
 
 - Actions and selected states derive their fill from the control accent.
-- Fields establish a local surface and use their accent for border and focus
-  chrome. A local `bg-*`, `bd-*`, or `ol-*` modifier overrides that channel.
+- Fields establish a local surface. Default field borders follow
+  `--control-border-*` (optional `--field-border-*` override); semantic
+  variant classes override the border from the accent. Focus outlines use
+  the accent. A local `bg-*`, `bd-*`, or `ol-*` modifier overrides that
+  channel.
 - Tabs paint through the shared `--background-color-*` channel, so `.bg-*`
   modifiers tweak bar and tab fills (including selected opacity).
 
@@ -72,6 +75,7 @@ Applied as classes on any control — sets `--accent-color` and the compatible
 - `ghost` — transparent background, no border; subtle ink wash on hover
 - `blank` — no visual chrome, inherits text color, no state effects
 - `horizontal` / `vertical` — joined selector-item orientation; horizontal is the default
+- `toggle` (selectors) — segmented pill presentation; direct buttons select with `[aria-pressed=true]` or `.selected`
 
 Native `<select>` options remain browser-owned UI. Use a `.selector` with radio
 or checkbox inputs for selector-style horizontal or vertical choices.

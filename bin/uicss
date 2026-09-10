@@ -35,6 +35,7 @@ const render = (mod, scoped) => {
 	return guard ? scoped(res, guard) : res;
 };
 const { default: css, guard: scoped, layers, docs } = await import(`${base}/src/js/uicss.js`);
+const { default: catalog } = await import(`${base}/src/js/catalog.js`);
 const compact = process.env.UICSS_COMPACT === "1";
 const rendercss = compact ? css.compact : css;
 const printcss = (value) => console.log([...rendercss(value)].join(compact ? "" : "\n"));
@@ -46,6 +47,9 @@ if (process.env.UICSS_DOC === "1") {
 		res[arg] = [...docs(resolve(mod))];
 	}
 	console.log(JSON.stringify(res));
+} else if (process.env.UICSS_DOC === "2") {
+	const { default: all } = await import(`${base}/src/css/all.js`);
+	console.log(JSON.stringify(catalog(all())));
 } else if (args.length === 0) {
 	const { default: all } = await import(`${base}/src/css/all.js`);
 	printcss(guard ? all(undefined, { guard }) : all());
@@ -64,6 +68,10 @@ if (process.env.UICSS_DOC === "1") {
 }
 
 case $1 in
+-c | --catalog)
+	shift
+	run_uicss 2 "$@"
+	;;
 -d | --doc)
 	shift
 	if ! run_uicss 1 "$@"; then

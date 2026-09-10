@@ -222,7 +222,7 @@ export default named({
 			[
 				"input[type=checkbox][role=switch].rounded",
 				":not(.selector) input[type=checkbox].toggle.rounded",
-				".toggle.rounded",
+				".toggle.rounded:not(.selector)",
 			],
 			{
 				__border_radius: "999px",
@@ -342,6 +342,13 @@ export default named({
 		...times(10, (i) => rule(`.z-${i}`, { z_index: i * 10 })),
 		rule(".d", { __depth: "0.25px" }),
 		...times(5, (i) => rule(`.d-${i}`, { __depth: `${i / 4}px` })),
+		rule(".icon", {
+			display: "inline-flex",
+			align_items: "center",
+			justify_content: "center",
+			aspect_ratio: "1/1",
+			line_height: "0em",
+		}),
 		rule(mods([".inset"], undefined, "focus", "hover", "active"), {
 			__inset_shadow: `oklch(0 0 0 / 0.1)`,
 			__inset_light: `oklch(1 0 0 / 0.5)`,

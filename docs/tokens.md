@@ -61,7 +61,7 @@ Each of these properties supports `base`, `tint`, `blend`, and `opacity` tokens 
 Controls use shared `--control-*` and per-kind `--field-*`/`--action-*` namespaces, with component-specific namespaces for `checkbox`, `radio`, `toggle`, `range`, `select`, and `selector`:
 - `--control-font-*`, `--control-padding`, `--control-gap`,
   `--control-border-radius`.
-- `--control-color-*`, `--control-background-*`, `--control-border-*`, `--control-outline-*`: Each color channel supports `base`, `tint`, `blend`, and `opacity`.
+- `--control-color-*`, `--control-background-*`, `--control-border-*`, `--control-outline-*`: Each color channel supports `base`, `tint`, `blend`, and `opacity`. `--border-color-*` is decorative chrome; `--control-border-*` is interactive. `--field-border-*` is optional and falls back to control.
 - `--field-font-size`, `--field-padding`, `--field-border-radius`,
   `--action-font-size`, `--action-border-width`, `--action-border-radius`,
   `--action-outline-width`: Per-kind overrides that fall back to shared control tokens.

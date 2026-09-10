@@ -7,6 +7,14 @@ import {
 	vars,
 	times,
 } from "../js/uicss.js";
+import { colormix } from "./colors.js";
+
+const hrColor = colormix(
+	vars.border.color.base,
+	vars.border.color.tint,
+	vars.border.color.blend,
+	vars.border.color.opacity,
+);
 
 export default named({
 	headings: group(
@@ -43,11 +51,11 @@ export default named({
 		),
 	),
 	paragraphs: group(
-		rule("a.link", {
+		rule(["a.link", "a.t", ".t a[href]"], {
 			color: vars.color.primary,
 			text_decoration: "underline",
 		}),
-		rule("a.link:hover", {
+		rule(["a.link:hover", "a.t:hover", ".t a[href]:hover"], {
 			text_decoration_thickness: "2px",
 		}),
 		rule(["p.t", ".t p"], {
@@ -235,7 +243,7 @@ export default named({
 		}),
 		rule(".sep-comma>*:after", {
 			display: "inline-block",
-			padding_left: vars.gap,
+			padding_right: vars.gap,
 			content: '", "',
 		}),
 		rule(".sep-dash>*:after", {
@@ -283,7 +291,7 @@ export default named({
 			content: "''",
 			flex_grow: 1,
 			height: vars.border.width.or("1px"),
-			background_color: vars.border.color.or(vars.color.neutral),
+			background_color: hrColor,
 		}),
 		rule(".hr::before", {
 			margin_right: vars.gap.or("0.5em"),

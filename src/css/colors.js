@@ -171,6 +171,9 @@ function colors(colors = COLORS) {
 			__color_text: `${vars.color.ink}`,
 			__color_surface: `${vars.color.paper}`,
 			__color_surface_text: `${vars.color.ink}`,
+			// Publish the structural border color once so components and the
+			// .lined/table separators share one mode-aware value.
+			__border_color: borderColor,
 			color: `${vars.color.ink}`,
 		}),
 		rule([`${root}.light`, `${root} .light`], {
@@ -392,7 +395,7 @@ function colors(colors = COLORS) {
 			__border_color_base: vars.color.surface_text,
 			__border_color_tint: vars.color.tint,
 			__border_color_blend: 1.0,
-			__border_color_opacity: 0.5,
+			__border_color_opacity: 0.35,
 			border_width: "0px",
 		}),
 		rule(":where(.reset-ol > *)", {

@@ -1,5 +1,4 @@
 deps/*
 .fallow
-docs.json
 run/*
 test-results/

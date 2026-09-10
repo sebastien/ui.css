@@ -15,9 +15,6 @@
     "./css/behavior.js": "./css/behavior.js",
     "./css/animate.js": "./css/animate.js"
   },
-  "dependencies": {
-    "wrangler": "^3.78.10"
-  },
   "devDependencies": {
     "@playwright/test": "^1.62.1"
   }

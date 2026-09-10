@@ -138,6 +138,7 @@ Preferred component recipes:
 - Text field: `<input class="input">` or plain `<input>` with library CSS loaded
 - Outline field: `<input class="input outline primary">`
 - Segmented control: `.selector.horizontal` or `.selector.vertical` containing hidden inputs and adjacent labels
+- Segmented button group: `.selector.toggle` with `button` children selected via `aria-pressed=true` or `.selected`
 - Content card: `.card stack g-2`
 - Badge: `.pill compact`
 - Muted outline badge: `.pill outline neutral`

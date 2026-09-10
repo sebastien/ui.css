@@ -180,7 +180,7 @@ export default group(
 				base: vars.color.surface_text,
 				tint: vars.color.tint,
 				blend: 1.0,
-				opacity: 0.5,
+				opacity: 0.35,
 			},
 			l: 5,
 			o: 9,
@@ -356,6 +356,10 @@ export default group(
 			border: {
 				width: "1px",
 				radius: "0.25em",
+				base: vars.color.surface_text,
+				tint: vars.color.tint,
+				blend: 1.0,
+				opacity: 0.75,
 			},
 			outline: {
 				width: "2px",

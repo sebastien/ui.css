@@ -446,56 +446,6 @@ const result = "fast, consistent styling"</code></pre>
       </section>
       <section id="selectors-demo" class="panel stack g-4 p-6 bd bd-4o reset-bd">
         <h2 class="h3 m-0">Selectors</h2>
-        <section id="tabs-demo" class="stack g-4">
-          <h3 class="h4 m-0">Tabs</h3>
-          <div class="stack g-5">
-            <div class="stack g-3">
-              <p class="b m-0">Color accents</p>
-              <div class="row wrap g-3">
-                <div class="tabs">
-                  <button class="tab active" role="tab" aria-selected="true">Overview</button>
-                  <button class="tab" role="tab" aria-selected="false">Activity</button>
-                  <button class="tab" role="tab" aria-selected="false">Settings</button>
-                </div>
-                <div class="tabs">
-                  <button class="tab accent active" role="tab" aria-selected="true">Overview</button>
-                  <button class="tab accent" role="tab" aria-selected="false">Activity</button>
-                  <button class="tab accent" role="tab" aria-selected="false">Settings</button>
-                </div>
-                <div class="tabs">
-                  <button class="tab primary active" role="tab" aria-selected="true">Overview</button>
-                  <button class="tab primary" role="tab" aria-selected="false">Activity</button>
-                  <button class="tab primary" role="tab" aria-selected="false">Settings</button>
-                </div>
-                <div class="tabs">
-                  <button class="tab secondary active" role="tab" aria-selected="true">Overview</button>
-                  <button class="tab secondary" role="tab" aria-selected="false">Activity</button>
-                  <button class="tab secondary" role="tab" aria-selected="false">Settings</button>
-                </div>
-                <div class="tabs">
-                  <button class="tab tertiary active" role="tab" aria-selected="true">Overview</button>
-                  <button class="tab tertiary" role="tab" aria-selected="false">Activity</button>
-                  <button class="tab tertiary" role="tab" aria-selected="false">Settings</button>
-                </div>
-                <div class="tabs">
-                  <button class="tab success active" role="tab" aria-selected="true">Overview</button>
-                  <button class="tab success" role="tab" aria-selected="false">Activity</button>
-                  <button class="tab success" role="tab" aria-selected="false">Settings</button>
-                </div>
-                <div class="tabs">
-                  <button class="tab warning active" role="tab" aria-selected="true">Overview</button>
-                  <button class="tab warning" role="tab" aria-selected="false">Activity</button>
-                  <button class="tab warning" role="tab" aria-selected="false">Settings</button>
-                </div>
-                <div class="tabs">
-                  <button class="tab danger active" role="tab" aria-selected="true">Overview</button>
-                  <button class="tab danger" role="tab" aria-selected="false">Activity</button>
-                  <button class="tab danger" role="tab" aria-selected="false">Settings</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
         <div class="stack g-5">
           <div class="stack g-2">
             <p class="b m-0">Toggle</p>
@@ -558,6 +508,14 @@ const result = "fast, consistent styling"</code></pre>
             <label for="selector-view-board">Board</label>
             <input type="radio" id="selector-view-calendar" name="selector-view" />
             <label for="selector-view-calendar">Calendar</label>
+          </div>
+        </div>
+        <div class="stack g-2">
+          <p class="b m-0">Toggle (segmented buttons)</p>
+          <div class="selector toggle regular" role="group" aria-label="Date range">
+            <button type="button" aria-pressed="false">7D</button>
+            <button type="button" aria-pressed="true">1M</button>
+            <button type="button" aria-haspopup="dialog" aria-expanded="false">Custom</button>
           </div>
         </div>
         <div class="stack g-2">
@@ -1082,8 +1040,10 @@ const result = "fast, consistent styling"</code></pre>
           <div class="stack g-3">
             <p class="b m-0">Default (flat)</p>
             <div class="stack g-2">
-              <label class="row g-2"><input type="checkbox" role="switch" /> Notifications</label>
-              <label class="row g-2"><input type="checkbox" role="switch" checked /> Confabulation</label>
+              <label class="row g-2"><input type="checkbox" role="switch" /> Square off</label>
+              <label class="row g-2"><input type="checkbox" role="switch" checked /> Square on</label>
+              <label class="row g-2"><input type="checkbox" role="switch" class="rounded" /> Circle off</label>
+              <label class="row g-2"><input type="checkbox" role="switch" class="rounded" checked /> Circle on</label>
             </div>
           </div>
           <div class="stack g-3">
@@ -1096,19 +1056,14 @@ const result = "fast, consistent styling"</code></pre>
           <div class="stack g-3">
             <p class="b m-0">Outline</p>
             <div class="stack g-2">
-              <label class="row g-2"><input type="checkbox" role="switch" class="outline" /> Neutral off</label>
-              <label class="row g-2"><input type="checkbox" role="switch" class="outline" checked /> Neutral on</label>
+              <label class="row g-2"><input type="checkbox" role="switch" class="outline" /> Square off</label>
+              <label class="row g-2"><input type="checkbox" role="switch" class="outline" checked /> Square on</label>
+              <label class="row g-2"><input type="checkbox" role="switch" class="outline rounded" /> Circle off</label>
+              <label class="row g-2"><input type="checkbox" role="switch" class="outline rounded" checked /> Circle on</label>
               <label class="row g-2"><input type="checkbox" role="switch" class="outline primary" /> Primary off</label>
-              <label class="row g-2"><input type="checkbox" role="switch" class="outline primary" checked /> Primary on</label>
+              <label class="row g-2"><input type="checkbox" role="switch" class="outline rounded primary" checked /> Primary on</label>
               <label class="row g-2"><input type="checkbox" role="switch" class="outline success" checked /> Success on</label>
-              <label class="row g-2"><input type="checkbox" role="switch" class="outline danger" checked /> Danger on</label>
-            </div>
-          </div>
-          <div class="stack g-3">
-            <p class="b m-0">Rounded outline</p>
-            <div class="stack g-2">
-              <label class="row g-2"><input type="checkbox" role="switch" class="rounded outline shadow" /> Notifications</label>
-              <label class="row g-2"><input type="checkbox" role="switch" class="rounded outline shadow primary" checked /> Confabulation</label>
+              <label class="row g-2"><input type="checkbox" role="switch" class="outline rounded danger" checked /> Danger on</label>
             </div>
           </div>
         <div class="stack g-3">
@@ -1118,6 +1073,76 @@ const result = "fast, consistent styling"</code></pre>
             <label class="row g-2"><input type="checkbox" role="switch" checked disabled /> Disabled on</label>
             <label class="row g-2"><input type="checkbox" role="switch" class="rounded" disabled /> Rounded off</label>
             <label class="row g-2"><input type="checkbox" role="switch" class="rounded" checked disabled /> Rounded on</label>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="tabs-demo" class="panel stack g-4 p-6 bd bd-4o reset-bd">
+      <h2 class="h3 m-0">Tabs</h2>
+      <div class="stack g-5">
+        <div class="stack g-3">
+          <p class="b m-0">Regular</p>
+          <div class="row wrap g-3">
+            <div class="tabs">
+              <button class="tab active" role="tab" aria-selected="true">Edit file</button>
+              <button class="tab" role="tab" aria-selected="false">Preview changes</button>
+              <button class="tab" role="tab" aria-selected="false">Preview rules</button>
+            </div>
+            <div class="tabs primary">
+              <button class="tab active" role="tab" aria-selected="true">Overview</button>
+              <button class="tab" role="tab" aria-selected="false">Activity</button>
+              <button class="tab" role="tab" aria-selected="false">Settings</button>
+            </div>
+          </div>
+        </div>
+        <div class="stack g-3">
+          <p class="b m-0">Group</p>
+          <div class="row wrap g-3">
+            <div class="tabs group">
+              <button class="tab active" role="tab" aria-selected="true">Overview</button>
+              <button class="tab" role="tab" aria-selected="false">Activity</button>
+              <button class="tab" role="tab" aria-selected="false">Settings</button>
+            </div>
+            <div class="tabs group">
+              <button class="tab success active" role="tab" aria-selected="true">Overview</button>
+              <button class="tab success" role="tab" aria-selected="false">Activity</button>
+              <button class="tab success" role="tab" aria-selected="false">Settings</button>
+            </div>
+            <div class="tabs group">
+              <button class="tab danger active" role="tab" aria-selected="true">Overview</button>
+              <button class="tab danger" role="tab" aria-selected="false">Activity</button>
+              <button class="tab danger" role="tab" aria-selected="false">Settings</button>
+            </div>
+          </div>
+        </div>
+        <div class="stack g-3">
+          <p class="b m-0">Outline</p>
+          <div class="row wrap g-3">
+            <div class="tabs bar">
+              <button class="tab active" role="tab" aria-selected="true">Overview</button>
+              <button class="tab" role="tab" aria-selected="false">Activity</button>
+              <button class="tab" role="tab" aria-selected="false">Settings</button>
+            </div>
+            <div class="tabs bar primary top">
+              <button class="tab active" role="tab" aria-selected="true">Overview</button>
+              <button class="tab" role="tab" aria-selected="false">Activity</button>
+              <button class="tab" role="tab" aria-selected="false">Settings</button>
+            </div>
+            <div class="tabs bar">
+              <button class="tab active" role="tab" aria-selected="true">Overview</button>
+              <button class="tab" role="tab" aria-selected="false">Activity</button>
+              <button class="tab" role="tab" aria-selected="false">Settings</button>
+            </div>
+            <div class="tabs bar vertical w-1bl">
+              <button class="tab active" role="tab" aria-selected="true">Overview</button>
+              <button class="tab" role="tab" aria-selected="false">Activity</button>
+              <button class="tab" role="tab" aria-selected="false">Settings</button>
+            </div>
+            <div class="tabs bar vertical left w-1bl">
+              <button class="tab active" role="tab" aria-selected="true">Overview</button>
+              <button class="tab" role="tab" aria-selected="false">Activity</button>
+              <button class="tab" role="tab" aria-selected="false">Settings</button>
+            </div>
           </div>
         </div>
       </div>

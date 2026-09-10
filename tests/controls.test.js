@@ -22,7 +22,7 @@ describe("controls color model", () => {
 	test("border inherit is available for controls and checkbox variants", () => {
 		expect(output).toContain(".bd-i {");
 		expect(output).toContain("border-color: inherit;");
-		expect(output).toContain("input[type=checkbox]:not(.toggle):not(.selector), .checkbox");
+		expect(output).toContain("input[type=checkbox]:not(.toggle):not(.selector):not([role=switch]), .checkbox");
 	});
 
 	test("unchecked checkboxes have a visible border", () => {
@@ -33,9 +33,16 @@ describe("controls color model", () => {
 		expect(output).toContain(".group > :not(input, textarea, select, button, .input, .textarea, .select, .button)");
 	});
 
-	test("tabs have separate classic and tab-bar presentations", () => {
+	test("tabs have classic and grouped presentations", () => {
 		expect(output).toContain(".tabs .tab");
-		expect(output).toContain(".tabs .tab[aria-selected=true]");
+		expect(output).toContain(".tabs:not(.group):not(.bar) .tab[aria-selected=true]");
+		expect(output).toContain(".tabs.group");
+		expect(output).toContain(".tabs.bar");
+		expect(output).toContain(".tabs:not(.group):not(.bar).primary .tab");
+		expect(output).toContain(".tabs.bar.primary .tab");
+		expect(output).toContain("color: var(--color-ink);");
+		expect(output).toContain("border: 0;");
+		expect(output).toContain("border-radius: 0.375rem 0.375rem 0 0;");
 		expect(output).toContain("padding: 0.35rem;");
 		expect(output).toContain("flex-wrap: wrap;");
 		expect(output).toContain("--accent-color: var(--color-primary);");
@@ -54,6 +61,34 @@ describe("controls color model", () => {
 		expect(tabs).toContain("--control-color-base: var(--color-primary);");
 		expect(tabs).toContain("--background-color-base: var(--color-primary);");
 	});
+
+	test("outline tabs use a bottom rule and state colors", () => {
+		const tabs = output.slice(output.indexOf("/* @group tab */"));
+		expect(tabs).toContain(".tabs.bar");
+		expect(tabs).toContain(
+			"border-bottom: var(--border-width) solid color-mix(in oklch, color-mix(in oklch, var(--border-color-base)");
+		expect(tabs).toContain("border: 0;");
+		expect(tabs).toContain(".tabs.bar.top");
+		expect(tabs).toContain(".tabs.bar.bottom");
+		expect(tabs).toContain(".tabs.bar .tab[aria-selected=true], .tabs.bar .tab.active");
+		expect(tabs).toContain("color: var(--color-ink);");
+		expect(tabs).toContain(".tabs.bar .tab::after");
+		expect(tabs).toContain("height: var(--border-width);");
+		expect(tabs).toContain("border-radius: 0;");
+		expect(tabs).toContain("margin-bottom: calc(-1 * var(--border-width));");
+		expect(tabs).toContain("visibility: visible;");
+		expect(tabs).toContain(".tabs.bar .tab:hover");
+		expect(tabs).toContain("background-color: transparent;");
+		expect(tabs).toContain(".tabs.bar .tab:not([aria-selected=true]):not(.active):hover");
+		expect(tabs).toContain(".tabs.vertical");
+		expect(tabs).toContain(".tabs.bar.vertical");
+		expect(tabs).toContain("border-right: var(--border-width) solid color-mix(in oklch, color-mix(in oklch, var(--border-color-base)");
+		expect(tabs).toContain(".tabs.bar.vertical .tab::after");
+		expect(tabs).toContain(".tabs.bar.vertical.left");
+		expect(tabs).toContain("border-left: var(--border-width) solid color-mix(in oklch, color-mix(in oklch, var(--border-color-base)");
+		expect(tabs).toContain(".tabs.bar.vertical.left .tab::after");
+		expect(tabs).toContain(".tabs.bar.vertical.right");
+});
 
 	test("interactive controls expose compact padding variants", () => {
 		expect(output).toContain("&.compact > option");
@@ -116,13 +151,14 @@ describe("controls color model", () => {
 		expect(output).toContain("--control-background-opacity: 0.8");
 	});
 
-	test("fields use pure accent borders and outlines at an opacity", () => {
+	test("fields follow the interactive control border, with an optional field override", () => {
 		const fields = output.slice(
 			output.indexOf("/* @group fieldbase */"),
 			output.indexOf("/* @end fieldbase */"),
 		);
-		expect(fields).toContain("--control-border-tint: var(--control-color-base)");
-		expect(fields).toContain("--control-border-blend: 1");
+		expect(fields).toContain("--field-border-base, var(--control-border-base)");
+		expect(fields).toContain("--field-border-opacity, var(--control-border-opacity)");
+		expect(fields).not.toContain("--control-border-base: var(--border-color-base)");
 		expect(fields).toContain("--control-outline-base: var(--control-color-base)");
 		expect(fields).toContain("--control-outline-tint: var(--control-color-base)");
 		expect(fields).toContain("--control-outline-blend: 1");
@@ -283,6 +319,19 @@ describe("controls color model", () => {
 		const selector = output.slice(output.indexOf("/* @group selector */"));
 		expect(selector).toContain(".selector.squared > input, .selector.squared > label");
 		expect(selector).toContain("border-radius: 0em;");
+	});
+
+	test("selector toggle is a pill button group, not a switch track", () => {
+		const selector = output.slice(output.indexOf("/* @group selector */"));
+		expect(selector).toContain(".selector.toggle {");
+		expect(selector).toContain("border-radius: 999px;");
+		expect(selector).toContain(".selector.toggle > button {");
+		expect(selector).toContain(
+			".selector.toggle > button[aria-pressed=true], .selector.toggle > button.selected {",
+		);
+		// The switch presentation must not claim the selector toggle host.
+		expect(output).toContain(".toggle:not(.selector)");
+		expect(output).not.toContain(".selector.toggle::before");
 	});
 
 	test("--control-border-size is unified into --control-border-width", () => {

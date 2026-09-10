@@ -33,8 +33,13 @@ The `controls.js` module provides comprehensive styling for interactive elements
 - `.colored` (fields / `.selector`): Accent text (and stronger border on fields). On `.selector`, unselected labels also get accent text/border; only the checked option is accent-filled by default.
 - `.selector` item colors: Add a semantic color class to an individual label; its checked, active, tinted, and colored states use that item color.
 - `.selector.horizontal`, `.selector.vertical`: Joined horizontal or vertical selector items. Horizontal is the default.
+- `.selector.toggle`: Segmented pill button group. Direct `button` children select with `[aria-pressed=true]` or `.selected`; `aria-pressed=false` (or `.selected` absent) is the resting state. Use it for view/range switchers, including buttons that open a dialog.
+- `.tabs`: Classic bordered tab strip with the selected tab visually joined to the content below.
+- `.tabs.group`: Filled, rounded tab group presentation.
 - `.tabs.compact` or `.tab.compact`: Reduced padding for tab navigation.
 - `.tabs.compacted`: Full-width bar with min-content tabs that do not stretch; tab padding is unchanged. Tabs wrap when they exceed the parent width.
+- `.tabs.bar`: Border-side tab navigation with neutral inactive tabs and ink active tabs by default. A semantic color on the tab bar makes inactive tabs ink and active tabs use that semantic color.
+- `.tabs.vertical`: Stacks tabs vertically; with `.bar`, the border and active indicator are on the right by default. Add `.left` or `.right` to choose the bar side.
 - Tabs paint through the background color channel, so `.bg-*` color, tint, blend, and opacity modifiers apply to `.tabs` and `.tab` (for example `.tab.primary.active.bg-2o`).
 - `select[multiple]`: Native vertical listbox with selector-like option rows. `select.vertical` opts into the same styling; pair it with `size` to render a listbox and control visible rows.
 
@@ -67,7 +72,12 @@ each driven by four variables: `base`, `tint`, `blend`, `opacity`.
   `--color-neutral-background` surface; medium `--color-neutral` stays for
   borders and chrome. Checked controls still pin fill to the accent.
 - Fields default to the mode-aware surface at 0.8 opacity.
-- Field borders and focus outlines use the pure semantic accent; interaction emphasis changes opacity rather than mixing the accent with paper.
+- Decorative edges (`.bd`, cards, alerts, tabs) use `--border-color-*`
+  (softer, default opacity 0.35). Interactive chrome (outline buttons,
+  checkboxes, inputs) uses `--control-border-*` (default opacity 0.75).
+  Fields follow control; set `--field-border-*` to override inputs only.
+  Semantic classes override the border from the accent. Focus outlines use
+  the accent.
 - Field/selector `.tinted` applies a soft wash of the main accent
   (`--control-color-base`, primary unless a semantic class is set). Semantic
   classes alone only set the accent (border/focus); they do not recolor the fill.
@@ -137,6 +147,13 @@ each driven by four variables: `base`, `tint`, `blend`, `opacity`.
     <label for="email">Email</label>
     <input id="push" type="checkbox" name="channels">
     <label for="push">Push</label>
+</div>
+
+<!-- Segmented toggle button group -->
+<div class="selector toggle">
+    <button type="button" aria-pressed="false">7D</button>
+    <button type="button" aria-pressed="true">1M</button>
+    <button type="button" aria-haspopup="dialog" aria-expanded="false">Custom</button>
 </div>
 
 <!-- Range progress and switches -->
