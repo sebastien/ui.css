@@ -35,12 +35,15 @@ test("selector color variants use the same field surface as inputs", async ({ pa
 	expect(backgrounds[3]).toBe(backgrounds[1]);
 });
 
-test("selector toggle renders a pill button group with an elevated selection", async ({ page }) => {
+test("selector toggle matches switch chrome with optional shadow", async ({ page }) => {
 	await page.setContent(
 		`<style>${stylesheet}</style>
 		<div id="group" class="selector toggle">
 			<button id="off" type="button" aria-pressed="false">7D</button>
 			<button id="on" type="button" aria-pressed="true">1M</button>
+		</div>
+		<div id="pill" class="selector toggle rounded shadow">
+			<button id="pill-on" type="button" aria-pressed="true">1M</button>
 		</div>`,
 	);
 
@@ -48,6 +51,8 @@ test("selector toggle renders a pill button group with an elevated selection", a
 		const group = getComputedStyle(document.getElementById("group"));
 		const off = getComputedStyle(document.getElementById("off"));
 		const on = getComputedStyle(document.getElementById("on"));
+		const pill = getComputedStyle(document.getElementById("pill"));
+		const pillOn = getComputedStyle(document.getElementById("pill-on"));
 		return {
 			display: group.display,
 			radius: group.borderRadius,
@@ -55,15 +60,19 @@ test("selector toggle renders a pill button group with an elevated selection", a
 			offBackground: off.backgroundColor,
 			onBackground: on.backgroundColor,
 			onShadow: on.boxShadow,
+			pillRadius: pill.borderRadius,
+			pillOnShadow: pillOn.boxShadow,
 		};
 	});
 
 	expect(values.display).toBe("inline-flex");
-	expect(values.radius).toBe("999px");
+	expect(values.radius).not.toBe("999px");
+	expect(values.pillRadius).toBe("999px");
 	expect(values.width).not.toBe("44px");
 	expect(values.offBackground).toMatch(/rgba\(0, 0, 0, 0\)|\/ 0\)$/);
 	expect(values.onBackground).not.toMatch(/rgba\(0, 0, 0, 0\)|\/ 0\)$/);
-	expect(values.onShadow).not.toBe("none");
+	expect(values.onShadow).toBe("none");
+	expect(values.pillOnShadow).not.toBe("none");
 });
 
 test("selector multiple listboxes do not add an outer option border", async ({ page }) => {

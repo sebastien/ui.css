@@ -321,15 +321,16 @@ describe("controls color model", () => {
 		expect(selector).toContain("border-radius: 0em;");
 	});
 
-	test("selector toggle is a pill button group, not a switch track", () => {
+	test("selector toggle is a segmented group matching switch chrome", () => {
 		const selector = output.slice(output.indexOf("/* @group selector */"));
 		expect(selector).toContain(".selector.toggle {");
-		expect(selector).toContain("border-radius: 999px;");
+		expect(selector).toContain(".selector.toggle.rounded {");
+		expect(selector).toContain(".selector.toggle.outline {");
+		expect(selector).toContain(".selector.toggle.shadow > button[aria-pressed=true]");
 		expect(selector).toContain(".selector.toggle > button {");
 		expect(selector).toContain(
 			".selector.toggle > button[aria-pressed=true], .selector.toggle > button.selected {",
 		);
-		// The switch presentation must not claim the selector toggle host.
 		expect(output).toContain(".toggle:not(.selector)");
 		expect(output).not.toContain(".selector.toggle::before");
 	});

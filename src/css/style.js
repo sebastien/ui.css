@@ -223,6 +223,8 @@ export default named({
 				"input[type=checkbox][role=switch].rounded",
 				":not(.selector) input[type=checkbox].toggle.rounded",
 				".toggle.rounded:not(.selector)",
+				".selector.toggle.rounded",
+				".selector.toggle.rounded > button",
 			],
 			{
 				__border_radius: "999px",

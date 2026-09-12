@@ -142,8 +142,12 @@ function buttongroup(...rest) {
 			border_bottom_right_radius: "0",
 		}),
 		css.rule(".buttons.outline", { gap: "0" }),
-		css.rule(".buttons.outline > * > :not(:first-child)", { margin_left: "-1px" }),
-		css.rule(".buttons.outline > *:not(:first-child) > *", { margin_left: "-1px" }),
+		css.rule(".buttons.outline > * > *", {
+			border_left_width: "0",
+		}),
+		css.rule(".buttons.outline > *:first-child > *", {
+			border_left_width: vars.control.border.width.or("1px"),
+		}),
 		...rest,
 	);
 }
@@ -797,16 +801,41 @@ function native() {
 			display: "inline-flex",
 			align_items: "center",
 			justify_content: "center",
+			aspect_ratio: "1",
+			width: "1.5em",
+			height: "1.5em",
+			padding: "0",
 			border: "0",
 			background: "transparent",
-			padding: "0 0.375em",
 			font: "inherit",
-			line_height: "1",
+			line_height: "0",
 			color: "inherit",
 			cursor: "pointer",
-			border_radius: "9999px",
+			border_radius: "50%",
+			outline: "none",
+			box_shadow: "none",
 		}),
-		css.rule(".tag button:hover", { opacity: "0.6" }),
+		css.rule(
+			[
+				".tag button:hover",
+				".tag button.hover",
+			],
+			{ opacity: "0.6" },
+		),
+		css.rule(
+			[
+				".tag button:focus",
+				".tag button:focus-visible",
+				".tag button:active",
+				".tag button.focus",
+				".tag button.active",
+			],
+			{
+				outline: "none",
+				outline_width: "0px",
+				box_shadow: "none",
+			},
+		),
 	);
 }
 
@@ -946,9 +975,7 @@ function pagination() {
 				__control_background_tint: vars.color.paper,
 				__control_background_blend: 1.0,
 				__control_background_opacity: 1.0,
-				__control_border_base: "var(--accent-color)",
 				color: "contrast-color(var(--accent-color))",
-				border_color: "var(--accent-color)",
 				background_color: "var(--accent-color)",
 			},
 		),

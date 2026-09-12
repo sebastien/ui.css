@@ -512,10 +512,27 @@ const result = "fast, consistent styling"</code></pre>
         </div>
         <div class="stack g-2">
           <p class="b m-0">Toggle (segmented buttons)</p>
-          <div class="selector toggle regular" role="group" aria-label="Date range">
-            <button type="button" aria-pressed="false">7D</button>
-            <button type="button" aria-pressed="true">1M</button>
-            <button type="button" aria-haspopup="dialog" aria-expanded="false">Custom</button>
+          <div class="row wrap g-3">
+            <div class="selector toggle regular" role="group" aria-label="Date range">
+              <button type="button" aria-pressed="false">7D</button>
+              <button type="button" aria-pressed="true">1M</button>
+              <button type="button" aria-haspopup="dialog" aria-expanded="false">Custom</button>
+            </div>
+            <div class="selector toggle rounded" role="group" aria-label="Date range rounded">
+              <button type="button" aria-pressed="false">7D</button>
+              <button type="button" aria-pressed="true">1M</button>
+              <button type="button">Custom</button>
+            </div>
+            <div class="selector toggle outline" role="group" aria-label="Date range outline">
+              <button type="button" aria-pressed="false">7D</button>
+              <button type="button" aria-pressed="true">1M</button>
+              <button type="button">Custom</button>
+            </div>
+            <div class="selector toggle rounded outline shadow" role="group" aria-label="Date range rounded outline">
+              <button type="button" aria-pressed="false">7D</button>
+              <button type="button" aria-pressed="true">1M</button>
+              <button type="button">Custom</button>
+            </div>
           </div>
         </div>
         <div class="stack g-2">

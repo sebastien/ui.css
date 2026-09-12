@@ -848,8 +848,11 @@ function toggle() {
 			min_width: width,
 			height: height,
 			min_height: height,
-			// Off track is a visible gray — pin base to neutral (field defaults to paper)
+			// Off track is a visible gray — pin the whole recipe so field chrome cannot wash it.
 			__control_background_base: vars.control.color.base.or(vars.color.neutral),
+			__control_background_tint: vars.color.paper,
+			__control_background_blend: 0.45,
+			__control_background_opacity: 1.0,
 			background_color: control.background(0.45, 1.0),
 			// Border
 			border_radius: vars.toggle.border.radius.or(
@@ -1005,18 +1008,18 @@ function range() {
 		}),
 		css.rule("&::-webkit-slider-thumb", {
 			appearance: "none",
+			box_sizing: "border-box",
 			margin_top: `calc(( ${vars.range.track.height.or("0.45em")} - ${vars.range.thumb.size.or("1em")} ) / 2)`,
 			width: vars.range.thumb.size.or("1em"),
 			height: vars.range.thumb.size.or("1em"),
-			border_radius: "100%",
-			border_width: vars.control.border.width.or("1px"),
-			border_style: "solid",
-			border_color: control.border(0.9, 1.0, vars.color.ink),
+			border_radius: "50%",
+			border: "0",
 			__control_background_base: vars.color.paper,
 			__control_background_tint: vars.color.paper,
 			__control_background_blend: 0,
 			__control_background_opacity: 1.0,
 			background_color: vars.color.paper,
+			box_shadow: `0 0 0 ${vars.control.border.width.or("1px")} ${control.border(0.9, 1.0, vars.color.ink)}`,
 		}),
 		css.rule("&::-moz-range-track", {
 			box_sizing: "border-box",
@@ -1054,17 +1057,17 @@ function range() {
 			background_color: control.color(1.0, 1.0, vars.color.ink),
 		}),
 		css.rule("&::-moz-range-thumb", {
+			box_sizing: "border-box",
 			width: vars.range.thumb.size.or("1em"),
 			height: vars.range.thumb.size.or("1em"),
-			border_radius: "100%",
-			border_width: vars.control.border.width.or("1px"),
-			border_style: "solid",
-			border_color: control.border(0.9, 1.0, vars.color.ink),
+			border_radius: "50%",
+			border: "0",
 			__control_background_base: vars.color.paper,
 			__control_background_tint: vars.color.paper,
 			__control_background_blend: 0,
 			__control_background_opacity: 1.0,
 			background_color: vars.color.paper,
+			box_shadow: `0 0 0 ${vars.control.border.width.or("1px")} ${control.border(0.9, 1.0, vars.color.ink)}`,
 		}),
 		css.rule(
 			"&:hover::-webkit-slider-runnable-track, &.hover::-webkit-slider-runnable-track",
@@ -1095,13 +1098,13 @@ function range() {
 		css.rule(
 			"&:focus::-webkit-slider-thumb, &:focus-within::-webkit-slider-thumb, &.focus::-webkit-slider-thumb",
 			{
-				box_shadow: `0 0 0 ${vars.control.outline.width.or("2px")} ${control.outline(0.8, 0.5)}`,
+				box_shadow: `0 0 0 ${vars.control.border.width.or("1px")} ${control.border(0.9, 1.0, vars.color.ink)}, 0 0 0 calc(${vars.control.border.width.or("1px")} + ${vars.control.outline.width.or("2px")}) ${control.outline(0.8, 0.5)}`,
 			},
 		),
 		css.rule(
 			"&:focus::-moz-range-thumb, &:focus-within::-moz-range-thumb, &.focus::-moz-range-thumb",
 			{
-				box_shadow: `0 0 0 ${vars.control.outline.width.or("2px")} ${control.outline(0.8, 0.5)}`,
+				box_shadow: `0 0 0 ${vars.control.border.width.or("1px")} ${control.border(0.9, 1.0, vars.color.ink)}, 0 0 0 calc(${vars.control.border.width.or("1px")} + ${vars.control.outline.width.or("2px")}) ${control.outline(0.8, 0.5)}`,
 			},
 		),
 		css.rule("&:active::-webkit-slider-thumb, &.active::-webkit-slider-thumb", {
@@ -1213,13 +1216,12 @@ function select() {
 		),
 		css.nesting("&[multiple] > option:checked, &.vertical > option:checked", {
 			// Solid accent fill — full opacity, no paper blend or hover wash.
+			// Border stays ink (structural); only the fill uses the accent.
 			__control_background_base: vars.control.color.base,
 			__control_background_tint: vars.control.color.base,
 			__control_background_blend: 1.0,
 			__control_background_opacity: 1.0,
-			__control_border_base: vars.control.color.base,
 			color: controlContrast(),
-			border_color: control.border(1.0, 1.0, vars.color.paper),
 			background_color: control.background(1.0, 1.0),
 			outline: "none !important",
 			box_shadow: "none !important",
@@ -1376,14 +1378,13 @@ function selector() {
 				border_bottom_left_radius: vars.selector.border.radius.or("0.25em"),
 			}),
 			css.nesting("& > input:checked + label", {
-				// Solid accent fill — full opacity, no paper blend, no hover wash
+				// Solid accent fill — full opacity, no paper blend, no hover wash.
+				// Border stays ink (structural); only the fill uses the accent.
 				__control_background_base: vars.control.color.base,
 				__control_background_tint: vars.control.color.base,
 				__control_background_blend: 1.0,
 				__control_background_opacity: 1.0,
-				__control_border_base: vars.control.color.base,
 				color: controlContrast(),
-				border_color: control.border(1.0, 1.0, vars.color.paper),
 				background_color: control.background(1.0, 1.0),
 			}),
 			// Item colors are scoped to the rendered label. Checked and tinted
@@ -1421,56 +1422,90 @@ function selector() {
 				flex: "1",
 			}),
 		),
-		// Segmented button group: a pill track of toggle buttons. Buttons are
-		// selected with [aria-pressed=true] or .selected. The presentation
-		// matches .toggle's pill chrome, not its binary switch behavior.
+		// Segmented button group. Track chrome matches the switch (.toggle):
+		// filled gray, no visible border; .outline / .shadow / .rounded apply.
 		css.rule(".selector.toggle", {
 			display: "inline-flex",
 			align_items: "center",
 			width: "fit-content",
-			padding: "0.125em",
+			padding: "0.25em",
 			gap: "0.125em",
 			border_style: "solid",
 			border_width: vars.control.border.width.or("1px"),
-			border_color: control.border(0.55, 0.9, vars.color.paper),
-			border_radius: "999px",
-			background_color: control.background(1.0, 0.2),
-			__control_background_base: vars.color.neutral,
+			border_color: "transparent",
+			border_radius: vars.toggle.border.radius.or(
+				vars.control.border.radius,
+				"0.25em",
+			),
+			__control_background_base: vars.control.color.base.or(vars.color.neutral),
 			__control_background_tint: vars.color.paper,
-			__control_background_blend: 1.0,
-			__control_background_opacity: 0.2,
+			__control_background_blend: 0.45,
+			__control_background_opacity: 1.0,
+			background_color: control.background(0.45, 1.0),
 			__control_gap: "0.125em",
 			__gap: "0.125em",
+		}),
+		css.rule(".selector.toggle.rounded", {
+			border_radius: "999px",
+		}),
+		css.rule(".selector.toggle.outline", {
+			__control_background_opacity: 0,
+			background_color: "transparent",
+			__control_border_base: vars.border.color.base,
+			border_color: control.border(1.0, 1.0),
 		}),
 		css.rule(".selector.toggle > button", {
 			appearance: "none",
 			padding: "0.3em 0.75em",
 			border: "0",
-			border_radius: "999px",
+			border_width: vars.control.border.width.or("1px"),
+			border_style: "solid",
+			border_color: "transparent",
+			border_radius: vars.toggle.border.radius.or(
+				vars.control.border.radius,
+				"0.25em",
+			),
 			background_color: "transparent",
-			color: vars.color.neutral,
+			color: vars.color.ink,
 			box_shadow: "none",
 			transition:
-				"background-color 140ms ease, color 140ms ease, box-shadow 140ms ease",
+				"background-color 140ms ease, color 140ms ease, box-shadow 140ms ease, border-color 140ms ease",
+		}),
+		css.rule(".selector.toggle.rounded > button", {
+			border_radius: "999px",
 		}),
 		css.rule(".selector.toggle > button:hover, .selector.toggle > button.hover", {
-			background_color: control.background(0.5, 0.35),
+			background_color: control.background(0.55, 0.35),
 		}),
 		css.rule(
 			".selector.toggle > button[aria-pressed=true], .selector.toggle > button.selected",
 			{
-				background_color: control.background(
-					1.0,
-					1.0,
-					vars.color.surface,
-					vars.color.surface,
-				),
-				__control_background_base: vars.color.surface,
-				__control_background_tint: vars.color.surface,
-				__control_background_blend: 1.0,
+				__control_background_base: vars.color.paper,
+				__control_background_tint: vars.color.paper,
+				__control_background_blend: 0,
 				__control_background_opacity: 1.0,
+				background_color: vars.color.paper,
 				color: vars.color.ink,
-				box_shadow: "0 1px 2px oklch(0% 0 0 / 0.12)",
+				box_shadow: "none",
+			},
+		),
+		css.rule(
+			".selector.toggle.shadow > button[aria-pressed=true], .selector.toggle.shadow > button.selected",
+			{
+				box_shadow: "0 1px 2px oklch(0% 0 0 / 0.16)",
+			},
+		),
+		css.rule(
+			".selector.toggle.rounded.shadow > button[aria-pressed=true], .selector.toggle.rounded.shadow > button.selected",
+			{
+				box_shadow:
+					"0 1px 3px oklch(0% 0 0 / 0.22), 0 0 0 0.5px oklch(0% 0 0 / 0.06)",
+			},
+		),
+		css.rule(
+			".selector.toggle.outline > button[aria-pressed=true], .selector.toggle.outline > button.selected",
+			{
+				border_color: control.border(0.55, 0.55, vars.color.ink),
 			},
 		),
 		css.rule(".selector.squared > input, .selector.squared > label", {
