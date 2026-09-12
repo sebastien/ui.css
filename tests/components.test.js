@@ -73,6 +73,14 @@ describe("CSS-first components", () => {
 		expect(output).toMatch(/\.panels > \.vertical > \* \{[^}]*overflow: auto;/);
 	});
 
+	test("includes a resizable divider with an optional handle", () => {
+		expect(output).toContain(".divider {");
+		expect(output).toContain("cursor: col-resize;");
+		expect(output).toContain(".divider > .handle {");
+		expect(output).toContain(".divider.horizontal, .divider[aria-orientation=horizontal] {");
+		expect(output).toContain("cursor: row-resize;");
+	});
+
 	test("uses clip for non-scrollable visual and animated overflow", () => {
 		expect(output).toMatch(/\.avatar, figure\[data-avatar\] \{[^}]*overflow: clip;/);
 		expect(output).toMatch(/progress, meter \{[^}]*overflow: clip;/);

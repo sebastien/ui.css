@@ -315,15 +315,19 @@ function colors(colors = COLORS) {
 		// ------------------------------------------------------------------------
 		// Creates .{bg,tx,bd,ol}-{0-10}o classes for opacity control
 		// 0 = transparent, 10 = opaque
+		// The border channel also publishes --border-opacity, the interactive
+		// override controls and fields read, so `.bd-No` reaches their edge too.
 		Object.keys(shorthands).flatMap((short) => [
 			...times(10).map((index) =>
 				rule(`.${short}-${index}o`, {
 					[`__${shorthands[short].name.replaceAll("-", "_")}_opacity`]:
 						index / 10,
+					...(short === "bd" ? { __border_opacity: index / 10 } : {}),
 				}),
 			),
 			rule(`.${short}o`, {
 				[`__${shorthands[short].name.replaceAll("-", "_")}_opacity`]: 1.0,
+				...(short === "bd" ? { __border_opacity: 1.0 } : {}),
 			}),
 		]),
 

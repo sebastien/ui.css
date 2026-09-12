@@ -157,7 +157,9 @@ describe("controls color model", () => {
 			output.indexOf("/* @end fieldbase */"),
 		);
 		expect(fields).toContain("--field-border-base, var(--control-border-base)");
-		expect(fields).toContain("--field-border-opacity, var(--control-border-opacity)");
+		expect(fields).toContain(
+			"--field-border-opacity, var(--input-border-opacity, var(--border-opacity, var(--control-border-opacity, 0.75)))",
+		);
 		expect(fields).not.toContain("--control-border-base: var(--border-color-base)");
 		expect(fields).toContain("--control-outline-base: var(--control-color-base)");
 		expect(fields).toContain("--control-outline-tint: var(--control-color-base)");

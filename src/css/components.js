@@ -152,6 +152,72 @@ function buttongroup(...rest) {
 	);
 }
 
+function divider() {
+	return css.group(
+		css.rule(".divider", {
+			position: "relative",
+			display: "flex",
+			flex: "0 0 auto",
+			align_self: "stretch",
+			align_items: "center",
+			justify_content: "center",
+			width: vars.divider.width.or("1px"),
+			background_color: bd,
+			cursor: "col-resize",
+			touch_action: "none",
+		}),
+		// A wider pseudo-element makes the 1px separator practical to drag.
+		css.rule(".divider::after", {
+			content: '\"\"',
+			position: "absolute",
+			top: "0",
+			bottom: "0",
+			left: "50%",
+			width: vars.divider.hit.width.or("0.5rem"),
+			transform: "translateX(-50%)",
+		}),
+		css.rule(".divider > .handle", {
+			position: "relative",
+			z_index: "1",
+			width: vars.divider.handle.width.or("5px"),
+			height: vars.divider.handle.height.or("1.5rem"),
+			border_radius: vars.divider.handle.radius.or("999px"),
+			background_color: bd,
+		}),
+		css.rule(".divider:focus-visible", {
+			outline: `2px solid ${vars.outline.color}`,
+			outline_offset: "2px",
+		}),
+		css.rule([".divider.horizontal", ".divider[aria-orientation=horizontal]"], {
+			align_self: "auto",
+			width: "auto",
+			height: vars.divider.width.or("1px"),
+			cursor: "row-resize",
+		}),
+		css.rule(
+			[".divider.horizontal::after", ".divider[aria-orientation=horizontal]::after"],
+			{
+				top: "50%",
+				bottom: "auto",
+				left: "0",
+				width: "auto",
+				height: vars.divider.hit.width.or("0.5rem"),
+				transform: "translateY(-50%)",
+			},
+		),
+		css.rule(
+			[
+				".divider.horizontal > .handle",
+				".divider[aria-orientation=horizontal] > .handle",
+			],
+			{
+				width: vars.divider.handle.height.or("1.5rem"),
+				height: vars.divider.handle.width.or("5px"),
+			},
+		),
+	);
+}
+
 function toast(...rest) {
 	return css.group(
 		css.rule(".toast", {
@@ -1000,6 +1066,7 @@ export default css.named({
 	feedback: feedback(),
 	pagination: pagination(),
 	buttongroup: buttongroup(),
+	divider: divider(),
 	toast: toast(),
 });
 // EOF

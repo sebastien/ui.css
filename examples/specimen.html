@@ -1164,6 +1164,22 @@ const result = "fast, consistent styling"</code></pre>
         </div>
       </div>
     </section>
+    <section id="divider-demo" class="panel stack g-4 p-6 bd bd-4o reset-bd">
+      <h2 class="h3 m-0">Resizable Dividers</h2>
+      <p class="m-0 dim">The divider and handle are visual primitives; resizing behavior is application-owned.</p>
+      <div class="grid col-2 g-4">
+        <div class="row stretch g-0 h-5bl bd rounder nooverflow">
+          <div class="panel fill stack middle p-4">One</div>
+          <div class="divider" role="separator" aria-orientation="vertical" aria-label="Resize panels"><div class="handle"></div></div>
+          <div class="panel fill stack middle p-4">Two</div>
+        </div>
+        <div class="stack g-0 h-5bl bd rounder nooverflow">
+          <div class="panel fill stack middle p-4">Three</div>
+          <div class="divider horizontal" role="separator" aria-orientation="horizontal" aria-label="Resize panels"><div class="handle"></div></div>
+          <div class="panel fill stack middle p-4">Four</div>
+        </div>
+      </div>
+    </section>
     <section id="accordion-demo" class="panel stack g-4 p-6 bd bd-4o reset-bd">
       <h2 class="h3 m-0">Accordion</h2>
       <div class="card stack g-0">
@@ -1292,6 +1308,34 @@ const result = "fast, consistent styling"</code></pre>
               <hr />
               <button role="menuitem"><iconify-icon icon="lucide:log-out" width="16" height="16"></iconify-icon> Logout</button>
               <button class="danger" role="menuitem"><iconify-icon icon="lucide:trash-2" width="16" height="16"></iconify-icon> Delete</button>
+            </menu>
+          </div>
+        </div>
+        <div class="stack g-3">
+          <p class="b m-0">Account menu</p>
+          <div>
+            <button type="button" class="outline" popovertarget="specimen-account-menu">My account <iconify-icon icon="lucide:chevron-down" width="16" height="16"></iconify-icon></button>
+            <menu class="popover" popover id="specimen-account-menu" role="menu" aria-orientation="vertical">
+              <div role="group">
+                <span class="small dim">My Account</span>
+                <button type="button" role="menuitem"><iconify-icon icon="lucide:user" width="16" height="16"></iconify-icon><span class="fill">Profile</span><kbd>Shift+Cmd+P</kbd></button>
+                <button type="button" role="menuitem"><iconify-icon icon="lucide:credit-card" width="16" height="16"></iconify-icon><span class="fill">Billing</span><kbd>Cmd+B</kbd></button>
+                <button type="button" role="menuitem"><iconify-icon icon="lucide:settings" width="16" height="16"></iconify-icon><span class="fill">Settings</span><kbd>Cmd+S</kbd></button>
+              </div>
+              <hr />
+              <div role="group">
+                <button type="button" role="menuitem"><iconify-icon icon="lucide:users" width="16" height="16"></iconify-icon> Team</button>
+                <button type="button" role="menuitem"><iconify-icon icon="lucide:user-plus" width="16" height="16"></iconify-icon> Invite users</button>
+                <button type="button" role="menuitem"><iconify-icon icon="lucide:plus" width="16" height="16"></iconify-icon><span class="fill">New team</span><kbd>Cmd+T</kbd></button>
+              </div>
+              <hr />
+              <div role="group">
+                <button type="button" role="menuitem"><iconify-icon icon="lucide:github" width="16" height="16"></iconify-icon> GitHub</button>
+                <button type="button" role="menuitem"><iconify-icon icon="lucide:life-buoy" width="16" height="16"></iconify-icon> Support</button>
+                <button type="button" role="menuitem" disabled><iconify-icon icon="lucide:code" width="16" height="16"></iconify-icon> API</button>
+              </div>
+              <hr />
+              <button type="button" role="menuitem"><iconify-icon icon="lucide:log-out" width="16" height="16"></iconify-icon><span class="fill">Log out</span><kbd>Shift+Cmd+Q</kbd></button>
             </menu>
           </div>
         </div>

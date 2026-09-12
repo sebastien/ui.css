@@ -23,6 +23,11 @@ The `reset.js` module establishes a consistent cross-browser baseline. It remove
 - `a`: Unstyled — inherits color, no decoration, no hover/visited effects; `a[href]` gets `cursor: pointer`.
 - `summary`: Hides the default disclosure marker.
 
+### Guarded / embed builds (`--guard ".uicss"`):
+
+- Guarding scopes every selector under `.uicss`, so the structural rules compile to `.uicss html`, `.uicss body`, etc. Those only match such elements *inside* a `.uicss` container — an embed page's own `<body>` is an ancestor, never a descendant, so it keeps the UA margin (typically `8px`).
+- Embed pages must reset it themselves: `body { margin: 0; }`. Pair with `.fit-screen` (widths are `100%`, not `100vw`) to avoid horizontal overflow.
+
 ### Differences with standard CSS resets:
 
 - **Token-Integrated**: Instead of just clearing styles, it immediately applies the `ui.css` design system variables.

@@ -55,7 +55,9 @@ const control = {
 			tint: (fallback = vars.color.tint) =>
 				vars.control.border.tint.or(vars.control.color.tint, fallback),
 			blend: (fallback = 1.0) => vars.control.border.blend.or(fallback),
-			opacity: (fallback = 0.75) => vars.control.border.opacity.or(fallback),
+			// Generic `.bd-No` override wins over the interactive token.
+			opacity: (fallback = 0.75) =>
+				`var(--border-opacity, ${vars.control.border.opacity.or(fallback)})`,
 		},
 	),
 	outline: Object.assign(
@@ -78,6 +80,13 @@ const control = {
 };
 
 const controlContrast = () => `contrast-color(${control.background()})`;
+
+// Edge opacity precedence. A generic `.bd-No` utility writes --border-opacity,
+// which outranks the interactive default and any semantic variant that pins
+// --control-border-opacity. Fields additionally honor --field-border-opacity,
+// with --input-border-opacity kept as the legacy alias for the same channel.
+const fieldBorderOpacity = (fallback = 0.75) =>
+	`var(--field-border-opacity, var(--input-border-opacity, var(--border-opacity, var(--control-border-opacity, ${fallback}))))`;
 
 const baseHosts = [
 	"button",
@@ -235,7 +244,7 @@ function fieldchrome() {
 			vars.field.border.base.or(vars.control.border.base),
 			vars.field.border.tint.or(vars.control.border.tint),
 			vars.field.border.blend.or(vars.control.border.blend),
-			vars.field.border.opacity.or(vars.control.border.opacity),
+			fieldBorderOpacity(),
 		),
 		__control_background_base: vars.color.surface,
 		__control_background_tint: vars.color.surface,
@@ -280,7 +289,14 @@ function fieldstates() {
 				__control_background_opacity: 0,
 				__control_border_opacity: 1.0,
 				background_color: "transparent",
-				border_color: control.border(1.0, 1.0, vars.control.color.base),
+				// Route through the field/utility opacity chain so --field-border-opacity
+				// and `.bd-No` can soften the outline accent border.
+				border_color: colors.mixed(
+					control.border.base(),
+					control.border.tint(vars.control.color.base),
+					control.border.blend(1.0),
+					fieldBorderOpacity(1.0),
+				),
 			},
 		),
 		css.rule(
@@ -288,7 +304,12 @@ function fieldstates() {
 			{
 				color: control.color(1.0, 1.0, vars.color.ink),
 				__control_border_opacity: 1.0,
-				border_color: control.border(1.0, 1.0, vars.control.color.base),
+				border_color: colors.mixed(
+					control.border.base(),
+					control.border.tint(vars.control.color.base),
+					control.border.blend(1.0),
+					fieldBorderOpacity(1.0),
+				),
 			},
 		),
 		css.rule(

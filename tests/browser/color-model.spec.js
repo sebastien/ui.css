@@ -310,3 +310,23 @@ test("semantic pills and cards derive paint channels from their accent", async (
 		}
 	}
 });
+
+test("border opacity utilities reach control and field edges", async ({ page }) => {
+	await render(
+		page,
+		`<input id="utility" class="input bd-3o">
+		<input id="variant" class="input primary bd-3o">
+		<input id="field" class="input outline primary" style="--field-border-opacity: 0.2">
+		<input id="legacy" class="input" style="--input-border-opacity: 0.4">`,
+	);
+	const alphas = await page.$$eval("input", (elements) =>
+		elements.map((element) => {
+			const match = getComputedStyle(element).borderColor.match(/\/\s*([\d.]+)\s*\)/);
+			return match ? Number(match[1]) : 1;
+		}),
+	);
+	expect(alphas[0]).toBeCloseTo(0.3, 2);
+	expect(alphas[1]).toBeCloseTo(0.3, 2);
+	expect(alphas[2]).toBeCloseTo(0.2, 2);
+	expect(alphas[3]).toBeCloseTo(0.4, 2);
+});

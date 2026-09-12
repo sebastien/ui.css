@@ -12,6 +12,7 @@ application.
 - Alerts: add `.alert` for styling and `role="alert"` for assistive technology, with `.success`, `.warning`, `.danger`, and `.error` variants.
 - Avatars: add `.avatar`; use `.avatars` for an overlapping group.
 - Content: `.card`, `.panel`, `.pill`, `.badge`, `.status`.
+- Divider: use `.divider` between resizable side-by-side panels. Add `.horizontal` or `aria-orientation="horizontal"` between stacked panels. Add a `.handle` child for the centered, 5px-wide rounded grip; application code supplies the resize behavior and separator keyboard interaction.
 - Pills and badges use the background color channel, so `.bg-*` color, tint, blend, and opacity modifiers apply to them.
 - Disclosure: `details.accordion`, `details.section`, `details.tree`.
 - Native surfaces: `dialog` and `[popover]` receive surface and backdrop styling.

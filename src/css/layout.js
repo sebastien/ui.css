@@ -156,15 +156,15 @@ export default named({
 			min_height: "100vh",
 			height: "100vh",
 			max_height: "100vh",
-			min_width: "100vw",
-			width: "100vw",
-			max_width: "100vw",
+			min_width: "100%",
+			width: "100%",
+			max_width: "100%",
 		}),
 	),
 	filling: group(
 		rule(".fill-screen", {
 			box_sizing: "border-box",
-			min_width: "100vw",
+			min_width: "100%",
 			min_height: "100vh",
 		}),
 		rule(".fill-w", {
