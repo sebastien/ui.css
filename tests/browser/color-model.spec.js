@@ -316,8 +316,7 @@ test("border opacity utilities reach control and field edges", async ({ page }) 
 		page,
 		`<input id="utility" class="input bd-3o">
 		<input id="variant" class="input primary bd-3o">
-		<input id="field" class="input outline primary" style="--field-border-opacity: 0.2">
-		<input id="legacy" class="input" style="--input-border-opacity: 0.4">`,
+		<input id="field" class="input outline primary" style="--field-border-opacity: 0.2">`,
 	);
 	const alphas = await page.$$eval("input", (elements) =>
 		elements.map((element) => {
@@ -328,5 +327,32 @@ test("border opacity utilities reach control and field edges", async ({ page }) 
 	expect(alphas[0]).toBeCloseTo(0.3, 2);
 	expect(alphas[1]).toBeCloseTo(0.3, 2);
 	expect(alphas[2]).toBeCloseTo(0.2, 2);
-	expect(alphas[3]).toBeCloseTo(0.4, 2);
+});
+
+test("color and blend utilities reach control borders and outlines", async ({ page }) => {
+	await render(
+		page,
+		`<input id="mod" class="input bd-danger">
+		<input id="ref" class="input" style="--control-border-base: var(--color-danger)">
+		<input id="blend" class="input bd-4b">
+		<input id="blend-ref" class="input" style="--control-border-blend: 0.4">
+		<button id="outline" class="ol-3o">x</button>
+		<button id="outline-mod" class="ol-danger">x</button>
+		<button id="outline-ref" style="--control-outline-base: var(--color-danger)">x</button>`,
+	);
+	const colors = await page.$$eval("input", (elements) =>
+		elements.map((element) => getComputedStyle(element).borderColor),
+	);
+	expect(colors[0]).toBe(colors[1]);
+	expect(colors[2]).toBe(colors[3]);
+	const outlineColors = await page.$$eval("button", (elements) =>
+		elements.map((element) => getComputedStyle(element).outlineColor),
+	);
+	expect(outlineColors[1]).toBe(outlineColors[2]);
+	const outline = await page.$eval("#outline", (element) => {
+		const value = getComputedStyle(element).outlineColor;
+		const match = value.match(/\/\s*([\d.]+)\s*\)/);
+		return match ? Number(match[1]) : 1;
+	});
+	expect(outline).toBeCloseTo(0.3, 2);
 });

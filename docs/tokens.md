@@ -26,6 +26,7 @@ These properties can be overridden to theme the application.
 - `--color-neutral`, `--color-primary`, `--color-secondary`, `--color-tertiary`: Semantic color baselines.
 - `--color-success`, `--color-info`, `--color-warning`, `--color-danger`, `--color-error`: Status color baselines.
 - `--color-page`, `--color-text`: Context-dependent aliases for paper/ink.
+- `--color-focus`: Focus ring color for raw outlines (defaults to `--color-neutral`).
 
 #### Property Specific Colors (Base, Tint, Blend, Opacity)
 Each of these properties supports `base`, `tint`, `blend`, and `opacity` tokens (e.g., `--background-base`, `--background-blend`).
@@ -59,13 +60,18 @@ Each of these properties supports `base`, `tint`, `blend`, and `opacity` tokens 
 
 #### Component Specific (Button, Input, etc.)
 Controls use shared `--control-*` and per-kind `--field-*`/`--action-*` namespaces, with component-specific namespaces for `checkbox`, `radio`, `toggle`, `range`, `select`, and `selector`:
-- `--control-font-*`, `--control-padding`, `--control-gap`,
+- `--control-font-*`, `--control-padding`, `--control-padding-{compact,compacted}`, `--control-gap`,
   `--control-border-radius`.
-- `--control-color-*`, `--control-background-*`, `--control-border-*`, `--control-outline-*`: Each color channel supports `base`, `tint`, `blend`, and `opacity`. `--border-color-*` is decorative chrome; `--control-border-*` is interactive. `--field-border-*` is optional and falls back to control.
-- `--field-font-size`, `--field-padding`, `--field-border-radius`,
+- `--control-color-*`, `--control-background-*`, `--control-border-*`, `--control-outline-*`: Each color channel supports `base`, `tint`, `blend`, and `opacity`. `--border-color-*` is decorative chrome; `--control-border-*` is interactive.
+- `--field-font-size`, `--field-padding`, `--field-padding-{compact,tight}`, `--field-border-radius`, `--field-border-{base,tint,blend,opacity}`,
   `--action-font-size`, `--action-border-width`, `--action-border-radius`,
   `--action-outline-width`: Per-kind overrides that fall back to shared control tokens.
-- Component namespaces provide sizing and geometry tokens such as `--checkbox-size`, `--radio-dot-size`, and `--range-track-height`.
+  Field padding is field-specific: fields do not read `--control-padding-compact` / `--control-padding-compacted`.
+- `--border-{base,tint,blend,opacity}` and `--outline-{base,tint,blend,opacity}`: override-only
+  channels published by the `.bd-*` / `.ol-*` utility modifiers. Controls and fields read them
+  ahead of the `--control-*` tokens, so a modifier class reaches interactive chrome without the
+  `.bd` / `.ol` apply class. Precedence for fields is `--field-border-*` → `--border-*` → `--control-border-*`.
+- Component namespaces provide sizing and geometry tokens such as `--checkbox-size`, `--radio-dot-size`, `--toggle-width`, and `--range-track-height`.
 
 ### Scale indices:
 

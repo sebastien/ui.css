@@ -177,14 +177,28 @@ via fallback chains:
 
 - `--control-{color,background,border,outline}-{base,tint,blend,opacity}`:
   per-channel color computation.
-- `--control-font-*`, `--control-padding`, `--control-gap`,
+- `--control-font-*`, `--control-padding`, `--control-padding-{compact,compacted}`, `--control-gap`,
   `--control-border-width`, `--control-border-radius`,
   `--control-outline-width`: shared geometry.
-- `--field-font-size`, `--field-padding`, `--field-border-radius`,
+- `--field-font-size`, `--field-padding`, `--field-padding-{compact,tight}`, `--field-border-radius`,
+  `--field-border-{base,tint,blend,opacity}`,
   `--action-font-size`, `--action-padding`, `--action-border-width`, `--action-border-radius`,
   `--action-outline-width`: per-kind geometry and typography overrides
   (fields vs actions). These fall back to the shared `--control-*` tokens.
 - `--{checkbox,radio,toggle,range,select,selector}-*`: per-component sizing.
+- `.bd-*` / `.ol-*` color, tint, blend and opacity modifiers publish
+  `--border-{base,tint,blend,opacity}` / `--outline-{base,tint,blend,opacity}`.
+  Controls and fields consume them ahead of the `--control-*` tokens, so the
+  modifiers reach interactive chrome even without the `.bd` / `.ol` apply class.
+  Fields take `--field-border-*` first, then `--border-*`, then `--control-border-*`.
+
+> Migration: the old `--input-*` field namespace was renamed. Use `--field-*`
+> for the field-specific channel and `--control-*` for the shared interactive
+> one (`--input-border-opacity` → `--field-border-opacity`). No aliases remain.
+>
+> Field density is now themed through `--field-padding-{compact,tight}`.
+> Fields no longer read `--control-padding-compact` / `--control-padding-compacted`;
+> set the `--field-padding-*` tokens to retheme field padding.
 
 Note: `input[type=submit]`, `input[type=button]`, and `input[type=reset]` are
 styled as actions, not fields.

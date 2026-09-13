@@ -42,7 +42,7 @@ const control = {
 		},
 	),
 	border: Object.assign(
-		(blend = 0.8, opacity = 0.8, tint = vars.color.paper) =>
+		(blend = 0.8, opacity = 0.75, tint = vars.color.paper) =>
 			colors.mixed(
 				control.border.base(),
 				control.border.tint(tint),
@@ -50,43 +50,57 @@ const control = {
 				control.border.opacity(opacity),
 			),
 		{
+			// Generic `.bd-*` overrides win over the interactive tokens, which
+			// always have root defaults, so only one fallback step is reachable.
 			base: (fallback = vars.color.surface_text) =>
-				vars.control.border.base.or(vars.control.color.base, fallback),
+				vars.border.base.or(vars.control.border.base, fallback),
 			tint: (fallback = vars.color.tint) =>
-				vars.control.border.tint.or(vars.control.color.tint, fallback),
-			blend: (fallback = 1.0) => vars.control.border.blend.or(fallback),
-			// Generic `.bd-No` override wins over the interactive token.
+				vars.border.tint.or(vars.control.border.tint, fallback),
+			blend: (fallback = 1.0) =>
+				vars.border.blend.or(vars.control.border.blend, fallback),
 			opacity: (fallback = 0.75) =>
-				`var(--border-opacity, ${vars.control.border.opacity.or(fallback)})`,
+				vars.border.opacity.or(vars.control.border.opacity, fallback),
 		},
 	),
 	outline: Object.assign(
 		(blend = 0.8, opacity = 0.5, tint = vars.color.paper) =>
 			colors.mixed(
-				control.outline.base(vars.color.focus.or(vars.color.neutral)),
+				control.outline.base(),
 				control.outline.tint(tint),
 				control.outline.blend(blend),
 				control.outline.opacity(opacity),
 			),
 		{
+			// Generic `.ol-*` overrides win over the interactive tokens, which
+			// always have root defaults, so only one fallback step is reachable.
 			base: (fallback = vars.color.neutral) =>
-				vars.control.outline.base.or(vars.control.color.base, fallback),
+				vars.outline.base.or(vars.control.outline.base, fallback),
 			tint: (fallback = vars.color.paper) =>
-				vars.control.outline.tint.or(vars.control.color.tint, fallback),
-			blend: (fallback = 0.8) => vars.control.outline.blend.or(fallback),
-			opacity: (fallback = 0.5) => vars.control.outline.opacity.or(fallback),
+				vars.outline.tint.or(vars.control.outline.tint, fallback),
+			blend: (fallback = 0.8) =>
+				vars.outline.blend.or(vars.control.outline.blend, fallback),
+			opacity: (fallback = 0.5) =>
+				vars.outline.opacity.or(vars.control.outline.opacity, fallback),
 		},
 	),
 };
 
 const controlContrast = () => `contrast-color(${control.background()})`;
 
-// Edge opacity precedence. A generic `.bd-No` utility writes --border-opacity,
-// which outranks the interactive default and any semantic variant that pins
-// --control-border-opacity. Fields additionally honor --field-border-opacity,
-// with --input-border-opacity kept as the legacy alias for the same channel.
+// Field edge channels. Precedence: a per-field `--field-border-*` override,
+// then the generic `.bd-*` utility override, then the shared control token.
+const fieldBorderBase = () =>
+	vars.field.border.base.or(vars.border.base, vars.control.border.base);
+const fieldBorderTint = () =>
+	vars.field.border.tint.or(vars.border.tint, vars.control.border.tint);
+const fieldBorderBlend = () =>
+	vars.field.border.blend.or(vars.border.blend, vars.control.border.blend);
 const fieldBorderOpacity = (fallback = 0.75) =>
-	`var(--field-border-opacity, var(--input-border-opacity, var(--border-opacity, var(--control-border-opacity, ${fallback}))))`;
+	vars.field.border.opacity.or(
+		vars.border.opacity,
+		vars.control.border.opacity,
+		fallback,
+	);
 
 const baseHosts = [
 	"button",
@@ -241,9 +255,9 @@ function fieldchrome() {
 		__control_outline_tint: vars.control.color.base,
 		__control_outline_blend: 1.0,
 		border_color: colors.mixed(
-			vars.field.border.base.or(vars.control.border.base),
-			vars.field.border.tint.or(vars.control.border.tint),
-			vars.field.border.blend.or(vars.control.border.blend),
+			fieldBorderBase(),
+			fieldBorderTint(),
+			fieldBorderBlend(),
 			fieldBorderOpacity(),
 		),
 		__control_background_base: vars.color.surface,
@@ -264,13 +278,13 @@ function fieldstates() {
 		css.rule(
 			fieldHosts.map((s) => `${s}.compact`),
 			{
-				padding: vars.control.padding.compact.or("0.35em 0.5em"),
+				padding: vars.field.padding.compact.or("0.35em 0.5em"),
 			},
 		),
 		css.rule(
 			fieldHosts.map((s) => `${s}.tight`),
 			{
-				padding: vars.control.padding.tight.or("0.15em 0.25em"),
+				padding: vars.field.padding.tight.or("0.15em 0.25em"),
 			},
 		),
 		css.rule(
@@ -289,12 +303,12 @@ function fieldstates() {
 				__control_background_opacity: 0,
 				__control_border_opacity: 1.0,
 				background_color: "transparent",
-				// Route through the field/utility opacity chain so --field-border-opacity
-				// and `.bd-No` can soften the outline accent border.
+				// Full field/utility chain so color, tint, blend and opacity all
+				// respond to --field-border-* and `.bd-*` modifiers.
 				border_color: colors.mixed(
-					control.border.base(),
-					control.border.tint(vars.control.color.base),
-					control.border.blend(1.0),
+					fieldBorderBase(),
+					fieldBorderTint(),
+					fieldBorderBlend(),
 					fieldBorderOpacity(1.0),
 				),
 			},
@@ -305,9 +319,9 @@ function fieldstates() {
 				color: control.color(1.0, 1.0, vars.color.ink),
 				__control_border_opacity: 1.0,
 				border_color: colors.mixed(
-					control.border.base(),
-					control.border.tint(vars.control.color.base),
-					control.border.blend(1.0),
+					fieldBorderBase(),
+					fieldBorderTint(),
+					fieldBorderBlend(),
 					fieldBorderOpacity(1.0),
 				),
 			},

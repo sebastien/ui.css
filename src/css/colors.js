@@ -77,6 +77,16 @@ const shorthands = {
 	ol: { name: "outline-color", css: "outline-color" },
 };
 
+// Border and outline utilities also publish override-only variables that the
+// interactive control recipes read, so `.bd-*`/`.ol-*` modifiers reach controls.
+// They must be separate names: the generic `--*-color-*` tokens have root
+// defaults that would otherwise clobber the control tokens.
+const overrideChannels = { bd: "border", ol: "outline" };
+const overrideChannel = (short, channel, value) => {
+	const name = overrideChannels[short];
+	return name ? { [`__${name}_${channel}`]: value } : {};
+};
+
 const fades = {
 	t: "to top",
 	b: "to bottom",
@@ -293,6 +303,7 @@ function colors(colors = COLORS) {
 				rule(`.${short}-${semantic}`, {
 					[`__${shorthands[short].name.replaceAll("-", "_")}_base`]:
 						vars.color[semantic],
+					...overrideChannel(short, "base", vars.color[semantic]),
 				}),
 			),
 		),
@@ -306,6 +317,7 @@ function colors(colors = COLORS) {
 				rule(`.${short}-${color}`, {
 					[`__${shorthands[short].name.replaceAll("-", "_")}_base`]:
 						vars.color[color],
+					...overrideChannel(short, "base", vars.color[color]),
 				}),
 			),
 		),
@@ -315,19 +327,17 @@ function colors(colors = COLORS) {
 		// ------------------------------------------------------------------------
 		// Creates .{bg,tx,bd,ol}-{0-10}o classes for opacity control
 		// 0 = transparent, 10 = opaque
-		// The border channel also publishes --border-opacity, the interactive
-		// override controls and fields read, so `.bd-No` reaches their edge too.
 		Object.keys(shorthands).flatMap((short) => [
 			...times(10).map((index) =>
 				rule(`.${short}-${index}o`, {
 					[`__${shorthands[short].name.replaceAll("-", "_")}_opacity`]:
 						index / 10,
-					...(short === "bd" ? { __border_opacity: index / 10 } : {}),
+					...overrideChannel(short, "opacity", index / 10),
 				}),
 			),
 			rule(`.${short}o`, {
 				[`__${shorthands[short].name.replaceAll("-", "_")}_opacity`]: 1.0,
-				...(short === "bd" ? { __border_opacity: 1.0 } : {}),
+				...overrideChannel(short, "opacity", 1.0),
 			}),
 		]),
 
@@ -341,12 +351,14 @@ function colors(colors = COLORS) {
 				rule(`.${short}-${index}b`, {
 					[`__${shorthands[short].name.replaceAll("-", "_")}_blend`]:
 						index / 10,
+					...overrideChannel(short, "blend", index / 10),
 				}),
 			),
 		),
 		Object.keys(shorthands).map((short) =>
 			rule(`.${short}b`, {
 				[`__${shorthands[short].name.replaceAll("-", "_")}_blend`]: 1.0,
+				...overrideChannel(short, "blend", 1.0),
 			}),
 		),
 		// ------------------------------------------------------------------------
@@ -358,6 +370,7 @@ function colors(colors = COLORS) {
 				rule(`.${short}-to-${color}`, {
 					[`__${shorthands[short].name.replaceAll("-", "_")}_tint`]:
 						vars.color[color],
+					...overrideChannel(short, "tint", vars.color[color]),
 				}),
 			),
 		),
@@ -367,8 +380,10 @@ function colors(colors = COLORS) {
 				__color_tint: vars.color[color],
 				__text_color_tint: vars.color[color],
 				__border_color_tint: vars.color[color],
+				__border_tint: vars.color[color],
 				__background_color_tint: vars.color[color],
 				__outline_color_tint: vars.color[color],
+				__outline_tint: vars.color[color],
 			}),
 		),
 
@@ -376,6 +391,7 @@ function colors(colors = COLORS) {
 		Object.keys(shorthands).flatMap((short) => [
 			rule(`.${short}-to-transparent`, {
 				[`__${shorthands[short].name.replaceAll("-", "_")}_opacity`]: 0,
+				...overrideChannel(short, "opacity", 0),
 			}),
 		]),
 		// ------------------------------------------------------------------------

@@ -107,6 +107,9 @@ export default group(
 			error: vars.color.red,
 			danger: vars.color.error,
 			accent: vars.color.primary,
+			// Focus ring color for raw `outline` declarations (control outline
+			// chrome tracks --control-outline-* instead).
+			focus: vars.color.neutral,
 			// Mode-dependent roles. Components consume these rather than fixed endpoints.
 			page: vars.color.paper,
 			text: vars.color.ink,
@@ -346,6 +349,8 @@ export default group(
 			},
 			gap: "0.25em",
 			padding: "0.5em 0.8em",
+			padding_compact: "0.15em 0.25em",
+			padding_compacted: "0.1em 0.15em",
 			margin: "0em",
 			color: {
 				base: vars.color.neutral,
@@ -363,6 +368,14 @@ export default group(
 			},
 			outline: {
 				width: "2px",
+				// Dynamic default: tracks the control accent unless overridden.
+				base: vars.control.color.base,
+				tint: vars.control.color.tint,
+				blend: 0.8,
+				opacity: 0.5,
+			},
+			default: {
+				outline: { opacity: 0.8 },
 			},
 			disabled: { opacity: 0.5 },
 		},
@@ -371,6 +384,8 @@ export default group(
 				size: `${vars.control.font.size}`,
 			},
 			padding: "0.55em 0.7em",
+			padding_compact: "0.35em 0.5em",
+			padding_tight: "0.15em 0.25em",
 			border: {
 				radius: "0.25em",
 			},
@@ -415,6 +430,7 @@ export default group(
 			size: "1.125em",
 			border: {
 				radius: "0.2em",
+				width: "1px",
 			},
 		},
 		radio: {
@@ -422,6 +438,23 @@ export default group(
 			dot: {
 				size: "0.5em",
 			},
+		},
+		toggle: {
+			width: "2.75em",
+			height: "1.5em",
+			inset: "0.125em",
+			border: { radius: vars.control.border.radius },
+			knob: {
+				border: { radius: "inherit" },
+			},
+		},
+		range: {
+			height: "1.5em",
+			track: {
+				height: "0.45em",
+				radius: "999px",
+			},
+			thumb: { size: "1em" },
 		},
 		alert: {
 			padding: "0.8rem 1rem",
