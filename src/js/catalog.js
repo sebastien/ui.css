@@ -43,6 +43,28 @@ function walk(value, parents, visit) {
 
 const classes = (selector) => [...selector.matchAll(/\.([a-zA-Z_][\w-]*)/g)].map((match) => match[1]);
 
+const tokenKind = (name, value) => {
+	if (name.startsWith("--color-")) return "color";
+	if (typeof value === "number") return "number";
+	return "value";
+};
+
+function tokenCatalog(value, output = []) {
+	if (!value) return output;
+	if (Array.isArray(value)) {
+		for (const item of value) tokenCatalog(item, output);
+		return output;
+	}
+	if (value.ref && "value" in value) {
+		output.push({ name: value.ref, path: value.name.split("."), value: String(value.value), kind: tokenKind(value.ref, value.value) });
+		return output;
+	}
+	if (value.contents) {
+		for (const item of value.contents) tokenCatalog(item, output);
+	}
+	return output;
+}
+
 const placeholder = (name) => `\${${name}}`;
 
 const subjectOf = (selector) => {
@@ -158,6 +180,7 @@ export function catalog(value) {
 		vocabs,
 		hosts: Object.fromEntries([...hosts].map(([name, selectors]) => [name, [...selectors].sort()])),
 		ops,
+		tokens: tokenCatalog(value).sort((a, b) => a.name.localeCompare(b.name)),
 	};
 }
 

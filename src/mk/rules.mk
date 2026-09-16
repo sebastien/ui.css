@@ -35,9 +35,4 @@ browser-test: dist/ui.css ## Runs Chromium computed-style tests
 browser-install: ## Installs the Chromium browser for browser tests
 	bunx playwright install chromium
 
-deploy: $(DIST_ALL)
-	@
-	rsync -rv dist/www/ pgs.sh:/ui.css
-
-
 # EOF

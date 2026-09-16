@@ -1495,6 +1495,9 @@ function selector() {
 			__control_gap: "0.125em",
 			__gap: "0.125em",
 		}),
+		css.rule(".selector.toggle.compact", {
+			padding: "1px",
+		}),
 		css.rule(".selector.toggle.rounded", {
 			border_radius: "999px",
 		}),

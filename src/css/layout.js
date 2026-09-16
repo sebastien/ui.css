@@ -161,6 +161,10 @@ export default named({
 			max_width: "100%",
 		}),
 	),
+	minimum: group(
+		rule(".min-w-0", { min_width: "0px" }),
+		rule(".min-h-0", { min_height: "0px" }),
+	),
 	filling: group(
 		rule(".fill-screen", {
 			box_sizing: "border-box",
@@ -399,6 +403,29 @@ export default named({
 		rule([".row.top", ".stack.top"], {
 			align_items: "flex-start",
 		}),
+		...Object.entries({
+			start: "flex-start",
+			middle: "center",
+			end: "flex-end",
+			stretch: "stretch",
+			baseline: "baseline",
+		}).map(([name, value]) =>
+			rule(`.items-${name}`, {
+				align_items: value,
+			}),
+		),
+		...Object.entries({
+			start: "flex-start",
+			middle: "center",
+			end: "flex-end",
+			between: "space-between",
+			around: "space-around",
+			evenly: "space-evenly",
+		}).map(([name, value]) =>
+			rule(`.justify-${name}`, {
+				justify_content: value,
+			}),
+		),
 		...times(7, (_) =>
 			rule(`.fl-${_}`, {
 				flex: `${_}`,

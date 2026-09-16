@@ -1020,7 +1020,10 @@ const nesting = (selector, props_, ...children) => {
 	return new NestingRule(sel, props, children.flat());
 };
 
+const VERSION = "1.0.0";
+
 export {
+	VERSION,
 	blended,
 	block,
 	classes,
@@ -1051,6 +1054,7 @@ export {
 	where,
 };
 export default Object.assign(css, {
+	VERSION,
 	css,
 	rule,
 	mods,

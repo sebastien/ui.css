@@ -55,6 +55,18 @@ for (const line of stylesheet) {
 </div>
 ```
 
+### CDN usage (jsDelivr)
+
+```html
+<script type="importmap">
+{
+  "imports": {
+    "ui.css/": "https://cdn.jsdelivr.net/gh/sebastien/ui.css@v1.0.0/"
+  }
+}
+</script>
+```
+
 ### Core Concepts
 
 - **Functional DSL**: Composable rules using `rule()`, `group()`, and `named()`.

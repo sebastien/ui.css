@@ -19,4 +19,9 @@ describe("catalog", () => {
 		});
 		expect(output.ops.find(({ template }) => template === ".compact").on).not.toContain("focus");
 	});
+
+	test("includes editable token metadata", () => {
+		expect(output.tokens).toContainEqual(expect.objectContaining({ name: "--color-primary", path: ["color", "primary"], kind: "color" }));
+		expect(output.tokens).toContainEqual(expect.objectContaining({ name: "--gap-1", path: ["gap", "1"] }));
+	});
 });
