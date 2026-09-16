@@ -9,6 +9,7 @@ The `controls.js` module provides comprehensive styling for interactive elements
 - `button`, `.button`: Standard button styling with configurable fonts and colors.
 - `.selectable`: Base class for interactive items (list items, cards) that share button-like state logic but may have different layouts.
 - `input`, `.input`: Standard text input styling.
+- `input[type="file"]`, `.input.file`, `.file`: The `::file-selector-button` is styled as the field's action part, joined to the filename like a button group. Semantic colors (`.primary`, `.danger`, …) retint only the button; `.compact` / `.compacted` and `:disabled` apply.
 - `textarea`, `.textarea`: Multi-line text input styling.
 - `input[type="checkbox"]`, `.checkbox`: Custom styled checkboxes with `:checked` markers.
 - `input[type="radio"]`, `.radio`: Custom styled radio buttons.
@@ -37,9 +38,10 @@ The `controls.js` module provides comprehensive styling for interactive elements
 - `.tabs`: Classic bordered tab strip with the selected tab visually joined to the content below.
 - `.tabs.group`: Filled, rounded tab group presentation.
 - `.tabs.compact` or `.tab.compact`: Reduced padding for tab navigation.
-- `.tabs.compacted`: Full-width bar with min-content tabs that do not stretch; tab padding is unchanged. Tabs wrap when they exceed the parent width.
-- `.tabs.bar`: Border-side tab navigation with neutral inactive tabs and ink active tabs by default. A semantic color on the tab bar makes inactive tabs ink and active tabs use that semantic color.
-- `.tabs.vertical`: Stacks tabs vertically; with `.bar`, the border and active indicator are on the right by default. Add `.left` or `.right` to choose the bar side.
+- `.tabs.compacted`: Full-width bar with min-content tabs that do not stretch; tab padding is unchanged. Add `.tabs.wrap` to let tabs wrap when they exceed the parent width.
+- `.tabs.outline`: Border-side tab navigation with neutral inactive tabs and ink active tabs by default, plus a `::after` active indicator. A semantic color on the tab bar makes inactive tabs ink and active tabs use that semantic color.
+- `.tabs.bar`: Joined, bordered horizontal bar (Apple-style) with a solid accent fill and contrast text on the active tab, like a checked `.selector`. Add a semantic color to the bar (`.tabs.bar.primary`) or an individual tab; horizontal only.
+- `.tabs.vertical`: Stacks tabs vertically; with `.outline`, the border and active indicator are on the right by default. Add `.left` or `.right` to choose the bar side.
 - Tabs paint through the background color channel, so `.bg-*` color, tint, blend, and opacity modifiers apply to `.tabs` and `.tab` (for example `.tab.primary.active.bg-2o`).
 - `select[multiple]`: Native vertical listbox with selector-like option rows. `select.vertical` opts into the same styling; pair it with `size` to render a listbox and control visible rows.
 
@@ -49,7 +51,7 @@ The `controls.js` module provides comprehensive styling for interactive elements
 - `:active`, `.active`: Click/press effect.
 - `:focus`, `:focus-visible`, `.focus`: Keyboard focus ring.
 - `.selected`, `:checked`, `.checked`: Persistently selected state.
-- `:disabled`, `.disabled`: Visual dimming and `pointer-events: none`.
+- `:disabled`, `.disabled`: Visual dimming and `pointer-events: none`. On `.selector`, either mark the hidden `input` with `disabled` or add `.disabled` to a `label` (or to the whole `.selector`) to disable individual items; on `.tabs`, add `disabled` / `.disabled` to a `.tab`.
 
 ### Color model
 

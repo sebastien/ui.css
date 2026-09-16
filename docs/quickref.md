@@ -341,10 +341,29 @@ value changes. It is a percentage such as `60%`.
 ### Tabs
 
 ```html
+<!-- Classic bordered strip -->
 <div class="tabs">
     <button class="tab active">Tab 1</button>
     <button class="tab">Tab 2</button>
     <button class="tab" disabled>Tab 3</button>
+</div>
+
+<!-- Filled rounded group -->
+<div class="tabs group">
+    <button class="tab active">Tab 1</button>
+    <button class="tab">Tab 2</button>
+</div>
+
+<!-- Border-side navigation -->
+<div class="tabs outline primary">
+    <button class="tab active">Tab 1</button>
+    <button class="tab">Tab 2</button>
+</div>
+
+<!-- Joined bar with an accent-filled active tab -->
+<div class="tabs bar primary">
+    <button class="tab active">Tab 1</button>
+    <button class="tab">Tab 2</button>
 </div>
 ```
 

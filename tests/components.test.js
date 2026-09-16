@@ -123,4 +123,20 @@ describe("CSS-first components", () => {
 		);
 		expect(output).toContain("padding: 0.35rem 0.5rem;");
 	});
+
+	test("styles attachments with media, content, actions, and states", () => {
+		expect(output).toContain(".attachment {");
+		expect(output).toContain(".attachment .media {");
+		expect(output).toContain(".attachment .media > img {");
+		expect(output).toContain(".attachment .title {");
+		expect(output).toContain(".attachment .description {");
+		expect(output).toContain(".attachment .actions {");
+		expect(output).toContain(".attachment .trigger {");
+		expect(output).toContain(".attachment[data-state=error] {");
+		expect(output).toContain(".attachment[data-state=idle] {");
+		expect(output).toContain(".attachment.small {");
+		expect(output).toContain(".attachment.smaller {");
+		expect(output).toContain(".attachment.vertical {");
+		expect(output).toContain("@keyframes attachment-pulse");
+	});
 });

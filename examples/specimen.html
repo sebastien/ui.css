@@ -559,6 +559,70 @@ const result = "fast, consistent styling"</code></pre>
             <label for="selector-toggle-push">Push</label>
           </div>
         </div>
+        <div class="stack g-2">
+          <p class="b m-0">Disabled</p>
+          <div class="row wrap g-3 items-center">
+            <div class="selector regular" role="radiogroup" aria-label="Disabled input selector">
+              <input type="radio" id="selector-disabled-a" name="selector-disabled" checked />
+              <label for="selector-disabled-a">One</label>
+              <input type="radio" id="selector-disabled-b" name="selector-disabled" disabled />
+              <label for="selector-disabled-b">Two</label>
+              <input type="radio" id="selector-disabled-c" name="selector-disabled" />
+              <label for="selector-disabled-c">Three</label>
+            </div>
+            <div class="selector regular" role="radiogroup" aria-label="Disabled label selector">
+              <input type="radio" id="selector-disabled-label-a" name="selector-disabled-label" checked />
+              <label for="selector-disabled-label-a">One</label>
+              <input type="radio" id="selector-disabled-label-b" name="selector-disabled-label" />
+              <label for="selector-disabled-label-b" class="disabled">Two</label>
+              <input type="radio" id="selector-disabled-label-c" name="selector-disabled-label" />
+              <label for="selector-disabled-label-c">Three</label>
+            </div>
+            <div class="selector toggle regular" role="group" aria-label="Disabled toggle button">
+              <button type="button" aria-pressed="true">7D</button>
+              <button type="button" aria-pressed="false" disabled>1M</button>
+              <button type="button">Custom</button>
+            </div>
+          </div>
+        </div>
+        <div class="stack g-2">
+          <p class="b m-0">Variants</p>
+          <p class="m-0 dim"><code>.squared</code> squares the item corners; <code>.bd-to-transparent</code> clears the item borders; on <code>.selector.toggle</code> add <code>.nobd</code> to clear the track border.</p>
+          <div class="row wrap g-3 items-center">
+            <div class="selector regular" role="radiogroup" aria-label="Default selector">
+              <input type="radio" id="selector-variant-a" name="selector-variant" checked />
+              <label for="selector-variant-a">One</label>
+              <input type="radio" id="selector-variant-b" name="selector-variant" />
+              <label for="selector-variant-b">Two</label>
+            </div>
+            <div class="selector regular squared" role="radiogroup" aria-label="Squared selector">
+              <input type="radio" id="selector-squared-a" name="selector-squared" checked />
+              <label for="selector-squared-a">One</label>
+              <input type="radio" id="selector-squared-b" name="selector-squared" />
+              <label for="selector-squared-b">Two</label>
+            </div>
+            <div class="selector regular bd-to-transparent" role="radiogroup" aria-label="Transparent border selector">
+              <input type="radio" id="selector-nobd-a" name="selector-nobd" checked />
+              <label for="selector-nobd-a">One</label>
+              <input type="radio" id="selector-nobd-b" name="selector-nobd" />
+              <label for="selector-nobd-b">Two</label>
+            </div>
+            <div class="selector regular squared bd-to-transparent" role="radiogroup" aria-label="Squared transparent selector">
+              <input type="radio" id="selector-flat-a" name="selector-flat" checked />
+              <label for="selector-flat-a">One</label>
+              <input type="radio" id="selector-flat-b" name="selector-flat" />
+              <label for="selector-flat-b">Two</label>
+            </div>
+            <div class="selector toggle outline" role="group" aria-label="Outline toggle">
+              <button type="button" aria-pressed="true">7D</button>
+              <button type="button" aria-pressed="false">1M</button>
+            </div>
+            <div class="selector toggle outline squared nobd" role="group" aria-label="Squared borderless toggle">
+              <button type="button" aria-pressed="true">7D</button>
+              <button type="button" aria-pressed="false">1M</button>
+            </div>
+          </div>
+        </div>
         <div class="stack g-4">
           <p class="b m-0">Color variants</p>
           <p class="m-0 dim">Default: only the selected option is colored. <code>.colored</code> tints every label; <code>.tinted</code> washes the track.</p>
@@ -1113,6 +1177,16 @@ const result = "fast, consistent styling"</code></pre>
           </div>
         </div>
         <div class="stack g-3">
+          <p class="b m-0">Wrap</p>
+          <div class="tabs wrap" style="max-width: 20rem">
+            <button class="tab active" role="tab" aria-selected="true">Overview</button>
+            <button class="tab" role="tab" aria-selected="false">Activity</button>
+            <button class="tab" role="tab" aria-selected="false">Settings</button>
+            <button class="tab" role="tab" aria-selected="false">Billing</button>
+            <button class="tab" role="tab" aria-selected="false">Members</button>
+          </div>
+        </div>
+        <div class="stack g-3">
           <p class="b m-0">Group</p>
           <div class="row wrap g-3">
             <div class="tabs group">
@@ -1135,30 +1209,78 @@ const result = "fast, consistent styling"</code></pre>
         <div class="stack g-3">
           <p class="b m-0">Outline</p>
           <div class="row wrap g-3">
+            <div class="tabs outline">
+              <button class="tab active" role="tab" aria-selected="true">Overview</button>
+              <button class="tab" role="tab" aria-selected="false">Activity</button>
+              <button class="tab" role="tab" aria-selected="false">Settings</button>
+            </div>
+            <div class="tabs outline primary top">
+              <button class="tab active" role="tab" aria-selected="true">Overview</button>
+              <button class="tab" role="tab" aria-selected="false">Activity</button>
+              <button class="tab" role="tab" aria-selected="false">Settings</button>
+            </div>
+            <div class="tabs outline">
+              <button class="tab active" role="tab" aria-selected="true">Overview</button>
+              <button class="tab" role="tab" aria-selected="false">Activity</button>
+              <button class="tab" role="tab" aria-selected="false">Settings</button>
+            </div>
+            <div class="tabs outline vertical w-1bl">
+              <button class="tab active" role="tab" aria-selected="true">Overview</button>
+              <button class="tab" role="tab" aria-selected="false">Activity</button>
+              <button class="tab" role="tab" aria-selected="false">Settings</button>
+            </div>
+            <div class="tabs outline vertical left w-1bl">
+              <button class="tab active" role="tab" aria-selected="true">Overview</button>
+              <button class="tab" role="tab" aria-selected="false">Activity</button>
+              <button class="tab" role="tab" aria-selected="false">Settings</button>
+            </div>
+          </div>
+        </div>
+        <div class="stack g-3">
+          <p class="b m-0">Bar</p>
+          <p class="m-0 dim">Joined horizontal bar with a filled active tab (selector-like). Add a semantic color to the bar or a tab.</p>
+          <div class="row wrap g-3 items-center">
             <div class="tabs bar">
               <button class="tab active" role="tab" aria-selected="true">Overview</button>
               <button class="tab" role="tab" aria-selected="false">Activity</button>
-              <button class="tab" role="tab" aria-selected="false">Settings</button>
+              <button class="tab" role="tab" aria-selected="false" disabled>Settings</button>
             </div>
-            <div class="tabs bar primary top">
+            <div class="tabs bar primary">
               <button class="tab active" role="tab" aria-selected="true">Overview</button>
               <button class="tab" role="tab" aria-selected="false">Activity</button>
               <button class="tab" role="tab" aria-selected="false">Settings</button>
             </div>
-            <div class="tabs bar">
+            <div class="tabs bar success">
               <button class="tab active" role="tab" aria-selected="true">Overview</button>
               <button class="tab" role="tab" aria-selected="false">Activity</button>
               <button class="tab" role="tab" aria-selected="false">Settings</button>
             </div>
-            <div class="tabs bar vertical w-1bl">
+            <div class="tabs bar danger">
               <button class="tab active" role="tab" aria-selected="true">Overview</button>
               <button class="tab" role="tab" aria-selected="false">Activity</button>
               <button class="tab" role="tab" aria-selected="false">Settings</button>
             </div>
-            <div class="tabs bar vertical left w-1bl">
-              <button class="tab active" role="tab" aria-selected="true">Overview</button>
-              <button class="tab" role="tab" aria-selected="false">Activity</button>
-              <button class="tab" role="tab" aria-selected="false">Settings</button>
+          </div>
+        </div>
+        <div class="stack g-3">
+          <p class="b m-0">Variants</p>
+          <p class="m-0 dim"><code>.squared</code> squares the corners, <code>.nobd</code> makes the border transparent, and <code>.bg-0o</code> makes the background transparent.</p>
+          <div class="stack g-2">
+            <span class="small b">Bar</span>
+            <div class="row wrap g-3 items-center">
+              <div class="tabs bar primary"><button class="tab active" role="tab" aria-selected="true">Overview</button><button class="tab" role="tab" aria-selected="false">Activity</button></div>
+              <div class="tabs bar primary squared"><button class="tab active" role="tab" aria-selected="true">Overview</button><button class="tab" role="tab" aria-selected="false">Activity</button></div>
+              <div class="tabs bar primary nobd"><button class="tab active" role="tab" aria-selected="true">Overview</button><button class="tab" role="tab" aria-selected="false">Activity</button></div>
+              <div class="tabs bar primary squared nobd bg-0o"><button class="tab active" role="tab" aria-selected="true">Overview</button><button class="tab" role="tab" aria-selected="false">Activity</button></div>
+            </div>
+          </div>
+          <div class="stack g-2">
+            <span class="small b">Group</span>
+            <div class="row wrap g-3 items-center">
+              <div class="tabs group"><button class="tab active" role="tab" aria-selected="true">Overview</button><button class="tab" role="tab" aria-selected="false">Activity</button></div>
+              <div class="tabs group squared"><button class="tab active" role="tab" aria-selected="true">Overview</button><button class="tab" role="tab" aria-selected="false">Activity</button></div>
+              <div class="tabs group bg-0o"><button class="tab active" role="tab" aria-selected="true">Overview</button><button class="tab" role="tab" aria-selected="false">Activity</button></div>
+              <div class="tabs group squared bg-0o"><button class="tab active" role="tab" aria-selected="true">Overview</button><button class="tab" role="tab" aria-selected="false">Activity</button></div>
             </div>
           </div>
         </div>
@@ -1373,7 +1495,89 @@ const result = "fast, consistent styling"</code></pre>
     </section>
     <section id="upload-demo" class="panel stack g-4 p-6 bd bd-4o reset-bd">
       <h2 class="h3 m-0">Upload</h2>
+      <div class="stack g-3">
+        <h3 class="h4 m-0">File input</h3>
+        <p class="m-0 dim">The selector button joins the field like a button group; add <code>.input.file</code> (or rely on <code>input[type=file]</code>) and semantic colors retint only the button.</p>
+        <div class="row wrap g-3 items-center">
+          <input type="file" class="input file" />
+          <input type="file" class="primary" />
+          <input type="file" class="danger" />
+          <input type="file" class="compact" />
+          <input type="file" disabled />
+        </div>
+      </div>
       <label class="card stack g-2 centered p-6" style="border-style: dashed"><strong>Attachments</strong><input type="file" multiple /><small class="hint">Drop files here or click to choose</small></label>
+      <div id="attachment-demo" class="stack g-3">
+        <h3 class="h4 m-0">Attachments</h3>
+        <p class="m-0 dim">A file attachment with media, title, description, and actions. State is set with <code>data-state</code>.</p>
+        <div class="stack stretch force g-2 limit-0b">
+          <div class="attachment">
+            <div class="media"><iconify-icon icon="lucide:file-text" width="18" height="18"></iconify-icon></div>
+            <div class="content">
+              <span class="title">sales-dashboard.pdf</span>
+              <span class="description">PDF · 2.4 MB</span>
+            </div>
+            <div class="actions"><button class="action" aria-label="Remove sales-dashboard.pdf">×</button></div>
+          </div>
+          <div class="attachment" data-state="idle">
+            <div class="media"><iconify-icon icon="lucide:plus" width="18" height="18"></iconify-icon></div>
+            <div class="content">
+              <span class="title">Drop a file</span>
+              <span class="description">Waiting for a file</span>
+            </div>
+          </div>
+          <div class="attachment" data-state="uploading">
+            <div class="media"><iconify-icon icon="lucide:file-text" width="18" height="18"></iconify-icon></div>
+            <div class="content">
+              <span class="title">quarterly-report.pdf</span>
+              <span class="description">Uploading · 45%</span>
+            </div>
+          </div>
+          <div class="attachment" data-state="processing">
+            <div class="media"><iconify-icon icon="lucide:file-text" width="18" height="18"></iconify-icon></div>
+            <div class="content">
+              <span class="title">notes.md</span>
+              <span class="description">Processing · Markdown</span>
+            </div>
+          </div>
+          <div class="attachment" data-state="error">
+            <div class="media"><iconify-icon icon="lucide:alert-triangle" width="18" height="18"></iconify-icon></div>
+            <div class="content">
+              <span class="title">large-video.mp4</span>
+              <span class="description">File is too large</span>
+            </div>
+          </div>
+          <div class="attachment small">
+            <div class="media"><iconify-icon icon="lucide:file-text" width="16" height="16"></iconify-icon></div>
+            <div class="content">
+              <span class="title">Small attachment</span>
+              <span class="description">PDF · 2.4 MB</span>
+            </div>
+          </div>
+          <div class="attachment smaller">
+            <div class="media"><iconify-icon icon="lucide:file-text" width="14" height="14"></iconify-icon></div>
+            <div class="content">
+              <span class="title">Extra small attachment</span>
+              <span class="description">PDF · 2.4 MB</span>
+            </div>
+          </div>
+          <div class="attachment">
+            <div class="media"><img alt="Cat" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96'%3E%3Crect width='96' height='96' fill='%23c7d2fe'/%3E%3Ccircle cx='48' cy='40' r='18' fill='%236366f1'/%3E%3C/svg%3E" /></div>
+            <div class="content">
+              <span class="title">cat.jpg</span>
+              <span class="description">JPG · 340 KB</span>
+            </div>
+          </div>
+          <div class="attachment">
+            <div class="media"><iconify-icon icon="lucide:file-text" width="18" height="18"></iconify-icon></div>
+            <div class="content">
+              <span class="title">annual-report.pdf</span>
+              <span class="description">PDF · 8.1 MB</span>
+            </div>
+            <a class="trigger" href="#attachment-demo" aria-label="Open annual-report.pdf"></a>
+          </div>
+        </div>
+      </div>
     </section>
      <section id="meter-demo" class="panel stack g-4 p-6 bd bd-4o reset-bd">
        <h2 class="h3 m-0">Meter</h2>

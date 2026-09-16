@@ -33,20 +33,46 @@ describe("controls color model", () => {
 		expect(output).toContain(".group > :not(input, textarea, select, button, .input, .textarea, .select, .button)");
 	});
 
-	test("tabs have classic and grouped presentations", () => {
+	test("file inputs join a selector button to the field", () => {
+		expect(output).toContain("input[type=file], .file {");
+		expect(output).toContain("&::file-selector-button {");
+		expect(output).toContain(
+			"--file-background: var(--color-neutral-background, var(--color-neutral));",
+		);
+		expect(output).toContain("background-color: var(--file-background);");
+		expect(output).toContain("color: contrast-color(var(--file-background));");
+		expect(output).toContain("&:hover::file-selector-button {");
+		expect(output).toContain(
+			"--file-background: var(--color-primary-background, var(--color-primary));",
+		);
+		// .file is a first-class field alias, so .input.file works on any element.
+		expect(output).toContain(
+			".select, .file, .group > :not(input, textarea, select, button, .input, .textarea, .select, .button)",
+		);
+	});
+
+	test("tabs have classic, grouped, outline, and bar presentations", () => {
 		expect(output).toContain(".tabs .tab");
-		expect(output).toContain(".tabs:not(.group):not(.bar) .tab[aria-selected=true]");
+		expect(output).toContain(".tabs:not(.group):not(.outline):not(.bar) .tab[aria-selected=true]");
 		expect(output).toContain(".tabs.group");
+		expect(output).toContain(".tabs.outline");
 		expect(output).toContain(".tabs.bar");
-		expect(output).toContain(".tabs:not(.group):not(.bar).primary .tab");
-		expect(output).toContain(".tabs.bar.primary .tab");
+		expect(output).toContain(".tabs:not(.group):not(.outline):not(.bar).primary .tab");
+		expect(output).toContain(".tabs.outline.primary .tab");
 		expect(output).toContain("color: var(--color-ink);");
 		expect(output).toContain("border: 0;");
 		expect(output).toContain("border-radius: 0.375rem 0.375rem 0 0;");
 		expect(output).toContain("padding: 0.35rem;");
 		expect(output).toContain("flex-wrap: wrap;");
 		expect(output).toContain("--accent-color: var(--color-primary);");
-		expect(output).not.toContain(".tabsbar");
+	});
+
+	test(".tabs.wrap wraps any tab presentation", () => {
+		const tabs = output.slice(
+			output.indexOf("/* @group tab */"),
+			output.indexOf("/* @end tab */"),
+		);
+		expect(tabs).toContain(".tabs.wrap {");
 	});
 
 	test("tabs paint through the background color channel", () => {
@@ -62,33 +88,64 @@ describe("controls color model", () => {
 		expect(tabs).toContain("--background-color-base: var(--color-primary);");
 	});
 
-	test("outline tabs use a bottom rule and state colors", () => {
+	test("outline tabs use a border rule and state colors", () => {
 		const tabs = output.slice(output.indexOf("/* @group tab */"));
-		expect(tabs).toContain(".tabs.bar");
+		expect(tabs).toContain(".tabs.outline");
 		expect(tabs).toContain(
 			"border-bottom: var(--border-width) solid color-mix(in oklch, color-mix(in oklch, var(--border-color-base)");
 		expect(tabs).toContain("border: 0;");
-		expect(tabs).toContain(".tabs.bar.top");
-		expect(tabs).toContain(".tabs.bar.bottom");
-		expect(tabs).toContain(".tabs.bar .tab[aria-selected=true], .tabs.bar .tab.active");
+		expect(tabs).toContain(".tabs.outline.top");
+		expect(tabs).toContain(".tabs.outline.bottom");
+		expect(tabs).toContain(".tabs.outline .tab[aria-selected=true], .tabs.outline .tab.active");
 		expect(tabs).toContain("color: var(--color-ink);");
-		expect(tabs).toContain(".tabs.bar .tab::after");
+		expect(tabs).toContain(".tabs.outline .tab::after");
 		expect(tabs).toContain("height: var(--border-width);");
 		expect(tabs).toContain("border-radius: 0;");
 		expect(tabs).toContain("margin-bottom: calc(-1 * var(--border-width));");
 		expect(tabs).toContain("visibility: visible;");
-		expect(tabs).toContain(".tabs.bar .tab:hover");
+		expect(tabs).toContain(".tabs.outline .tab:hover");
 		expect(tabs).toContain("background-color: transparent;");
-		expect(tabs).toContain(".tabs.bar .tab:not([aria-selected=true]):not(.active):hover");
+		expect(tabs).toContain(".tabs.outline .tab:not([aria-selected=true]):not(.active):hover");
 		expect(tabs).toContain(".tabs.vertical");
-		expect(tabs).toContain(".tabs.bar.vertical");
+		expect(tabs).toContain(".tabs.outline.vertical");
 		expect(tabs).toContain("border-right: var(--border-width) solid color-mix(in oklch, color-mix(in oklch, var(--border-color-base)");
-		expect(tabs).toContain(".tabs.bar.vertical .tab::after");
-		expect(tabs).toContain(".tabs.bar.vertical.left");
+		expect(tabs).toContain(".tabs.outline.vertical .tab::after");
+		expect(tabs).toContain(".tabs.outline.vertical.left");
 		expect(tabs).toContain("border-left: var(--border-width) solid color-mix(in oklch, color-mix(in oklch, var(--border-color-base)");
-		expect(tabs).toContain(".tabs.bar.vertical.left .tab::after");
-		expect(tabs).toContain(".tabs.bar.vertical.right");
-});
+		expect(tabs).toContain(".tabs.outline.vertical.left .tab::after");
+		expect(tabs).toContain(".tabs.outline.vertical.right");
+	});
+
+	test("bar tabs are a joined selector-like bar with a filled active tab", () => {
+		const tabs = output.slice(output.indexOf("/* @group tab */"));
+		expect(tabs).toContain(".tabs.bar {");
+		expect(tabs).toContain("width: fit-content;");
+		expect(tabs).toContain("border-radius: 0.375rem;");
+		expect(tabs).toContain(".tabs.bar .tab {");
+		expect(tabs).toContain(".tabs.bar .tab:first-child {");
+		expect(tabs).toContain("border-left: 0;");
+		expect(tabs).toContain(".tabs.bar .tab[aria-selected=true], .tabs.bar .tab.active {");
+		expect(tabs).toContain("color: contrast-color(var(--background-color));");
+		expect(tabs).toContain(".tabs.bar.primary {");
+		expect(tabs).toContain("--accent-color: var(--color-primary);");
+	});
+
+	test("selected tabs paint the channel background directly", () => {
+		const tabs = output.slice(output.indexOf("/* @group tab */"));
+		expect(tabs).toContain(
+			".tabs .tab[aria-selected=true], .tabs .tab.active {\n\t\tbackground-color: var(--background-color);",
+		);
+	});
+
+	test("tabs and selectors support disabled items", () => {
+		expect(output).toContain(".tabs .tab:disabled, .tabs .tab.disabled {");
+		expect(output).toContain("cursor: not-allowed;");
+		expect(output).toContain("& > input:disabled + label, & > label.disabled {");
+		expect(output).toContain("&.disabled > label {");
+		expect(output).toContain(
+			".selector.toggle.disabled > button, .selector.toggle > button:disabled, .selector.toggle > button.disabled {",
+		);
+	});
 
 	test("interactive controls expose compact padding variants", () => {
 		expect(output).toContain("&.compact > option");

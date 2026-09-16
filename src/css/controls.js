@@ -114,6 +114,7 @@ const baseHosts = [
 	".input",
 	".textarea",
 	".select",
+	".file",
 	".group > :not(input, textarea, select, button, .input, .textarea, .select, .button)",
 	"input[type=checkbox]:not(.toggle):not(.selector)",
 	".checkbox",
@@ -223,6 +224,7 @@ const fieldHosts = [
 	".textarea",
 	"select",
 	".select",
+	".file",
 	".group > :not(input, textarea, select, button, .input, .textarea, .select, .button)",
 	".checkbox",
 	".radio",
@@ -238,6 +240,7 @@ const outlineFieldHosts = [
 	".textarea",
 	"select",
 	".select",
+	".file",
 	".group > :not(input, textarea, select, button, .input, .textarea, .select, .button)",
 ];
 
@@ -1444,6 +1447,18 @@ function selector() {
 				__control_background_opacity: 0.2,
 				background_color: control.background(0.9, 0.2, vars.color.paper),
 			}),
+			// Disabled items: dim the label and ignore pointer events. Either
+			// the hidden input carries `disabled` or the label carries .disabled.
+			css.rule("& > input:disabled + label, & > label.disabled", {
+				opacity: vars.control.disabled.opacity.or(0.5),
+				pointer_events: "none",
+				cursor: "not-allowed",
+			}),
+			css.rule("&.disabled > label", {
+				opacity: vars.control.disabled.opacity.or(0.5),
+				pointer_events: "none",
+				cursor: "not-allowed",
+			}),
 			css.rule("&.compact", {
 				padding: "0em",
 			}),
@@ -1512,6 +1527,14 @@ function selector() {
 		css.rule(".selector.toggle > button:hover, .selector.toggle > button.hover", {
 			background_color: control.background(0.55, 0.35),
 		}),
+		css.rule(
+			".selector.toggle.disabled > button, .selector.toggle > button:disabled, .selector.toggle > button.disabled",
+			{
+				opacity: vars.control.disabled.opacity.or(0.5),
+				pointer_events: "none",
+				cursor: "not-allowed",
+			},
+		),
 		css.rule(
 			".selector.toggle > button[aria-pressed=true], .selector.toggle > button.selected",
 			{
@@ -1582,7 +1605,7 @@ function tab() {
 			background_color: "transparent",
 			gap: "0",
 		}),
-		css.rule(".tabs:not(.group):not(.bar) .tab", {
+		css.rule(".tabs:not(.group):not(.outline):not(.bar) .tab", {
 			border_bottom: `1px solid ${tabBorder}`,
 			border_left: `1px solid ${tabBorder}`,
 			border_radius: "0",
@@ -1590,7 +1613,10 @@ function tab() {
 			color: vars.color.neutral,
 			background_color: "transparent",
 		}),
-		css.rule(".tabs:not(.group):not(.bar) .tab:first-child", {
+		css.rule(".tabs.wrap", {
+			flex_wrap: "wrap",
+		}),
+		css.rule(".tabs:not(.group):not(.outline):not(.bar) .tab:first-child", {
 			border_left: "0",
 		}),
 		css.rule(".tabs.group", {
@@ -1623,6 +1649,11 @@ function tab() {
 			__background_color_opacity: 0,
 			...tabBackground(),
 		}),
+		// Selected tabs paint the background directly so the generic action
+		// button `.active` style cannot override the channel-derived fill.
+		css.rule(".tabs .tab[aria-selected=true], .tabs .tab.active", {
+			background_color: vars.background.color,
+		}),
 		css.rule(".tabs.compact", {
 			padding: "0.2rem",
 		}),
@@ -1637,7 +1668,7 @@ function tab() {
 			width: "min-content",
 			flex: "0 0 min-content",
 		}),
-		css.rule(".tabs.bar", {
+		css.rule(".tabs.outline", {
 			display: "flex",
 			width: "100%",
 			overflow: "visible",
@@ -1649,11 +1680,11 @@ function tab() {
 			background_color: "transparent",
 			gap: "0",
 		}),
-		css.rule(".tabs.bar.top", {
+		css.rule(".tabs.outline.top", {
 			border_bottom: "0",
 			border_top: `${vars.border.width} solid ${tabBorder}`,
 		}),
-		css.rule(".tabs.bar.bottom", {
+		css.rule(".tabs.outline.bottom", {
 			border_top: "0",
 			border_bottom: `${vars.border.width} solid ${tabBorder}`,
 		}),
@@ -1661,13 +1692,13 @@ function tab() {
 			flex_direction: "column",
 			align_items: "stretch",
 		}),
-		css.rule(".tabs.bar.vertical", {
+		css.rule(".tabs.outline.vertical", {
 			width: "max-content",
 			max_width: "100%",
 			border_bottom: "0",
 			border_right: `${vars.border.width} solid ${tabBorder}`,
 		}),
-		css.rule(".tabs.bar .tab", {
+		css.rule(".tabs.outline .tab", {
 			position: "relative",
 			top: "0",
 			border: "0",
@@ -1692,11 +1723,11 @@ function tab() {
 			color: `contrast-color(${vars.background.color})`,
 			box_shadow: `var(--shadow-x) var(--shadow-y) var(--shadow-spread) var(--shadow-color)`,
 		}),
-		css.rule(".tabs:not(.group):not(.bar) .tab:hover", {
+		css.rule(".tabs:not(.group):not(.outline):not(.bar) .tab:hover", {
 			__background_color_base: vars.color.neutral,
 			__background_color_opacity: 0.35,
 		}),
-		css.rule(".tabs:not(.group):not(.bar) .tab[aria-selected=true], .tabs:not(.group):not(.bar) .tab.active", {
+		css.rule(".tabs:not(.group):not(.outline):not(.bar) .tab[aria-selected=true], .tabs:not(.group):not(.outline):not(.bar) .tab.active", {
 			__background_color_base: vars.color.surface,
 			__background_color_opacity: 1.0,
 			border_bottom_color: vars.color.surface,
@@ -1704,21 +1735,21 @@ function tab() {
 			box_shadow: "none",
 		}),
 		...colors.semantic.flatMap((name) => [
-			css.rule(`.tabs:not(.group):not(.bar).${name} .tab:not([aria-selected=true]):not(.active), .tabs.bar.${name} .tab:not([aria-selected=true]):not(.active)`, {
+			css.rule(`.tabs:not(.group):not(.outline):not(.bar).${name} .tab:not([aria-selected=true]):not(.active), .tabs.outline.${name} .tab:not([aria-selected=true]):not(.active)`, {
 				color: vars.color.ink,
 			}),
-			css.rule(`.tabs:not(.group):not(.bar).${name} .tab[aria-selected=true], .tabs:not(.group):not(.bar).${name} .tab.active, .tabs.bar.${name} .tab[aria-selected=true], .tabs.bar.${name} .tab.active`, {
+			css.rule(`.tabs:not(.group):not(.outline):not(.bar).${name} .tab[aria-selected=true], .tabs:not(.group):not(.outline):not(.bar).${name} .tab.active, .tabs.outline.${name} .tab[aria-selected=true], .tabs.outline.${name} .tab.active`, {
 				color: vars.color[name],
 			}),
 		]),
-		css.rule(".tabs.bar .tab[aria-selected=true], .tabs.bar .tab.active", {
+		css.rule(".tabs.outline .tab[aria-selected=true], .tabs.outline .tab.active", {
 			color: vars.color.ink,
 			background_color: "transparent",
 			box_shadow: "none",
 			z_index: 1,
 			margin_bottom: `calc(-1 * ${vars.border.width})`,
 		}),
-		css.rule(".tabs.bar .tab::after", {
+		css.rule(".tabs.outline .tab::after", {
 			content: '""',
 			position: "absolute",
 			bottom: "0",
@@ -1728,18 +1759,18 @@ function tab() {
 			background_color: "currentColor",
 			visibility: "hidden",
 		}),
-		css.rule(".tabs.bar .tab[aria-selected=true]::after, .tabs.bar .tab.active::after", {
+		css.rule(".tabs.outline .tab[aria-selected=true]::after, .tabs.outline .tab.active::after", {
 			visibility: "visible",
 		}),
-		css.rule(".tabs.bar.vertical .tab", {
+		css.rule(".tabs.outline.vertical .tab", {
 			top: "0",
 			text_align: "start",
 		}),
-		css.rule(".tabs.bar.vertical .tab[aria-selected=true], .tabs.bar.vertical .tab.active", {
+		css.rule(".tabs.outline.vertical .tab[aria-selected=true], .tabs.outline.vertical .tab.active", {
 			margin_bottom: "0",
 			margin_right: `calc(-1 * ${vars.border.width})`,
 		}),
-		css.rule(".tabs.bar.vertical .tab::after", {
+		css.rule(".tabs.outline.vertical .tab::after", {
 			top: "0",
 			right: "0",
 			bottom: "0",
@@ -1747,48 +1778,91 @@ function tab() {
 			width: vars.border.width,
 			height: "auto",
 		}),
-		css.rule(".tabs.bar.top .tab[aria-selected=true], .tabs.bar.top .tab.active", {
+		css.rule(".tabs.outline.top .tab[aria-selected=true], .tabs.outline.top .tab.active", {
 			margin_bottom: "0",
 			margin_top: `calc(-1 * ${vars.border.width})`,
 		}),
-		css.rule(".tabs.bar.top .tab::after", {
+		css.rule(".tabs.outline.top .tab::after", {
 			top: "0",
 			bottom: "auto",
 		}),
-		css.rule(".tabs.bar.vertical.left", {
+		css.rule(".tabs.outline.vertical.left", {
 			border_right: "0",
 			border_left: `${vars.border.width} solid ${tabBorder}`,
 		}),
-		css.rule(".tabs.bar.vertical.left .tab[aria-selected=true], .tabs.bar.vertical.left .tab.active", {
+		css.rule(".tabs.outline.vertical.left .tab[aria-selected=true], .tabs.outline.vertical.left .tab.active", {
 			margin_right: "0",
 			margin_left: `calc(-1 * ${vars.border.width})`,
 		}),
-		css.rule(".tabs.bar.vertical.left .tab::after", {
+		css.rule(".tabs.outline.vertical.left .tab::after", {
 			right: "auto",
 			left: "0",
 		}),
-		css.rule(".tabs.bar.vertical.right", {
+		css.rule(".tabs.outline.vertical.right", {
 			border_left: "0",
 			border_right: `${vars.border.width} solid ${tabBorder}`,
 		}),
 		...colors.semantic.map((name) =>
-			css.rule(`.tabs.bar .tab.${name}[aria-selected=true], .tabs.bar .tab.${name}.active`, {
+			css.rule(`.tabs.outline .tab.${name}[aria-selected=true], .tabs.outline .tab.${name}.active`, {
 				color: vars.color[name],
 			}),
 		),
-		css.rule(".tabs.bar .tab:hover", {
+		css.rule(".tabs.outline .tab:hover", {
 			background_color: "transparent",
 		}),
-		css.rule(".tabs.bar .tab:not([aria-selected=true]):not(.active):hover", {
+		css.rule(".tabs.outline .tab:not([aria-selected=true]):not(.active):hover", {
 			color: vars.color.text,
 		}),
+		// Bar presentation: a joined, bordered horizontal bar (Apple-style).
+		// The selected tab is a solid accent/semantic fill with contrast text,
+		// matching a checked .selector label. Horizontal only; use
+		// .tabs.outline.vertical for a border-side bar.
+		css.rule(".tabs.bar", {
+			display: "inline-flex",
+			width: "fit-content",
+			max_width: "100%",
+			overflow: "hidden",
+			position: "relative",
+			bottom: "0",
+			border: `1px solid ${tabBorder}`,
+			border_radius: "0.375rem",
+			background_color: "transparent",
+			gap: "0",
+		}),
+		css.rule(".tabs.bar .tab", {
+			border: "0",
+			border_left: `1px solid ${tabBorder}`,
+			border_radius: "0",
+			padding: "0.5em 1em",
+			color: vars.color.neutral,
+			white_space: "nowrap",
+		}),
+		css.rule(".tabs.bar .tab:first-child", {
+			border_left: "0",
+		}),
+		css.rule(".tabs.bar .tab:not([aria-selected=true]):not(.active):hover", {
+			__background_color_base: vars.color.neutral,
+			__background_color_opacity: 0.35,
+		}),
+		css.rule(".tabs.bar .tab[aria-selected=true], .tabs.bar .tab.active", {
+			__background_color_base: vars.accent.color.or(vars.color.surface),
+			__background_color_opacity: 1.0,
+			color: `contrast-color(${vars.background.color})`,
+			z_index: 1,
+		}),
+		...colors.semantic.map((name) =>
+			css.rule(`.tabs.bar.${name}`, {
+				__accent_color: vars.color[name],
+			}),
+		),
 		css.rule(".tabs .tab:focus-visible, .tabs .tab.focus", {
 			outline: `2px solid ${vars.color.focus.or(vars.color.neutral)}`,
 			outline_offset: "-2px",
 		}),
 		css.rule(".tabs .tab:disabled, .tabs .tab.disabled", {
-			opacity: 0.5,
+			opacity: vars.control.disabled.opacity.or(0.5),
 			pointer_events: "none",
+			cursor: "not-allowed",
 		}),
 		css.rule(".tabs.group .tab.ghost", {
 			__background_color_opacity: 0,
@@ -1805,11 +1879,80 @@ function tab() {
 	);
 }
 
+function fileinput() {
+	const transition = [
+		"background-color",
+		"border-color",
+		"color",
+	]
+		.map(
+			(_) =>
+				`${_} ${vars.motion.duration.normal} ${vars.motion.easing.emphasized}`,
+		)
+		.join(", ");
+	return css.nesting(
+		["input[type=file]", ".file"],
+		{},
+		// The field is the group; ::file-selector-button is its action part and
+		// the filename text is the non-button part. `--file-background` keeps the
+		// button fill independent of the field's own background channel.
+		css.rule("&", {
+			padding: "0 0.75em 0 0",
+			gap: "0",
+			align_items: "stretch",
+			overflow: "clip",
+			cursor: "pointer",
+			__file_background: vars.color.neutral.background.or(vars.color.neutral),
+		}),
+		// Density classes set field padding; the group keeps a flush button.
+		css.rule(["&.compact", "&.compacted", "&.tight"], {
+			padding: "0 0.75em 0 0",
+		}),
+		css.rule("&::file-selector-button", {
+			font: "inherit",
+			appearance: "none",
+			margin: "0",
+			margin_inline_end: "0.75em",
+			padding: vars.action.padding.or(vars.control.padding, "0.5em 1em"),
+			border: "0",
+			border_inline_end: `1px solid ${control.border()}`,
+			border_radius: "0",
+			background_color: "var(--file-background)",
+			color: "contrast-color(var(--file-background))",
+			cursor: "pointer",
+			transition: transition,
+		}),
+		css.rule("&:hover::file-selector-button", {
+			background_color: `color-mix(in oklch, var(--file-background), ${vars.color.surface} 12%)`,
+		}),
+		css.rule("&:active::file-selector-button", {
+			background_color: `color-mix(in oklch, var(--file-background), ${vars.color.ink} 12%)`,
+		}),
+		css.rule("&.compact::file-selector-button", {
+			padding: vars.control.padding.compact.or("0.15em 0.25em"),
+		}),
+		css.rule("&.compacted::file-selector-button", {
+			padding: vars.control.padding.compacted.or("0.1em 0.15em"),
+		}),
+		// Semantic colors retint the action part only.
+		...colors.semantic.map((color) =>
+			css.rule(`&.${color}`, {
+				__file_background: vars.color[color].background.or(vars.color[color]),
+			}),
+		),
+		css.rule(["&:disabled", "&.disabled"], {
+			opacity: vars.control.disabled.opacity.or(0.5),
+			pointer_events: "none",
+		}),
+	);
+}
+
 export default css.named({
 	base: basechrome(),
 	fieldbase: fieldchrome(),
 	fieldstates: fieldstates(),
 	colorvariants: colorvariants(),
+	fileinput: fileinput(),
 	actions: action([
 		"button",
 		".button",

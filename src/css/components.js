@@ -685,6 +685,148 @@ function avatar() {
 	);
 }
 
+function attachment() {
+	const muted = `color-mix(in oklch, ${vars.color.neutral}, ${vars.color.surface} 82%)`;
+	const description = `color-mix(in oklch, ${vars.color.surface_text}, ${vars.color.surface} 40%)`;
+	return css.group(
+		css.rule(".attachment", {
+			position: "relative",
+			display: "flex",
+			flex_wrap: "wrap",
+			align_items: "center",
+			gap: "0.5rem",
+			width: "fit-content",
+			max_width: "100%",
+			min_width: "0",
+			padding: "0.5rem",
+			border: `1px solid ${bd}`,
+			border_radius: vars.border.radius[2],
+			background_color: vars.color.surface,
+			color: vars.color.surface_text,
+			font_size: "0.875rem",
+		}),
+		css.rule(".attachment:has(> a, > button)", { cursor: "pointer" }),
+		css.rule(".attachment:has(> a, > button):hover", {
+			background_color: muted,
+		}),
+		css.rule(".attachment:focus-within", {
+			outline: `2px solid ${vars.outline.color}`,
+			outline_offset: "2px",
+		}),
+		// Media
+		css.rule(".attachment .media", {
+			display: "flex",
+			flex: "none",
+			align_items: "center",
+			justify_content: "center",
+			width: "2.5rem",
+			aspect_ratio: "1",
+			overflow: "clip",
+			border: `1px solid ${bd}`,
+			border_radius: vars.border.radius[1],
+			background_color: muted,
+		}),
+		css.rule(".attachment .media > img", {
+			width: "100%",
+			height: "100%",
+			object_fit: "cover",
+		}),
+		// Content
+		css.rule(".attachment .content", {
+			flex: "1 1 auto",
+			min_width: "0",
+			line_height: "1.25",
+		}),
+		css.rule(".attachment .title", {
+			display: "block",
+			overflow: "hidden",
+			text_overflow: "ellipsis",
+			white_space: "nowrap",
+			font_weight: "600",
+		}),
+		css.rule(".attachment .description", {
+			display: "block",
+			overflow: "hidden",
+			text_overflow: "ellipsis",
+			white_space: "nowrap",
+			font_size: "0.75em",
+			color: description,
+		}),
+		// Actions
+		css.rule(".attachment .actions", {
+			display: "flex",
+			flex: "none",
+			align_items: "center",
+			gap: "0.25rem",
+		}),
+		css.rule(".attachment .action", {
+			display: "inline-flex",
+			align_items: "center",
+			justify_content: "center",
+			width: "1.5rem",
+			height: "1.5rem",
+			padding: "0",
+			border: "0",
+			border_radius: vars.border.radius[1],
+			background: "transparent",
+			color: "inherit",
+			cursor: "pointer",
+		}),
+		css.rule(".attachment .action:hover", { background_color: muted }),
+		// Optional whole-attachment trigger.
+		css.rule(".attachment .trigger", {
+			position: "absolute",
+			inset: "0",
+			z_index: "1",
+			border: "0",
+			background: "transparent",
+			cursor: "pointer",
+		}),
+		// States
+		css.rule(".attachment[data-state=idle]", { border_style: "dashed" }),
+		css.rule(".attachment[data-state=error]", {
+			background_color: vars.color.surface_text,
+			color: vars.color.surface,
+		}),
+		css.rule(".attachment[data-state=error] .media", {
+			background_color: vars.color.surface,
+			color: vars.color.surface_text,
+		}),
+		css.rule(".attachment[data-state=error] .description", {
+			color: "inherit",
+		}),
+		css.rule(
+			[
+				".attachment[data-state=uploading] .title",
+				".attachment[data-state=processing] .title",
+			],
+			{ animation: "attachment-pulse 1.4s ease-in-out infinite" },
+		),
+		keyframes("attachment-pulse", {
+			"0%, 100%": { opacity: 1 },
+			"50%": { opacity: "0.62" },
+		}),
+		// Sizes reuse the shared text size classes (.small, .smaller).
+		css.rule(".attachment.small", { gap: "0.4rem", padding: "0.4rem" }),
+		css.rule(".attachment.small .media", { width: "2rem" }),
+		css.rule(".attachment.smaller", { gap: "0.3rem", padding: "0.25rem" }),
+		css.rule(".attachment.smaller .media", { width: "1.75rem" }),
+		// Vertical
+		css.rule(".attachment.vertical", {
+			flex_direction: "column",
+			align_items: "stretch",
+			width: "6rem",
+		}),
+		css.rule(".attachment.vertical .media", { width: "100%" }),
+		css.rule(".attachment.vertical .content", { padding: "0 0.25rem" }),
+		css.rule(".attachment.vertical .actions", {
+			position: "absolute",
+			top: "0.5rem",
+			right: "0.5rem",
+		}),
+	);
+}
+
 function native() {
 	return css.group(
 		css.rule("details.accordion", {
@@ -705,9 +847,21 @@ function native() {
 			margin_top: "-1px",
 		}),
 		css.rule("details.accordion summary", {
+			display: "flex",
+			align_items: "center",
+			justify_content: "space-between",
+			gap: vars.gap,
 			padding: "0.8rem 1rem",
 			cursor: "pointer",
 			font_weight: "600",
+		}),
+		css.rule("details.accordion > summary::after", {
+			content: "'▾'",
+			transform_origin: "center",
+			transition: `transform ${vars.motion.duration.base} ${vars.motion.easing.out}`,
+		}),
+		css.rule("details.accordion[open] > summary::after", {
+			transform: "rotate(180deg)",
 		}),
 		css.rule("details.accordion > :not(summary)", { padding: "0 1rem 1rem" }),
 		css.rule("dialog", {
@@ -1062,6 +1216,7 @@ export default css.named({
 	popover: popover(),
 	alert: alert(),
 	avatar: avatar(),
+	attachment: attachment(),
 	native: native(),
 	feedback: feedback(),
 	pagination: pagination(),

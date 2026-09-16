@@ -462,7 +462,7 @@ export default named({
 			__motion_animation_duration: fast,
 			__motion_animation_ease: easeIn,
 		}),
-		rule(".accordion", {
+		rule(".accordion:not(details)", {
 			display: "grid",
 			grid_template_rows: "auto 0fr",
 			transition: `grid-template-rows ${slow} ${softer}`,
@@ -470,7 +470,7 @@ export default named({
 		rule(".accordion > :not(summary)", {
 			overflow: "clip",
 		}),
-		rule([".accordion.is-open", ".accordion[open]"], {
+		rule([".accordion:not(details).is-open", ".accordion:not(details)[open]"], {
 			grid_template_rows: "auto 1fr",
 		}),
 		namedAnimation(".details-reveal", "details-reveal", {

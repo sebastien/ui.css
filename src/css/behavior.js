@@ -109,25 +109,31 @@ export default named({
 		rule("details[open]", {
 			__details_open_show_display: "inherit",
 			__details_open_hide_display: "none",
-			__details_open_rotate: vars.motion.rotation,
 		}),
 		rule(".open-show, .when-open", {
 			display: "var(--details-open-show-display)",
 		}),
 		rule(".open-hide", { display: "var(--details-open-hide-display)" }),
+		// Resolve the rotation on the rotating element itself so that `.r-90`/
+		// `.r-180` can be set there (its `--motion-rotation` is not visible to
+		// the ancestor `details`). `> summary` keeps nested details correct.
+		rule("details[open] > summary .open-rotate", {
+			__details_open_rotate: "var(--motion-rotation, 180deg)",
+		}),
 		rule(".open-rotate", {
 			transform: "rotate(var(--details-open-rotate, 0deg))",
 			transform_origin: "center",
 			transition: `transform ${vars.motion.duration.fast} ${vars.motion.easing.standard}`,
 		}),
 		rule("details::details-content", {
-			transition: `height ${vars.motion.duration.fast} ${vars.motion.easing.standard}, opacity ${vars.motion.duration.fast} ${vars.motion.easing.standard}`,
+			transition: `height ${vars.motion.duration.base} ${vars.motion.easing.out}, content-visibility ${vars.motion.duration.base} ${vars.motion.easing.out} allow-discrete`,
 			height: "0",
+			content_visibility: "hidden",
 			overflow: "clip",
 		}),
 		rule("details[open]::details-content", {
 			height: "auto",
-			opacity: "1",
+			content_visibility: "visible",
 		}),
 	),
 	rotation: group(
