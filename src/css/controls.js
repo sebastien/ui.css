@@ -566,6 +566,11 @@ function action(selector, ...rest) {
 		css.rule("&.compacted", {
 			padding: vars.control.padding.compacted.or("0.1em 0.15em"),
 		}),
+		// Expanded density: the large step above the default padding.
+		css.rule("&.expanded", {
+			padding: vars.action.padding.expanded.or("0.5em 1.5em"),
+			font_size: vars.action.font.size.expanded.or("1em"),
+		}),
 		// Semantic fills: prefer --color-{semantic}-background when defined
 		// (neutral → light surface), else the solid semantic color.
 		...colors.semantic.map((color) =>
@@ -802,6 +807,8 @@ function checkbox() {
 		}),
 		css.rule("&.compact", {
 			padding: "0em",
+			width: vars.checkbox.size.small.or("1em"),
+			min_width: vars.checkbox.size.small.or("1em"),
 		}),
 	);
 }
@@ -830,7 +837,7 @@ function radio() {
 		css.rule("&::before", {
 			content: '""',
 			aspect_ratio: "1",
-			width: "0.45em",
+			width: vars.radio.dot.size.or("0.45em"),
 			height: "auto",
 			border_radius: "50%",
 			justify_self: "center",

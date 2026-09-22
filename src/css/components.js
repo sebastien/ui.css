@@ -54,6 +54,15 @@ function pill(...rest) {
 		css.rule("&.expanded", {
 			padding: "0.5em 1.25em",
 		}),
+		// Badge: fixed circular counter chip (number badge).
+		css.rule("&.badge", {
+			width: vars.badge.size.or("1.25rem"),
+			aspect_ratio: "1",
+			justify_content: "center",
+			padding: "0em",
+			line_height: "1",
+			font_size: "0.75rem",
+		}),
 		// Color variants: solid color bg with light text
 		...colors.semantic.map((color) =>
 			css.rule(css.mods("&", color), {
@@ -393,19 +402,23 @@ function section() {
 			blend,
 			vars.background.color.opacity,
 		);
+	const radius = vars.section.border.radius.or(vars.border.radius[1]);
 	return css.group(
 		css.rule("details.section", {
 			border: `1px solid ${border}`,
-			border_radius: `${vars.border.radius[1]}`,
+			border_radius: `${radius}`,
 			margin_bottom: `${vars.margin[2]}`,
 		}),
 
 		css.rule("details.section summary", {
+			display: "flex",
+			align_items: "center",
+			gap: vars.gap[1],
 			cursor: "pointer",
 			user_select: "none",
-			padding: `${vars.pad[2]}`,
+			padding: vars.section.summary.pad.or(`${vars.pad[2]}`),
 			background_color: background(0.7),
-			border_radius: `${vars.border.radius[1]} ${vars.border.radius[1]} 0 0`,
+			border_radius: `${radius} ${radius} 0 0`,
 			font_weight: "600",
 			transition: "background-color 0.2s ease",
 		}),
@@ -414,25 +427,25 @@ function section() {
 			background_color: background(0.6),
 		}),
 
-		css.rule("details.section summary:before", {
+		// Marker sits at the far end of the summary row.
+		css.rule("details.section summary:after", {
 			content: "'▸'",
 			display: "inline-block",
-			margin_right: `${vars.gap[1]}`,
+			margin_left: "auto",
 			transition: "transform 0.2s ease",
 			transform_origin: "center",
 		}),
 
-		css.rule("details.section[open] summary:before", {
+		css.rule("details.section[open] summary:after", {
 			transform: "rotate(90deg)",
 		}),
 
 		css.rule("details.section[open] summary", {
-			border_radius: `${vars.border.radius[1]} ${vars.border.radius[1]} 0 0`,
 			border_bottom: `1px solid ${border}`,
 		}),
 
 		css.rule("details.section > *:not(summary)", {
-			padding: `${vars.pad[2]}`,
+			padding: vars.section.body.pad.or(`${vars.pad[2]}`),
 		}),
 	);
 }
