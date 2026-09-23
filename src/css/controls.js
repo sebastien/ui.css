@@ -3,13 +3,20 @@ import colors from "./colors.js";
 
 const control = {
 	color: Object.assign(
-		(blend = 1.0, opacity = 1.0, tint = vars.color.paper) =>
-			colors.mixed(
+		(blend = 1.0, opacity = 1.0, tint = vars.color.paper) => {
+			// Full-strength, fully opaque paints collapse to the base var
+			// chain: the mix would be a no-op, and a 0%-weight side is
+			// degenerate in Chromium (the surviving hue is dropped).
+			if (blend === 1 && opacity === 1) {
+				return control.color.base();
+			}
+			return colors.mixed(
 				control.color.base(),
 				control.color.tint(tint),
 				control.color.blend(blend),
 				control.color.opacity(opacity),
-			),
+			);
+		},
 		{
 			base: (fallback = vars.color.neutral) =>
 				vars.control.color.base.or(fallback),
@@ -25,13 +32,20 @@ const control = {
 			opacity = 1.0,
 			tint = vars.color.paper,
 			base = vars.color.neutral,
-		) =>
-			colors.mixed(
+		) => {
+			// Full-strength, fully opaque paints collapse to the base var
+			// chain: the mix would be a no-op, and a 0%-weight side is
+			// degenerate in Chromium (the surviving hue is dropped).
+			if (blend === 1 && opacity === 1) {
+				return control.background.base(base);
+			}
+			return colors.mixed(
 				control.background.base(base),
 				control.background.tint(tint),
 				control.background.blend(blend),
 				control.background.opacity(opacity),
-			),
+			);
+		},
 		{
 			base: (fallback = vars.color.neutral) =>
 				vars.control.background.base.or(vars.control.color.base, fallback),
@@ -42,13 +56,19 @@ const control = {
 		},
 	),
 	border: Object.assign(
-		(blend = 0.8, opacity = 0.75, tint = vars.color.paper) =>
-			colors.mixed(
+		(blend = 0.8, opacity = 0.75, tint = vars.color.paper) => {
+			// Full-strength, fully opaque paints collapse to the base var
+			// chain (degenerate 0%-weight mix in Chromium otherwise).
+			if (blend === 1 && opacity === 1) {
+				return control.border.base();
+			}
+			return colors.mixed(
 				control.border.base(),
 				control.border.tint(tint),
 				control.border.blend(blend),
 				control.border.opacity(opacity),
-			),
+			);
+		},
 		{
 			// Generic `.bd-*` overrides win over the interactive tokens, which
 			// always have root defaults, so only one fallback step is reachable.
@@ -63,13 +83,19 @@ const control = {
 		},
 	),
 	outline: Object.assign(
-		(blend = 0.8, opacity = 0.5, tint = vars.color.paper) =>
-			colors.mixed(
+		(blend = 0.8, opacity = 0.5, tint = vars.color.paper) => {
+			// Full-strength, fully opaque paints collapse to the base var
+			// chain (degenerate 0%-weight mix in Chromium otherwise).
+			if (blend === 1 && opacity === 1) {
+				return control.outline.base();
+			}
+			return colors.mixed(
 				control.outline.base(),
 				control.outline.tint(tint),
 				control.outline.blend(blend),
 				control.outline.opacity(opacity),
-			),
+			);
+		},
 		{
 			// Generic `.ol-*` overrides win over the interactive tokens, which
 			// always have root defaults, so only one fallback step is reachable.
@@ -247,6 +273,14 @@ const outlineFieldHosts = [
 function fieldchrome() {
 	return css.rule(fieldHosts, {
 		font_size: vars.field.font.size.or(vars.control.font.size, "1em"),
+		font_weight: vars.field.font.weight.or(
+			vars.control.font.weight,
+			vars.font.controls.weight,
+		),
+		line_height: vars.field.font.line.or(
+			vars.control.font.line,
+			vars.font.controls.line,
+		),
 		padding: vars.field.padding.or("0.5em 0.75em"),
 		border_radius: vars.field.border.radius.or(
 			vars.control.border.radius,
@@ -276,12 +310,155 @@ function fieldchrome() {
 	});
 }
 
+// Composite field chrome: .input/.textarea used as a container wraps slots
+// around a bare control. Composite behavior keys off "has element children"
+// (:has(> *)), so bare input.input / textarea.textarea keep the standard
+// field chrome untouched. Slots: .leading/.prefix and .trailing/.suffix (dim
+// edge slots), .unit (framed, tinted segment), .note (hint), plus bare svg
+// icons. The child control is reset to transparent and flexed to fill; the
+// container keeps the field chrome (border, radius, padding-inline) from
+// fieldbase while dropping its block padding.
+function fieldslots() {
+	const hosts = [".input", ".textarea"];
+	// Composite gate: "holds at least one slot or control child". The :is()
+	// list lifts specificity to (0,2,0) so the composite's padding-block
+	// reset also wins over size variants (.compact/.tight re-add padding via
+	// a (0,2,0) shorthand); order alone would lose that tie.
+	const composite = hosts.map(
+		(s) =>
+			`${s}:has(> :is(input, textarea, svg, .leading, .trailing, .unit, .note, .prefix, .suffix))`,
+	);
+	const unit = ":is(.unit, .prefix, .suffix)";
+	return css.group(
+		css.rule(composite, {
+			display: "inline-flex",
+			flex_direction: "row",
+			align_items: "stretch",
+			gap: vars.field.gap.or("0.5em"),
+			padding_block: "0px",
+			color: vars.field.slot.color.or(vars.color.neutral),
+			text_wrap: "nowrap",
+		}),
+		css.rule(
+			hosts.map((s) => `${s} > :is(.leading, .trailing, .unit, .note, .prefix, .suffix)`),
+			{
+				display: "inline-flex",
+				align_items: "center",
+				flex_shrink: "0",
+			},
+		),
+		css.rule(hosts.map((s) => `${s} > ${unit}`), {
+			border_left_width: vars.border.width.or("1px"),
+			border_left_style: vars.border.style.or("solid"),
+			border_right_width: vars.border.width.or("1px"),
+			border_right_style: vars.border.style.or("solid"),
+			border_color: "inherit",
+			background_color: vars.field.unit.background.or(
+				vars.color.neutral.background,
+				"transparent",
+			),
+			padding: vars.field.unit.padding.or("0.7143em 0.5714em"),
+		}),
+		css.rule(hosts.map((s) => `${s}.compact > ${unit}`), {
+			padding: vars.field.unit.padding.compact.or("0.6667em 0.5em"),
+		}),
+		css.rule(hosts.map((s) => `${s} > :is(input, textarea)`), {
+			flex: "1 1 0%",
+			width: "100%",
+			min_width: "0px",
+			appearance: "none",
+			background_color: "transparent",
+			border_width: "0px",
+			outline_width: "0px",
+			font: "inherit",
+			color: vars.color.surface_text,
+			padding: `${vars.field.input_padding_block} 0px`,
+		}),
+		css.rule(hosts.map((s) => `${s}.compact > :is(input, textarea)`), {
+			padding: `${vars.field.input_padding_block_compact} 0px`,
+		}),
+		// Focus is expressed on the composite (border via :focus-within), not
+		// as an inner outline: the element-level control focus ring would
+		// otherwise paint inside the container.
+		css.rule(hosts.map((s) => `${s} > :is(input, textarea):focus`), {
+			outline_width: "0px",
+		}),
+		css.rule(".textarea > textarea", {
+			padding: vars.field.input_padding_block,
+		}),
+		css.rule(hosts.map((s) => `${s} svg`), {
+			width: vars.field.icon_size,
+			height: vars.field.icon_size,
+			flex_shrink: "0",
+		}),
+		css.rule(hosts.map((s) => `${s}.no-border`), {
+			border_style: "none",
+		}),
+		css.rule(hosts.map((s) => `${s}.no-border > ${unit}`), {
+			border_style: "none",
+		}),
+		// Edge-flush units: a unit-like segment sitting at a horizontal edge
+		// takes over that edge's padding — the container drops it so the
+		// tinted unit background reaches the border with no white gap.
+		// Floating slots (.leading/.trailing/.note) stay inset.
+		css.rule(hosts.map((s) => `${s}:has(> ${unit}:first-child)`), {
+			padding_inline_start: "0px",
+		}),
+		css.rule(hosts.map((s) => `${s}:has(> ${unit}:last-child)`), {
+			padding_inline_end: "0px",
+		}),
+		// A flush unit rounds its outer corners to the container's radius
+		// (inherit picks up whatever the container resolves, per corner) and
+		// drops its outer side border: doubling the container's own border
+		// reads as a seam. The inner side border keeps its separator role.
+		css.rule(
+			hosts.map((s) => `${s}:has(> ${unit}:first-child) > ${unit}:first-child`),
+			{
+				border_start_start_radius: "inherit",
+				border_end_start_radius: "inherit",
+				border_inline_start_width: "0px",
+			},
+		),
+		css.rule(
+			hosts.map((s) => `${s}:has(> ${unit}:last-child) > ${unit}:last-child`),
+			{
+				border_start_end_radius: "inherit",
+				border_end_end_radius: "inherit",
+				border_inline_end_width: "0px",
+			},
+		),
+		// A disabled child disables the whole composite: keep the container
+		// interactive-free and let the AL-style disabled recipe (theme) paint
+		// it, instead of the control-level opacity dimming the text twice.
+		css.rule(hosts.map((s) => `${s}:has(> :disabled)`), {
+			pointer_events: "none",
+		}),
+		css.rule(hosts.map((s) => `${s}:has(> :disabled) > :is(input, textarea)`), {
+			opacity: "1",
+			color: "inherit",
+		}),
+	);
+}
+
 function fieldstates() {
 	return css.group(
 		css.rule(
 			fieldHosts.map((s) => `${s}.compact`),
 			{
-				padding: vars.field.padding.compact.or("0.35em 0.5em"),
+				padding: vars.field.padding.compact.or(
+					vars.control.padding.compact,
+					"0.35em 0.5em",
+				),
+				font_size: vars.field.font.size.compact.or(
+					vars.field.font.size,
+					vars.control.font.size,
+					"1em",
+				),
+				line_height: vars.field.font.line.compact.or(
+					vars.field.font.line,
+					vars.control.font.line,
+					vars.font.controls.line,
+				),
 			},
 		),
 		css.rule(
@@ -534,6 +711,10 @@ function action(selector, ...rest) {
 		}),
 		css.rule("&", {
 			font_size: vars.action.font.size.or(vars.control.font.size, "1em"),
+			font_weight: vars.action.font.weight.or(
+				vars.control.font.weight,
+				vars.font.controls.weight,
+			),
 			// Cursor
 			cursor: "pointer",
 			// Default fill uses the light neutral surface (not medium neutral,
@@ -549,7 +730,7 @@ function action(selector, ...rest) {
 			background_color: control.background(1.0, 1.0, vars.color.ink),
 			// Prefer --text-color when .tx / .tx-* utilities set it; otherwise
 			// contrast against the accent fill.
-			color: `var(--text-color, ${controlContrast()})`,
+			color: vars.text.color.or(controlContrast()),
 			// Border
 			border_width: vars.action.border.width.or(
 				vars.control.border.width,
@@ -562,14 +743,30 @@ function action(selector, ...rest) {
 		}),
 		css.rule("&.compact", {
 			padding: vars.control.padding.compact.or("0.15em 0.25em"),
+			font_weight: vars.action.font.weight.compact.or(
+				vars.action.font.weight,
+				vars.control.font.weight,
+				vars.font.controls.weight,
+			),
 		}),
 		css.rule("&.compacted", {
 			padding: vars.control.padding.compacted.or("0.1em 0.15em"),
+			font_size: vars.action.font.size.compacted.or("0.75em"),
+			font_weight: vars.action.font.weight.compacted.or(
+				vars.action.font.weight,
+				vars.control.font.weight,
+				vars.font.controls.weight,
+			),
 		}),
 		// Expanded density: the large step above the default padding.
 		css.rule("&.expanded", {
 			padding: vars.action.padding.expanded.or("0.5em 1.5em"),
 			font_size: vars.action.font.size.expanded.or("1em"),
+			font_weight: vars.action.font.weight.expanded.or(
+				vars.action.font.weight,
+				vars.control.font.weight,
+				vars.font.controls.weight,
+			),
 		}),
 		// Semantic fills: prefer --color-{semantic}-background when defined
 		// (neutral → light surface), else the solid semantic color.
@@ -594,12 +791,27 @@ function action(selector, ...rest) {
 				vars.color.ink,
 			),
 		}),
-		// Hover state, typically a blent to paper
+		// Hover state, typically a blend to paper. The state rule owns the
+		// tint/blend channels: the base rule pins --control-background-blend,
+		// so the state values must be declared (not just used as var()
+		// fallbacks) to take effect. Brand hooks: --action-hover-tint and
+		// --action-hover-blend.
 		css.rule(css.mods("&", "hover"), {
+			__control_background_tint: vars.action.hover.tint.or(
+				vars.control.color.tint,
+				vars.color.paper,
+			),
+			__control_background_blend: vars.action.hover.blend.or(0.9),
 			background_color: control.background(0.9, 1.0),
 		}),
-		// Active state, typically a blend to ink
+		// Active state, typically a blend to ink. Brand hooks:
+		// --action-active-tint and --action-active-blend.
 		css.rule(css.mods("&", "active"), {
+			__control_background_tint: vars.action.active.tint.or(
+				vars.control.color.tint,
+				vars.color.ink,
+			),
+			__control_background_blend: vars.action.active.blend.or(0.9),
 			background_color: control.background(0.9, 1.0, vars.color.ink),
 		}),
 		// Disabled variant
@@ -618,7 +830,7 @@ function action(selector, ...rest) {
 				__control_default_outline_opacity: 0.4,
 				__control_border_width: vars.border.width.or("2px"),
 				// Prefer --text-color from .tx utilities over the accent
-				color: `var(--text-color, ${control.color(1.0, 1.0, vars.color.ink)})`,
+				color: vars.text.color.or(control.color(1.0, 1.0, vars.color.ink)),
 				border_width: vars.control.border.width,
 				border_color: control.border(1.0, 1.0, vars.color.paper),
 				// Wash from solid accent at opacity (not light surface token)
@@ -647,7 +859,7 @@ function action(selector, ...rest) {
 				__control_background_opacity: 0,
 				// Transparent fill: text is the accent (not contrast-color of
 				// the accent, which yields white and disappears on light surfaces).
-				color: `var(--text-color, ${control.color(1.0, 1.0, vars.color.ink)})`,
+				color: vars.text.color.or(control.color(1.0, 1.0, vars.color.ink)),
 				background_color: control.background(1.0, 0),
 			},
 			css.rule("&:hover, &.hover", {
@@ -664,7 +876,7 @@ function action(selector, ...rest) {
 				__control_color_base: vars.color.ink,
 				__control_border_opacity: 0,
 				__control_background_opacity: 0,
-				color: `var(--text-color, ${control.color(1.0, 1.0, vars.color.ink)})`,
+				color: vars.text.color.or(control.color(1.0, 1.0, vars.color.ink)),
 				background_color: control.background(1.0, 0),
 			},
 			css.rule("&:hover, &.hover", {
@@ -681,7 +893,7 @@ function action(selector, ...rest) {
 				__control_border_opacity: 0.8,
 				__control_background_opacity: 1.0,
 				background_color: control.background(1.0, 1.0, vars.color.ink),
-				color: `var(--text-color, ${controlContrast()})`,
+				color: vars.text.color.or(controlContrast()),
 			}),
 		),
 		// Explicit color variants win over outline/ghost ink defaults.
@@ -708,7 +920,7 @@ function action(selector, ...rest) {
 			__control_background_base: vars.color.neutral,
 			__control_background_tint: vars.color.neutral,
 			__control_background_blend: 1.0,
-			color: `var(--text-color, ${control.color(0.3, 1.0, vars.color.ink)})`,
+			color: vars.text.color.or(control.color(0.3, 1.0, vars.color.ink)),
 			border_color: control.border(0.3, 1.0, vars.color.ink),
 		}),
 		css.rule("&.ghost.neutral", {
@@ -856,7 +1068,11 @@ function radio() {
 		}),
 		css.rule("&:checked::before, &.checked::before", {
 			color: controlContrast(),
-			transform: "scale(1)",
+			// Rest state carries no transform: a scale(1) layer snaps to
+			// integer device pixels, so at fractional layout offsets (dpr 1)
+			// the dot shifts up to half a pixel against the anti-aliased
+			// circle. none still transitions from scale(0).
+			transform: "none",
 		}),
 		css.rule("&:disabled, &.disabled", {
 			cursor: "not-allowed",
@@ -1091,12 +1307,12 @@ function range() {
 			background_color: control.color(1.0, 1.0, vars.color.ink),
 		}),
 		css.rule("&.tinted::-webkit-slider-runnable-track", {
-			background: `linear-gradient(to right, ${control.color(1.0, 1.0, vars.color.ink)} 0 var(--range-progress, 50%), ${colors.mixed(
+			background: `linear-gradient(to right, ${control.color(1.0, 1.0, vars.color.ink)} 0 ${vars.range.progress.or("50%")}, ${colors.mixed(
 				vars.color.neutral,
 				vars.color.page.or(vars.color.paper),
 				0.2,
 				0.95,
-			)} var(--range-progress, 50%) 100%)`,
+			)} ${vars.range.progress.or("50%")} 100%)`,
 		}),
 		css.rule("&.tinted::-moz-range-progress", {
 			background_color: control.color(1.0, 1.0, vars.color.ink),
@@ -1731,7 +1947,7 @@ function tab() {
 			__background_color_base: vars.accent.color.or(vars.color.surface),
 			__background_color_opacity: 1.0,
 			color: `contrast-color(${vars.background.color})`,
-			box_shadow: `var(--shadow-x) var(--shadow-y) var(--shadow-spread) var(--shadow-color)`,
+			box_shadow: `${vars.shadow.x} ${vars.shadow.y} ${vars.shadow.spread} ${vars.shadow.color}`,
 		}),
 		css.rule(".tabs:not(.group):not(.outline):not(.bar) .tab:hover", {
 			__background_color_base: vars.color.neutral,
@@ -1927,16 +2143,16 @@ function fileinput() {
 			border: "0",
 			border_inline_end: `1px solid ${control.border()}`,
 			border_radius: "0",
-			background_color: "var(--file-background)",
-			color: "contrast-color(var(--file-background))",
+			background_color: vars.file.background,
+			color: `contrast-color(${vars.file.background})`,
 			cursor: "pointer",
 			transition: transition,
 		}),
 		css.rule("&:hover::file-selector-button", {
-			background_color: `color-mix(in oklch, var(--file-background), ${vars.color.surface} 12%)`,
+			background_color: `color-mix(in oklch, ${vars.file.background}, ${vars.color.surface} 12%)`,
 		}),
 		css.rule("&:active::file-selector-button", {
-			background_color: `color-mix(in oklch, var(--file-background), ${vars.color.ink} 12%)`,
+			background_color: `color-mix(in oklch, ${vars.file.background}, ${vars.color.ink} 12%)`,
 		}),
 		css.rule("&.compact::file-selector-button", {
 			padding: vars.control.padding.compact.or("0.15em 0.25em"),
@@ -1961,6 +2177,7 @@ export default css.named({
 	base: basechrome(),
 	fieldbase: fieldchrome(),
 	fieldstates: fieldstates(),
+	fieldslots: fieldslots(),
 	colorvariants: colorvariants(),
 	fileinput: fileinput(),
 	actions: action([
@@ -1970,16 +2187,35 @@ export default css.named({
 		"input[type=button]",
 		"input[type=reset]",
 	]),
-	fields: field([
-		".input",
-		// :where() keeps element-level specificity so per-component rules win
-		"input:where(:not([type=submit],[type=button],[type=reset],[type=image]):not(.button))",
-		"textarea",
-		".textarea",
-		"select",
-		".select",
-		".group > :not(input, textarea, select, button, .input, .textarea, .select, .button)",
-	]),
+	fields: css.group(
+		field([
+			".input",
+			// :where() keeps element-level specificity so per-component rules win
+			"input:where(:not([type=submit],[type=button],[type=reset],[type=image]):not(.button))",
+			"textarea",
+			".textarea",
+			"select",
+			".select",
+			".group > :not(input, textarea, select, button, .input, .textarea, .select, .button)",
+		]),
+		// Fields fill their container by default (override with --field-width).
+		// Sibling rule: nesting under the field hosts would turn these into
+		// descendant selectors. Excludes the .group > :not(...) catch-all,
+		// which must not stretch arbitrary children, and self-sizing controls
+		// (checkbox, radio, range, file, button-like inputs).
+		css.rule(
+			[
+				".input",
+				"input:where(:not([type=submit],[type=button],[type=reset],[type=image],[type=checkbox],[type=radio],[type=range],[type=file]):not(.button))",
+				"textarea",
+				".textarea",
+				"select",
+				".select",
+				".file",
+			],
+			{ width: vars.field.width },
+		),
+	),
 	checkbox: checkbox(),
 	radio: radio(),
 	range: range(),

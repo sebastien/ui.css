@@ -124,10 +124,22 @@ function colormix(
 	blend = 1.0,
 	opacity = 1.0,
 ) {
+	const wrap = (color) =>
+		opacity === undefined || opacity === 1
+			? color
+			: `color-mix(in oklch, ${color}, transparent calc(100% - 100% * ${opacity}))`;
+	// Full-strength blends collapse to the surviving color: a mix with a 0%
+	// weight side is degenerate in Chromium, which drops the surviving hue
+	// (oklch(… none) renders as hue 0). Only literal full-strength calls
+	// collapse; var()-driven blends keep the runtime-responsive expression.
+	if (blend === 1) {
+		return wrap(base);
+	}
+	if (blend === 0) {
+		return wrap(tint);
+	}
 	const inner = `color-mix(in oklch, ${base}, ${tint} calc(100% - 100% * ${blend}))`;
-	return opacity === undefined
-		? inner
-		: `color-mix(in oklch, ${inner}, transparent calc(100% - 100% * ${opacity}))`;
+	return wrap(inner);
 }
 
 // Function: colormixin

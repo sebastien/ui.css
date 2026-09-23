@@ -18,15 +18,16 @@ function pill(...rest) {
 		css.rule("&", {
 			// Box
 			display: "inline-flex",
-			padding: "0.25em 1em",
-			font_size: "0.75em",
+			padding: vars.pill.padding,
+			font_size: vars.pill.font_size,
 			font_weight: "500",
 			align_items: "center",
 			white_space: "nowrap",
-			gap: vars.gap,
-			line_height: "1.15em",
-			// Border
-			border_width: "1px",
+			gap: vars.pill.gap.or(vars.gap),
+			line_height: vars.pill.line_height,
+			// Border — transparent by default (borderless like the reference);
+			// the outline variant re-enables it.
+			border_width: "0px",
 			border_style: "solid",
 			border_color: "transparent",
 			border_radius: "9999px",
@@ -36,23 +37,28 @@ function pill(...rest) {
 			__background_color_tint: vars.color.surface,
 			__background_color_blend: 1.0,
 			__background_color_opacity: 1.0,
-			background_color: vars.background.color,
-			color: vars.color.paper,
+			background_color: vars.pill.bg.or(vars.background.color),
+			color: vars.pill.text.or(vars.color.paper),
 		}),
 		css.rule("&.dot > *:first-child:before", {
 			display: "inline-block",
 			content: '""',
-			width: "0.65em",
-			height: "0.65em",
-			margin_right: vars.gap,
+			width: vars.pill.dot_size,
+			height: vars.pill.dot_size,
+			margin_right: vars.pill.gap.or(vars.gap),
 			border_radius: "50%",
-			background_color: "currentColor",
+			background_color: vars.pill.dot_color.or("currentColor"),
+		}),
+		// Icon slot: inline svg sized to the pill font (like the label).
+		css.rule("& svg", {
+			width: vars.pill.icon_size,
+			height: vars.pill.icon_size,
 		}),
 		css.rule("&.compact", {
-			padding: "0.125em 0.5em",
+			padding: vars.pill.padding.compact,
 		}),
 		css.rule("&.expanded", {
-			padding: "0.5em 1.25em",
+			padding: vars.pill.padding.expanded,
 		}),
 		// Badge: fixed circular counter chip (number badge).
 		css.rule("&.badge", {
@@ -80,21 +86,22 @@ function pill(...rest) {
 		}),
 		// Tinted: color @ 10% bg with full color text
 		css.rule("&.tinted", {
-			__background_color_base: "var(--accent-color)",
+			__background_color_base: vars.accent.color,
 			__background_color_tint: "transparent",
 			__background_color_blend: 0.1,
 			__background_color_opacity: 1.0,
-			color: `var(--accent-color)`,
+			color: vars.pill.text.or(vars.accent.color),
 			border_color: "transparent",
 		}),
 		// Outline: transparent bg with color border and darkened text
 		css.rule("&.outline", {
-			__background_color_base: "var(--accent-color)",
+			__background_color_base: vars.accent.color,
 			__background_color_tint: vars.color.paper,
 			__background_color_blend: 1.0,
 			__background_color_opacity: 0,
-			border_color: `color-mix(in oklch, var(--accent-color), ${vars.color.surface} 60%)`,
-			color: `color-mix(in oklch, var(--accent-color), ${vars.color.surface_text} 40%)`,
+			border_width: "1px",
+			border_color: `color-mix(in oklch, ${vars.accent.color}, ${vars.color.surface} 60%)`,
+			color: `color-mix(in oklch, ${vars.accent.color}, ${vars.color.surface_text} 40%)`,
 		}),
 		...rest,
 	);
@@ -407,7 +414,11 @@ function section() {
 		css.rule("details.section", {
 			border: `1px solid ${border}`,
 			border_radius: `${radius}`,
-			margin_bottom: `${vars.margin[2]}`,
+			margin_bottom: vars.section.margin.or(vars.margin[2]),
+			// Panel height animation (progressive): interpolate-size enables
+			// keyword interpolation for this subtree; ::details-content
+			// carries the transition. Ignored where unsupported.
+			interpolate_size: "allow-keywords",
 		}),
 
 		css.rule("details.section summary", {
@@ -419,33 +430,50 @@ function section() {
 			padding: vars.section.summary.pad.or(`${vars.pad[2]}`),
 			background_color: background(0.7),
 			border_radius: `${radius} ${radius} 0 0`,
-			font_weight: "600",
+			font_weight: "inherit",
 			transition: "background-color 0.2s ease",
 		}),
 
-		css.rule("details.section summary:hover", {
-			background_color: background(0.6),
+		// Hover raises elevation instead of tinting the header
+		// (AL shadow-sm -> shadow-md).
+		css.rule("details.section:where(:hover)", {
+			box_shadow: `calc(${vars.shadow.x} * 2) calc(${vars.shadow.y} * 2) calc(${vars.shadow.spread} * 2) ${vars.shadow.color}`,
 		}),
 
-		// Marker sits at the far end of the summary row.
+		// Marker: border-drawn chevron pointing down, rotating to up when
+		// open (AL rotates its svg chevron 180deg over 300ms). Glyph box
+		// 0.75em with ~0.12em stroke ≈ the AL 12px/2px chevron inside a
+		// 24px icon slot.
 		css.rule("details.section summary:after", {
-			content: "'▸'",
+			content: '""',
 			display: "inline-block",
 			margin_left: "auto",
-			transition: "transform 0.2s ease",
+			width: "0.75em",
+			height: "0.75em",
+			border_right: "max(2px, 0.12em) solid currentColor",
+			border_bottom: "max(2px, 0.12em) solid currentColor",
+			transform: "rotate(45deg)",
 			transform_origin: "center",
+			transition: "transform 0.3s ease",
 		}),
 
 		css.rule("details.section[open] summary:after", {
-			transform: "rotate(90deg)",
+			transform: "rotate(225deg)",
 		}),
 
-		css.rule("details.section[open] summary", {
-			border_bottom: `1px solid ${border}`,
+		css.rule("details.section::details-content", {
+			transition: "height 0.5s ease-in-out, content-visibility 0.5s ease-in-out",
 		}),
 
 		css.rule("details.section > *:not(summary)", {
 			padding: vars.section.body.pad.or(`${vars.pad[2]}`),
+			// Body reads as the same surface as the header (AL: white panel
+			// on a white item). Both compose through the shared background
+			// channels, so setting --background-color-* on the details (or
+			// an ancestor, custom props inherit through shadow boundaries)
+			// retints header and body together; a .bg-* class on a wrapper
+			// element around the composite works the same way.
+			background_color: background(0.7),
 		}),
 	);
 }
@@ -1091,7 +1119,7 @@ function meter() {
 	];
 	const mozValue = ["progress::-moz-progress-bar", "meter::-moz-meter-bar"];
 	const bg = (color) => ({ background: `${color} !important` });
-	const meterColor = "var(--meter-color, var(--color-neutral))";
+	const meterColor = vars.meter.color.or(vars.color.neutral);
 
 	return css.group(
 		css.rule(["progress", "meter"], {
@@ -1170,7 +1198,7 @@ function pagination() {
 		}),
 		css.rule(".pagination > *", { display: "flex" }),
 		css.rule(".pagination > * > :is(a, .button)", {
-			__control_color_base: "var(--accent-color)",
+			__control_color_base: vars.accent.color,
 			display: "inline-flex",
 			align_items: "center",
 			justify_content: "center",
@@ -1204,12 +1232,12 @@ function pagination() {
 		css.rule(
 			".pagination > * > :is(a, .button)[aria-current=page], .pagination > * > :is(a, .button).active",
 			{
-				__control_background_base: "var(--accent-color)",
+				__control_background_base: vars.accent.color,
 				__control_background_tint: vars.color.paper,
 				__control_background_blend: 1.0,
 				__control_background_opacity: 1.0,
-				color: "contrast-color(var(--accent-color))",
-				background_color: "var(--accent-color)",
+				color: `contrast-color(${vars.accent.color})`,
+				background_color: vars.accent.color,
 			},
 		),
 	);

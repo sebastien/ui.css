@@ -839,6 +839,46 @@ const result = "fast, consistent styling"</code></pre>
           <span class="small">This field is required</span>
         </div>
         <div class="stack g-3">
+          <p class="b m-0">Field - Chrome slots</p>
+          <p class="m-0 dim">Composite <code>.input</code> hosts slots around a bare control: <code>.leading</code>/<code>.prefix</code>, framed <code>.unit</code>/<code>.suffix</code>, <code>.trailing</code>, <code>.note</code>, and sized <code>svg</code> icons. A unit-like segment at an edge takes over that edge's padding (flush with the border).</p>
+          <div class="grid col-2 g-4">
+            <span class="input">
+              <span class="leading">leading</span>
+              <input type="text" placeholder="placeholder" />
+              <small class="note">note</small>
+              <span class="trailing">trailing</span>
+            </span>
+            <span class="input compact">
+              <span class="leading">leading</span>
+              <input type="text" placeholder="compact" />
+              <span class="unit">unit</span>
+            </span>
+            <span class="input">
+              <span class="prefix">https://</span>
+              <input type="text" placeholder="domain" />
+              <span class="unit">.com</span>
+            </span>
+            <span class="input">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9" /><path d="M12 3a9 9 0 0 1 0 18" /></svg>
+              <input type="text" placeholder="with icon" />
+              <span class="suffix">suffix</span>
+            </span>
+            <span class="input no-border">
+              <input type="text" placeholder="no border" />
+              <span class="unit">kg</span>
+            </span>
+            <span class="input">
+              <span class="prefix">$</span>
+              <input type="text" placeholder="amount" />
+              <span class="suffix">USD</span>
+            </span>
+            <div class="input">
+              <input type="text" value="Unavailable" disabled />
+              <span class="unit">USD</span>
+            </div>
+          </div>
+        </div>
+        <div class="stack g-3">
           <p class="b m-0">Field - Style variants</p>
           <div class="row wrap g-3">
             <input class="input regular fit-w" type="text" value="Regular" />

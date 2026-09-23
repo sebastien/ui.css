@@ -200,12 +200,12 @@ export default named({
 	),
 	surface: group(
 		namedAnimation(".popover-in", "popover-in", {
-			transform_origin: "var(--motion-origin, top center)",
+			transform_origin: vars.motion.origin.or("top center"),
 			__motion_animation_duration: fast,
 			__motion_animation_ease: softer,
 		}),
 		namedAnimation(".popover-out", "popover-out", {
-			transform_origin: "var(--motion-origin, top center)",
+			transform_origin: vars.motion.origin.or("top center"),
 			__motion_animation_duration: fast,
 			__motion_animation_ease: easeIn,
 		}),
@@ -568,7 +568,7 @@ export default named({
 	),
 	stagger: group(
 		rule(".stagger > *", {
-			animation_delay: `calc(var(--motion-stagger-index, 0) * ${vars.motion.stagger.step})`,
+			animation_delay: `calc(${vars.motion.stagger.index.or(0)} * ${vars.motion.stagger.step})`,
 		}),
 		...times(12, (i) =>
 			rule(`.stagger > *:nth-child(${i + 1})`, {

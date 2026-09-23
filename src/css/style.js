@@ -373,8 +373,7 @@ export default named({
 			border_left_color: vars.inset.shadow,
 			border_bottom_color: vars.inset.light,
 			border_right_color: vars.inset.light,
-			box_shadow:
-				"inset 0 var(--depth, 0.25px) calc(var(--depth, 0.25px) * 2) var(--inset-shadow), inset 0 calc(var(--depth, 0.25px) * -1) var(--depth, 0.25px) var(--inset-light)",
+			box_shadow: `inset 0 ${vars.depth.or("0.25px")} calc(${vars.depth.or("0.25px")} * 2) ${vars.inset.shadow}, inset 0 calc(${vars.depth.or("0.25px")} * -1) ${vars.depth.or("0.25px")} ${vars.inset.light}`,
 		}),
 		rule(mods([".outset", ".raised"], undefined, "focus", "hover", "active"), {
 			__inset_shadow: `oklch(0 0 0 / 0.1)`,
@@ -384,20 +383,17 @@ export default named({
 			border_left_color: vars.inset.light,
 			border_bottom_color: vars.inset.shadow,
 			border_right_color: vars.inset.shadow,
-			box_shadow:
-				"0 calc(var(--depth, 0.25px) * 2) calc(var(--depth, 0.25px) * 3) rgb(0 0 0 / 0.12)",
+			box_shadow: `0 calc(${vars.depth.or("0.25px")} * 2) calc(${vars.depth.or("0.25px")} * 3) rgb(0 0 0 / 0.12)`,
 		}),
 		rule(mods([".t-inset"], undefined, "focus", "hover", "active"), {
 			__inset_shadow: `oklch(0 0 0 / 0.1)`,
 			__inset_light: `oklch(1 0 0 / 0.5)`,
-			text_shadow:
-				"calc(var(--depth, 1px) * -1) calc(var(--depth, 1px) * -1) calc(var(--depth, 1px) * 0.5) var(--inset-shadow), var(--depth, 1px) var(--depth, 1px) calc(var(--depth, 1px) * 0.5) var(--inset-light)",
+			text_shadow: `calc(${vars.depth.or("1px")} * -1) calc(${vars.depth.or("1px")} * -1) calc(${vars.depth.or("1px")} * 0.5) ${vars.inset.shadow}, ${vars.depth.or("1px")} ${vars.depth.or("1px")} calc(${vars.depth.or("1px")} * 0.5) ${vars.inset.light}`,
 		}),
 		rule(mods([".t-outset"], undefined, "focus", "hover", "active"), {
 			__inset_shadow: `oklch(0 0 0 / 0.1)`,
 			__inset_light: `oklch(1 0 0 / 0.5)`,
-			text_shadow:
-				"calc(var(--depth, 1px) * -1) calc(var(--depth, 1px) * -1) calc(var(--depth, 1px) * 0.5) var(--inset-light), var(--depth, 1px) var(--depth, 1px) calc(var(--depth, 1px) * 0.5) var(--inset-shadow)",
+			text_shadow: `calc(${vars.depth.or("1px")} * -1) calc(${vars.depth.or("1px")} * -1) calc(${vars.depth.or("1px")} * 0.5) ${vars.inset.light}, ${vars.depth.or("1px")} ${vars.depth.or("1px")} calc(${vars.depth.or("1px")} * 0.5) ${vars.inset.shadow}`,
 		}),
 		rule(mods([".embossed"], undefined, "focus", "hover", "active"), {
 			__inset_shadow: `oklch(0 0 0 / 0.1)`,
@@ -407,8 +403,7 @@ export default named({
 			border_left_color: vars.inset.shadow,
 			border_bottom_color: vars.inset.light,
 			border_right_color: vars.inset.light,
-			box_shadow:
-				"inset 0 var(--depth, 0.25px) calc(var(--depth, 0.25px) * 2) rgb(0 0 0 / 0.12), inset 0 calc(var(--depth, 0.25px) * -1) var(--depth, 0.25px) rgb(255 255 255 / 0.5)",
+			box_shadow: `inset 0 ${vars.depth.or("0.25px")} calc(${vars.depth.or("0.25px")} * 2) rgb(0 0 0 / 0.12), inset 0 calc(${vars.depth.or("0.25px")} * -1) ${vars.depth.or("0.25px")} rgb(255 255 255 / 0.5)`,
 		}),
 	),
 });

@@ -278,16 +278,16 @@ export default named({
 			),
 			delta: group(
 				rule(".d", {
-					transform: `translate(var(--dx, 0px),var(--dy,0px))`,
+					transform: `translate(${vars.dx.or("0px")},${vars.dy.or("0px")})`,
 				}),
 				rule(".dp", {
 					position: "relative",
-					top: "var(--dy, 0px)",
-					left: "var(--dx, 0px)",
+					top: vars.dy.or("0px"),
+					left: vars.dx.or("0px"),
 				}),
 				rule(".dm", {
-					margin_bottom: "var(--dy, 0px)",
-					margin_right: "var(--dx, 0px)",
+					margin_bottom: vars.dy.or("0px"),
+					margin_right: vars.dx.or("0px"),
 				}),
 				...times(8, (_) => rule(`.dr-${_ + 1}`, { __dx: `${_ + 1}px` })),
 				...times(8, (_) => rule(`.dl-${_ + 1}`, { __dx: `-${_ + 1}px` })),
@@ -447,11 +447,10 @@ export default named({
 		rule(".grid-items", {
 			display: "grid",
 			gap: vars.gap,
-			grid_template_columns:
-				"repeat(auto-fit, minmax(min(100%, var(--item-min, 16rem)), 1fr))",
+			grid_template_columns: `repeat(auto-fit, minmax(min(100%, ${vars.item.min.or("16rem")}), 1fr))`,
 		}),
 		rule(".grid-items > *", {
-			max_width: "var(--item-max, none)",
+			max_width: vars.item.max.or("none"),
 		}),
 		rule(".grid.lined > *", {
 			border_right_width: vars.border.width.or("1px"),

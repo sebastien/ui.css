@@ -111,17 +111,17 @@ export default named({
 			__details_open_hide_display: "none",
 		}),
 		rule(".open-show, .when-open", {
-			display: "var(--details-open-show-display)",
+			display: vars.details.open.show.display,
 		}),
-		rule(".open-hide", { display: "var(--details-open-hide-display)" }),
+		rule(".open-hide", { display: vars.details.open.hide.display }),
 		// Resolve the rotation on the rotating element itself so that `.r-90`/
 		// `.r-180` can be set there (its `--motion-rotation` is not visible to
 		// the ancestor `details`). `> summary` keeps nested details correct.
 		rule("details[open] > summary .open-rotate", {
-			__details_open_rotate: "var(--motion-rotation, 180deg)",
+			__details_open_rotate: vars.motion.rotation.or("180deg"),
 		}),
 		rule(".open-rotate", {
-			transform: "rotate(var(--details-open-rotate, 0deg))",
+			transform: `rotate(${vars.details.open.rotate.or("0deg")})`,
 			transform_origin: "center",
 			transition: `transform ${vars.motion.duration.fast} ${vars.motion.easing.standard}`,
 		}),

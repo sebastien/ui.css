@@ -430,4 +430,88 @@ describe("controls color model", () => {
 			"border-radius: var(--action-border-radius, var(--control-border-radius, 0.25em));",
 		);
 	});
+
+	test("action hover and active blends are tokenizable in tint and amount", () => {
+		const actions = output.slice(
+			output.indexOf("/* @group actions */"),
+			output.indexOf("/* @end actions */"),
+		);
+
+		// Hover mixes toward paper by default, active toward ink; both the
+		// tint and the blend amount can be re-pointed per brand.
+		expect(actions).toContain(
+			"--control-background-tint: var(--action-hover-tint, var(--control-color-tint, var(--color-paper)));",
+		);
+		expect(actions).toContain(
+			"--control-background-blend: var(--action-hover-blend, 0.9);",
+		);
+		expect(actions).toContain(
+			"--control-background-tint: var(--action-active-tint, var(--control-color-tint, var(--color-ink)));",
+		);
+		expect(actions).toContain(
+			"--control-background-blend: var(--action-active-blend, 0.9);",
+		);
+		// The state rules must DECLARE the channels: the base rule pins
+		// --control-background-blend on the element, so a var() fallback
+		// alone would never apply (regression guard).
+		const hover = actions.slice(
+			actions.indexOf("&:hover, &.hover"),
+			actions.indexOf("&:active, &.active"),
+		);
+		expect(hover).toContain("--control-background-blend: var(--action-hover-blend");
+	});
+
+	test("actions expose a per-density font weight", () => {
+		const actions = output.slice(
+			output.indexOf("/* @group actions */"),
+			output.indexOf("/* @end actions */"),
+		);
+
+		const weight =
+			"font-weight: var(--action-font-weight, var(--control-font-weight, var(--font-controls-weight)))";
+		// Density steps wrap the base token, so the bare chain is base-only.
+		expect(actions.split(weight + ";").length - 1).toBe(1);
+		expect(actions).toContain(
+			"font-weight: var(--action-font-weight-compact, var(--action-font-weight, var(--control-font-weight, var(--font-controls-weight))));",
+		);
+		expect(actions).toContain(
+			"font-weight: var(--action-font-weight-compacted, var(--action-font-weight, var(--control-font-weight, var(--font-controls-weight))));",
+		);
+		expect(actions).toContain(
+			"font-weight: var(--action-font-weight-expanded, var(--action-font-weight, var(--control-font-weight, var(--font-controls-weight))));",
+		);
+	});
+
+	test("field compact sizing prefers field tokens over control tokens", () => {
+		const fieldstates = output.slice(
+			output.indexOf("/* @group fieldstates */"),
+			output.indexOf("/* @end fieldstates */"),
+		);
+		const actions = output.slice(
+			output.indexOf("/* @group actions */"),
+			output.indexOf("/* @end actions */"),
+		);
+
+		// Fields read --field-padding-compact first so brands can size small
+		// inputs independently from small buttons.
+		expect(fieldstates).toContain(
+			"padding: var(--field-padding-compact, var(--control-padding-compact, 0.35em 0.5em));",
+		);
+		expect(fieldstates).toContain(
+			"font-size: var(--field-font-size-compact, var(--field-font-size, var(--control-font-size, 1em)));",
+		);
+		// Actions keep reading the control token directly.
+		expect(actions).toContain(
+			"padding: var(--control-padding-compact, 0.15em 0.25em);",
+		);
+		expect(actions).not.toContain("--field-padding-compact");
+		// Fieldbase exposes a field-level font weight.
+		const fieldbase = output.slice(
+			output.indexOf("/* @group fieldbase */"),
+			output.indexOf("/* @end fieldbase */"),
+		);
+		expect(fieldbase).toContain(
+			"font-weight: var(--field-font-weight, var(--control-font-weight, var(--font-controls-weight)));",
+		);
+	});
 });

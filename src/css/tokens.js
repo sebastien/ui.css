@@ -95,7 +95,7 @@ export default group(
 			gray: "#d5d5d5",
 			// Semantics from the prior default scheme
 			// Medium neutral: borders, accents, chrome
-			neutral: "var(--color-gray)",
+			neutral: vars.color.gray,
 			// Light neutral: filled surfaces (default buttons, chips, …)
 			neutral_background: "#e5e7eb",
 			primary: vars.color.blue,
@@ -163,7 +163,7 @@ export default group(
 			},
 			code: {
 				pad: { horizontal: "1em", vertical: "0.75em" },
-				background: "color-mix(in oklch, var(--color-ink), transparent 94%)",
+				background: `color-mix(in oklch, ${vars.color.ink}, transparent 94%)`,
 				radius: "3px",
 			},
 			dt: {
@@ -389,6 +389,28 @@ export default group(
 			border: {
 				radius: "0.25em",
 			},
+			width: "100%",
+			gap: "0.5em",
+			icon_size: "1.5em",
+			slot_color: undefined,
+			input_padding_block: "0.7143em",
+			input_padding_block_compact: "0.5em",
+			unit_padding: "0.7143em 0.5714em",
+			unit_padding_compact: "0.6667em 0.5em",
+			unit_background: undefined,
+		},
+		pill: {
+			font_size: "0.75em",
+			line_height: "1.15em",
+			padding: "0.25em 1em",
+			padding_compact: "0.125em 0.5em",
+			padding_expanded: "0.5em 1.25em",
+			gap: undefined,
+			dot_size: "0.65em",
+			dot_color: undefined,
+			icon_size: "1em",
+			bg: undefined,
+			text: undefined,
 		},
 		action: {
 			font: {
