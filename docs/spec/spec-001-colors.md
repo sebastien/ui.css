@@ -35,9 +35,12 @@ mist
 olive
 ```
 
-These colors can be defined or overridden directly as `--color-{color}`. A
-palette can expose any additional scale tokens it needs, but ui.css utilities
-only depend on the unqualified palette name.
+Each color is defined as `--color-{color}` in `tokens.js` with a default value,
+so `.{bg,tx,bd,ol}-{color}` utilities resolve out of the box. A theme can
+override any `--color-{color}`. A palette can expose any additional scale tokens
+it needs, but ui.css utilities only depend on the unqualified palette name.
+Beyond the palette, `--background-color-{role}` is an optional per-role hook
+(the neutral role ships `--background-color-neutral`).
 
 ## Semantic Colors
 
@@ -70,7 +73,8 @@ Global tokens describe semantic intent and inherit through the document:
 
 - `--color-page`, `--color-text` — page roles, swapped by `.light` and `.dark`
 - `--color-surface`, `--color-surface-text` — component surface roles
-- `--accent-color` — the nearest component or container semantic identity
+- `--accent` — the nearest component or container semantic identity
+  (distinct from the global semantic alias `--color-accent`)
 
 Paint channels are local to a painted element. Components initialize them and
 utilities can override them in the later `colors` cascade layer:

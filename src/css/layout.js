@@ -143,7 +143,7 @@ export default named({
 			width: "max-content",
 		}),
 		rule(".fit-page", {
-			max_width: `${vars.page.width}`,
+			max_width: `${vars.limit.page}`,
 		}),
 		rule(".fit-text", {
 			max_width: `${vars.text.width}`,

@@ -14,7 +14,7 @@ body[data-theme="select"] {
 	--color-secondary: #6366f1;
 	--color-tertiary: #06b6d4;
 	--color-neutral: #94a3b8;
-	--color-neutral-background: #e2e8f0;
+	--background-color-neutral: #e2e8f0;
 	--color-success: #10b981;
 	--color-info: #38bdf8;
 	--color-warning: #fbbf24;
@@ -28,7 +28,7 @@ body[data-theme="select"] {
 	--color-surface-text: var(--color-text);
 	--color-tint: var(--color-surface);
 	--color-accent: var(--color-primary);
-	--accent-color: var(--color-neutral);
+	--accent: var(--color-neutral);
 	--border-color-base: #cbd5e1;
 
 	line-height: 1.6;

@@ -243,13 +243,13 @@ test("outline alerts pass their semantic color to nested controls", async ({ pag
 		page,
 		`<div class="alert outline success"><button id="button">Save</button><input id="field"></div>`,
 	);
-	const alert = await properties(page, ".alert", ["--accent-color"]);
-	const button = await properties(page, "#button", ["--accent-color", "--control-color-base"]);
+	const alert = await properties(page, ".alert", ["--accent"]);
+	const button = await properties(page, "#button", ["--accent", "--control-color-base"]);
 	const field = await page.$eval("#field", (element) => getComputedStyle(element).color);
 	const alertColor = await page.$eval(".alert", (element) => getComputedStyle(element).color);
 
-	expect(alert["--accent-color"]).toBe("#22c55e");
-	expect(button["--accent-color"]).toBe("#22c55e");
+	expect(alert["--accent"]).toBe("#22c55e");
+	expect(button["--accent"]).toBe("#22c55e");
 	expect(button["--control-color-base"]).toBe("#22c55e");
 	expect(field).toBe(alertColor);
 });
@@ -290,11 +290,11 @@ test("tab background modifiers adjust the shared paint channel", async ({ page }
 		`<div class="tabs group"><button id="tab" class="tab primary active bg-2o">Overview</button></div>`,
 	);
 	const tab = await properties(page, "#tab", [
-		"--accent-color",
+		"--accent",
 		"--background-color-base",
 		"--background-color-opacity",
 	]);
-	expect(tab["--accent-color"]).toBe("#0c31bf");
+	expect(tab["--accent"]).toBe("#0c31bf");
 	expect(tab["--background-color-base"]).toBe("#0c31bf");
 	expect(tab["--background-color-opacity"]).toBe("0.2");
 });
@@ -302,8 +302,8 @@ test("tab background modifiers adjust the shared paint channel", async ({ page }
 test("semantic pills and cards derive paint channels from their accent", async ({ page }) => {
 	await render(page, `<span id="pill" class="pill success">Ready</span><article id="card" class="card danger">Danger</article>`);
 	for (const [selector, color] of [["#pill", "#22c55e"], ["#card", "#ef4444"]]) {
-		const component = await properties(page, selector, ["--accent-color", "--background-color-base", "--border-color-base"]);
-		expect(component["--accent-color"]).toBe(color);
+		const component = await properties(page, selector, ["--accent", "--background-color-base", "--border-color-base"]);
+		expect(component["--accent"]).toBe(color);
 		expect(component["--background-color-base"]).toBe(color);
 		if (selector === "#card") {
 			expect(component["--border-color-base"]).toBe(color);

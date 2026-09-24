@@ -8,7 +8,7 @@ test("compact action padding overrides the action default", async ({ page }) => 
 		`<style>${stylesheet}</style>
 		<button id="default">Default</button>
 		<button id="compact" class="compact">Compact</button>
-		<button id="compacted" class="compacted">Compacted</button>`,
+		<button id="tight" class="tight">Tight</button>`,
 	);
 
 	const padding = await page.$$eval("button", (buttons) =>

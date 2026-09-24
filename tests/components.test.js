@@ -26,7 +26,7 @@ describe("CSS-first components", () => {
 		expect(output).toContain(".alert {");
 		expect(output).toContain(".alert.outline");
 		expect(output).toContain(".alert.outline.success");
-		expect(output).toContain("--accent-color: var(--color-success);");
+		expect(output).toContain("--accent: var(--color-success);");
 		expect(output).toContain(
 			":where(.alert.outline) :where(input, textarea, select, .input, .textarea, .select):not(.colored)",
 		);
@@ -103,7 +103,7 @@ describe("CSS-first components", () => {
 	});
 
 	test("uses the shared accent role for component identities", () => {
-		expect(output).toContain("--accent-color: var(--color-neutral);");
+		expect(output).toContain("--accent: var(--color-neutral);");
 		expect(output).toContain("&.soft");
 		expect(output).not.toContain(".pill.secondary {");
 		expect(output).not.toContain("--pill-color");

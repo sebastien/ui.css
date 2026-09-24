@@ -37,13 +37,13 @@ describe("controls color model", () => {
 		expect(output).toContain("input[type=file], .file {");
 		expect(output).toContain("&::file-selector-button {");
 		expect(output).toContain(
-			"--file-background: var(--color-neutral-background, var(--color-neutral));",
+			"--file-background: var(--background-color-neutral, var(--color-neutral));",
 		);
 		expect(output).toContain("background-color: var(--file-background);");
 		expect(output).toContain("color: contrast-color(var(--file-background));");
 		expect(output).toContain("&:hover::file-selector-button {");
 		expect(output).toContain(
-			"--file-background: var(--color-primary-background, var(--color-primary));",
+			"--file-background: var(--background-color-primary, var(--color-primary));",
 		);
 		// .file is a first-class field alias, so .input.file works on any element.
 		expect(output).toContain(
@@ -64,7 +64,7 @@ describe("controls color model", () => {
 		expect(output).toContain("border-radius: 0.375rem 0.375rem 0 0;");
 		expect(output).toContain("padding: 0.35rem;");
 		expect(output).toContain("flex-wrap: wrap;");
-		expect(output).toContain("--accent-color: var(--color-primary);");
+		expect(output).toContain("--accent: var(--color-primary);");
 	});
 
 	test(".tabs.wrap wraps any tab presentation", () => {
@@ -81,7 +81,7 @@ describe("controls color model", () => {
 		expect(tabs).toContain("--background-color-opacity: 0.2;");
 		expect(tabs).toContain("--background-color-opacity: 0;");
 		expect(tabs).toContain("--background-color-opacity: 1;");
-		expect(tabs).toContain("--background-color-base: var(--accent-color, var(--color-surface));");
+		expect(tabs).toContain("--background-color-base: var(--accent, var(--color-surface));");
 		expect(tabs).toContain("background-color: var(--background-color);");
 		expect(tabs).toContain("contrast-color(var(--background-color))");
 		expect(tabs).toContain("--control-color-base: var(--color-primary);");
@@ -127,7 +127,7 @@ describe("controls color model", () => {
 		expect(tabs).toContain(".tabs.bar .tab[aria-selected=true], .tabs.bar .tab.active {");
 		expect(tabs).toContain("color: contrast-color(var(--background-color));");
 		expect(tabs).toContain(".tabs.bar.primary {");
-		expect(tabs).toContain("--accent-color: var(--color-primary);");
+		expect(tabs).toContain("--accent: var(--color-primary);");
 	});
 
 	test("selected tabs paint the channel background directly", () => {
@@ -178,14 +178,14 @@ describe("controls color model", () => {
 		// selector checked label (5), plus .tinted on each field() emission
 		// tinted selector labels (1), and selected/tinted native option rows (2)
 		// (fieldstates emits .tinted once)
-		// → 11. Default actions use --color-neutral-background instead.
+		// → 11. Default actions use --background-color-neutral instead.
 		// Tab no longer uses action() — it has its own standalone style.
 		expect(count(ACCENT_PIN)).toBe(11);
 	});
 
 	test("default action fill uses light neutral background", () => {
 		expect(output).toContain(
-			"--control-background-base: var(--color-neutral-background, var(--color-neutral))",
+			"--control-background-base: var(--background-color-neutral, var(--color-neutral))",
 		);
 	});
 
@@ -199,7 +199,7 @@ describe("controls color model", () => {
 		const selectable = output.slice(output.indexOf("/* @group selectable */"));
 		const hover = selectable.slice(selectable.indexOf("&:hover, &.hover"));
 		expect(hover).toContain(
-			"--control-background-base: var(--color-neutral-background, var(--color-neutral))",
+			"--control-background-base: var(--background-color-neutral, var(--color-neutral))",
 		);
 	});
 
@@ -278,7 +278,7 @@ describe("controls color model", () => {
 		expect(output).toContain(".tinted::-webkit-slider-runnable-track");
 		expect(output).toContain("--range-progress");
 		expect(output).toContain("::-moz-range-progress");
-		expect(output).not.toContain("accent-color: var(--control-color-base);");
+		expect(output).not.toContain("--accent: var(--control-color-base);");
 		expect(output).toContain("background-color: var(--color-paper);");
 		expect(output).toContain("background-color: transparent !important;");
 	});
@@ -297,7 +297,7 @@ describe("controls color model", () => {
 		expect(output).toContain(".input.ghost.white");
 		expect(output).toContain(".input.ghost.error");
 		expect(output).toContain(
-		"--control-background-base: var(--color-error-background, var(--color-error));",
+		"--control-background-base: var(--background-color-error, var(--color-error));",
 	);
 		expect(output).toContain("--control-background-blend: 1;");
 		expect(output).toContain("--control-background-opacity: 1;");
@@ -341,8 +341,8 @@ describe("controls color model", () => {
 	});
 
 	test("control semantic variants publish the shared accent role", () => {
-		expect(output).toContain("--control-color-base: var(--accent-color");
-		expect(output).toContain("--accent-color: var(--color-primary);");
+		expect(output).toContain("--control-color-base: var(--accent");
+		expect(output).toContain("--accent: var(--color-primary);");
 	});
 
 	test("shared chrome and color variants are emitted once", () => {
@@ -475,7 +475,7 @@ describe("controls color model", () => {
 			"font-weight: var(--action-font-weight-compact, var(--action-font-weight, var(--control-font-weight, var(--font-controls-weight))));",
 		);
 		expect(actions).toContain(
-			"font-weight: var(--action-font-weight-compacted, var(--action-font-weight, var(--control-font-weight, var(--font-controls-weight))));",
+			"font-weight: var(--action-font-weight-tight, var(--action-font-weight, var(--control-font-weight, var(--font-controls-weight))));",
 		);
 		expect(actions).toContain(
 			"font-weight: var(--action-font-weight-expanded, var(--action-font-weight, var(--control-font-weight, var(--font-controls-weight))));",

@@ -163,7 +163,7 @@ function colorvariants() {
 				__control_color_base: vars.color[color],
 				__control_border_base: vars.color[color],
 				__control_border_opacity: 1.0,
-				__accent_color: vars.color[color],
+				__accent: vars.color[color],
 			}),
 		),
 		css.rule("&.bw", {
@@ -207,7 +207,7 @@ function basechrome() {
 			text_overflow: "ellipsis",
 			// Paint recipes are local: inherited text recipes must not restyle controls.
 			__text_color: "initial",
-			__control_color_base: vars.accent.color.or(vars.control.color.base),
+			__control_color_base: vars.accent.or(vars.control.color.base),
 			border_width: vars.control.border.width.or("1px"),
 			border_radius: vars.control.border.radius.or("0.25em"),
 			border_color: control.border(),
@@ -223,9 +223,9 @@ function basechrome() {
 			},
 		),
 		css.rule(
-			baseHosts.map((selector) => `${selector}.compacted`),
+			baseHosts.map((selector) => `${selector}.tight`),
 			{
-				padding: vars.control.padding.compacted.or("0.1em 0.15em"),
+				padding: vars.control.padding.tight.or("0.1em 0.15em"),
 			},
 		),
 		css.rule(
@@ -354,7 +354,7 @@ function fieldslots() {
 			border_right_style: vars.border.style.or("solid"),
 			border_color: "inherit",
 			background_color: vars.field.unit.background.or(
-				vars.color.neutral.background,
+				vars.background.color.neutral,
 				"transparent",
 			),
 			padding: vars.field.unit.padding.or("0.7143em 0.5714em"),
@@ -600,7 +600,7 @@ function fieldstates() {
 			css.rule(
 				fieldHosts.map((s) => `${s}.ghost.${color}`),
 				{
-					__control_background_base: vars.color[color].background.or(
+					__control_background_base: vars.background.color[color].or(
 						vars.color[color],
 					),
 					__control_background_blend: 1.0,
@@ -649,7 +649,7 @@ function selectable(...rest) {
 			cursor: "pointer",
 			__control_color_opacity: 0.0,
 			__control_background_opacity: 0.0,
-			__control_background_base: vars.color.neutral.background.or(
+			__control_background_base: vars.background.color.neutral.or(
 				vars.color.neutral,
 			),
 			// Default styling, background is pure primary color
@@ -658,7 +658,7 @@ function selectable(...rest) {
 				0.0,
 				vars.color.tint,
 				vars.selectable.bg.or(
-					vars.color.neutral.background,
+					vars.background.color.neutral,
 					vars.color.neutral,
 				),
 			),
@@ -667,7 +667,7 @@ function selectable(...rest) {
 		...colors.semantic.map((color) =>
 			css.rule(css.mods("&", color), {
 				__control_color_base: vars.color[color],
-				__control_background_base: vars.color[color].background.or(
+				__control_background_base: vars.background.color[color].or(
 					vars.color[color],
 				),
 			}),
@@ -675,7 +675,7 @@ function selectable(...rest) {
 		// Hover stays neutral even when the selectable has a semantic color.
 		css.rule(css.mods("&", "hover"), {
 			__control_color_opacity: 0.5,
-			__control_background_base: vars.color.neutral.background.or(
+			__control_background_base: vars.background.color.neutral.or(
 				vars.color.neutral,
 			),
 			__control_background_opacity: 0.5,
@@ -688,7 +688,7 @@ function selectable(...rest) {
 		// Selected: same neutral wash as hover, slightly darker so it reads as sticky.
 		css.rule(["&.selected"], {
 			__control_color_opacity: 0.6,
-			__control_background_base: vars.color.neutral.background.or(
+			__control_background_base: vars.background.color.neutral.or(
 				vars.color.neutral,
 			),
 			__control_background_opacity: 0.6,
@@ -721,7 +721,7 @@ function action(selector, ...rest) {
 			// which is reserved for borders/chrome). --control-background-base
 			// is element-scoped: never set it on ancestors.
 			__control_color_opacity: 1.0,
-			__control_background_base: vars.color.neutral.background.or(
+			__control_background_base: vars.background.color.neutral.or(
 				vars.color.neutral,
 			),
 			__control_background_blend: 1.0,
@@ -749,10 +749,10 @@ function action(selector, ...rest) {
 				vars.font.controls.weight,
 			),
 		}),
-		css.rule("&.compacted", {
-			padding: vars.control.padding.compacted.or("0.1em 0.15em"),
-			font_size: vars.action.font.size.compacted.or("0.75em"),
-			font_weight: vars.action.font.weight.compacted.or(
+		css.rule("&.tight", {
+			padding: vars.control.padding.tight.or("0.1em 0.15em"),
+			font_size: vars.action.font.size.tight.or("0.75em"),
+			font_weight: vars.action.font.weight.tight.or(
 				vars.action.font.weight,
 				vars.control.font.weight,
 				vars.font.controls.weight,
@@ -768,11 +768,11 @@ function action(selector, ...rest) {
 				vars.font.controls.weight,
 			),
 		}),
-		// Semantic fills: prefer --color-{semantic}-background when defined
+		// Semantic fills: prefer --background-color-{semantic} when defined
 		// (neutral → light surface), else the solid semantic color.
 		...colors.semantic.map((color) =>
 			css.rule(css.mods("&", color), {
-				__control_background_base: vars.color[color].background.or(
+				__control_background_base: vars.background.color[color].or(
 					vars.color[color],
 				),
 			}),
@@ -905,7 +905,7 @@ function action(selector, ...rest) {
 		),
 		css.rule(css.mods("&", "neutral"), {
 			__control_color_base: vars.color.neutral,
-			__control_background_base: vars.color.neutral.background.or(
+			__control_background_base: vars.background.color.neutral.or(
 				vars.color.neutral,
 			),
 		}),
@@ -1869,7 +1869,7 @@ function tab() {
 			box_shadow: "none",
 			outline: "0",
 			appearance: "none",
-			__background_color_base: vars.accent.color.or(vars.color.surface),
+			__background_color_base: vars.accent.or(vars.color.surface),
 			__background_color_tint: vars.color.paper,
 			__background_color_blend: 1.0,
 			__background_color_opacity: 0,
@@ -1934,7 +1934,7 @@ function tab() {
 		}),
 		...colors.semantic.map((name) =>
 			css.rule(`.tabs .tab.${name}`, {
-				__accent_color: vars.color[name],
+				__accent: vars.color[name],
 				__control_color_base: vars.color[name],
 				__background_color_base: vars.color[name],
 			}),
@@ -1944,7 +1944,7 @@ function tab() {
 			__background_color_opacity: 0.4,
 		}),
 		css.rule(".tabs.group .tab[aria-selected=true], .tabs.group .tab.active", {
-			__background_color_base: vars.accent.color.or(vars.color.surface),
+			__background_color_base: vars.accent.or(vars.color.surface),
 			__background_color_opacity: 1.0,
 			color: `contrast-color(${vars.background.color})`,
 			box_shadow: `${vars.shadow.x} ${vars.shadow.y} ${vars.shadow.spread} ${vars.shadow.color}`,
@@ -2071,14 +2071,14 @@ function tab() {
 			__background_color_opacity: 0.35,
 		}),
 		css.rule(".tabs.bar .tab[aria-selected=true], .tabs.bar .tab.active", {
-			__background_color_base: vars.accent.color.or(vars.color.surface),
+			__background_color_base: vars.accent.or(vars.color.surface),
 			__background_color_opacity: 1.0,
 			color: `contrast-color(${vars.background.color})`,
 			z_index: 1,
 		}),
 		...colors.semantic.map((name) =>
 			css.rule(`.tabs.bar.${name}`, {
-				__accent_color: vars.color[name],
+				__accent: vars.color[name],
 			}),
 		),
 		css.rule(".tabs .tab:focus-visible, .tabs .tab.focus", {
@@ -2099,7 +2099,7 @@ function tab() {
 			__background_color_opacity: 0.4,
 		}),
 		css.rule(".tabs.group .tab.ghost[aria-selected=true], .tabs.group .tab.ghost.active", {
-			__background_color_base: vars.accent.color.or(vars.color.surface),
+			__background_color_base: vars.accent.or(vars.color.surface),
 			__background_color_opacity: 1.0,
 		}),
 	);
@@ -2128,10 +2128,10 @@ function fileinput() {
 			align_items: "stretch",
 			overflow: "clip",
 			cursor: "pointer",
-			__file_background: vars.color.neutral.background.or(vars.color.neutral),
+			__file_background: vars.background.color.neutral.or(vars.color.neutral),
 		}),
 		// Density classes set field padding; the group keeps a flush button.
-		css.rule(["&.compact", "&.compacted", "&.tight"], {
+		css.rule(["&.compact", "&.tight"], {
 			padding: "0 0.75em 0 0",
 		}),
 		css.rule("&::file-selector-button", {
@@ -2157,13 +2157,13 @@ function fileinput() {
 		css.rule("&.compact::file-selector-button", {
 			padding: vars.control.padding.compact.or("0.15em 0.25em"),
 		}),
-		css.rule("&.compacted::file-selector-button", {
-			padding: vars.control.padding.compacted.or("0.1em 0.15em"),
+		css.rule("&.tight::file-selector-button", {
+			padding: vars.control.padding.tight.or("0.1em 0.15em"),
 		}),
 		// Semantic colors retint the action part only.
 		...colors.semantic.map((color) =>
 			css.rule(`&.${color}`, {
-				__file_background: vars.color[color].background.or(vars.color[color]),
+				__file_background: vars.background.color[color].or(vars.color[color]),
 			}),
 		),
 		css.rule(["&:disabled", "&.disabled"], {

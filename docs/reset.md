@@ -39,4 +39,4 @@ The `reset.js` module establishes a consistent cross-browser baseline. It remove
 ### The `reset` module:
 
 - `reset()`: Generates the baseline normalization rules.
-- `vars.font.text`, `vars.font.heading`, `vars.font.controls`: Variables used to set the normalized typography.
+- `vars.font.text.family`, `vars.font.heading.family`, `vars.font.controls.*`: Variables used to set the normalized typography.

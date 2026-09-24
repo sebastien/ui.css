@@ -23,7 +23,7 @@ export default named({
 	base: rule(".base", {
 		font_family: `${vars.font.family}`,
 		font_size: vars.font.size,
-		line_height: `${vars.font.line_height}`,
+		line_height: `${vars.font.line}`,
 	}),
 	style: group(
 		rule([".nolink", ".nolink:hover"], {
@@ -349,9 +349,14 @@ export default named({
 			content: `""`,
 		}),
 	),
+	// Alternating background wash on alternating children. Uses `currentColor`
+	// so the stripe adapts to the element's text color in light and dark modes.
+	// Override `--striped-background` to supply an explicit color.
 	striped: group(
 		rule(".striped > *:nth-child(even)", {
-			__background_l: 7,
+			background_color: vars.striped.background.or(
+				"color-mix(in oklch, currentColor, transparent 94%)",
+			),
 		}),
 	),
 	depth: group(

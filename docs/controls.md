@@ -9,7 +9,7 @@ The `controls.js` module provides comprehensive styling for interactive elements
 - `button`, `.button`: Standard button styling with configurable fonts and colors.
 - `.selectable`: Base class for interactive items (list items, cards) that share button-like state logic but may have different layouts.
 - `input`, `.input`: Standard text input styling.
-- `input[type="file"]`, `.input.file`, `.file`: The `::file-selector-button` is styled as the field's action part, joined to the filename like a button group. Semantic colors (`.primary`, `.danger`, …) retint only the button; `.compact` / `.compacted` and `:disabled` apply.
+- `input[type="file"]`, `.input.file`, `.file`: The `::file-selector-button` is styled as the field's action part, joined to the filename like a button group. Semantic colors (`.primary`, `.danger`, …) retint only the button; `.compact` / `.tight` and `:disabled` apply.
 - `textarea`, `.textarea`: Multi-line text input styling.
 - `input[type="checkbox"]`, `.checkbox`: Custom styled checkboxes with `:checked` markers.
 - `input[type="radio"]`, `.radio`: Custom styled radio buttons.
@@ -59,7 +59,7 @@ Controls derive all their colors from `color-mix()` expressions over four
 channels — `color` (accent), `background` (surface), `border`, `outline` —
 each driven by four variables: `base`, `tint`, `blend`, `opacity`.
 
-- `--accent-color` is the inheritable semantic identity. Variant classes set it
+- `--accent` is the inheritable semantic identity. Variant classes set it
   alongside the compatible `--control-color-base` input.
 - `--control-color-*` drives coordinated accent state behavior.
 - `--control-background-*` is the **surface**: the background the control sits
@@ -69,9 +69,9 @@ each driven by four variables: `base`, `tint`, `blend`, `opacity`.
   (e.g. `input, textarea, select { --control-background-base: … }`), never on
   containers — a container-level value would be inherited by every descendant
   control and silently override their variant colors.
-- Actions (buttons) fill from `--color-{semantic}-background` when set, else
+- Actions (buttons) fill from `--background-color-{semantic}` when set, else
   the solid semantic color. Default/neutral buttons use the light
-  `--color-neutral-background` surface; medium `--color-neutral` stays for
+  `--background-color-neutral` surface; medium `--color-neutral` stays for
   borders and chrome. Checked controls still pin fill to the accent.
 - Fields default to the mode-aware surface at 0.8 opacity.
 - Decorative edges (`.bd`, cards, alerts, tabs) use `--border-color-*`
@@ -179,7 +179,7 @@ via fallback chains:
 
 - `--control-{color,background,border,outline}-{base,tint,blend,opacity}`:
   per-channel color computation.
-- `--control-font-*`, `--control-padding`, `--control-padding-{compact,compacted}`, `--control-gap`,
+- `--control-font-*`, `--control-padding`, `--control-padding-{compact,tight}`, `--control-gap`,
   `--control-border-width`, `--control-border-radius`,
   `--control-outline-width`: shared geometry.
 - `--field-font-size`, `--field-padding`, `--field-padding-{compact,tight}`, `--field-border-radius`,
@@ -199,7 +199,7 @@ via fallback chains:
 > one (`--input-border-opacity` → `--field-border-opacity`). No aliases remain.
 >
 > Field density is now themed through `--field-padding-{compact,tight}`.
-> Fields no longer read `--control-padding-compact` / `--control-padding-compacted`;
+> Fields no longer read `--control-padding-compact` / `--control-padding-tight`;
 > set the `--field-padding-*` tokens to retheme field padding.
 
 Note: `input[type=submit]`, `input[type=button]`, and `input[type=reset]` are

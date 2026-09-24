@@ -57,7 +57,9 @@ The `style.js` module provides miscellaneous styling utilities for spacing, elem
 - `table`: Reset table with `border-collapse: separate`.
 - `table.lined`: Adds borders to table cells.
 - `.sep`: Adds `/` separators between children (use with `.dash` or `.comma`).
-- `.striped`: Adds alternating background colors to children.
+- `.striped`: Adds alternating background colors to children. The stripe is a
+  subtle `currentColor` wash by default; override `--striped-background` to set
+  an explicit color.
 
 ### Using
 

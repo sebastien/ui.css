@@ -13,7 +13,7 @@ These properties can be overridden to theme the application.
 - `--font-sans`: Sans-serif font family.
 - `--font-serif`: Serif font family.
 - `--font-cursive`: Cursive font family.
-- `--font-base`: Base font size in pixels (default: 14).
+- `--font-base`: Base font size in pixels (default: 16).
 - `--font-size`: Calculated base font size.
 - `--font-line`: Base line height.
 - `--font-text-family`, `--font-heading-family`, `--font-display-family`, `--font-script-family`, `--font-code-family`: Font family configuration.
@@ -29,11 +29,11 @@ These properties can be overridden to theme the application.
 - `--color-focus`: Focus ring color for raw outlines (defaults to `--color-neutral`).
 
 #### Property Specific Colors (Base, Tint, Blend, Opacity)
-Each of these properties supports `base`, `tint`, `blend`, and `opacity` tokens (e.g., `--background-base`, `--background-blend`).
+Each of these properties supports `base`, `tint`, `blend`, and `opacity` tokens (e.g., `--background-color-base`, `--background-color-blend`). The computed mix is exposed as `--{property}-color`.
 - `background`: General background color.
 - `text`: General text color.
 - `border`: Border color and style (`--border-width`, `--border-style`).
-- `outline`: Outline color and style (`--outline-width`, `--outline-style`).
+- `outline`: Outline color (`--outline-color-{base,tint,blend,opacity}`).
 
 #### Spacing & Sizing
 - `--pad-0` through `--pad-8`: Padding scale.
@@ -45,7 +45,7 @@ Each of these properties supports `base`, `tint`, `blend`, and `opacity` tokens 
 
 #### Radius & Elevation
 - `--border-radius-0` through `--border-radius-6`: Border radius scale.
-- `--shadow-x`, `--shadow-y`, `--shadow-spread`, `--shadow-base`, `--shadow-opacity`, `--shadow-color`: Box shadow configuration.
+- `--shadow-x`, `--shadow-y`, `--shadow-spread`, `--shadow-color-{base,tint,blend,opacity}`, `--shadow-color`: Box shadow configuration.
 
 #### Layout & Limits
 - `--limit-text`: Maximum width for text blocks (default: 80ch).
@@ -54,23 +54,22 @@ Each of these properties supports `base`, `tint`, `blend`, and `opacity` tokens 
 
 #### Page & Headings
 - `--page-base`: Base page font size for rem calculations.
-- `--page-unit`: Calculated unit equivalent to 1px in rems.
 - `--heading-min`, `--heading-max`: Font size bounds for responsive headings.
 - `--heading-size-0` through `--heading-size-6`: Heading size scale (percentage-based).
 
 #### Component Specific (Button, Input, etc.)
 Controls use shared `--control-*` and per-kind `--field-*`/`--action-*` namespaces, with component-specific namespaces for `checkbox`, `radio`, `toggle`, `range`, `select`, and `selector`:
-- `--control-font-*`, `--control-padding`, `--control-padding-{compact,compacted}`, `--control-gap`,
+- `--control-font-*`, `--control-padding`, `--control-padding-{compact,tight}`, `--control-gap`,
   `--control-border-radius`.
-- `--control-color-*`, `--control-background-*`, `--control-border-*`, `--control-outline-*`: Each color channel supports `base`, `tint`, `blend`, and `opacity`. `--border-color-*` is decorative chrome; `--control-border-*` is interactive.
+- `--control-color-*`, `--control-background-*`, `--control-border-*`, `--control-outline-*`: Each color channel supports `base`, `tint`, `blend`, and `opacity`. `--border-color-*` is decorative chrome; `--control-border-*` is interactive. `--control-background-*` is scoped to painted controls (not a root token).
 - `--field-font-size`, `--field-padding`, `--field-padding-{compact,tight}`, `--field-border-radius`, `--field-border-{base,tint,blend,opacity}`,
   `--action-font-size`, `--action-border-width`, `--action-border-radius`,
   `--action-outline-width`: Per-kind overrides that fall back to shared control tokens.
-  Field padding is field-specific: fields do not read `--control-padding-compact` / `--control-padding-compacted`.
-- `--border-{base,tint,blend,opacity}` and `--outline-{base,tint,blend,opacity}`: override-only
-  channels published by the `.bd-*` / `.ol-*` utility modifiers. Controls and fields read them
+  Field padding is field-specific: fields do not read `--control-padding-compact` / `--control-padding-tight`.
+- `--field-border-{base,tint,blend,opacity}` are override hooks (declare-only-when-set); the shared channels are `--border-color-{base,tint,blend,opacity}`.
+- `--border-color-{base,tint,blend,opacity}` and `--outline-color-{base,tint,blend,opacity}`: channels published by the `.bd-*` / `.ol-*` utility modifiers. Controls and fields read them
   ahead of the `--control-*` tokens, so a modifier class reaches interactive chrome without the
-  `.bd` / `.ol` apply class. Precedence for fields is `--field-border-*` → `--border-*` → `--control-border-*`.
+  `.bd` / `.ol` apply class. Precedence for fields is `--field-border-*` → `--border-color-*` → `--control-border-*`.
 - Component namespaces provide sizing and geometry tokens such as `--checkbox-size`, `--radio-dot-size`, `--toggle-width`, and `--range-track-height`.
 
 ### Scale indices:

@@ -8,7 +8,7 @@ The `text.js` module provides utilities for styling typography, headings, lists,
 
 - `h1.t`–`h7.t` / `.t h1`–`.t h7`: Themed headings with sizes, weight, and margins (raw tags are unstyled without `.t`).
 - `.h1` through `.h7`: Utility classes to apply heading sizes and weights to any element.
-- `h1.sz-N.t` / `.t h1.sz-N`: Heading level with an explicit size modifier.
+- `h1.sz-N.t` / `.t h1.sz-N`: Heading level with an explicit size modifier (`N` = 0–6, matching `--heading-size-0`–`--heading-size-6`).
 - `.noheading`: Resets heading variables (size, amplitude) to a flat 1rem baseline.
 
 ### Font Properties:

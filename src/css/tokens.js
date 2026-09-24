@@ -50,13 +50,6 @@ export default group(
 				weight: 500,
 			},
 			family: `${vars.font.text.family}`,
-			line_height: `${vars.font.line}`,
-			control: {
-				family: `${vars.font.controls.family}`,
-				size: `${vars.font.controls.size}`,
-				line: `${vars.font.controls.line}`,
-				weight: `${vars.font.controls.weight}`,
-			},
 		},
 		block: {
 			width: "120px",
@@ -86,18 +79,37 @@ export default group(
 			white: "#FFFFFF",
 			black: "#000000",
 			hi: "#FFFF00A0",
-			amber: "#f59e0b",
-			blue: "#0c31bf",
+			// Full palette. Consumers may override any of these; ui.css ships
+			// defaults so `.bg-*` / `.tx-*` utilities resolve without a theme.
 			red: "#ef4444",
-			cyan: "#06b6d4",
-			teal: "#14b8a6",
+			orange: "#f97316",
+			amber: "#f59e0b",
+			yellow: "#eab308",
+			lime: "#84cc16",
 			green: "#22c55e",
+			emerald: "#10b981",
+			teal: "#14b8a6",
+			cyan: "#06b6d4",
+			sky: "#0ea5e9",
+			blue: "#0c31bf",
+			indigo: "#6366f1",
+			violet: "#8b5cf6",
+			purple: "#a855f7",
+			fuchsia: "#d946ef",
+			pink: "#ec4899",
+			rose: "#f43f5e",
+			// Neutral palette
+			slate: "#64748b",
 			gray: "#d5d5d5",
+			zinc: "#71717a",
+			stone: "#78716c",
+			taupe: "#a8a29e",
+			mauve: "#b39ddb",
+			mist: "#cbd5e1",
+			olive: "#65a30d",
 			// Semantics from the prior default scheme
 			// Medium neutral: borders, accents, chrome
 			neutral: vars.color.gray,
-			// Light neutral: filled surfaces (default buttons, chips, …)
-			neutral_background: "#e5e7eb",
 			primary: vars.color.blue,
 			secondary: "#23d9d9",
 			tertiary: vars.color.green,
@@ -120,8 +132,10 @@ export default group(
 		},
 	}),
 	tokens({
-		// Component identity inherits; paint recipes remain local to each element.
-		accent: { color: vars.color.neutral },
+		// Bare component identity (distinct from the global semantic
+		// `--color-accent`). Components override `--accent` locally; paint
+		// recipes remain local to each element.
+		accent: vars.color.neutral,
 	}),
 
 	// ------------------------------------------------------------------------
@@ -138,6 +152,9 @@ export default group(
 				tint: vars.color.tint.or(vars.color.surface),
 				blend: 1.0,
 				opacity: 1.0,
+				// Optional extra-light surface per role. `neutral` ships a
+				// default; other roles are override hooks (see docs/hooks.md).
+				neutral: "#e5e7eb",
 			},
 		},
 		text: {
@@ -158,11 +175,11 @@ export default group(
 			},
 			blockquote: {
 				border: { width: "4px" },
-				pad: { horizontal: "1em", vertical: "0.25em" },
+				padding: { horizontal: "1em", vertical: "0.25em" },
 				opacity: 0.85,
 			},
 			code: {
-				pad: { horizontal: "1em", vertical: "0.75em" },
+				padding: { horizontal: "1em", vertical: "0.75em" },
 				background: `color-mix(in oklch, ${vars.color.ink}, transparent 94%)`,
 				radius: "3px",
 			},
@@ -176,6 +193,20 @@ export default group(
 			inline: {
 				subsup_size: "0.75em",
 			},
+			// Text sizing scale (separate from text color)
+			size: [
+				"0.58", // 0: xxs
+				"0.69", // 1: xs
+				"0.83", // 2: s
+				"1.00", // 3: m
+				"1.20", // 4: l
+				"1.44", // 5: xl
+				"1.73", // 6: xxl
+				"2.00", // 7: xxxl
+				"2.25", // 8
+				"2.50", // 9
+				"2.75", // 10
+			],
 			width: `${vars.limit.text}`,
 		},
 		border: {
@@ -185,8 +216,6 @@ export default group(
 				blend: 1.0,
 				opacity: 0.35,
 			},
-			l: 5,
-			o: 9,
 			width: "1px",
 			style: "solid",
 			radius: [
@@ -206,22 +235,6 @@ export default group(
 				blend: 0.3,
 				opacity: 0.8,
 			},
-		},
-		// Text sizing properties (separate from text color)
-		textsize: {
-			size: [
-				"0.58", // 0: xxs
-				"0.69", // 1: xs
-				"0.83", // 2: s
-				"1.00", // 3: m
-				"1.20", // 4: l
-				"1.44", // 5: xl
-				"1.73", // 6: xxl
-				"2.00", // 7: xxxl
-				"2.25", // 8
-				"2.50", // 9
-				"2.75", // 10
-			],
 		},
 	}),
 	// ------------------------------------------------------------------------
@@ -303,15 +316,19 @@ export default group(
 			x: "2px",
 			y: "2px",
 			spread: "1px",
-			base: vars.color.shadow.or(vars.color.ink),
-			tint: vars.color.paper,
-			blend: 0.4,
-			opacity: 0.12,
-			color: colormix(
-				vars.shadow.base,
-				vars.shadow.tint,
-				vars.shadow.blend,
-				vars.shadow.opacity,
+			color: {
+				base: vars.color.ink,
+				tint: vars.color.paper,
+				blend: 0.4,
+				opacity: 0.12,
+			},
+			// Trailing `_` emits the channel root (`--shadow-color`, the computed
+			// mix) alongside the nested roles, mirroring `--background-color`.
+			color_: colormix(
+				vars.shadow.color.base,
+				vars.shadow.color.tint,
+				vars.shadow.color.blend,
+				vars.shadow.color.opacity,
 			),
 		},
 		limit: {
@@ -350,7 +367,7 @@ export default group(
 			gap: "0.25em",
 			padding: "0.5em 0.8em",
 			padding_compact: "0.15em 0.25em",
-			padding_compacted: "0.1em 0.15em",
+			padding_tight: "0.1em 0.15em",
 			margin: "0em",
 			color: {
 				base: vars.color.neutral,
@@ -438,7 +455,7 @@ export default group(
 		card: {
 			padding: "1.5rem",
 			border: {
-				size: "1px",
+				width: "1px",
 				radius: "0.5em",
 			},
 			color: {

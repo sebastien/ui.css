@@ -42,7 +42,7 @@ as they use `em` units.
 
 ## Color Variables
 
-`--accent-color` is the inheritable semantic identity. Controls retain the
+`--accent` is the inheritable semantic identity. Controls retain the
 `--control-*` channels as their default and state inputs. The later `bg`, `tx`,
 `bd`, and `ol` apply utilities provide explicit final property overrides; their
 modifier classes configure the corresponding shared paint recipe.
@@ -60,7 +60,7 @@ Pinning rules:
 
 ## Color Variants
 
-Applied as classes on any control — sets `--accent-color` and the compatible
+Applied as classes on any control — sets `--accent` and the compatible
 `--control-color-base` input:
 
 - `neutral` (default)

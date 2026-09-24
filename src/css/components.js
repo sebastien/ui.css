@@ -32,8 +32,8 @@ function pill(...rest) {
 			border_color: "transparent",
 			border_radius: "9999px",
 			// Accent identifies the semantic variant; paint remains in shared channels.
-			__accent_color: vars.color.neutral,
-			__background_color_base: vars.accent.color,
+			__accent: vars.color.neutral,
+			__background_color_base: vars.accent,
 			__background_color_tint: vars.color.surface,
 			__background_color_blend: 1.0,
 			__background_color_opacity: 1.0,
@@ -72,7 +72,7 @@ function pill(...rest) {
 		// Color variants: solid color bg with light text
 		...colors.semantic.map((color) =>
 			css.rule(css.mods("&", color), {
-				__accent_color: vars.color[color],
+				__accent: vars.color[color],
 			}),
 		),
 		// Soft: light neutral background with dark text.
@@ -86,22 +86,22 @@ function pill(...rest) {
 		}),
 		// Tinted: color @ 10% bg with full color text
 		css.rule("&.tinted", {
-			__background_color_base: vars.accent.color,
+			__background_color_base: vars.accent,
 			__background_color_tint: "transparent",
 			__background_color_blend: 0.1,
 			__background_color_opacity: 1.0,
-			color: vars.pill.text.or(vars.accent.color),
+			color: vars.pill.text.or(vars.accent),
 			border_color: "transparent",
 		}),
 		// Outline: transparent bg with color border and darkened text
 		css.rule("&.outline", {
-			__background_color_base: vars.accent.color,
+			__background_color_base: vars.accent,
 			__background_color_tint: vars.color.paper,
 			__background_color_blend: 1.0,
 			__background_color_opacity: 0,
 			border_width: "1px",
-			border_color: `color-mix(in oklch, ${vars.accent.color}, ${vars.color.surface} 60%)`,
-			color: `color-mix(in oklch, ${vars.accent.color}, ${vars.color.surface_text} 40%)`,
+			border_color: `color-mix(in oklch, ${vars.accent}, ${vars.color.surface} 60%)`,
+			color: `color-mix(in oklch, ${vars.accent}, ${vars.color.surface_text} 40%)`,
 		}),
 		...rest,
 	);
@@ -271,9 +271,9 @@ function status(...rest) {
 			// Border
 			border_width: vars.status.border.size.or("0px"),
 			border_radius: vars.status.border.radius.or("1em"),
-			__accent_color: vars.status.color.base.or(vars.color.neutral),
+			__accent: vars.status.color.base.or(vars.color.neutral),
 			border_color: colors.mixed(
-				vars.accent.color,
+				vars.accent,
 				vars.status.color.tint.or(vars.color.paper),
 				0.5,
 				1.0,
@@ -284,12 +284,12 @@ function status(...rest) {
 				0.5,
 				0.3,
 			),
-			color: `contrast-color(${vars.accent.color})`,
+			color: `contrast-color(${vars.accent})`,
 		}),
 		// Color variants
 		...colors.semantic.map((color) =>
 			css.rule(css.mods(["&", "& > *"], color), {
-				__accent_color: vars.color[color],
+				__accent: vars.color[color],
 			}),
 		),
 		css.rule("& > *", {
@@ -298,7 +298,7 @@ function status(...rest) {
 			width: "2em",
 			height: "0.25em",
 			background_color: colors.mixed(
-				vars.accent.color,
+				vars.accent,
 				vars.status.color.tint.or(vars.color.paper),
 				1.0,
 				1.0,
@@ -308,7 +308,7 @@ function status(...rest) {
 			background_color: "transparent",
 			border_width: vars.status.border.size.or("1px"),
 			border_color: colors.mixed(
-				vars.accent.color,
+				vars.accent,
 				vars.status.color.tint.or(vars.color.paper),
 				1.0,
 				1.0,
@@ -343,8 +343,8 @@ function card(...rest) {
 		{},
 		css.rule("&", {
 			padding: vars.card.padding.or("0.5em"),
-			__accent_color: vars.card.color.base.or(vars.color.neutral),
-			__background_color_base: vars.accent.color,
+			__accent: vars.card.color.base.or(vars.color.neutral),
+			__background_color_base: vars.accent,
 			__background_color_tint: vars.card.color.tint.or(vars.color.surface),
 			__background_color_blend: vars.card.color.blend.or(0.1),
 			__background_color_opacity: vars.card.color.alpha.or(1.0),
@@ -355,7 +355,7 @@ function card(...rest) {
 				vars.background.color.opacity,
 			),
 			// Border
-			border_width: vars.card.border.size.or("1px"),
+			border_width: vars.card.border.width.or("1px"),
 			border_radius: vars.card.border.radius.or("0.5em"),
 			border_color: bd,
 			// Background
@@ -364,7 +364,7 @@ function card(...rest) {
 		// Color variants: identity tints the surface and edge from the accent.
 		...colors.semantic.map((color) =>
 			css.rule(css.mods("&", color), {
-				__accent_color: vars.color[color],
+				__accent: vars.color[color],
 				__border_color_base: vars.color[color],
 				__border_color_tint: vars.card.color.tint.or(vars.color.surface),
 				__border_color_blend: 0.35,
@@ -427,7 +427,7 @@ function section() {
 			gap: vars.gap[1],
 			cursor: "pointer",
 			user_select: "none",
-			padding: vars.section.summary.pad.or(`${vars.pad[2]}`),
+			padding: vars.section.summary.padding.or(`${vars.pad[2]}`),
 			background_color: background(0.7),
 			border_radius: `${radius} ${radius} 0 0`,
 			font_weight: "inherit",
@@ -466,7 +466,7 @@ function section() {
 		}),
 
 		css.rule("details.section > *:not(summary)", {
-			padding: vars.section.body.pad.or(`${vars.pad[2]}`),
+			padding: vars.section.body.padding.or(`${vars.pad[2]}`),
 			// Body reads as the same surface as the header (AL: white panel
 			// on a white item). Both compose through the shared background
 			// channels, so setting --background-color-* on the details (or
@@ -667,7 +667,7 @@ function alert() {
 			["info", vars.color.info],
 		].map(([name, color]) =>
 			css.rule([`.alert.ghost.${name}`, `.alert.outline.${name}`], {
-				__accent_color: color,
+				__accent: color,
 				border_width: "1px",
 				background_color: "transparent",
 				border_color: `${color}`,
@@ -675,7 +675,7 @@ function alert() {
 			}),
 		),
 		css.rule([".alert.ghost", ".alert.outline"], {
-			__accent_color: vars.color.neutral,
+			__accent: vars.color.neutral,
 			border_width: "1px",
 			background_color: "transparent",
 			border_color: bd,
@@ -1194,11 +1194,11 @@ function pagination() {
 			padding: "0",
 			margin: "0",
 			list_style: "none",
-			__accent_color: vars.color.neutral,
+			__accent: vars.color.neutral,
 		}),
 		css.rule(".pagination > *", { display: "flex" }),
 		css.rule(".pagination > * > :is(a, .button)", {
-			__control_color_base: vars.accent.color,
+			__control_color_base: vars.accent,
 			display: "inline-flex",
 			align_items: "center",
 			justify_content: "center",
@@ -1217,7 +1217,7 @@ function pagination() {
 			css.rule(
 				[`.pagination.${name}`, `.pagination > * > :is(a, .button).${name}`],
 				{
-					__accent_color: vars.color[name],
+					__accent: vars.color[name],
 				},
 			),
 		),
@@ -1232,12 +1232,12 @@ function pagination() {
 		css.rule(
 			".pagination > * > :is(a, .button)[aria-current=page], .pagination > * > :is(a, .button).active",
 			{
-				__control_background_base: vars.accent.color,
+				__control_background_base: vars.accent,
 				__control_background_tint: vars.color.paper,
 				__control_background_blend: 1.0,
 				__control_background_opacity: 1.0,
-				color: `contrast-color(${vars.accent.color})`,
-				background_color: vars.accent.color,
+				color: `contrast-color(${vars.accent})`,
+				background_color: vars.accent,
 			},
 		),
 	);

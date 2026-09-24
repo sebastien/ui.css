@@ -2,7 +2,7 @@
 
 body[data-theme="material"] {
 	--font-sans: "Roboto", sans-serif;
-	--font-heading: var(--font-sans);
+	--font-heading-family: var(--font-sans);
 	--font-controls-family: var(--font-sans);
 	--font-controls-size: 0.875rem;
 	--font-controls-line: 36px;
@@ -17,7 +17,7 @@ body[data-theme="material"] {
 	--color-secondary: #ff4081;
 	--color-tertiary: #009688;
 	--color-neutral: #607d8b;
-	--color-neutral-background: #cfd8dc;
+	--background-color-neutral: #cfd8dc;
 	--color-accent: #ff4081;
 	--color-success: #4caf50;
 	--color-info: #2196f3;
@@ -32,7 +32,7 @@ body[data-theme="material"] {
 	--color-surface-text: var(--color-text);
 	--color-tint: var(--color-surface);
 	--color-accent: var(--color-primary);
-	--accent-color: var(--color-neutral);
+	--accent: var(--color-neutral);
 
 	--border-color-base: #bdbdbd;
 
@@ -46,11 +46,11 @@ body[data-theme="material"] {
 	--control-disabled-opacity: 0.26;
 
 	/* MD v1 shadows */
-	--shadow-1: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-	--shadow-2: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-	--shadow-3: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
-	--shadow-4: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
-	--shadow-5: 0 19px 38px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
+	--md-shadow-1: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+	--md-shadow-2: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+	--md-shadow-3: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+	--md-shadow-4: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+	--md-shadow-5: 0 19px 38px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
 
 	line-height: 1.5;
 	color: var(--color-ink);
@@ -83,16 +83,16 @@ body[data-theme="material"] {
 		letter-spacing: 0.03em;
 		font-size: 0.8125rem;
 		font-weight: 500;
-		box-shadow: var(--shadow-1);
+		box-shadow: var(--md-shadow-1);
 		border-radius: 2px;
 		transition: box-shadow 0.2s ease, background 0.2s ease;
 
 		&:hover {
-			box-shadow: var(--shadow-2);
+			box-shadow: var(--md-shadow-2);
 		}
 
 		&:active {
-			box-shadow: var(--shadow-3);
+			box-shadow: var(--md-shadow-3);
 		}
 
 		&:disabled {
@@ -126,7 +126,7 @@ body[data-theme="material"] {
 	/* MD v1 cards: 2dp shadow, rounded 2px */
 	& .panel {
 		border-radius: 2px;
-		box-shadow: var(--shadow-1);
+		box-shadow: var(--md-shadow-1);
 		border: none;
 	}
 

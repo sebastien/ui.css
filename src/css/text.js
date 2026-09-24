@@ -1,5 +1,4 @@
 import {
-	sizes,
 	sizenames,
 	named,
 	rule,
@@ -18,7 +17,7 @@ const hrColor = colormix(
 
 export default named({
 	headings: group(
-		...sizes.map((_, si) =>
+		...times(7, (si) =>
 			rule(
 				[
 					...times(7, (hi) => `h${hi + 1}.sz-${si}.t`),
@@ -117,9 +116,9 @@ export default named({
 			margin_right: "0",
 			margin_top: `${vars.text.gap}`,
 			margin_bottom: `${vars.text.gap}`,
-			padding_left: `${vars.text.blockquote.pad.horizontal}`,
-			padding_top: `${vars.text.blockquote.pad.vertical}`,
-			padding_bottom: `${vars.text.blockquote.pad.vertical}`,
+			padding_left: `${vars.text.blockquote.padding.horizontal}`,
+			padding_top: `${vars.text.blockquote.padding.vertical}`,
+			padding_bottom: `${vars.text.blockquote.padding.vertical}`,
 			opacity: `${vars.text.blockquote.opacity}`,
 		}),
 	),
@@ -130,7 +129,7 @@ export default named({
 			border_radius: `${vars.text.code.radius}`,
 			margin_top: `${vars.text.gap}`,
 			margin_bottom: `${vars.text.gap}`,
-			padding: `${vars.text.code.pad.vertical} ${vars.text.code.pad.horizontal}`,
+			padding: `${vars.text.code.padding.vertical} ${vars.text.code.padding.horizontal}`,
 			overflow_x: "auto",
 			white_space: "pre",
 			contain: "paint",
@@ -204,7 +203,6 @@ export default named({
 			__heading_size_4: "1rem",
 			__heading_size_5: "1rem",
 			__heading_size_6: "1rem",
-			__heading_size_7: "1rem",
 		}),
 		rule(".pre", { white_space: "pre" }),
 		rule(".pre-lines", { white_space: "pre-line" }),
@@ -318,16 +316,16 @@ export default named({
 		rule(".lh-175", { __line_height: "1.75em" }),
 		rule(".lh-200", { __line_height: "2.00em" }),
 		...times(10, (i) =>
-			rule(`.t-${i}`, { font_size: `calc(1em * ${vars.textsize.size[i]})` }),
+			rule(`.t-${i}`, { font_size: `calc(1em * ${vars.text.size[i]})` }),
 		),
 		...times(10, (i) =>
-			rule(`.t-${i}r`, { font_size: `calc(1rem * ${vars.textsize.size[i]})` }),
+			rule(`.t-${i}r`, { font_size: `calc(1rem * ${vars.text.size[i]})` }),
 		),
 		rule(".mono", { font_family: `${vars.font.mono}` }),
 		rule(".sans", { font_family: `${vars.font.sans}` }),
 		rule(".serif", { font_family: `${vars.font.serif}` }),
 		rule(".code", { font_family: `${vars.font.code.family}` }),
-		rule(".control", { font_family: `${vars.font.control.family}` }),
+		rule(".control", { font_family: `${vars.control.font.family}` }),
 		rule(".heading", { font_family: `${vars.font.heading.family}` }),
 		rule(".script", { font_family: `${vars.font.script.family}` }),
 		rule(".display", { font_family: `${vars.font.display.family}` }),
@@ -341,11 +339,11 @@ export default named({
 		...Object.keys(sizenames).map((k, i) =>
 			group(
 				rule(`.t-${k}`, {
-					font_size: `calc(1rem * ${vars.textsize.size[i]})`,
+					font_size: `calc(1rem * ${vars.text.size[i]})`,
 					line_height: vars.line.height.or("1.25em"),
 				}),
 				rule(`.${k}`, {
-					font_size: `calc(1em * ${vars.textsize.size[i]})`,
+					font_size: `calc(1em * ${vars.text.size[i]})`,
 					line_height: vars.line.height.or("1.25em"),
 				}),
 			),
