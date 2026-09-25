@@ -71,6 +71,21 @@ Compose interfaces in layers. Before writing custom CSS, reach for these classes
 | `.to-tl` / `.to-tr` / `.to-br` / `.to-bl` | Corner |
 | `.to-t` / `.to-b` / `.to-l` / `.to-r` | Edge |
 
+### Transform origin
+
+| Class | `transform-origin` |
+|-------|--------------------|
+| `.origin-c` | Center |
+| `.origin-t` / `.origin-b` / `.origin-l` / `.origin-r` | Edge midpoint |
+| `.origin-tl` / `.origin-tr` / `.origin-bl` / `.origin-br` | Corner |
+
+Each class sets `--motion-origin-x` / `--motion-origin-y` (read by
+`.open-rotate` and disclosure markers, which center the unset axis) plus the
+`transform-origin` shorthand for direct use on any transformed element.
+Directional classes move one axis and leave the other centered; corners set
+both. Set `--motion-origin-x` / `--motion-origin-y` directly to move a single
+axis without a class.
+
 ### Sizing shortcuts
 
 | Class | What it does |

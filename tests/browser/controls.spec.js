@@ -158,3 +158,50 @@ test("disabled selector listboxes dim content without dimming the border", async
 	expect(values.selectedBackground).toMatch(/rgba\(.+0\.15\)|\/ 0\.15\)$/);
 	expect(values.selectedColor).toMatch(/rgba\(.+0\.5\)|\/ 0\.5\)$/);
 });
+
+test("expandable fields keep one height across collapse and expand", async ({ page }) => {
+	await page.setContent(
+		`<style>${stylesheet}</style>
+		<input id="default" class="input expandable" type="search" placeholder="Search" aria-label="Search" />
+		<input id="compact" class="input expandable compact small" type="search" placeholder="Search" aria-label="Search" />`,
+	);
+
+	const collapsed = await page.evaluate(() =>
+		Object.fromEntries(
+			["default", "compact"].map((id) => {
+				const cs = getComputedStyle(document.getElementById(id));
+				return [
+					id,
+					{
+						height: cs.height,
+						width: cs.width,
+						transitionProperty: cs.transitionProperty,
+					},
+				];
+			}),
+		),
+	);
+
+	for (const id of ["default", "compact"]) {
+		// Only `width` may animate: a height transition turns the collapsed /
+		// expanded height mismatch into a visible layout shift.
+		expect(collapsed[id].transitionProperty).toBe("width");
+
+		await page.focus(`#${id}`);
+		await page.waitForTimeout(250);
+		const focused = await page.$eval(`#${id}`, (el) => {
+			const cs = getComputedStyle(el);
+			return { height: cs.height, width: cs.width };
+		});
+		expect(focused.height).toBe(collapsed[id].height);
+		expect(parseFloat(focused.width)).toBeGreaterThan(parseFloat(collapsed[id].width));
+
+		await page.$eval(`#${id}`, (el) => el.blur());
+		await page.waitForTimeout(250);
+		const blurred = await page.$eval(
+			`#${id}`,
+			(el) => getComputedStyle(el).height,
+		);
+		expect(blurred).toBe(collapsed[id].height);
+	}
+});

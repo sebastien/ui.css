@@ -128,6 +128,11 @@ const fieldBorderOpacity = (fallback = 0.75) =>
 		fallback,
 	);
 
+// Idle tab labels across presentations. Bare neutral chrome text is only
+// ~1.4:1 on paper and ~3:1 on ink; mixing toward the text pole in srgb keeps
+// it muted while clearing AA.
+const tabLabel = `color-mix(in srgb, ${vars.color.neutral}, ${vars.color.surface_text} 60%)`;
+
 const baseHosts = [
 	"button",
 	".button",
@@ -442,18 +447,23 @@ function fieldslots() {
 
 function fieldstates() {
 	return css.group(
+		// The base rule carries the expanded padding so the collapsed icon
+		// control and the expanded field share one content box: only `width`
+		// changes between states. A fixed collapsed height fought the auto
+		// content height, and animating `height` turned the difference into a
+		// visible layout shift.
 		css.rule("input.expandable, .input.expandable", {
 			width: "2.5em",
-			height: "2.5em",
+			height: "auto",
 			max_width: "100%",
 			box_sizing: "border-box",
-			padding: "0",
+			padding: "0.5em 0.75em 0.5em 2.25em",
 			background_image:
 				"url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m16 16 4 4'/%3E%3C/svg%3E\")",
 			background_repeat: "no-repeat",
 			background_position: "center",
 			background_size: "1.1em",
-			transition: "width 180ms ease, height 180ms ease",
+			transition: "width 180ms ease",
 		}),
 		css.rule(
 			[
@@ -464,8 +474,6 @@ function fieldstates() {
 			],
 			{
 				width: "100%",
-				height: "auto",
-				padding: "0.5em 0.75em 0.5em 2.25em",
 				background_position: "0.65em center",
 			},
 		),
@@ -475,18 +483,6 @@ function fieldstates() {
 				".input.expandable.compact",
 			],
 			{
-				height: "2em",
-			},
-		),
-		css.rule(
-			[
-				"input.expandable.compact:focus",
-				"input.expandable.compact:not(:placeholder-shown)",
-				".input.expandable.compact:focus",
-				".input.expandable.compact:not(:placeholder-shown)",
-			],
-			{
-				height: "auto",
 				padding: "0.35em 0.5em 0.35em 2.25em",
 			},
 		),
@@ -877,17 +873,17 @@ function action(selector, ...rest) {
 			pointer_events: "none",
 			cursor: "not-allowed",
 		}),
-		// Outline variant: ink text + ink border by default. Use .neutral /
-		// .primary / … for an explicit color. Press wash uses the solid
-		// accent (medium neutral / ink / …), not light neutral-background.
+		// Outline variant: mode text + matching border by default (surface_text
+		// flips with .light/.dark). Use .neutral / .primary / … for an explicit
+		// color. Press wash uses the solid accent (medium neutral / …).
 		css.nesting(
 			css.mods("&", "outline"),
 			{
-				__control_color_base: vars.color.ink,
+				__control_color_base: vars.color.surface_text,
 				__control_default_outline_opacity: 0.4,
 				__control_border_width: vars.border.width.or("2px"),
 				// Prefer --text-color from .tx utilities over the accent
-				color: vars.text.color.or(control.color(1.0, 1.0, vars.color.ink)),
+				color: vars.text.color.or(control.color(1.0, 1.0, vars.color.surface_text)),
 				border_width: vars.control.border.width,
 				border_color: control.border(1.0, 1.0, vars.color.paper),
 				// Wash from solid accent at opacity (not light surface token)
@@ -906,17 +902,17 @@ function action(selector, ...rest) {
 				background_color: control.background(1.0, 0.22),
 			}),
 		),
-		// Ghost variant: ink text by default, no chrome until hover.
+		// Ghost variant: mode text by default, no chrome until hover.
 		css.nesting(
 			css.mods("&", "ghost"),
 			{
-				__control_color_base: vars.color.ink,
+				__control_color_base: vars.color.surface_text,
 				__control_default_outline_opacity: 0.2,
 				__control_border_opacity: 0,
 				__control_background_opacity: 0,
 				// Transparent fill: text is the accent (not contrast-color of
 				// the accent, which yields white and disappears on light surfaces).
-				color: vars.text.color.or(control.color(1.0, 1.0, vars.color.ink)),
+				color: vars.text.color.or(control.color(1.0, 1.0, vars.color.surface_text)),
 				background_color: control.background(1.0, 0),
 			},
 			css.rule("&:hover, &.hover", {
@@ -930,10 +926,10 @@ function action(selector, ...rest) {
 		css.nesting(
 			css.mods("&", "onoff"),
 			{
-				__control_color_base: vars.color.ink,
+				__control_color_base: vars.color.surface_text,
 				__control_border_opacity: 0,
 				__control_background_opacity: 0,
-				color: vars.text.color.or(control.color(1.0, 1.0, vars.color.ink)),
+				color: vars.text.color.or(control.color(1.0, 1.0, vars.color.surface_text)),
 				background_color: control.background(1.0, 0),
 			},
 			css.rule("&:hover, &.hover", {
@@ -1187,7 +1183,7 @@ function toggle() {
 			min_height: height,
 			// Off track is a visible gray — pin the whole recipe so field chrome cannot wash it.
 			__control_background_base: vars.control.color.base.or(vars.color.neutral),
-			__control_background_tint: vars.color.paper,
+			__control_background_tint: vars.color.surface,
 			__control_background_blend: 0.45,
 			__control_background_opacity: 1.0,
 			background_color: control.background(0.45, 1.0),
@@ -1352,7 +1348,7 @@ function range() {
 			// NOTE: no --control-* pins here, the thumb inherits from the track.
 			box_shadow: `inset 0 0 0 ${vars.control.border.width.or("1px")} ${colors.mixed(
 				vars.color.neutral,
-				vars.color.paper,
+				vars.color.surface,
 				0.6,
 				1.0,
 			)}`,
@@ -1386,7 +1382,7 @@ function range() {
 			// Track stays neutral; only progress and thumb carry the accent
 			box_shadow: `inset 0 0 0 ${vars.control.border.width.or("1px")} ${colors.mixed(
 				vars.color.neutral,
-				vars.color.paper,
+				vars.color.surface,
 				0.6,
 				1.0,
 			)}`,
@@ -1431,7 +1427,7 @@ function range() {
 			{
 				border_color: colors.mixed(
 					vars.color.neutral,
-					vars.color.paper,
+					vars.color.surface,
 					0.8,
 					1.0,
 				),
@@ -1442,7 +1438,7 @@ function range() {
 			{
 				border_color: colors.mixed(
 					vars.color.neutral,
-					vars.color.paper,
+					vars.color.surface,
 					0.85,
 					1.0,
 				),
@@ -1514,7 +1510,7 @@ function select() {
 			line_height: "inherit",
 			font_weight: "inherit",
 			padding: "0.5em 1em",
-			color: vars.color.ink,
+			color: vars.color.surface_text,
 			text_align: "left",
 			outline: "none !important",
 			box_shadow: "none !important",
@@ -1524,8 +1520,8 @@ function select() {
 			__control_background_opacity: 0,
 			border_width: vars.control.border.width.or("1px"),
 			border_top_width: "0px",
-			border_color: control.border(0.55, 0.9, vars.color.paper),
-			background_color: control.background(1.0, 0.0, vars.color.paper),
+			border_color: control.border(0.55, 0.9, vars.color.surface),
+			background_color: control.background(1.0, 0.0, vars.color.surface),
 		}),
 		css.rule("&.compact > option", {
 			padding: "0.35em 0.5em",
@@ -1658,20 +1654,20 @@ function selector() {
 				display: "none !important",
 				visibility: "hidden !important",
 			}),
-			// Labels: ink text + neutral borders by default. Only the checked
+			// Labels: mode text + neutral borders by default. Only the checked
 			// option takes the accent fill. .colored also accents label bd/tx.
 			css.nesting("& > label", {
 				border_radius: "0em",
 				padding: "0.5em 1em",
 				justify_content: "center",
 				cursor: "pointer",
-				color: vars.color.ink,
+				color: vars.color.surface_text,
 				// Pin border to the shared structural color (not the semantic accent)
 				__control_border_base: vars.border.color.base,
 				__control_background_opacity: 0.8,
 				border_width: vars.control.border.width.or("1px"),
 				border_left_width: "0px",
-				border_color: control.border(0.55, 0.9, vars.color.paper),
+				border_color: control.border(0.55, 0.9, vars.color.surface),
 				background_color: control.background(
 					1.0,
 					0.8,
@@ -1685,9 +1681,9 @@ function selector() {
 				__control_background_opacity: 1.0,
 			}),
 			css.rule("&.colored > label", {
-				color: control.color(1.0, 1.0, vars.color.ink),
+				color: control.color(1.0, 1.0, vars.color.surface_text),
 				__control_border_base: vars.control.color.base,
-				border_color: control.border(0.9, 1.0, vars.color.paper),
+				border_color: control.border(0.9, 1.0, vars.color.surface),
 			}),
 			// Hover wash only on unselected labels (selected stays solid)
 			css.rule(
@@ -1701,7 +1697,7 @@ function selector() {
 			),
 			css.rule("&:active, &.active", {
 				__control_background_opacity: 0.2,
-				background_color: control.background(0.9, 0.2, vars.color.paper),
+				background_color: control.background(0.9, 0.2, vars.color.surface),
 			}),
 			css.rule("& > label:last-child", {
 				border_top_right_radius: vars.selector.border.radius.or("0.25em"),
@@ -1763,7 +1759,7 @@ function selector() {
 			}),
 			css.rule("& > label:active, & > label.active", {
 				__control_background_opacity: 0.2,
-				background_color: control.background(0.9, 0.2, vars.color.paper),
+				background_color: control.background(0.9, 0.2, vars.color.surface),
 			}),
 			// Disabled items: dim the label and ignore pointer events. Either
 			// the hidden input carries `disabled` or the label carries .disabled.
@@ -1806,7 +1802,7 @@ function selector() {
 				"0.25em",
 			),
 			__control_background_base: vars.control.color.base.or(vars.color.neutral),
-			__control_background_tint: vars.color.paper,
+			__control_background_tint: vars.color.surface,
 			__control_background_blend: 0.45,
 			__control_background_opacity: 1.0,
 			background_color: control.background(0.45, 1.0),
@@ -1849,7 +1845,7 @@ function selector() {
 				"0.25em",
 			),
 			background_color: "transparent",
-			color: vars.color.ink,
+			color: vars.color.surface_text,
 			box_shadow: "none",
 			transition:
 				"background-color 140ms ease, color 140ms ease, box-shadow 140ms ease, border-color 140ms ease",
@@ -1942,7 +1938,7 @@ function tab() {
 			border_bottom: `1px solid ${tabBorder}`,
 			border_left: `1px solid ${tabBorder}`,
 			border_radius: "0",
-			color: vars.color.neutral,
+			color: tabLabel,
 			background_color: "transparent",
 		}),
 		css.rule(".tabs.wrap", {
@@ -1974,7 +1970,7 @@ function tab() {
 			// presentation never re-declares padding on the tab itself.
 			padding: vars.tab.padding.or("0.5em 0.85em"),
 			font: "inherit",
-			color: vars.color.ink,
+			color: vars.color.surface_text,
 			box_shadow: "none",
 			outline: "0",
 			appearance: "none",
@@ -2051,7 +2047,7 @@ function tab() {
 			top: "0",
 			border: "0",
 			border_radius: "0",
-			color: vars.color.neutral,
+			color: tabLabel,
 			white_space: "nowrap",
 		}),
 		...colors.semantic.map((name) =>
@@ -2079,19 +2075,26 @@ function tab() {
 			__background_color_base: vars.color.surface,
 			__background_color_opacity: 1.0,
 			border_bottom_color: vars.color.surface,
-			color: vars.color.ink,
+			// Solid surface paint, declared here rather than relying on the
+			// generic selected-tab paint (`background-color:
+			// var(--background-color)`): the regular-tab rule below sets
+			// `background-color: transparent` at (0,5,0), which outranks the
+			// generic (0,3,0) paint and left selected tabs unfilled — invisible
+			// against a dark page. This rule re-wins at (0,6,0).
+			background_color: vars.color.surface,
+			color: vars.color.surface_text,
 			box_shadow: "none",
 		}),
 		...colors.semantic.flatMap((name) => [
 			css.rule(`.tabs:not(.group):not(.outline):not(.bar).${name} .tab:not([aria-selected=true]):not(.active), .tabs.outline.${name} .tab:not([aria-selected=true]):not(.active)`, {
-				color: vars.color.ink,
+				color: vars.color.surface_text,
 			}),
 			css.rule(`.tabs:not(.group):not(.outline):not(.bar).${name} .tab[aria-selected=true], .tabs:not(.group):not(.outline):not(.bar).${name} .tab.active, .tabs.outline.${name} .tab[aria-selected=true], .tabs.outline.${name} .tab.active`, {
 				color: vars.color[name],
 			}),
 		]),
 		css.rule(".tabs.outline .tab[aria-selected=true], .tabs.outline .tab.active", {
-			color: vars.color.ink,
+			color: vars.color.surface_text,
 			background_color: "transparent",
 			box_shadow: "none",
 			z_index: 1,
@@ -2181,7 +2184,7 @@ function tab() {
 			border: "0",
 			border_left: `1px solid ${tabBorder}`,
 			border_radius: "0",
-			color: vars.color.neutral,
+			color: tabLabel,
 			white_space: "nowrap",
 		}),
 		css.rule(".tabs.bar .tab:first-child", {
@@ -2353,14 +2356,18 @@ export default css.named({
 		}),
 		css.rule([".hint", "[data-hint]"], {
 			font_size: "0.875em",
-			color: `color-mix(in oklch, ${vars.color.ink}, ${vars.color.paper} 42%)`,
+			// Mode-aware secondary text: surface_text/surface resolve to
+			// ink/paper in light and paper/ink in dark.
+			color: `color-mix(in oklch, ${vars.color.surface_text}, ${vars.color.surface} 42%)`,
 		}),
+		// Error text mixes the semantic red toward the text pole in srgb: the
+		// raw red is only ~3.6:1 on paper and ~3.9:1 on ink.
 		css.rule([".error", "[data-field][aria-invalid=true] .error"], {
 			font_size: "0.875em",
-			color: vars.color.error,
+			color: `color-mix(in srgb, ${vars.color.error}, ${vars.color.surface_text} 60%)`,
 		}),
 		css.rule(".field:has(:is(input, textarea, select)[aria-invalid=true])", {
-			color: vars.color.error,
+			color: `color-mix(in srgb, ${vars.color.error}, ${vars.color.surface_text} 60%)`,
 		}),
 		css.rule(".group", {
 			display: "flex",

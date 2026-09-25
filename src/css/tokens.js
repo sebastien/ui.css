@@ -1,3 +1,4 @@
+import makeSolver from "../js/contrast.js";
 import { group, tokens, vars } from "../js/uicss.js";
 import { colormix } from "./colors.js";
 
@@ -13,6 +14,81 @@ const scale = (fn, scaleVar, steps) => [
 	"0em",
 	...steps.map((px) => fn(px, scaleVar)),
 ];
+
+// ----------------------------------------------------------------------------
+//
+// CONTRAST TARGETS
+//
+// ----------------------------------------------------------------------------
+// Build-time solved contrast values (see src/js/contrast.js). Parity targets
+// are the ratios measured from the legacy magic constants, so light-mode
+// output is unchanged; bump them consciously. The dark-pair targets are
+// policy: 4.5 (WCAG AA text) for links, 3.0 (non-text floor) for accents.
+const INK = "#1e293b";
+const PAPER = "#f8fafc";
+const BLUE = "#0c31bf";
+const GRAY = "#d5d5d5";
+
+const solver = makeSolver();
+const TARGETS = {
+	decorative: 2.06, // legacy structural border opacity 0.35
+	interactive: 6.34, // legacy control border opacity 0.75
+	outline: 1.68, // legacy outline: 30/70 pre-blend @ 0.8
+	controlOutline: 1.14, // legacy control outline: 80/20 pre-blend @ 0.5
+	link: 4.5, // WCAG AA text, both modes
+	semanticDark: 3.0, // WCAG 1.4.11 non-text floor for dark accents
+};
+
+// Formats a solved oklch weight as a color-mix percentage.
+const pct = (weight) => `${Math.round(weight * 1000) / 10}%`;
+// Recipe toward `toward`; collapses to the plain token when no lift is needed.
+const lifted = (from, weight, toward = vars.color.paper) =>
+	weight > 0
+		? `color-mix(in oklch, ${from}, ${toward} ${pct(weight)})`
+		: `${from}`;
+
+// Asserts a solved value exists. A null means the palette makes the target
+// unreachable, usually after a theme override of the source colors; failing
+// the build beats silently omitting the token or shipping the un-lifted color.
+const solved = (value, label) => {
+	if (value === null) {
+		throw new Error(`contrast solver could not reach ${label}`);
+	}
+	return value;
+};
+
+// Solved channel opacities (replace the legacy constants).
+const borderOpacity = solved(
+	solver.mixFor(INK, PAPER, TARGETS.decorative),
+	"the decorative border target",
+);
+const controlBorderOpacity = solved(
+	solver.mixFor(INK, PAPER, TARGETS.interactive),
+	"the interactive control border target",
+);
+const outlineOpacity = solved(
+	solver.mixFor(solver.mix(INK, PAPER, 0.7), PAPER, TARGETS.outline),
+	"the outline target",
+);
+const controlOutlineOpacity = solved(
+	solver.mixFor(solver.mix(GRAY, PAPER, 0.2), PAPER, TARGETS.controlOutline),
+	"the control outline target",
+);
+// Solved dark pairs; the mode rules in colors.js swap these in. Recipes
+// reference the palette source (never the semantic alias) so the dark rules
+// cannot self-reference, and theme overrides of the source propagate.
+const neutralDarkWeight = solved(
+	solver.recedeFor(GRAY, INK, TARGETS.semanticDark, INK),
+	"the dark neutral target",
+);
+const linkDarkWeight = solved(
+	solver.liftFor(BLUE, INK, TARGETS.link, PAPER),
+	"the dark link target",
+);
+const primaryDarkWeight = solved(
+	solver.liftFor(BLUE, INK, TARGETS.semanticDark, PAPER),
+	"the dark primary target",
+);
 
 // Module: tokens
 // This defines the main parameters for the style. They can be overriden
@@ -74,8 +150,8 @@ export default group(
 	tokens({
 		color: {
 			// Softer endpoints than pure black/white (still neutral greys)
-			ink: "#1e293b",
-			paper: "#f8fafc",
+			ink: INK,
+			paper: PAPER,
 			white: "#FFFFFF",
 			black: "#000000",
 			hi: "#FFFF00A0",
@@ -91,7 +167,7 @@ export default group(
 			teal: "#14b8a6",
 			cyan: "#06b6d4",
 			sky: "#0ea5e9",
-			blue: "#0c31bf",
+			blue: BLUE,
 			indigo: "#6366f1",
 			violet: "#8b5cf6",
 			purple: "#a855f7",
@@ -100,7 +176,7 @@ export default group(
 			rose: "#f43f5e",
 			// Neutral palette
 			slate: "#64748b",
-			gray: "#d5d5d5",
+			gray: GRAY,
 			zinc: "#71717a",
 			stone: "#78716c",
 			taupe: "#a8a29e",
@@ -109,8 +185,13 @@ export default group(
 			olive: "#65a30d",
 			// Semantics from the prior default scheme
 			// Medium neutral: borders, accents, chrome
-			neutral: vars.color.gray,
+			// Mode-paired roles: neutral/link flip with .light/.dark via the
+			// mode rules in colors.js; themes override the role or the pair.
+			neutral_light: vars.color.gray,
+			neutral_dark: lifted(vars.color.gray, neutralDarkWeight, vars.color.ink),
+			neutral: vars.color.neutral_light,
 			primary: vars.color.blue,
+			primary_dark: lifted(vars.color.blue, primaryDarkWeight),
 			secondary: "#23d9d9",
 			tertiary: vars.color.green,
 			success: vars.color.green,
@@ -119,6 +200,12 @@ export default group(
 			error: vars.color.red,
 			danger: vars.color.error,
 			accent: vars.color.primary,
+			accent_dark: vars.color.primary_dark,
+			// Link text pairs with the mode: primary in light, solver-lifted
+			// blue in dark for AA contrast against the ink page.
+			link_light: vars.color.primary,
+			link_dark: lifted(vars.color.blue, linkDarkWeight),
+			link: vars.color.link_light,
 			// Focus ring color for raw `outline` declarations (control outline
 			// chrome tracks --control-outline-* instead).
 			focus: vars.color.neutral,
@@ -154,7 +241,12 @@ export default group(
 				opacity: 1.0,
 				// Optional extra-light surface per role. `neutral` ships a
 				// default; other roles are override hooks (see docs/hooks.md).
-				neutral: "#e5e7eb",
+				// The neutral surface is mode-paired: light chip in light
+				// mode, elevated dark surface in dark mode (default button
+				// fill); the mode rules in colors.js swap the role.
+				neutral_light: "#e5e7eb",
+				neutral_dark: "#334155",
+				neutral: vars.background.color.neutral_light,
 			},
 		},
 		text: {
@@ -214,7 +306,8 @@ export default group(
 				base: vars.color.surface_text,
 				tint: vars.color.tint,
 				blend: 1.0,
-				opacity: 0.35,
+				// Solved: ink@α over paper meets the decorative target.
+				opacity: borderOpacity,
 			},
 			width: "1px",
 			style: "solid",
@@ -233,7 +326,8 @@ export default group(
 				base: vars.color.surface_text,
 				tint: vars.color.tint.or(vars.color.surface),
 				blend: 0.3,
-				opacity: 0.8,
+				// Solved: 30/70 pre-blend@α over paper meets the outline target.
+				opacity: outlineOpacity,
 			},
 		},
 	}),
@@ -381,7 +475,8 @@ export default group(
 				base: vars.color.surface_text,
 				tint: vars.color.tint,
 				blend: 1.0,
-				opacity: 0.75,
+				// Solved: ink@α over paper meets the interactive target.
+				opacity: controlBorderOpacity,
 			},
 			outline: {
 				width: "2px",
@@ -389,7 +484,8 @@ export default group(
 				base: vars.control.color.base,
 				tint: vars.control.color.tint,
 				blend: 0.8,
-				opacity: 0.5,
+				// Solved: 80/20 pre-blend@α over paper.
+				opacity: controlOutlineOpacity,
 			},
 			default: {
 				outline: { opacity: 0.8 },
@@ -467,7 +563,11 @@ export default group(
 			},
 			color: {
 				base: vars.color.neutral,
-				tint: vars.color.paper,
+				// No root tint token: the recipes fall back to
+				// var(--card-color-tint, var(--color-surface)), which resolves
+				// per element and so follows .light/.dark. --card-color-tint
+				// remains a theme override hook (docs/hooks.md); a root alias
+				// would freeze to the light pole at :root.
 				blend: 0,
 				alpha: 1.0,
 			},

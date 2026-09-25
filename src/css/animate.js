@@ -27,6 +27,12 @@ const namedAnimation = (selector, name, props = {}) =>
 		...props,
 	});
 
+// Popovers originate at their top center. Compose the shared per-axis origin
+// channels (set by `.origin-*`) and the whole-value `--motion-origin` override
+// so animation origins follow the same model as the rest of the motion rules.
+const popoverOrigin =
+	"var(--motion-origin, var(--motion-origin-x, center) var(--motion-origin-y, top))";
+
 export default named({
 	base: group(
 		rule(".anim", {
@@ -200,12 +206,12 @@ export default named({
 	),
 	surface: group(
 		namedAnimation(".popover-in", "popover-in", {
-			transform_origin: vars.motion.origin.or("top center"),
+			transform_origin: popoverOrigin,
 			__motion_animation_duration: fast,
 			__motion_animation_ease: softer,
 		}),
 		namedAnimation(".popover-out", "popover-out", {
-			transform_origin: vars.motion.origin.or("top center"),
+			transform_origin: popoverOrigin,
 			__motion_animation_duration: fast,
 			__motion_animation_ease: easeIn,
 		}),

@@ -6,6 +6,7 @@ import {
 	sides,
 	times,
 	vars,
+	where,
 } from "../js/uicss.js";
 
 // ----------------------------------------------------------------------------
@@ -149,6 +150,64 @@ function colormixin(color) {
 	return colormix(color.base, color.tint, color.blend, color.opacity);
 }
 
+// Function: modechannels
+// Paint-channel inputs derived from the mode roles, for one mode. Mode rules
+// re-declare these so nested .light/.dark containers re-substitute inherited
+// values locally instead of freezing the root-resolved ones.
+function modechannels(mode) {
+	return {
+		__color_tint: `${mode.tint}`,
+		__color_neutral: `${mode.neutral}`,
+		__color_link: `${mode.link}`,
+		__color_focus: `${vars.color.neutral}`,
+		// Re-pair the inheritable accent chain with the flipped neutral so bare
+		// controls (which read --accent / --control-color-base) follow the mode.
+		__accent: `${vars.color.neutral}`,
+		__control_color_base: `${vars.color.neutral}`,
+		__control_outline_base: `${vars.control.color.base}`,
+		__background_color_neutral: `${mode.background_neutral}`,
+		__background_color_base: `${vars.color.surface}`,
+		__background_color_tint: vars.color.tint.or(vars.color.surface),
+		__text_color_base: `${mode.surface_text}`,
+		__text_color_tint: vars.color.tint.or(vars.color.surface),
+		__border_color_base: `${mode.surface_text}`,
+		__border_color_tint: `${vars.color.tint}`,
+		__outline_color_base: `${mode.surface_text}`,
+		__outline_color_tint: vars.color.tint.or(vars.color.surface),
+		__control_color_tint: `${vars.color.tint}`,
+		__control_border_base: `${mode.surface_text}`,
+		__control_border_tint: `${vars.color.tint}`,
+		...(mode.primary
+			? {
+					__color_primary: `${mode.primary}`,
+					__color_accent: `${mode.accent}`,
+				}
+			: {}),
+	};
+}
+
+// Mode-paired channel values. Surface text and tint swap with the page roles;
+// neutral/link/background-neutral switch to their dark counterparts.
+const lightchannels = {
+	tint: vars.color.paper,
+	surface_text: vars.color.ink,
+	neutral: vars.color.neutral_light,
+	link: vars.color.link_light,
+	background_neutral: vars.background.color.neutral_light,
+};
+
+const darkchannels = {
+	tint: vars.color.ink,
+	surface_text: vars.color.paper,
+	neutral: vars.color.neutral_dark,
+	link: vars.color.link_dark,
+	background_neutral: vars.background.color.neutral_dark,
+	// Accents below the dark non-text floor lift toward paper via solved
+	// recipes (see tokens.js); the rest of the palette already clears 3:1.
+	primary: vars.color.primary_dark,
+	accent: vars.color.accent_dark,
+};
+
 // NOTE: component token helper mutators were removed.
 // Components now consume token variables directly with CSS fallback chains.
 
@@ -188,6 +247,13 @@ function colors(colors = COLORS) {
 		// ------------------------------------------------------------------------
 		// DARK / LIGHT MODE
 		// ------------------------------------------------------------------------
+		// Mode classes swap the page/surface roles and repaint the host. The
+		// role declarations and host paint use `:where(:root)` so the mode
+		// selector stays at (0,1,0) and still wins over the base `:root` by
+		// source order, while the paint-channel inputs live in a fully
+		// `:where()`-wrapped rule. Nested mode containers re-substitute
+		// locally, and utilities or component variants on the mode element
+		// out-rank the mode defaults.
 		rule([root], {
 			__color_page: `${vars.color.paper}`,
 			__color_text: `${vars.color.ink}`,
@@ -196,26 +262,31 @@ function colors(colors = COLORS) {
 			// Publish the structural border color once so components and the
 			// .lined/table separators share one mode-aware value.
 			__border_color: borderColor,
+			color_scheme: "light",
 			color: `${vars.color.ink}`,
 		}),
-		rule([`${root}.light`, `${root} .light`], {
+		rule([`${where(root)}.light`, `${where(root)} .light`], {
 			__color_page: `${vars.color.paper}`,
 			__color_text: `${vars.color.ink}`,
 			__color_surface: `${vars.color.paper}`,
 			__color_surface_text: `${vars.color.ink}`,
+			color_scheme: "light",
 			// Apply actual properties
 			background_color: `${vars.color.paper}`,
 			color: `${vars.color.ink}`,
 		}),
-		rule([`${root}.dark`, `${root} .dark`], {
+		rule(where(`${root}.light`, `${root} .light`), modechannels(lightchannels)),
+		rule([`${where(root)}.dark`, `${where(root)} .dark`], {
 			__color_page: `${vars.color.ink}`,
 			__color_text: `${vars.color.paper}`,
 			__color_surface: `${vars.color.ink}`,
 			__color_surface_text: `${vars.color.paper}`,
+			color_scheme: "dark",
 			// Apply actual properties with swapped colors
 			background_color: `${vars.color.ink}`,
 			color: `${vars.color.paper}`,
 		}),
+		rule(where(`${root}.dark`, `${root} .dark`), modechannels(darkchannels)),
 		rule(`.bg-def`, {
 			background_color: `${vars.color.page}`,
 		}),
@@ -317,10 +388,10 @@ function colors(colors = COLORS) {
 						vars.color[semantic],
 					...(short === "bg"
 						? {
-							__background_color_tint: vars.color.tint,
-							__background_color_blend: 1.0,
-							__background_color_opacity: 1.0,
-						}
+								__background_color_tint: vars.color.tint,
+								__background_color_blend: 1.0,
+								__background_color_opacity: 1.0,
+							}
 						: {}),
 					...overrideChannel(short, "base", vars.color[semantic]),
 				}),
@@ -338,10 +409,10 @@ function colors(colors = COLORS) {
 						vars.color[color],
 					...(short === "bg"
 						? {
-							__background_color_tint: vars.color.tint,
-							__background_color_blend: 1.0,
-							__background_color_opacity: 1.0,
-						}
+								__background_color_tint: vars.color.tint,
+								__background_color_blend: 1.0,
+								__background_color_opacity: 1.0,
+							}
 						: {}),
 					...overrideChannel(short, "base", vars.color[color]),
 				}),
@@ -462,7 +533,7 @@ function colors(colors = COLORS) {
 	);
 }
 
-export { COLORS, SEMANTIC, colormix, colormixin, colorvars };
+export { COLORS, colormix, colormixin, colorvars, SEMANTIC };
 export default Object.assign(colors, {
 	mix: colormixin,
 	mixed: colormix,

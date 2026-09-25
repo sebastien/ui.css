@@ -40,7 +40,8 @@ so `.{bg,tx,bd,ol}-{color}` utilities resolve out of the box. A theme can
 override any `--color-{color}`. A palette can expose any additional scale tokens
 it needs, but ui.css utilities only depend on the unqualified palette name.
 Beyond the palette, `--background-color-{role}` is an optional per-role hook
-(the neutral role ships `--background-color-neutral`).
+(the neutral role ships the mode-paired `--background-color-neutral-light` /
+`--background-color-neutral-dark`).
 
 ## Semantic Colors
 
@@ -76,6 +77,12 @@ Global tokens describe semantic intent and inherit through the document:
 - `--accent` — the nearest component or container semantic identity
   (distinct from the global semantic alias `--color-accent`)
 
+Prefer the mode-aware roles (`page`/`text`, `surface`/`surface-text`) in
+component recipes so they follow `.light` / `.dark`. `--color-ink` and
+`--color-paper` are fixed poles: use them only when a value must stay at the
+extreme in both modes, such as a label composited over a saturated accent with
+`contrast-color(...)` or a mix that must resolve against a known pole.
+
 Paint channels are local to a painted element. Components initialize them and
 utilities can override them in the later `colors` cascade layer:
 
@@ -89,6 +96,29 @@ Actual color values are computed colors from these variables:
 The computed color is a color-mix of base and tint, then mixed with transparent
 through the corresponding opacity value. The resulting color is stored
 as `--{background,text,border,outline}-color`.
+
+## Light / Dark Mode
+
+`.light` and `.dark` can be applied to the root or to any container, so a
+subtree can invert independently. A mode rule:
+
+- publishes `color-scheme` (`light` / `dark`) for native controls;
+- repoints `--color-page` / `--color-text` and `--color-surface` /
+  `--color-surface-text` at the matching pole;
+- re-derives the paint-channel inputs from the mode roles inside `:where(...)`,
+  so a color utility or component variant on the mode element still wins.
+
+Mode roles are paired so nested mode containers re-substitute locally instead
+of freezing root-resolved values:
+
+- `--color-neutral-{light,dark}`, `--color-link-{light,dark}`,
+  `--color-primary-dark`
+- `--background-color-neutral-{light,dark}`
+
+The dark pairs and the baseline channel opacities are solved at build time by
+`src/js/contrast.js` against WCAG targets (AA text, 3:1 non-text). `tokens.js`
+throws if a palette override makes a target unreachable, so contrast cannot
+degrade silently. See `docs/hooks.md` for the override surface.
 
 ## Using Colors
 

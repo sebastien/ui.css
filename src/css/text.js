@@ -51,7 +51,7 @@ export default named({
 	),
 	paragraphs: group(
 		rule(["a.link", "a.t", ".t a[href]"], {
-			color: vars.color.primary,
+			color: vars.color.link,
 			text_decoration: "underline",
 		}),
 		rule(["a.link:hover", "a.t:hover", ".t a[href]:hover"], {

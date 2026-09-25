@@ -23,6 +23,13 @@ The `layout.js` module provides a comprehensive suite of utilities for controlli
 - `.to-hc`, `.to-wc`: Set the corresponding axis to `50%`.
 - `.to-c`: Set both axes to `50%`; it does not apply a centering transform.
 
+### Transform origin:
+
+- `.origin-c`: Center pivot.
+- `.origin-t`, `.origin-b`, `.origin-l`, `.origin-r`: Edge midpoints; each moves one axis and leaves the other at `center`.
+- `.origin-tl`, `.origin-tr`, `.origin-bl`, `.origin-br`: Corners.
+- Every class sets `--motion-origin-x` / `--motion-origin-y` (per-axis channel) and the `transform-origin` shorthand. Motion rules such as `.open-rotate` and the disclosure markers resolve those per-axis channels, so an unset axis stays `center` and a single class or custom-property override is enough. `--motion-origin` overrides only the utility shorthand, not the per-axis motion rules.
+
 ### Sizing and Gaps:
 
 - `.g-{0-10}`: Grid/Flex gap.

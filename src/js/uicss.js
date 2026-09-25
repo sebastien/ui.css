@@ -67,6 +67,14 @@ const classes = (...values) => values.map((_) => `.${_}`);
 // Wraps an array of selectors in a `:where(...)` pseudo-class.
 const where = (...sel) => `:where(${sel.flat().join(", ")})`;
 
+// Constant: motionOrigin
+// Shared `transform-origin` resolution for motion rules. Reads the
+// `--motion-origin-{x,y}` channels set by `.origin-*` and keeps an unset axis
+// at `center`. Motion rules live above the `.origin-*` utilities in the layer
+// order, so this resolution wins over their shorthand.
+const motionOrigin =
+	"var(--motion-origin-x, center) var(--motion-origin-y, center)";
+
 // Function: cross
 // Builds the cartesian product of selector fragments.
 const cross = (...sets) =>
@@ -1045,6 +1053,7 @@ export {
 	media,
 	supports,
 	mods,
+	motionOrigin,
 	named,
 	nesting,
 	on,

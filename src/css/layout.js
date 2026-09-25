@@ -60,6 +60,30 @@ export default named({
 		rule(".rl-90", { transform: "rotate(-90deg)" }),
 		rule(".rr-90", { transform: "rotate(90deg)" }),
 	),
+	// Transform origin utilities. Each class sets `--motion-origin-{x,y}` so
+	// motion code can compose per-axis defaults (see `.open-rotate`), and the
+	// full `transform-origin` shorthand for direct use on any transformed
+	// element. Directional classes move one axis and leave the other centered;
+	// corners set both. `--motion-origin` overrides the shorthand only.
+	origin: group(
+		...[
+			["c", "center", "center"],
+			["t", "center", "top"],
+			["b", "center", "bottom"],
+			["l", "left", "center"],
+			["r", "right", "center"],
+			["tl", "left", "top"],
+			["tr", "right", "top"],
+			["bl", "left", "bottom"],
+			["br", "right", "bottom"],
+		].map(([name, x, y]) =>
+			rule(`.origin-${name}`, {
+				__motion_origin_x: x,
+				__motion_origin_y: y,
+				transform_origin: vars.motion.origin.or(`${x} ${y}`),
+			}),
+		),
+	),
 	gap: group(
 		sizes.map((_, i) =>
 			rule(`.g-${i}`, {

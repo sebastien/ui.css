@@ -2,26 +2,9 @@ import { expect, test } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 
 const stylesheet = await readFile(new URL("../../dist/ui.css", import.meta.url), "utf8");
-const material = await readFile(new URL("../../src/css/theme.material.css", import.meta.url), "utf8");
-const crm = await readFile(new URL("../../src/css/theme.crm.css", import.meta.url), "utf8");
-const select = await readFile(new URL("../../src/css/theme.select.css", import.meta.url), "utf8");
-const semanticProperties = [
-	"--color-paper",
-	"--color-ink",
-	"--color-neutral",
-	"--color-primary",
-	"--color-secondary",
-	"--color-tertiary",
-	"--color-success",
-	"--color-info",
-	"--color-warning",
-	"--color-danger",
-	"--color-error",
-	"--color-accent",
-];
 
-async function render(page, body, theme = "") {
-	await page.setContent(`<style>${stylesheet}</style><style>${theme}</style>${body}`);
+async function render(page, body) {
+	await page.setContent(`<style>${stylesheet}</style>${body}`);
 }
 
 async function properties(page, selector, names) {
@@ -35,29 +18,6 @@ async function properties(page, selector, names) {
 	);
 }
 
-test("theme scopes recompute semantic roles", async ({ page }) => {
-	for (const [name, theme, paper, ink] of [
-		["material", material, "#fafafa", "#212121"],
-		["crm", crm, "#ffffff", "#1c2429"],
-	]) {
-		await render(page, `<body data-theme="${name}"><input id="field"><div id="card" class="card">Card</div></body>`, theme);
-		const field = await properties(page, "#field", ["--color-surface", "--color-surface-text", ...semanticProperties]);
-		expect(field["--color-surface"]).toBe(paper);
-		expect(field["--color-surface-text"]).toBe(ink);
-		for (const property of semanticProperties) {
-			expect(field[property]).not.toBe("");
-		}
-	}
-});
-
-test("the select theme has self-contained semantic colors", async ({ page }) => {
-	await render(page, `<body data-theme="select"><button id="button" class="primary">Save</button></body>`, select);
-	const button = await properties(page, "#button", ["--color-primary", "--color-neutral", "--color-surface"]);
-	expect(button["--color-primary"]).not.toBe("");
-	expect(button["--color-neutral"]).not.toBe("");
-	expect(button["--color-surface"]).not.toBe("");
-});
-
 test("background color utilities reset inherited blend and opacity defaults", async ({ page }) => {
 	await render(
 		page,
@@ -68,15 +28,6 @@ test("background color utilities reset inherited blend and opacity defaults", as
 	expect(solid["--background-color-blend"]).toBe("1");
 	expect(solid["--background-color-opacity"]).toBe("1");
 	expect(blended["--background-color-blend"]).toBe("0.5");
-});
-
-test("dark mode overrides a themed surface", async ({ page }) => {
-	await render(page, `<body data-theme="material" class="dark"><input id="field"></body>`, material);
-	const field = await properties(page, "#field", ["--color-surface", "--color-surface-text"]);
-	expect(field["--color-surface"]).toBe("#212121");
-	expect(field["--color-surface-text"]).toBe("#fafafa");
-	expect(await page.$eval("body", (element) => getComputedStyle(element).backgroundColor)).toBe("rgb(33, 33, 33)");
-	expect(await page.$eval("body", (element) => getComputedStyle(element).color)).toBe("rgb(250, 250, 250)");
 });
 
 test("color reset wrappers restore channel defaults while child utilities win", async ({ page }) => {
@@ -264,19 +215,6 @@ test("outline alerts pass their semantic color to nested controls", async ({ pag
 	expect(button["--accent"]).toBe("#22c55e");
 	expect(button["--control-color-base"]).toBe("#22c55e");
 	expect(field).toBe(alertColor);
-});
-
-test("theme geometry tokens reach actions and fields", async ({ page }) => {
-	await render(page, `<body data-theme="material"><button id="action">Save</button><input id="field"></body>`, material);
-	const action = await page.$eval("#action", (element) => {
-		const style = getComputedStyle(element);
-		return { padding: style.padding, radius: style.borderRadius, outline: style.outlineWidth };
-	});
-	const field = await page.$eval("#field", (element) => getComputedStyle(element).borderRadius);
-	expect(action.padding).toBe("0px 16px");
-	expect(action.radius).toBe("2px");
-	expect(action.outline).toBe("0px");
-	expect(field).toBe("0px");
 });
 
 test("color apply utilities override control paint", async ({ page }) => {

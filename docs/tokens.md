@@ -21,12 +21,14 @@ These properties can be overridden to theme the application.
 
 #### Colors
 - `--color-white`, `--color-black`: Basic color constants.
-- `--color-ink`: Primary text color baseline.
-- `--color-paper`: Primary background color baseline.
+- `--color-ink`, `--color-paper`: Text and background poles.
+- `--color-page`, `--color-text`, `--color-surface`, `--color-surface-text`: Mode-aware roles that swap under `.light` / `.dark`.
 - `--color-neutral`, `--color-primary`, `--color-secondary`, `--color-tertiary`: Semantic color baselines.
 - `--color-success`, `--color-info`, `--color-warning`, `--color-danger`, `--color-error`: Status color baselines.
-- `--color-page`, `--color-text`: Context-dependent aliases for paper/ink.
+- `--color-link`: Mode-paired link text (AA against the page in both modes).
 - `--color-focus`: Focus ring color for raw outlines (defaults to `--color-neutral`).
+
+Mode roles are paired: `--color-neutral-{light,dark}`, `--color-link-{light,dark}`, and `--color-primary-dark` are derived at build time by `src/js/contrast.js`. The `.light` / `.dark` rules repoint the singular roles at the matching pair and re-derive the paint channels (see `docs/spec/spec-001-colors.md`).
 
 #### Property Specific Colors (Base, Tint, Blend, Opacity)
 Each of these properties supports `base`, `tint`, `blend`, and `opacity` tokens (e.g., `--background-color-base`, `--background-color-blend`). The computed mix is exposed as `--{property}-color`.

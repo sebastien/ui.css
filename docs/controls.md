@@ -46,7 +46,7 @@ The `controls.js` module provides comprehensive styling for interactive elements
 - `.tabs.group`: Filled, rounded tab group presentation.
 - `.tabs.compact` or `.tab.compact`: Reduced padding for tab navigation, applied across every presentation (plain, group, outline, bar). `.compact` on the container tightens all tabs; `.tab.compact` tightens one. The group container also tightens its own fill.
 - `.tabs.compacted`: Full-width bar with min-content tabs that do not stretch; tab padding is unchanged. Add `.tabs.wrap` to let tabs wrap when they exceed the parent width.
-- `.tabs.outline`: Border-side tab navigation with neutral inactive tabs and ink active tabs by default, plus a `::after` active indicator. A semantic color on the tab bar makes inactive tabs ink and active tabs use that semantic color.
+- `.tabs.outline`: Border-side tab navigation with muted inactive tabs (the neutral role mixed toward the text role) and ink active tabs by default, plus a `::after` active indicator. A semantic color on the tab bar makes inactive tabs ink and active tabs use that semantic color.
 - `.tabs.bar`: Joined, bordered horizontal bar (Apple-style) with a solid accent fill and contrast text on the active tab, like a checked `.selector`. Add a semantic color to the bar (`.tabs.bar.primary`) or an individual tab; horizontal only.
 - `.tabs.vertical`: Stacks tabs vertically; with `.outline`, the border and active indicator are on the right by default. Add `.left` or `.right` to choose the bar side.
 - Tabs paint through the background color channel, so `.bg-*` color, tint, blend, and opacity modifiers apply to `.tabs` and `.tab` (for example `.tab.primary.active.bg-2o`).

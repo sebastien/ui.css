@@ -1,4 +1,4 @@
-import css, { keyframes, vars } from "../js/uicss.js";
+import css, { keyframes, motionOrigin, vars } from "../js/uicss.js";
 import { colormix } from "./colors.js";
 import colors from "./colors.js";
 
@@ -10,6 +10,10 @@ const bd = colormix(
 	vars.border.color.blend,
 	vars.border.color.opacity,
 );
+
+// Danger menu labels: semantic red mixed toward the text pole in srgb, matching
+// the alert/pill text recipe (raw red is ~3.6:1 on a light menu).
+const menuDanger = `color-mix(in srgb, ${vars.color.danger}, ${vars.color.surface_text} 60%)`;
 
 function pill(...rest) {
 	return css.nesting(
@@ -38,7 +42,12 @@ function pill(...rest) {
 			__background_color_blend: 1.0,
 			__background_color_opacity: 1.0,
 			background_color: vars.pill.bg.or(vars.background.color),
-			color: vars.pill.text.or(vars.color.paper),
+			// Pick the readable pole for whatever the accent fill resolves to.
+			// Neutral/green/amber fills take dark text, blue/red take light —
+			// the old fixed paper text was ~1.4:1 on the neutral fill.
+			color: vars.pill.text.or(
+				`contrast-color(${vars.background.color})`,
+			),
 		}),
 		css.rule("&.dot > *:first-child:before", {
 			display: "inline-block",
@@ -86,24 +95,34 @@ function pill(...rest) {
 			color: vars.color.ink,
 			border_color: "transparent",
 		}),
-		// Tinted: color @ 10% bg with full color text
+		// Tinted: accent @ 10% background with accent-tinted text. The bare
+		// accent as text fails on the near-page tint (neutral ~1.4:1 light,
+		// ~2.7:1 dark); mixing toward the text pole in srgb keeps the hue and
+		// reaches AA without the oklch hue-arc problem noted below.
 		css.rule("&.tinted", {
 			__background_color_base: vars.accent,
 			__background_color_tint: "transparent",
 			__background_color_blend: 0.1,
 			__background_color_opacity: 1.0,
-			color: vars.pill.text.or(vars.accent),
+			color: vars.pill.text.or(
+				`color-mix(in srgb, ${vars.accent}, ${vars.color.surface_text} 60%)`,
+			),
 			border_color: "transparent",
 		}),
-		// Outline: transparent bg with color border and darkened text
+		// Outline: transparent bg with color border and mode-adjusted text.
+		// NOTE: never mix a saturated accent toward the ink/paper poles in
+		// oklch — hue interpolates by shortest arc (~260 for both poles), so
+		// amber swings through pink (70→328) and red through magenta. The
+		// border fades the accent with alpha instead; the text mixes toward
+		// the text pole in srgb, which darkens/lightens without hue arcs.
 		css.rule("&.outline", {
 			__background_color_base: vars.accent,
 			__background_color_tint: vars.color.paper,
 			__background_color_blend: 1.0,
 			__background_color_opacity: 0,
 			border_width: "1px",
-			border_color: `color-mix(in oklch, ${vars.accent}, ${vars.color.surface} 60%)`,
-			color: `color-mix(in oklch, ${vars.accent}, ${vars.color.surface_text} 40%)`,
+			border_color: `color-mix(in oklch, ${vars.accent}, transparent 60%)`,
+			color: `color-mix(in srgb, ${vars.accent}, ${vars.color.surface_text} 60%)`,
 		}),
 		...rest,
 	);
@@ -364,13 +383,16 @@ function card(...rest) {
 			background_color: vars.background.color,
 		}),
 		// Color variants: identity tints the surface and edge from the accent.
+		// The border fades the semantic color with alpha (blend 1 collapses to
+		// the pure color, opacity carries the softness) — mixing it toward the
+		// surface pole in oklch would swing hues through the shortest arc
+		// (green→teal, red→magenta) against the blue-ish ink pole in dark mode.
 		...colors.semantic.map((color) =>
 			css.rule(css.mods("&", color), {
 				__accent: vars.color[color],
 				__border_color_base: vars.color[color],
-				__border_color_tint: vars.card.color.tint.or(vars.color.surface),
-				__border_color_blend: 0.35,
-				__border_color_opacity: 1.0,
+				__border_color_blend: 1.0,
+				__border_color_opacity: 0.65,
 			}),
 		),
 		...rest,
@@ -451,7 +473,7 @@ function section() {
 			border_right: "max(2px, 0.12em) solid currentColor",
 			border_bottom: "max(2px, 0.12em) solid currentColor",
 			transform: "rotate(45deg)",
-			transform_origin: "center",
+			transform_origin: motionOrigin,
 			transition: `transform ${vars.motion.duration.base} ${vars.motion.easing.out}`,
 		}),
 
@@ -650,7 +672,10 @@ function alert() {
 			css.rule(`.alert.${name}`, {
 				border_width: "0",
 				background_color: `color-mix(in oklch, ${color}, transparent 88%)`,
-				color: `${color}`,
+				// Mix toward the text pole in srgb so the label keeps the
+				// semantic hue but clears AA on the pale tint (raw success/
+				// warning on a light tint is ~2:1).
+				color: `color-mix(in srgb, ${color}, ${vars.color.surface_text} 60%)`,
 			}),
 		),
 		...[
@@ -665,7 +690,7 @@ function alert() {
 				border_width: "1px",
 				background_color: "transparent",
 				border_color: `${color}`,
-				color: `${color}`,
+				color: `color-mix(in srgb, ${color}, ${vars.color.surface_text} 60%)`,
 			}),
 		),
 		css.rule([".alert.ghost", ".alert.outline"], {
@@ -890,13 +915,27 @@ function native() {
 			cursor: "pointer",
 			font_weight: "600",
 		}),
+		// Marker is a glyph in a fixed square box, centered on both axes so the
+		// box and the glyph share one center: the rotation pivot is the icon's
+		// visual center regardless of glyph metrics, and `--motion-origin`
+		// (or an `.origin-*` class) can move that pivot without the box
+		// jumping (per-axis fallback keeps the unset axis at `center`).
 		css.rule("details.accordion > summary::after", {
-			content: "'▾'",
-			transform_origin: "center",
+			content: "'›'",
+			box_sizing: "border-box",
+			display: "inline-flex",
+			align_items: "center",
+			justify_content: "center",
+			flex_shrink: "0",
+			width: vars.accordion.marker.size.or("1em"),
+			height: vars.accordion.marker.size.or("1em"),
+			font_size: vars.accordion.marker.font_size.or("1.25em"),
+			line_height: "1",
+			transform_origin: motionOrigin,
 			transition: `transform ${vars.motion.duration.base} ${vars.motion.easing.out}`,
 		}),
 		css.rule("details.accordion[open] > summary::after", {
-			transform: "rotate(180deg)",
+			transform: "rotate(90deg)",
 		}),
 		css.rule("details.accordion > :not(summary)", { padding: "0 1rem 1rem" }),
 		css.rule("dialog", {
@@ -997,7 +1036,7 @@ function native() {
 				"[popover]:popover-open menu :is(.danger, [data-variant=danger])",
 			],
 			{
-				color: vars.color.danger,
+				color: menuDanger,
 			},
 		),
 		css.rule(
@@ -1007,7 +1046,7 @@ function native() {
 			],
 			{
 				background_color: `color-mix(in oklch, ${vars.color.danger}, transparent 90%)`,
-				color: vars.color.danger,
+				color: menuDanger,
 			},
 		),
 		css.rule(["menu[popover] hr", "[popover] menu hr"], {
@@ -1147,7 +1186,9 @@ function feedback() {
 		css.rule(".skeleton", {
 			display: "block",
 			border_radius: vars.border.radius[1],
-			background: `linear-gradient(90deg, color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 92%), color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 82%), color-mix(in oklch, ${vars.color.neutral}, ${vars.color.paper} 92%))`,
+			// Shimmer blends toward the surface beneath (mode-aware), not the
+			// light pole — a paper mix pins the bars near-white in dark mode.
+			background: `linear-gradient(90deg, color-mix(in oklch, ${vars.color.neutral}, ${vars.color.surface} 92%), color-mix(in oklch, ${vars.color.neutral}, ${vars.color.surface} 82%), color-mix(in oklch, ${vars.color.neutral}, ${vars.color.surface} 92%))`,
 			background_size: "200% 100%",
 			animation: "skeleton-shimmer 1.4s linear infinite",
 		}),
@@ -1201,7 +1242,7 @@ function pagination() {
 			border_style: "solid",
 			border_color: bd,
 			background_color: "transparent",
-			color: vars.color.ink,
+			color: vars.color.surface_text,
 			border_radius: "0",
 		}),
 		css.rule(".pagination > *:not(:first-child) > :is(a, .button)", {

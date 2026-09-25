@@ -22,8 +22,10 @@ you rely on one, declare it rather than depending on the fallback.
 - `--color-{name}` — palette families. `tokens.js` ships defaults for the full
   `COLORS` list; a theme may override any of them (see `spec-001-colors.md`).
 - `--background-color-{role}` — optional extra-light background for a semantic
-  role, preferred by filled controls before the solid role color. Only
-  `--background-color-neutral` is declared; the others are hooks.
+  role, preferred by filled controls before the solid role color. The neutral
+  role is mode-paired (`--background-color-neutral-light` /
+  `--background-color-neutral-dark`) and repointed by the `.light` / `.dark`
+  rules; the other roles are hooks.
 
 ## Component hooks
 
@@ -78,7 +80,8 @@ you rely on one, declare it rather than depending on the fallback.
 - `--font-weight-{regular,medium,bold,bolder,boldest}`
 
 ### Motion / structure
-- `--motion-origin`, `--motion-rotation`, `--motion-stagger-index`
+- `--motion-origin` (whole-value `transform-origin` override for `.origin-*` and popover animations), `--motion-origin-x` / `--motion-origin-y` (per-axis; set by `.origin-*` and read by `.open-rotate` and the disclosure markers), `--motion-rotation`, `--motion-stagger-index`
+- `--accordion-marker-size`, `--accordion-marker-font-size` (accordion chevron box and glyph size)
 - `--depth`, `--dx`, `--dy`
 - `--meter-color`
 - `--file-background`

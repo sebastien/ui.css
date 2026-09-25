@@ -1,4 +1,12 @@
-import { vars, root, named, group, rule, supports } from "../js/uicss.js";
+import {
+	vars,
+	root,
+	named,
+	group,
+	motionOrigin,
+	rule,
+	supports,
+} from "../js/uicss.js";
 
 const gated = (condition, ...selectors) =>
 	selectors.map((selector) => `${root}${condition} ${selector}`);
@@ -122,7 +130,11 @@ export default named({
 		}),
 		rule(".open-rotate", {
 			transform: `rotate(${vars.details.open.rotate.or("0deg")})`,
-			transform_origin: "center",
+			// Per-axis fallback keeps the unset axis at `center`, so a single
+			// `.origin-*` class or `--motion-origin-{x,y}` pair is enough.
+			// `@layer behavior` outranks the `layout`-layer `.origin-*`
+			// shorthand, so this resolution always wins.
+			transform_origin: motionOrigin,
 			transition: `transform ${vars.motion.duration.fast} ${vars.motion.easing.standard}`,
 		}),
 		rule("details::details-content", {

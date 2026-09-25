@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -18,6 +18,19 @@
       })
 
       document.addEventListener("DOMContentLoaded", () => {
+        const themeSwitch = document.querySelector("#theme-switch")
+        const applyTheme = (dark) => {
+          document.documentElement.classList.toggle("dark", dark)
+          document.documentElement.classList.toggle("light", !dark)
+          themeSwitch.setAttribute("aria-checked", dark)
+          themeSwitch.setAttribute("aria-label", `Switch to ${dark ? "light" : "dark"} mode`)
+        }
+        // Initialize once from the OS preference; afterwards the toggle is manual.
+        const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)")?.matches ?? false
+        themeSwitch.checked = prefersDark
+        applyTheme(prefersDark)
+        themeSwitch.addEventListener("change", () => applyTheme(themeSwitch.checked))
+
         document.querySelectorAll("input[type=range].tinted").forEach((range) => {
           const updateProgress = () => {
             const value = Number(range.value)
@@ -32,12 +45,16 @@
     </script>
     <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
   </head>
-  <body class="m-0 bg-neutral bg tx">
+  <body class="m-0 bg-def tx-def">
     <main class="stack lined cover ma g-4">
-      <div class="row middle g-1 p-4 bg-white bg z-10 rel bd bd-b">
+      <div class="row middle g-1 p-4 bg-def z-10 rel bd bd-b">
         <strong class="b">UI.css</strong><span class="dim">Component and utility specimen</span>
+        <label class="row middle g-2 ml-auto" for="theme-switch">
+          <span class="small">Dark mode</span>
+          <input id="theme-switch" type="checkbox" role="switch" aria-checked="false" aria-label="Switch to dark mode" />
+        </label>
       </div>
-      <div class="row stretch fill lined min-h-0 bg-paper bg tx">
+      <div class="row stretch fill lined min-h-0 bg-def tx-def">
         <nav class="rel stack w-2bl" aria-label="Table of contents">
           <div class="cover overflow stack g-3 p-4">
             <div class="stack g-1">
