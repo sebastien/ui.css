@@ -473,10 +473,6 @@ export default named({
 		rule([".accordion:not(details).is-open", ".accordion:not(details)[open]"], {
 			grid_template_rows: "auto 1fr",
 		}),
-		namedAnimation(".details-reveal", "details-reveal", {
-			__motion_animation_duration: vars.motion.duration.base,
-			__motion_animation_ease: softer,
-		}),
 		keyframes("list-enter", {
 			from: {
 				opacity: 0,
@@ -495,16 +491,6 @@ export default named({
 			to: {
 				opacity: 0,
 				transform: `translateY(calc(${moveXs} * -1))`,
-			},
-		}),
-		keyframes("details-reveal", {
-			from: {
-				opacity: 0,
-				transform: `translateY(calc(${moveXs} * -1))`,
-			},
-			to: {
-				opacity: 1,
-				transform: "translateY(0)",
 			},
 		}),
 	),

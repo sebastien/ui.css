@@ -658,6 +658,10 @@ const group = (...rules) => new Group(rules);
 // Creates an `@media` at-rule containing regular ui.css rules or groups.
 const media = (query, ...contents) => new AtRule("media", query, contents.flat());
 
+// Function: supports
+// Creates an `@supports` at-rule containing regular ui.css rules or groups.
+const supports = (query, ...contents) => new AtRule("supports", query, contents.flat());
+
 // Function: keyframes
 // Creates an `@keyframes` at-rule from a frame-to-properties mapping.
 const keyframes = (name, frames) =>
@@ -740,7 +744,9 @@ const scopedcontent = (value, selector) => {
 		return value.flatMap((_) => scopedcontent(_, selector));
 	}
 	if (value instanceof AtRule) {
-		return [value.name === "media" ? guard(value, selector) : value];
+		return [
+			value.name === "media" || value.name === "supports" ? guard(value, selector) : value,
+		];
 	}
 	if (value instanceof Tokens) {
 		const res = new Tokens(value.contents, selector);
@@ -800,7 +806,7 @@ const guard = (value, selector) => {
 		return new Group(scopedcontent(value, selector));
 	}
 	if (value instanceof AtRule) {
-		return value.name === "media"
+		return value.name === "media" || value.name === "supports"
 			? new AtRule(
 					value.name,
 					value.prelude,
@@ -1037,6 +1043,7 @@ export {
 	layer,
 	layers,
 	media,
+	supports,
 	mods,
 	named,
 	nesting,
@@ -1066,6 +1073,7 @@ export default Object.assign(css, {
 	keyframes,
 	named,
 	media,
+	supports,
 	percent,
 	layer,
 	root,

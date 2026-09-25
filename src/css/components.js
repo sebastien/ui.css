@@ -415,10 +415,6 @@ function section() {
 			border: `1px solid ${border}`,
 			border_radius: `${radius}`,
 			margin_bottom: vars.section.margin.or(vars.margin[2]),
-			// Panel height animation (progressive): interpolate-size enables
-			// keyword interpolation for this subtree; ::details-content
-			// carries the transition. Ignored where unsupported.
-			interpolate_size: "allow-keywords",
 		}),
 
 		css.rule("details.section summary", {
@@ -454,15 +450,11 @@ function section() {
 			border_bottom: "max(2px, 0.12em) solid currentColor",
 			transform: "rotate(45deg)",
 			transform_origin: "center",
-			transition: "transform 0.3s ease",
+			transition: `transform ${vars.motion.duration.base} ${vars.motion.easing.out}`,
 		}),
 
 		css.rule("details.section[open] summary:after", {
 			transform: "rotate(225deg)",
-		}),
-
-		css.rule("details.section::details-content", {
-			transition: "height 0.5s ease-in-out, content-visibility 0.5s ease-in-out",
 		}),
 
 		css.rule("details.section > *:not(summary)", {

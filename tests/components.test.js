@@ -89,6 +89,14 @@ describe("CSS-first components", () => {
 		expect(output).toMatch(/\.accordion > :not\(summary\) \{[^}]*overflow: clip;/);
 	});
 
+	test("animates disclosure bodies with an instant fallback", () => {
+		expect(output).toMatch(/details::details-content \{[^}]*height: 0;/);
+		expect(output).toContain("allow-discrete");
+		expect(output).toContain("@supports not (interpolate-size: allow-keywords)");
+		// Component chrome must not shadow the shared behavior-layer transition.
+		expect(output).not.toContain("details.section::details-content");
+	});
+
 	test("keeps legacy figure avatar markup styled", () => {
 		expect(output).toContain("figure[data-avatar]");
 		expect(output).toContain(".avatars > :is(.avatar, figure[data-avatar])");

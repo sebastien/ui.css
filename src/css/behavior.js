@@ -1,4 +1,4 @@
-import { vars, root, named, group, rule } from "../js/uicss.js";
+import { vars, root, named, group, rule, supports } from "../js/uicss.js";
 
 const gated = (condition, ...selectors) =>
 	selectors.map((selector) => `${root}${condition} ${selector}`);
@@ -126,7 +126,7 @@ export default named({
 			transition: `transform ${vars.motion.duration.fast} ${vars.motion.easing.standard}`,
 		}),
 		rule("details::details-content", {
-			transition: `height ${vars.motion.duration.base} ${vars.motion.easing.out}, content-visibility ${vars.motion.duration.base} ${vars.motion.easing.out} allow-discrete`,
+			transition: `height ${vars.motion.duration.slow} ${vars.motion.easing.soft}, content-visibility ${vars.motion.duration.slow} ${vars.motion.easing.soft} allow-discrete`,
 			height: "0",
 			content_visibility: "hidden",
 			overflow: "clip",
@@ -135,6 +135,13 @@ export default named({
 			height: "auto",
 			content_visibility: "visible",
 		}),
+		// Without `interpolate-size` (Firefox, Safari) height cannot interpolate
+		// to `auto`: the transition would only reserve space while content pops
+		// at 50%. Release it so open/close stays clean and instant.
+		supports(
+			"not (interpolate-size: allow-keywords)",
+			rule("details::details-content", { transition: "none" }),
+		),
 	),
 	rotation: group(
 		rule(".r-180", { __motion_rotation: "180deg" }),
