@@ -58,6 +58,18 @@ test("the select theme has self-contained semantic colors", async ({ page }) => 
 	expect(button["--color-surface"]).not.toBe("");
 });
 
+test("background color utilities reset inherited blend and opacity defaults", async ({ page }) => {
+	await render(
+		page,
+		`<body><div class="panel bg-5b bg-5o"><div id="solid" class="bg-primary bg"></div><div id="blended" class="bg-primary bg-5b bg"></div></div></body>`,
+	);
+	const solid = await properties(page, "#solid", ["--background-color-blend", "--background-color-opacity"]);
+	const blended = await properties(page, "#blended", ["--background-color-blend"]);
+	expect(solid["--background-color-blend"]).toBe("1");
+	expect(solid["--background-color-opacity"]).toBe("1");
+	expect(blended["--background-color-blend"]).toBe("0.5");
+});
+
 test("dark mode overrides a themed surface", async ({ page }) => {
 	await render(page, `<body data-theme="material" class="dark"><input id="field"></body>`, material);
 	const field = await properties(page, "#field", ["--color-surface", "--color-surface-text"]);

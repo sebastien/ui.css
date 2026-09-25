@@ -12,9 +12,9 @@ application.
 - Alerts: add `.alert` for styling and `role="alert"` for assistive technology, with `.success`, `.warning`, `.danger`, and `.error` variants.
 - Avatars: add `.avatar`; use `.avatars` for an overlapping group.
 - Attachments: add `.attachment` around `.media`, `.content` (`.title` / `.description`), and `.actions` (`.action`). Use `data-state="idle|uploading|processing|error|done"`, `.vertical`, and `.small` / `.smaller`.
-- Content: `.card`, `.panel`, `.pill`, `.badge`, `.status`.
+- Content: `.card`, `.panel`, `.pill`, `.badge`, `.count`, `.status`.
 - Divider: use `.divider` between resizable side-by-side panels. Add `.horizontal` or `aria-orientation="horizontal"` between stacked panels. Add a `.handle` child for the centered, 5px-wide rounded grip; application code supplies the resize behavior and separator keyboard interaction.
-- Pills and badges use the background color channel, so `.bg-*` color, tint, blend, and opacity modifiers apply to them.
+- Pills and badges use the background color channel, so `.bg-*` color, tint, blend, and opacity modifiers apply to them. `.badge` is a pill-shaped text chip; add `.count` (or use `.count` alone) for a circular number counter whose size is `--badge-size`.
 - Disclosure: `details.accordion`, `details.section`, `details.tree`. Bodies animate through `details::details-content`: height and content-visibility transition smoothly where `interpolate-size` is supported (instant open/close elsewhere), and div-based `.accordion` panels use a `grid-template-rows` transition. All disclosure motion collapses under `prefers-reduced-motion`.
 - Native surfaces: `dialog` and `[popover]` receive surface and backdrop styling.
 - Feedback: native `meter` (and `progress`), `.skeleton.line`, `.skeleton.box`, and `[aria-busy="true"].loading`; add semantic color classes to value bars.

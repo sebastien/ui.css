@@ -13,7 +13,7 @@ const bd = colormix(
 
 function pill(...rest) {
 	return css.nesting(
-		[".pill", ".badge"],
+		[".pill", ".badge", ".count"],
 		{},
 		css.rule("&", {
 			// Box
@@ -60,8 +60,10 @@ function pill(...rest) {
 		css.rule("&.expanded", {
 			padding: vars.pill.padding.expanded,
 		}),
-		// Badge: fixed circular counter chip (number badge).
-		css.rule("&.badge", {
+		// Count: opt-in circular counter chip (number badge); bare .badge
+		// stays a pill-shaped text chip. `.count` is also a standalone host,
+		// so badge count, pill count, and count all resolve to a circle.
+		css.rule("&:where(.count)", {
 			width: vars.badge.size.or("1.25rem"),
 			aspect_ratio: "1",
 			justify_content: "center",

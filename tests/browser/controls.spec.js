@@ -15,7 +15,44 @@ test("compact action padding overrides the action default", async ({ page }) => 
 		buttons.map((button) => getComputedStyle(button).padding),
 	);
 
-	expect(padding).toEqual(["8px 12.8px", "2.4px 4px", "1.6px 2.4px"]);
+	// Tight adds a 0.75em font step, so its em padding resolves against 12px
+	// (0.1em 0.15em) and is intentionally smaller than compact's 16px base.
+	expect(padding).toEqual(["8px 12.8px", "2.4px 4px", "1.2px 1.8px"]);
+});
+
+test("compact tabs tighten padding across every presentation", async ({ page }) => {
+	await page.setContent(
+		`<style>${stylesheet}</style>
+		<div id="plain" class="tabs"><button id="plain-default" class="tab">A</button><button id="plain-per-tab" class="tab compact">B</button></div>
+		<div id="plain-compact" class="tabs compact"><button id="plain-container" class="tab">A</button></div>
+		<div id="bar" class="tabs bar"><button id="bar-default" class="tab">A</button></div>
+		<div id="bar-compact" class="tabs bar compact"><button id="bar-container" class="tab">A</button></div>
+		<div id="group" class="tabs group"><button id="group-default" class="tab">A</button></div>
+		<div id="group-compact" class="tabs group compact"><button id="group-container" class="tab">A</button></div>
+		<div id="outline" class="tabs outline"><button id="outline-default" class="tab">A</button></div>
+		<div id="outline-compact" class="tabs outline compact"><button id="outline-container" class="tab">A</button></div>`,
+	);
+
+	const padding = await page.evaluate(() =>
+		Object.fromEntries(
+			["plain-default", "plain-per-tab", "plain-container", "bar-default", "bar-container", "group-default", "group-container", "outline-default", "outline-container"].map(
+				(id) => [id, getComputedStyle(document.getElementById(id)).padding],
+			),
+		),
+	);
+	const groupPadding = await page.$eval("#group-compact", (el) => getComputedStyle(el).padding);
+
+	// Compact padding wins over every presentation default (0.35em 0.5em @ 16px).
+	for (const id of ["plain-per-tab", "plain-container", "bar-container", "group-container", "outline-container"]) {
+		expect(padding[id]).toBe("5.6px 8px");
+	}
+	// Presentation defaults are untouched.
+	expect(padding["plain-default"]).toBe("8px 16px");
+	expect(padding["bar-default"]).toBe("8px 16px");
+	expect(padding["group-default"]).toBe("8px 13.6px");
+	expect(padding["outline-default"]).toBe("8px 13.6px");
+	// Only the group container (padded fill) tightens; joined strips stay at 0.
+	expect(groupPadding).toBe("3.2px");
 });
 
 test("selector color variants use the same field surface as inputs", async ({ page }) => {

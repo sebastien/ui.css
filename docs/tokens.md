@@ -70,7 +70,7 @@ Controls use shared `--control-*` and per-kind `--field-*`/`--action-*` namespac
 - `--border-color-{base,tint,blend,opacity}` and `--outline-color-{base,tint,blend,opacity}`: channels published by the `.bd-*` / `.ol-*` utility modifiers. Controls and fields read them
   ahead of the `--control-*` tokens, so a modifier class reaches interactive chrome without the
   `.bd` / `.ol` apply class. Precedence for fields is `--field-border-*` → `--border-color-*` → `--control-border-*`.
-- Component namespaces provide sizing and geometry tokens such as `--checkbox-size`, `--radio-dot-size`, `--toggle-width`, and `--range-track-height`.
+- Component namespaces provide sizing and geometry tokens such as `--checkbox-size`, `--radio-dot-size`, `--toggle-width`, `--range-track-height`, `--badge-size`, and `--tab-padding` / `--tab-padding-compact`.
 
 ### Scale indices:
 

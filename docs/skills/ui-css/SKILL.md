@@ -121,6 +121,7 @@ Common control variants:
 Component primitives from `components.js`:
 
 - Pills and badges: `.pill`, `.badge`
+- Counters: `.count` (circular number chip, standalone or as `.badge count` / `.pill count`)
 - Status meter: `.status`
 - Surface containers: `.card`, `.panel`
 - Navigation: `.breadcrumbs`

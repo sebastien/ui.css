@@ -295,17 +295,17 @@ const result = "fast, consistent styling"</code></pre>
         <div class="stack g-4">
           <h3 class="h4 m-0">Semantic Palette</h3>
           <div class="grid col-3 g-3">
-            <div class="panel bg-paper bg stack g-2 p-4 rounded small"><span class="b">Base semantic</span><code>no class</code></div>
-            <div class="panel bg-neutral bg stack g-2 p-4 rounded small"><span class="b">Neutral</span><code>.neutral</code></div>
-            <div class="panel bg-accent bg stack g-2 p-4 rounded small"><span class="b">Accent</span><code>.accent</code></div>
-            <div class="panel bg-primary bg stack g-2 p-4 rounded small"><span class="b">Primary</span><code>.primary</code></div>
-            <div class="panel bg-secondary bg stack g-2 p-4 rounded small"><span class="b">Secondary</span><code>.secondary</code></div>
-            <div class="panel bg-tertiary bg stack g-2 p-4 rounded small"><span class="b">Tertiary</span><code>.tertiary</code></div>
-            <div class="panel bg-success bg stack g-2 p-4 rounded small"><span class="b">Success</span><code>.success</code></div>
-            <div class="panel bg-info bg stack g-2 p-4 rounded small"><span class="b">Info</span><code>.info</code></div>
-            <div class="panel bg-warning bg stack g-2 p-4 rounded small"><span class="b">Warning</span><code>.warning</code></div>
-            <div class="panel bg-danger bg stack g-2 p-4 rounded small"><span class="b">Danger</span><code>.danger</code></div>
-            <div class="panel bg-error bg stack g-2 p-4 rounded small"><span class="b">Error</span><code>.error</code></div>
+            <div class="bg-paper bg stack g-2 p-4 rounded small"><span class="b">Base semantic</span><code>no class</code></div>
+            <div class="bg-neutral bg stack g-2 p-4 rounded small"><span class="b">Neutral</span><code>.neutral</code></div>
+            <div class="bg-accent bg stack g-2 p-4 rounded small"><span class="b">Accent</span><code>.accent</code></div>
+            <div class="bg-primary bg stack g-2 p-4 rounded small"><span class="b">Primary</span><code>.primary</code></div>
+            <div class="bg-secondary bg stack g-2 p-4 rounded small"><span class="b">Secondary</span><code>.secondary</code></div>
+            <div class="bg-tertiary bg stack g-2 p-4 rounded small"><span class="b">Tertiary</span><code>.tertiary</code></div>
+            <div class="bg-success bg stack g-2 p-4 rounded small"><span class="b">Success</span><code>.success</code></div>
+            <div class="bg-info bg stack g-2 p-4 rounded small"><span class="b">Info</span><code>.info</code></div>
+            <div class="bg-warning bg stack g-2 p-4 rounded small"><span class="b">Warning</span><code>.warning</code></div>
+            <div class="bg-danger bg stack g-2 p-4 rounded small"><span class="b">Danger</span><code>.danger</code></div>
+            <div class="bg-error bg stack g-2 p-4 rounded small"><span class="b">Error</span><code>.error</code></div>
           </div>
         </div>
       </section>
@@ -450,6 +450,10 @@ const result = "fast, consistent styling"</code></pre>
           <div class="stack g-2">
             <p class="b m-0">Toggle</p>
             <label class="row g-2"><input class="toggle" type="checkbox" name="selector-view" checked /> Selector Toggle</label>
+            <div class="row wrap middle g-4">
+              <label class="row middle g-2"><input class="toggle smaller" type="checkbox" checked /> Smaller</label>
+              <label class="row middle g-2"><input class="toggle smallest" type="checkbox" checked /> Smallest</label>
+            </div>
           </div>
         </div>
         <div class="stack g-3">
@@ -512,12 +516,41 @@ const result = "fast, consistent styling"</code></pre>
         </div>
         <div class="stack g-2">
           <p class="b m-0">Toggle (segmented buttons)</p>
-          <div class="row wrap g-3">
-            <div class="selector toggle regular" role="group" aria-label="Date range">
-              <button type="button" aria-pressed="false">7D</button>
-              <button type="button" aria-pressed="true">1M</button>
-              <button type="button" aria-haspopup="dialog" aria-expanded="false">Custom</button>
+          <div class="grid col-2 g-3">
+            <div class="stack g-2">
+              <span class="small b">Default</span>
+              <div class="selector toggle regular" role="group" aria-label="Date range">
+                <button type="button" aria-pressed="false">7D</button>
+                <button type="button" aria-pressed="true">1M</button>
+                <button type="button" aria-haspopup="dialog" aria-expanded="false">Custom</button>
+              </div>
             </div>
+            <div class="stack g-2">
+              <span class="small b">Small</span>
+              <div class="selector toggle small" role="group" aria-label="Small date range">
+                <button type="button" aria-pressed="false">7D</button>
+                <button type="button" aria-pressed="true">1M</button>
+                <button type="button">Custom</button>
+              </div>
+            </div>
+            <div class="stack g-2">
+              <span class="small b">Smaller</span>
+              <div class="selector toggle smaller" role="group" aria-label="Smaller date range">
+                <button type="button" aria-pressed="false">7D</button>
+                <button type="button" aria-pressed="true">1M</button>
+                <button type="button">Custom</button>
+              </div>
+            </div>
+            <div class="stack g-2">
+              <span class="small b">Smallest</span>
+              <div class="selector toggle smallest" role="group" aria-label="Smallest date range">
+                <button type="button" aria-pressed="false">7D</button>
+                <button type="button" aria-pressed="true">1M</button>
+                <button type="button">Custom</button>
+              </div>
+            </div>
+          </div>
+          <div class="row wrap g-3">
             <div class="selector toggle compact" role="group" aria-label="Compact date range">
               <button type="button" aria-pressed="false">7D</button>
               <button type="button" aria-pressed="true">1M</button>
@@ -838,6 +871,26 @@ const result = "fast, consistent styling"</code></pre>
           <input class="input fit-w" type="text" placeholder="Enter your legal full name" />
           <span class="small">This field is required</span>
         </div>
+        <div class="stack g-1">
+          <span class="b">Expandable search</span>
+          <input class="input expandable" type="search" placeholder="Search" value="ui.css" aria-label="Search" />
+          <span class="small">Focus to expand; a non-empty value keeps it expanded.</span>
+        </div>
+        <div class="stack g-1">
+          <span class="b">Expandable search - round</span>
+          <input class="input expandable roundest" type="search" placeholder="Search" aria-label="Search" />
+          <span class="small">The empty control is a circle; focus or enter a value to expand it.</span>
+        </div>
+        <div class="grid col-2 g-4">
+          <label class="stack g-1">
+            <span class="b">Expandable search - small</span>
+            <input class="input expandable small" type="search" placeholder="Search" aria-label="Search" />
+          </label>
+          <label class="stack g-1">
+            <span class="b">Expandable search - smaller</span>
+            <input class="input expandable smaller" type="search" placeholder="Search" aria-label="Search" />
+          </label>
+        </div>
         <div class="stack g-3">
           <p class="b m-0">Field - Chrome slots</p>
           <p class="m-0 dim">Composite <code>.input</code> hosts slots around a bare control: <code>.leading</code>/<code>.prefix</code>, framed <code>.unit</code>/<code>.suffix</code>, <code>.trailing</code>, <code>.note</code>, and sized <code>svg</code> icons. A unit-like segment at an edge takes over that edge's padding (flush with the border).</p>
@@ -971,6 +1024,18 @@ const result = "fast, consistent styling"</code></pre>
           </div>
         </div>
         <div class="stack g-3">
+          <p class="b m-0">Checkboxes and radios - Sizes</p>
+          <div class="row wrap middle g-4">
+            <label class="row middle g-2"><input type="checkbox" checked /> Default checkbox</label>
+            <label class="row middle g-2"><input class="round" type="checkbox" checked /> Round checkbox</label>
+            <label class="row middle g-2"><input class="small" type="checkbox" checked /> Small checkbox</label>
+            <label class="row middle g-2"><input class="smaller" type="checkbox" checked /> Smaller checkbox</label>
+            <label class="row middle g-2"><input type="radio" name="size-radio" checked /> Default radio</label>
+            <label class="row middle g-2"><input class="small" type="radio" name="size-radio" /> Small radio</label>
+            <label class="row middle g-2"><input class="smaller" type="radio" name="size-radio" /> Smaller radio</label>
+          </div>
+        </div>
+        <div class="stack g-3">
           <p class="b m-0">Field - States</p>
           <div class="row wrap g-3">
             <input class="input regular fit-w" type="text" value="Normal" />
@@ -1028,6 +1093,11 @@ const result = "fast, consistent styling"</code></pre>
             <span class="small">Neutral</span>
             <input class="range fit-w" type="range" min="0" max="100" value="60" />
           </label>
+        </div>
+        <div class="stack g-3">
+          <p class="b m-0">Sizes</p>
+          <label class="stack g-1"><span class="small">Small</span><input class="range small fit-w" type="range" min="0" max="100" value="40" /></label>
+          <label class="stack g-1"><span class="small">Smaller</span><input class="range smaller fit-w" type="range" min="0" max="100" value="60" /></label>
         </div>
         <div class="stack g-3">
           <p class="b m-0">Color variants</p>
@@ -1192,6 +1262,28 @@ const result = "fast, consistent styling"</code></pre>
               <label class="row g-2"><input type="checkbox" role="switch" class="outline rounded danger" checked /> Danger on</label>
             </div>
           </div>
+          <div class="stack g-3">
+            <p class="b m-0">Sizes</p>
+            <p class="m-0 dim">The shared <code>.small</code> text size scales the em-based track and knob.</p>
+            <div class="grid col-2 g-3">
+              <div class="stack g-2">
+                <span class="small b">Default</span>
+                <label class="row g-2"><input type="checkbox" role="switch" /> Square off</label>
+                <label class="row g-2"><input type="checkbox" role="switch" checked /> Square on</label>
+                <label class="row g-2"><input type="checkbox" role="switch" class="rounded" /> Circle off</label>
+                <label class="row g-2"><input type="checkbox" role="switch" class="rounded" checked /> Circle on</label>
+                <label class="row g-2"><input type="checkbox" role="switch" class="outline rounded primary" checked /> Primary on</label>
+              </div>
+              <div class="stack g-2">
+                <span class="small b">Small</span>
+                <label class="row g-2"><input type="checkbox" role="switch" class="small" /> Square off</label>
+                <label class="row g-2"><input type="checkbox" role="switch" class="small" checked /> Square on</label>
+                <label class="row g-2"><input type="checkbox" role="switch" class="small rounded" /> Circle off</label>
+                <label class="row g-2"><input type="checkbox" role="switch" class="small rounded" checked /> Circle on</label>
+                <label class="row g-2"><input type="checkbox" role="switch" class="small outline rounded primary" checked /> Primary on</label>
+              </div>
+            </div>
+          </div>
         <div class="stack g-3">
           <p class="b m-0">Disabled</p>
           <div class="stack g-2">
@@ -1326,6 +1418,39 @@ const result = "fast, consistent styling"</code></pre>
               <div class="tabs group squared"><button class="tab active" role="tab" aria-selected="true">Overview</button><button class="tab" role="tab" aria-selected="false">Activity</button></div>
               <div class="tabs group bg-0o"><button class="tab active" role="tab" aria-selected="true">Overview</button><button class="tab" role="tab" aria-selected="false">Activity</button></div>
               <div class="tabs group squared bg-0o"><button class="tab active" role="tab" aria-selected="true">Overview</button><button class="tab" role="tab" aria-selected="false">Activity</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="stack g-3">
+          <p class="b m-0">Sizes</p>
+          <p class="m-0 dim"><code>.compact</code> tightens the tab padding (the group container also tightens its fill), and the shared <code>.small</code> text size scales tabs down since padding is em-based.</p>
+          <div class="stack g-2">
+            <span class="small b">Regular</span>
+            <div class="row wrap g-3 items-center">
+              <div class="tabs compact"><button class="tab active" role="tab" aria-selected="true">Overview</button><button class="tab" role="tab" aria-selected="false">Activity</button></div>
+              <div class="tabs small"><button class="tab active" role="tab" aria-selected="true">Overview</button><button class="tab" role="tab" aria-selected="false">Activity</button></div>
+              <div class="tabs"><button class="tab active" role="tab" aria-selected="true">Overview</button><button class="tab compact" role="tab" aria-selected="false">Compact tab</button></div>
+            </div>
+          </div>
+          <div class="stack g-2">
+            <span class="small b">Group</span>
+            <div class="row wrap g-3 items-center">
+              <div class="tabs group compact"><button class="tab active" role="tab" aria-selected="true">Overview</button><button class="tab" role="tab" aria-selected="false">Activity</button></div>
+              <div class="tabs group small"><button class="tab active" role="tab" aria-selected="true">Overview</button><button class="tab" role="tab" aria-selected="false">Activity</button></div>
+            </div>
+          </div>
+          <div class="stack g-2">
+            <span class="small b">Outline</span>
+            <div class="row wrap g-3">
+              <div class="tabs outline compact"><button class="tab active" role="tab" aria-selected="true">Overview</button><button class="tab" role="tab" aria-selected="false">Activity</button></div>
+              <div class="tabs outline small"><button class="tab active" role="tab" aria-selected="true">Overview</button><button class="tab" role="tab" aria-selected="false">Activity</button></div>
+            </div>
+          </div>
+          <div class="stack g-2">
+            <span class="small b">Bar</span>
+            <div class="row wrap g-3 items-center">
+              <div class="tabs bar compact"><button class="tab active" role="tab" aria-selected="true">Overview</button><button class="tab" role="tab" aria-selected="false">Activity</button></div>
+              <div class="tabs bar small"><button class="tab active" role="tab" aria-selected="true">Overview</button><button class="tab" role="tab" aria-selected="false">Activity</button></div>
             </div>
           </div>
         </div>
@@ -1735,13 +1860,17 @@ const result = "fast, consistent styling"</code></pre>
         </div>
         <div class="stack g-3">
           <p class="b m-0">Badges</p>
-          <div class="row wrap g-2">
+          <p class="m-0 dim">Badges are pill-shaped text chips. Add <code>.count</code> for a circular number counter.</p>
+          <div class="row wrap g-2 items-center">
             <span class="badge">Default</span>
             <span class="badge secondary">Secondary</span>
             <span class="badge outline">Outline</span>
             <span class="badge tinted success">Success</span>
             <span class="badge tinted warning">Warning</span>
             <span class="badge tinted danger">Danger</span>
+            <span class="badge primary count">3</span>
+            <span class="badge danger count">12</span>
+            <span class="count primary">5</span>
           </div>
         </div>
         <div class="stack g-3">

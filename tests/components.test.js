@@ -103,11 +103,21 @@ describe("CSS-first components", () => {
 	});
 
 	test("routes pill and badge fills through the background channel", () => {
-		expect(output).toContain(".bgc, .pill, .badge {");
+		expect(output).toContain(".bgc, .pill, .badge, .count {");
 		expect(output).toContain("--background-color-base: var(--color-neutral);");
 		expect(output).toContain("background-color: var(--background-color);");
 		expect(output).toContain("--background-color-blend: 0.1;");
 		expect(output).toContain("--background-color-opacity: 0;");
+	});
+
+	test("keeps badges as text chips and reserves circles for counters", () => {
+		// Bare .badge shares the pill base and must not be force-circled.
+		expect(output).not.toContain("&.badge {");
+		// Circular counter chips are opt-in via .count, which is also a
+		// standalone host (pill count, badge count, or bare count).
+		expect(output).toContain("&:where(.count) {");
+		expect(output).toMatch(/&:where\(\.count\) \{[^}]*width: var\(--badge-size, 1\.25rem\);/);
+		expect(output).toMatch(/&:where\(\.count\) \{[^}]*aspect-ratio: 1;/);
 	});
 
 	test("uses the shared accent role for component identities", () => {

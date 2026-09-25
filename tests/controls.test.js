@@ -322,6 +322,17 @@ describe("controls color model", () => {
 		expect(output).toContain("background-color: transparent;");
 	});
 
+	test("switches and segmented toggles support smaller sizes", () => {
+		const toggles = output.slice(output.indexOf("/* @group toggle */"), output.indexOf("/* @end toggle */"));
+		expect(toggles).toContain("&.smaller");
+		expect(toggles).toContain("--toggle-width-smaller, 2.25em");
+		expect(toggles).toContain("&.smallest");
+		expect(toggles).toContain("--toggle-height-smallest, 1em");
+		const selector = output.slice(output.indexOf(".selector.toggle.smaller"));
+		expect(selector).toContain(".selector.toggle.smallest");
+		expect(selector).toContain(".selector.toggle.smallest > button");
+	});
+
 	test("color reset wrappers clear inherited recipes", () => {
 		expect(output).toContain(":where(.reset-bg > *) {");
 		expect(output).toContain(":where(.reset-txt > *) {");

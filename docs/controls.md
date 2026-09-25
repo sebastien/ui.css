@@ -15,6 +15,7 @@ The `controls.js` module provides comprehensive styling for interactive elements
 - `input[type="radio"]`, `.radio`: Custom styled radio buttons.
 - `.toggle`: Switch/toggle control (often used with a hidden checkbox).
 - `input[type=checkbox][role=switch]`: Switch control. The knob is flat by default; add `.shadow` for a knob shadow.
+- `.smaller`, `.smallest` on switch controls: Reduced track sizes; both sizes can be themed with `--toggle-width-smaller`, `--toggle-height-smaller`, `--toggle-width-smallest`, and `--toggle-height-smallest`.
 
 ### Style Variants:
 
@@ -25,6 +26,11 @@ The `controls.js` module provides comprehensive styling for interactive elements
 - `.blank`: No visual chrome at all (no background, border, outline, or padding).
 - `.icon`: 1:1 aspect ratio button with minimal padding.
 - `.compact`: reduced padding for buttons, fields, selectors, tabs, and listbox options.
+- `.small`, `.smaller` on checkboxes and radios: reduced control size.
+- `.round` on checkboxes: circular checkbox shape.
+- `.small`, `.smaller` on range inputs: reduced track/thumb scale and control height.
+- `.expandable` on a text input: starts as a square icon control, expands to the available width on focus, and stays expanded while it has a value. Add `.roundest` for a circular collapsed control. Include a placeholder for the empty-state behavior; the search icon is decorative, so give the input an accessible name.
+- Text-size utilities such as `.small` and `.smaller` can be combined with `.expandable` to scale the text and its `em`-sized collapsed icon control.
 - `.default`: Emphasized button style with a visible outline.
 - `.tinted` (fields / `.selector`): Pure accent at low opacity (no paper blend); hover/focus do not force full opacity.
 - `.tinted` (range): Accent progress track; set `--range-progress` to the current percentage for the WebKit gradient implementation.
@@ -35,9 +41,10 @@ The `controls.js` module provides comprehensive styling for interactive elements
 - `.selector` item colors: Add a semantic color class to an individual label; its checked, active, tinted, and colored states use that item color.
 - `.selector.horizontal`, `.selector.vertical`: Joined horizontal or vertical selector items. Horizontal is the default.
 - `.selector.toggle`: Segmented pill button group. Direct `button` children select with `[aria-pressed=true]` or `.selected`; `aria-pressed=false` (or `.selected` absent) is the resting state. Use it for view/range switchers, including buttons that open a dialog.
+- `.selector.toggle.smaller`, `.selector.toggle.smallest`: Reduced segmented toggle typography and button padding.
 - `.tabs`: Classic bordered tab strip with the selected tab visually joined to the content below.
 - `.tabs.group`: Filled, rounded tab group presentation.
-- `.tabs.compact` or `.tab.compact`: Reduced padding for tab navigation.
+- `.tabs.compact` or `.tab.compact`: Reduced padding for tab navigation, applied across every presentation (plain, group, outline, bar). `.compact` on the container tightens all tabs; `.tab.compact` tightens one. The group container also tightens its own fill.
 - `.tabs.compacted`: Full-width bar with min-content tabs that do not stretch; tab padding is unchanged. Add `.tabs.wrap` to let tabs wrap when they exceed the parent width.
 - `.tabs.outline`: Border-side tab navigation with neutral inactive tabs and ink active tabs by default, plus a `::after` active indicator. A semantic color on the tab bar makes inactive tabs ink and active tabs use that semantic color.
 - `.tabs.bar`: Joined, bordered horizontal bar (Apple-style) with a solid accent fill and contrast text on the active tab, like a checked `.selector`. Add a semantic color to the bar (`.tabs.bar.primary`) or an individual tab; horizontal only.
@@ -112,6 +119,7 @@ each driven by four variables: `base`, `tint`, `blend`, `opacity`.
 <!-- Form controls -->
 <div class="stack g-2">
     <input type="text" placeholder="Username" class="success">
+    <input type="search" class="expandable" placeholder="Search" aria-label="Search">
     <textarea placeholder="Bio"></textarea>
     <label class="row g-2 middle pointer">
         <input type="checkbox" class="primary">

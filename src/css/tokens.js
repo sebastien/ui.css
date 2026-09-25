@@ -429,6 +429,13 @@ export default group(
 			bg: undefined,
 			text: undefined,
 		},
+		badge: {
+			size: "1.25rem",
+		},
+		tab: {
+			padding: "0.5em 0.85em",
+			padding_compact: "0.35em 0.5em",
+		},
 		action: {
 			font: {
 				size: `${vars.control.font.size}`,

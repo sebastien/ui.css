@@ -442,6 +442,63 @@ function fieldslots() {
 
 function fieldstates() {
 	return css.group(
+		css.rule("input.expandable, .input.expandable", {
+			width: "2.5em",
+			height: "2.5em",
+			max_width: "100%",
+			box_sizing: "border-box",
+			padding: "0",
+			background_image:
+				"url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m16 16 4 4'/%3E%3C/svg%3E\")",
+			background_repeat: "no-repeat",
+			background_position: "center",
+			background_size: "1.1em",
+			transition: "width 180ms ease, height 180ms ease",
+		}),
+		css.rule(
+			[
+				"input.expandable:focus",
+				"input.expandable:not(:placeholder-shown)",
+				".input.expandable:focus",
+				".input.expandable:not(:placeholder-shown)",
+			],
+			{
+				width: "100%",
+				height: "auto",
+				padding: "0.5em 0.75em 0.5em 2.25em",
+				background_position: "0.65em center",
+			},
+		),
+		css.rule(
+			[
+				"input.expandable.compact",
+				".input.expandable.compact",
+			],
+			{
+				height: "2em",
+			},
+		),
+		css.rule(
+			[
+				"input.expandable.compact:focus",
+				"input.expandable.compact:not(:placeholder-shown)",
+				".input.expandable.compact:focus",
+				".input.expandable.compact:not(:placeholder-shown)",
+			],
+			{
+				height: "auto",
+				padding: "0.35em 0.5em 0.35em 2.25em",
+			},
+		),
+		css.rule(
+			[
+				"input.expandable:placeholder-shown:not(:focus)::placeholder",
+				".input.expandable:placeholder-shown:not(:focus)::placeholder",
+			],
+			{
+				opacity: 0,
+			},
+		),
 		css.rule(
 			fieldHosts.map((s) => `${s}.compact`),
 			{
@@ -1017,10 +1074,21 @@ function checkbox() {
 		css.rule("&:disabled, &.disabled", {
 			cursor: "not-allowed",
 		}),
+		css.rule("&.round", {
+			border_radius: "50%",
+		}),
 		css.rule("&.compact", {
 			padding: "0em",
 			width: vars.checkbox.size.small.or("1em"),
 			min_width: vars.checkbox.size.small.or("1em"),
+		}),
+		css.rule("&.small", {
+			width: "1em",
+			min_width: "1em",
+		}),
+		css.rule("&.smaller", {
+			width: "0.875em",
+			min_width: "0.875em",
 		}),
 	);
 }
@@ -1079,6 +1147,14 @@ function radio() {
 		}),
 		css.rule("&.compact", {
 			padding: "0em",
+		}),
+		css.rule("&.small", {
+			width: "1em",
+			min_width: "1em",
+		}),
+		css.rule("&.smaller", {
+			width: "0.875em",
+			min_width: "0.875em",
 		}),
 	);
 }
@@ -1228,6 +1304,18 @@ function toggle() {
 		css.rule("&.compact", {
 			padding: "0em",
 		}),
+		css.rule("&.smaller", {
+			width: vars.toggle.width.smaller.or("2.25em"),
+			min_width: vars.toggle.width.smaller.or("2.25em"),
+			height: vars.toggle.height.smaller.or("1.25em"),
+			min_height: vars.toggle.height.smaller.or("1.25em"),
+		}),
+		css.rule("&.smallest", {
+			width: vars.toggle.width.smallest.or("1.75em"),
+			min_width: vars.toggle.width.smallest.or("1.75em"),
+			height: vars.toggle.height.smallest.or("1em"),
+			min_height: vars.toggle.height.smallest.or("1em"),
+		}),
 	);
 }
 
@@ -1246,6 +1334,14 @@ function range() {
 		}),
 		css.rule("&.tinted", {
 			background_color: "transparent !important",
+		}),
+		css.rule("&.small", {
+			height: "1.25em",
+			min_height: "1.25em",
+		}),
+		css.rule("&.smaller", {
+			height: "1em",
+			min_height: "1em",
 		}),
 		css.rule("&::-webkit-slider-runnable-track", {
 			box_sizing: "border-box",
@@ -1587,7 +1683,6 @@ function selector() {
 				__control_background_base: vars.color.white,
 				__control_background_blend: 1.0,
 				__control_background_opacity: 1.0,
-				background_color: control.background(1.0, 1.0),
 			}),
 			css.rule("&.colored > label", {
 				color: control.color(1.0, 1.0, vars.color.ink),
@@ -1721,6 +1816,18 @@ function selector() {
 		css.rule(".selector.toggle.compact", {
 			padding: "1px",
 		}),
+		css.rule(".selector.toggle.smaller", {
+			font_size: vars.toggle.font.size.smaller.or("0.875em"),
+		}),
+		css.rule(".selector.toggle.smallest", {
+			font_size: vars.toggle.font.size.smallest.or("0.75em"),
+		}),
+		css.rule(".selector.toggle.smaller > button", {
+			padding: "0.25em 0.625em",
+		}),
+		css.rule(".selector.toggle.smallest > button", {
+			padding: "0.2em 0.5em",
+		}),
 		css.rule(".selector.toggle.rounded", {
 			border_radius: "999px",
 		}),
@@ -1835,7 +1942,6 @@ function tab() {
 			border_bottom: `1px solid ${tabBorder}`,
 			border_left: `1px solid ${tabBorder}`,
 			border_radius: "0",
-			padding: "0.5em 1em",
 			color: vars.color.neutral,
 			background_color: "transparent",
 		}),
@@ -1863,7 +1969,10 @@ function tab() {
 			cursor: "pointer",
 			border: "0",
 			border_radius: "0.25rem",
-			padding: "0.5em 0.85em",
+			// Density flows through the inheritable --tab-padding channel, set
+			// by each presentation on its container. Tabs read it once, so a
+			// presentation never re-declares padding on the tab itself.
+			padding: vars.tab.padding.or("0.5em 0.85em"),
 			font: "inherit",
 			color: vars.color.ink,
 			box_shadow: "none",
@@ -1875,16 +1984,29 @@ function tab() {
 			__background_color_opacity: 0,
 			...tabBackground(),
 		}),
+		// Presentation padding: container-owned channel, no descendant override.
+		css.rule(".tabs:not(.group):not(.outline):not(.bar)", {
+			__tab_padding: "0.5em 1em",
+		}),
+		css.rule(".tabs.bar", {
+			__tab_padding: "0.5em 1em",
+		}),
 		// Selected tabs paint the background directly so the generic action
 		// button `.active` style cannot override the channel-derived fill.
 		css.rule(".tabs .tab[aria-selected=true], .tabs .tab.active", {
 			background_color: vars.background.color,
 		}),
-		css.rule(".tabs.compact", {
+		// Compact: the action base's nested `&.compact` resolves up to
+		// (0,2,1) via native nesting specificity (the max of button/.button/
+		// input[...]). Both `.tabs.compact .tab` and `.tabs .tab.compact`
+		// are (0,3,0), so they win; emitted after the action group, so the
+		// per-tab form is not shadowed. Presentation padding stays a
+		// channel, so no per-presentation selector list is needed.
+		css.rule(".tabs.group.compact", {
 			padding: "0.2rem",
 		}),
-		css.rule(".tabs.compact .tab, .tabs .tab.compact", {
-			padding: "0.35em 0.5em",
+		css.rule([".tabs.compact .tab", ".tabs .tab.compact"], {
+			padding: vars.tab.padding.compact.or("0.35em 0.5em"),
 		}),
 		css.rule(".tabs.compacted", {
 			display: "flex",
@@ -2059,7 +2181,6 @@ function tab() {
 			border: "0",
 			border_left: `1px solid ${tabBorder}`,
 			border_radius: "0",
-			padding: "0.5em 1em",
 			color: vars.color.neutral,
 			white_space: "nowrap",
 		}),

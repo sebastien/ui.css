@@ -238,7 +238,7 @@ function colors(colors = COLORS) {
 				background_size: "100% 100%",
 			}),
 		),
-		rule([".bgc", ".pill", ".badge"], {
+		rule([".bgc", ".pill", ".badge", ".count"], {
 			__background_color: backgroundColor,
 		}),
 		// .tx - applies the computed text color
@@ -315,6 +315,13 @@ function colors(colors = COLORS) {
 				rule(`.${short}-${semantic}`, {
 					[`__${shorthands[short].name.replaceAll("-", "_")}_base`]:
 						vars.color[semantic],
+					...(short === "bg"
+						? {
+							__background_color_tint: vars.color.tint,
+							__background_color_blend: 1.0,
+							__background_color_opacity: 1.0,
+						}
+						: {}),
 					...overrideChannel(short, "base", vars.color[semantic]),
 				}),
 			),
@@ -329,6 +336,13 @@ function colors(colors = COLORS) {
 				rule(`.${short}-${color}`, {
 					[`__${shorthands[short].name.replaceAll("-", "_")}_base`]:
 						vars.color[color],
+					...(short === "bg"
+						? {
+							__background_color_tint: vars.color.tint,
+							__background_color_blend: 1.0,
+							__background_color_opacity: 1.0,
+						}
+						: {}),
 					...overrideChannel(short, "base", vars.color[color]),
 				}),
 			),

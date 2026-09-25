@@ -54,14 +54,17 @@ you rely on one, declare it rather than depending on the fallback.
 - `--section-border-radius`, `--section-margin`
 - `--section-summary-padding`, `--section-body-padding`
 
-### Pills (`.pill`)
+### Pills, badges, counters (`.pill`, `.badge`, `.count`)
 - `--pill-gap`, `--pill-bg`, `--pill-text`, `--pill-dot-color`
+- `--badge-size` (diameter of the circular `.count` chip)
+
+### Tabs (`.tabs`)
+- `--tab-padding`, `--tab-padding-compact` (density channel read by each tab)
 
 ### Popovers (`.popover`, `menu`)
 - `--popover-anchor`, `--popover-area`, `--popover-fallbacks`
 
 ### Misc components
-- `--badge-size`
 - `--checkbox-size-small`
 - `--toggle-knob-border-width`
 - `--selectable-bg`
